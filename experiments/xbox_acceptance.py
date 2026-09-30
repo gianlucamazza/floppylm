@@ -21,6 +21,7 @@ from floppylm.model import GPTConfig, TinyGPT
 from floppylm.seed import seed_all
 from floppylm.train import TrainSpec
 from floppylm.xbox import check_fixture, fixture, prepare_job, verify_optimizer
+from floppylm.xbox_kernels import verify as verify_kernels
 from floppylm.xbox_portal import Portal
 
 
@@ -47,6 +48,12 @@ def main():
     }
     runlog.write_json(a.out / "acceptance.json", proof)
     prefix = runlog.new_run_id("gate")
+    proof["kernels"] = verify_kernels(
+        a.out / "kernels", executor=lambda data: portal.fixture(data, prefix + "-kernels")
+    )
+    runlog.write_json(a.out / "acceptance.json", proof)
+    if not proof["kernels"]["ok"]:
+        raise RuntimeError("per-operation hardware gate failed; evidence retained")
     for index, (fmt, scale, mlp, qk) in enumerate(
         itertools.product(
             ("ternary", "2bit"),

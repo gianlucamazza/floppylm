@@ -27,7 +27,7 @@ Cancellation writes a per-job marker. Controlled acceptance interruption uses a
 native checkpoint; the resumed response must carry the new submitted job hash.
 The final test uses an exclusive durable reservation before opening the test split.
 
-## Current evidence
+## Earlier package evidence
 
 - Independent held-out reference: 36 model/scale/MLP/QK cases and a three-step
   identical-gradient AdamW oracle passed on the host.
@@ -61,7 +61,7 @@ seeds, six recipes per arm, solver grids and five paired seeds before results.
 Its worker lock prevents concurrent launch; stable exclusive run identities prevent
 silent retraining when reopened. A failed comparison gate stops the campaign.
 
-## Current validated package and throughput
+## Earlier validated package and throughput
 
 CI run `36746732705`, source `9744ff7`, installed package
 `GianlucaMazza.XgpuE0_0.1.0.11_x64__g0p5dcfz4t9z4`:
@@ -76,3 +76,20 @@ A separate mixed zero/nonzero-row gate exposed a pre-existing incompatibility
 between tensor16 and S9. Scientific submission now checks S9 independently from
 Python/native parity. The proposed correction is in
 [e0-zero-row-proposal.md](e0-zero-row-proposal.md), awaiting explicit acceptance.
+
+## Current kernel validation
+
+The E0 backend now contains only the attention operations used by the model:
+Scores, causal Softmax and Weighted. The unused fused implementation has been
+removed from both CPU and HLSL; operation IDs are contiguous with no compatibility
+alias. Device Portal discovery requires its actual `InstalledPackages` response.
+Backpropagation for the active model remains required.
+
+Independent per-operation PyTorch/autograd fixtures exposed future-position
+Weighted gradients and cancellation in shifted-logit cross-entropy. Their failed
+baseline is retained in `runs/kernel-baseline-20260930T171719Z-0be030`.
+Both defects were corrected without changing the approved numerical thresholds.
+All 52 active-operation cases and the full 143-test host suite pass after cleanup.
+Scientific submissions now also require a successful per-operation hardware proof.
+The new source `762628a` must pass console acceptance before scientific execution;
+the earlier package proof above does not cover these changes.

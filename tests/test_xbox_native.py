@@ -130,3 +130,14 @@ def test_scientific_zero_row_gate_is_independent_of_backend_parity(fmt):
     assert zero_row_gate("row8log", fmt)["ok"]
     # A matching native implementation cannot make this oracle invariant true.
     assert not zero_row_gate("tensor16", fmt)["ok"]
+
+
+@pytest.mark.skipif(not BINARY.exists(), reason="native E0 binary not built")
+def test_every_kernel_matches_independent_autograd_including_hidden_boundaries(tmp_path):
+    from floppylm.xbox_kernels import verify
+
+    report = verify(tmp_path / "kernels", binary=BINARY, hardware=False)
+    assert report["case_count"] == 52
+    assert report["gates"]["causal-weighted:1"]["ok"]
+    assert report["gates"]["cross-entropy-shift:0"]["ok"]
+    assert report["ok"], {k: v for k, v in report["gates"].items() if not v["ok"]}

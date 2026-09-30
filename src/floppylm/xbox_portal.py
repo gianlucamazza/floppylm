@@ -72,7 +72,7 @@ class Portal:
             installed = portal.request("GET", "/api/app/packagemanager/packages", json_result=True)
             matches = [
                 p["PackageFullName"]
-                for p in installed.get("InstalledPackages", installed.get("Packages", []))
+                for p in installed["InstalledPackages"]
                 if p.get("PackageFullName", "").startswith("GianlucaMazza.XgpuE0_")
             ]
             if len(matches) != 1:
@@ -193,6 +193,8 @@ class Portal:
             proof = json.loads(acceptance.read_text())
             if proof.get("schema") != "floppylm.xbox.acceptance.v1" or not proof.get("ok"):
                 raise RuntimeError("invalid Xbox acceptance evidence")
+            if not proof.get("kernels", {}).get("ok"):
+                raise RuntimeError("scientific Xbox runs require per-operation acceptance evidence")
             if proof.get("commit") != device.get("commit") or not device.get("commit"):
                 raise RuntimeError("acceptance source commit differs from running package")
             if proof.get("package") != self.package:

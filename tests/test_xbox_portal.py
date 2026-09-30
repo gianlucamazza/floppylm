@@ -48,6 +48,7 @@ def test_scientific_submit_rejects_different_source_commit(tmp_path):
                 "ok": True,
                 "package": client.package,
                 "commit": "old",
+                "kernels": {"ok": True},
             }
         )
     )
