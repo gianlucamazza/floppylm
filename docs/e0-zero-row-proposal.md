@@ -1,6 +1,6 @@
 # E0 zero-row gate: proposed correction
 
-Status: proposed; requires owner acceptance before scientific campaign execution.
+Status: accepted — 2026-10-01; recorded in ADR 0011.
 This is separate from the accepted numerical refinement in ADR 0010.
 
 ## Context

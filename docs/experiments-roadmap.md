@@ -35,7 +35,7 @@ Hardware acceptance precedes the campaign; numerical gates are recorded in
 | S5  | Seed                           | 3 seed minimi per confronto; 5 se la differenza media appaiata è sotto 2 × gate                                                                                                                   |
 | S6  | FLOP stimati                   | forward per token = 2 × parametri stoccati + 4 × n_layers × (ctx/2) × d; training = 3 × forward × token; valutazioni escluse e riportate a parte in wall clock                                    |
 | S7  | Valutazione                    | finestra scorrevole, stride ctx/2, ogni byte bersaglio contato una volta, ultima finestra allineata alla fine; il separatore 0x03 è un bersaglio normale; val sul primo MiB, test sui primi 2 MiB |
-| S8  | Politica delle scale           | scelta dall'A/B del passo b fra `row16`, `row8log`, `tensor16`                                                                                                                                    |
+| S8  | Politica delle scale           | scelta dall'A/B del passo b fra `row16` e `row8log` (ADR 0011)                                                                                                                                    |
 | S9  | Righe nulle                    | scala 0 esatta, ricostruzione esattamente nulla in tutti i formati; `row8log` riserva il codice 0 alla scala nulla                                                                                |
 | S10 | Dati                           | deduplicazione esatta (sha1 del testo) è l'unica capacità attuale; filtro near-duplicate e test OOD restano requisiti successivi                                                                  |
 
@@ -63,7 +63,7 @@ E0-lite pre-v2 è diagnostica ([pre-v2](evidence/e0-lite/pre-v2/notes.md)).
   `train()` viene rifiutato; modifiche dirette a configurazione o parametri vengono rilevate
   prima del risalvataggio. Per riprendere il training usare un checkpoint del tronco.
 
-Campaign (not started; requires hardware acceptance):
+Campaign: hardware accepted; scale selection follows ADR 0011.
 
 a. Measure sustained Xbox GPU throughput, transfers and peak memory before scientific runs.
 b. A/B neutri a pari byte, ternario, 2 seed: politica delle scale; GELU vs SwiGLU vs ReLU².

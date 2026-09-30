@@ -99,3 +99,26 @@ See [the new package evidence](evidence/xbox-e0-20260930-kernels/notes.md).
 
 The new representative synthetic trial completed at 959.012 token/s,
 153.758 seconds wall time and 91,238,400 bytes peak app memory.
+
+## Scientific execution and recovery (2026-10-01)
+
+ADR 0011 records the owner's exclusion of tensor16 from scientific E0. The
+campaign compares row16 and row8log; the codec diagnostic remains available.
+Use the same installed package `0.1.0.19` and its acceptance/benchmark evidence.
+
+```bash
+python experiments/e0_campaign.py --out runs/e0-campaign-UNIQUE \
+  --acceptance runs/xbox-acceptance-20260930-ci36751689355/acceptance.json \
+  --benchmark runs/xbox-benchmark-20260930-ci36751689355/summary.json
+python experiments/e0_v2.py --resume RUN_ID --xbox-acceptance ACCEPTANCE_JSON
+# Reopen the campaign with --recover to recover existing bound trials.
+```
+
+Training corpora are shared by hard link on the same filesystem, with content
+hashes binding every job; prepared data must remain immutable. Transport loss is
+logged and retried up to five consecutive failures, without cancelling GPU work.
+An explicit interrupt cancels the job. Recovery verifies package, acceptance,
+recipe and asset hashes before reconnecting or using a verified checkpoint.
+Failed native jobs require diagnosis. Existing evaluated branches are hash-checked
+and reused; completed recovery does not repeat evaluation. The final-test exclusive
+reservation remains mandatory and is never reset automatically.

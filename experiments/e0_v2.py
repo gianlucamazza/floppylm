@@ -19,6 +19,7 @@ separate GPU app after hardware acceptance.
 from __future__ import annotations
 
 import argparse
+import fcntl
 import json
 import os
 import signal
@@ -130,6 +131,8 @@ def cmd_run(a: argparse.Namespace) -> int:
     ):
         raise ValueError("invalid run id")
     run_dir = runlog.make_exclusive_dir(RUNS / run_id)
+    lock = (run_dir / "worker.lock").open("a")
+    fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
     ev_dir = runlog.make_exclusive_dir(EVIDENCE / "runs" / run_id)
     runlog.set_status(run_dir, "running", pid=os.getpid())
     runlog.write_json(
@@ -172,6 +175,7 @@ def _execute_run(a, cfg, model, spec, run_id, run_dir, ev_dir) -> int:
         "budget_bits": budget_bits(a.budget_frac),
         "target_bytes": target,
         "smoke": a.smoke,
+        "evaluation": {"val_bytes": a.val_bytes},
         "retry_of": getattr(a, "retry_of", None),
         "retry_count": getattr(a, "retry_count", 0),
         "repair_ratio": getattr(a, "repair_ratio", None),
@@ -182,7 +186,10 @@ def _execute_run(a, cfg, model, spec, run_id, run_dir, ev_dir) -> int:
         "argv": sys.argv,
         "backend": getattr(a, "backend", "cpu"),
     }
-    runlog.write_json(run_dir / "manifest.json", manifest)
+    if getattr(a, "resume", None):
+        manifest = json.loads((run_dir / "manifest.json").read_text())
+    else:
+        runlog.write_json(run_dir / "manifest.json", manifest)
     runlog.set_status(run_dir, "running", pid=os.getpid())
     summary = {
         "run_id": run_id,
@@ -203,6 +210,12 @@ def _execute_run(a, cfg, model, spec, run_id, run_dir, ev_dir) -> int:
         "branches": [],
         "status": "running",
     }
+    if getattr(a, "resume", None):
+        summary.update(json.loads((ev_dir / "summary.json").read_text()))
+        summary.pop("error", None)
+        summary["status"] = "running"
+        summary.setdefault("recoveries", []).append({"started": runlog.now()})
+    runlog.write_json(ev_dir / "summary.json", summary)
     train = data_mod.load(DATA, "train")
     val = data_mod.load(DATA, "val")  # test is never opened here
     t0 = time.time()
@@ -215,6 +228,12 @@ def _execute_run(a, cfg, model, spec, run_id, run_dir, ev_dir) -> int:
 
     def on_branch(end: int, branch: TinyGPT, info: dict) -> None:
         blob, parts = pack_sections(branch)
+        previous_branch = next((b for b in summary["branches"] if b["end_step"] == end), None)
+        if previous_branch is not None:
+            if previous_branch["sha256"] != runlog.sha256_bytes(blob):
+                raise RuntimeError("recovered branch differs from evaluated artifact")
+            verified_branch(previous_branch)
+            return
         counted = unpack(blob)
         te = time.time()
         vb, vn = sliding_bpb(counted, val, a.val_bytes)
@@ -244,7 +263,8 @@ def _execute_run(a, cfg, model, spec, run_id, run_dir, ev_dir) -> int:
         from floppylm.xbox_portal import Portal
 
         job_root = run_dir / "xbox"
-        prepare_job(job_root, model, DATA / "train.bin", spec, run_id)
+        if not getattr(a, "resume", None):
+            prepare_job(job_root, model, DATA / "train.bin", spec, run_id)
         acct = Portal.configured().train(
             job_root,
             model,
@@ -252,6 +272,7 @@ def _execute_run(a, cfg, model, spec, run_id, run_dir, ev_dir) -> int:
             on_branch,
             purpose="functional" if a.smoke else "scientific",
             acceptance=Path(a.xbox_acceptance) if a.xbox_acceptance else None,
+            recover=bool(getattr(a, "resume", None)),
         )
         summary["backend"] = acct["backend"]
     else:
@@ -291,6 +312,8 @@ def _execute_run(a, cfg, model, spec, run_id, run_dir, ev_dir) -> int:
             "total_flops": flops(model, trunk_tokens + cd_tokens),
             "trunk_seconds": acct["trunk_seconds"],
             "wall_seconds": time.time() - t0,
+            "wall_scope": "current host attempt",
+            "native_execution_seconds": acct.get("backend", {}).get("wall_seconds"),
             "eval_seconds": sum(b["eval_seconds"] for b in bs),
         },
         "finished": runlog.now(),
@@ -300,6 +323,50 @@ def _execute_run(a, cfg, model, spec, run_id, run_dir, ev_dir) -> int:
     runlog.set_status(run_dir, "completed")
     print(f"completed {run_id}", flush=True)
     return 0
+
+
+def cmd_resume(a: argparse.Namespace) -> int:
+    run_id = a.resume
+    if not run_id or any(
+        c not in "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_" for c in run_id
+    ):
+        raise ValueError("invalid run id")
+    run_dir, ev_dir = RUNS / run_id, EVIDENCE / "runs" / run_id
+    lock = (run_dir / "worker.lock").open("a")
+    fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    manifest = json.loads((run_dir / "manifest.json").read_text())
+    summary = json.loads((ev_dir / "summary.json").read_text())
+    if manifest["backend"] != "xbox":
+        raise RuntimeError("--resume requires an Xbox trial")
+    if summary["status"] == "completed":
+        for branch in summary["branches"]:
+            verified_branch(branch)
+        return 0
+    if not (run_dir / "xbox/submitted.json").exists():
+        raise RuntimeError("trial has no bound submission; diagnose before recovery")
+    cfg, spec = GPTConfig(**manifest["config"]), TrainSpec(**manifest["spec"])
+    a.backend, a.smoke = "xbox", manifest["smoke"]
+    a.budget_frac = manifest["budget_bits"] / FULL_BUDGET_BITS
+    a.val_bytes = manifest["evaluation"]["val_bytes"]
+    a.threads = manifest["environment"]["torch_threads"]
+    a.tokens = spec.tokens if manifest["token_policy"] == "fixed" else 0
+    torch.set_num_threads(a.threads)
+    current_data = data_mod.manifest(DATA, RAW)
+    if current_data["verified"]["prepared"] != manifest["data"]["verified"]["prepared"]:
+        raise RuntimeError("recovery corpus mismatch")
+    model = TinyGPT(cfg)
+    previous = signal.signal(signal.SIGTERM, lambda *_: (_ for _ in ()).throw(KeyboardInterrupt()))
+    try:
+        return _execute_run(a, cfg, model, spec, run_id, run_dir, ev_dir)
+    except BaseException as error:
+        partial = json.loads((ev_dir / "summary.json").read_text())
+        state = "interrupted" if isinstance(error, KeyboardInterrupt) else "failed"
+        partial.update(status=state, error=repr(error))
+        runlog.write_json(ev_dir / "summary.json", partial)
+        runlog.set_status(run_dir, state, error=repr(error))
+        raise
+    finally:
+        signal.signal(signal.SIGTERM, previous)
 
 
 def _summary(run_id: str) -> dict:
@@ -564,6 +631,7 @@ def main() -> int:
     mode = ap.add_mutually_exclusive_group()
     mode.add_argument("--plan", action="store_true")
     mode.add_argument("--run", action="store_true")
+    mode.add_argument("--resume", metavar="RUN_ID", help="recover an existing Xbox trial")
     mode.add_argument("--retry", metavar="RUN_ID", help="S3: one fresh byte-budget repair")
     mode.add_argument("--grid", action="store_true")
     mode.add_argument("--parity", nargs="+", metavar="RUN_ID")
@@ -608,6 +676,8 @@ def main() -> int:
         return cmd_plan(a)
     if a.run:
         return cmd_run(a)
+    if a.resume:
+        return cmd_resume(a)
     if a.retry:
         return cmd_retry(a)
     if a.grid:

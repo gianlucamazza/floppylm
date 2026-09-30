@@ -116,6 +116,7 @@ def test_prepared_indices_match_numpy_stream(tmp_path):
     spec = TrainSpec(tokens=128, batch=2, seed=19)
     root = tmp_path / "job"
     prepare_job(root, TinyGPT(cfg), corpus, spec, "indices")
+    assert (root / "train.bin").stat().st_ino == corpus.stat().st_ino
     indices = np.fromfile(root / "indices.bin", dtype="<u8").reshape(-1, 2)
     rng = np.random.default_rng(19)
     for actual in indices:

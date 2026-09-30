@@ -25,8 +25,9 @@ from floppylm.model import GPTConfig
 
 
 class Campaign:
-    def __init__(self, root: Path, acceptance: Path, benchmark: Path):
+    def __init__(self, root: Path, acceptance: Path, benchmark: Path, *, recover: bool = False):
         self.root, self.acceptance = root, acceptance.resolve()
+        self.recover_trials = recover
         proof, speed = json.loads(acceptance.read_text()), json.loads(benchmark.read_text())
         if not proof["ok"] or any(proof[k] != speed[k] for k in ("package", "commit")):
             raise RuntimeError("benchmark and acceptance must bind the same hardware package")
@@ -36,11 +37,17 @@ class Campaign:
         self.path = root / "campaign.json"
         if self.path.exists():
             self.state = json.loads(self.path.read_text())
+            if self.state.get("protocol_adr") != "0011":
+                raise RuntimeError("campaign protocol differs; no implicit migration")
+            if self.state["benchmark_sha256"] != runlog.sha256_file(benchmark):
+                raise RuntimeError("campaign benchmark changed")
             if self.state["acceptance_sha256"] != runlog.sha256_file(acceptance):
                 raise RuntimeError("campaign acceptance changed")
         else:
             self.state = {
                 "schema": "floppylm.e0.campaign.v1",
+                "protocol_adr": "0011",
+                "sources": runlog.sources(ROOT),
                 "id": runlog.new_run_id("e0"),
                 "created": runlog.now(),
                 "status": "running",
@@ -59,8 +66,17 @@ class Campaign:
                     "paired_seeds": list(range(5)),
                     "batch": 32,
                     "ctx": 256,
-                    "scale_order": ["row16", "row8log", "tensor16"],
+                    "scale_order": ["row16", "row8log"],
                     "mlp_order": ["gelu", "swiglu", "relu2"],
+                    "lr": [0.001, 0.003, 0.01],
+                    "ternary_delta": [0.5, 0.7],
+                    "ternary_wd": 0.1,
+                    "2bit_wd": [0, 0.1],
+                    "grid_widths": list(range(64, 257, 16)),
+                    "grid_layers": list(range(1, 17)),
+                    "grid_ff_range": [2.0, 6.0],
+                    "grid_embedding_share": [0.08, 0.20],
+                    "grid_min_nominal_fill": 0.995,
                     "selection": "minimum mean 4T val bpb; declared enumeration order breaks ties",
                     "eligibility": "actual individual and reciprocal byte parity; saturation at 4T",
                     "byte_repair": "at most one fresh attempt per trial, preserving recipe",
@@ -126,6 +142,20 @@ class Campaign:
         if not path.exists():
             with (self.root / (run_id + ".log")).open("x") as log:
                 subprocess.run(cmd, stdout=log, stderr=subprocess.STDOUT, check=True)
+        if path.exists():
+            partial = json.loads(path.read_text())
+            if partial["status"] != "completed" and self.recover_trials:
+                subprocess.run(
+                    [
+                        sys.executable,
+                        str(ROOT / "experiments/e0_v2.py"),
+                        "--resume",
+                        run_id,
+                        "--xbox-acceptance",
+                        str(self.acceptance),
+                    ],
+                    check=True,
+                )
         summary = _summary(run_id)
         if summary.get("backend_name") != "xbox" or not summary.get("backend", {}).get(
             "hardware_gpu"
@@ -135,6 +165,8 @@ class Campaign:
         return summary
 
     def trial(self, key, cfg, seed, lr=0.003, wd=0.1):
+        if runlog.sources(ROOT)["files"] != self.state["sources"]["files"]:
+            raise RuntimeError("campaign implementation changed after preregistration")
         record = self.state["trials"].get(key)
         recipe = {"config": cfg.to_dict(), "seed": seed, "lr": lr, "wd": wd}
         if record is None:
@@ -204,6 +236,87 @@ class Campaign:
         self.state["decisions"][phase] = candidates[best].to_dict()
         self.save()
         return candidates[best]
+
+    def report(self):
+        trials = []
+        for key, record in self.state["trials"].items():
+            for run_id in (record["run_id"], record.get("repair_id")):
+                if run_id is None:
+                    continue
+                path = EVIDENCE / "runs" / run_id / "summary.json"
+                summary = json.loads(path.read_text()) if path.exists() else {}
+                trials.append(
+                    {
+                        "key": key,
+                        "run_id": run_id,
+                        "status": summary.get("status", "reserved"),
+                        "eligibility": record["status"],
+                        "compute": summary.get("compute"),
+                        "saturation": summary.get("saturation"),
+                        "recipe": record["recipe"],
+                    }
+                )
+        costs = [r["compute"] for r in trials if r["compute"] is not None]
+        report = {
+            "campaign": self.state["id"],
+            "status": self.state["status"],
+            "package": self.state["package"],
+            "commit": self.state["commit"],
+            "trials": trials,
+            "original_trials": len(self.state["trials"]),
+            "repair_trials": sum("repair_id" in r for r in self.state["trials"].values()),
+            "cost": {
+                k: sum(c.get(k) or 0 for c in costs)
+                for k in (
+                    "total_tokens",
+                    "total_flops",
+                    "wall_seconds",
+                    "eval_seconds",
+                    "native_execution_seconds",
+                )
+            },
+            "cost_scope": "completed trial compute; host wall per recorded host attempt",
+            "cost_unavailable_trials": [r["run_id"] for r in trials if r["compute"] is None],
+            "validation_paired": self.state.get("paired"),
+            "decisions": self.state["decisions"],
+        }
+        selection = self.state.get("selection")
+        if selection:
+            path = EVIDENCE / "selections" / (selection + ".test.json")
+            if path.exists():
+                final = json.loads(path.read_text())
+                scores = {"ternary": {}, "2bit": {}}
+                for item in final["results"]:
+                    trial = _summary(item["run_id"])
+                    scores[trial["config"]["core_fmt"]][trial["spec"]["seed"]] = item["test_bpb"]
+                report["test_paired"] = parity.paired_sigma(scores["ternary"], scores["2bit"])
+                report["frozen_gate_bpb"] = self.state["paired"]["gate_bpb"]
+                report["selection_sha256"] = runlog.sha256_file(
+                    EVIDENCE / "selections" / (selection + ".json")
+                )
+                report["test_report_sha256"] = runlog.sha256_file(path)
+        runlog.write_json(self.root / "summary.json", report)
+        destination = EVIDENCE / "campaigns" / self.state["id"]
+        destination.mkdir(parents=True, exist_ok=True)
+        runlog.write_json(destination / "summary.json", report)
+        runlog.write_json(destination / "campaign.json", self.state)
+        lines = [
+            "# " + self.state["id"],
+            "",
+            "Status: **" + self.state["status"] + "**.",
+            "",
+            f"Trials: {report['original_trials']}; byte repairs: {report['repair_trials']}.",
+            "Costs, exclusions, recipes and hashes are in summary.json.",
+            "This campaign establishes a scalar E0 baseline. Vector cores are outside E0.",
+        ]
+        if "test_paired" in report:
+            lines += [
+                "",
+                f"Test paired ternary minus 2bit bpb: {report['test_paired']['mean']:.6f}; "
+                f"sample SD {report['test_paired']['sd']:.6f}; frozen validation gate "
+                f"{report['frozen_gate_bpb']:.6f}.",
+            ]
+        runlog.write_atomic(destination / "notes.md", "\n".join(lines) + "\n")
 
     def run(self):
         budget = FULL_BUDGET_BITS / 16
@@ -293,6 +406,7 @@ class Campaign:
             status="completed", phase="completed", finished=runlog.now(), selection=name
         )
         self.save()
+        self.report()
 
 
 def main():
@@ -300,13 +414,15 @@ def main():
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--acceptance", type=Path, required=True)
     parser.add_argument("--benchmark", type=Path, required=True)
+    parser.add_argument("--recover", action="store_true", help="recover existing bound trials")
     a = parser.parse_args()
-    campaign = Campaign(a.out, a.acceptance, a.benchmark)
+    campaign = Campaign(a.out, a.acceptance, a.benchmark, recover=a.recover)
     try:
         campaign.run()
     except BaseException as error:
         campaign.state.update(status="stopped", error=repr(error), stopped=runlog.now())
         campaign.save()
+        campaign.report()
         raise
     return 0
 

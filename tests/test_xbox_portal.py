@@ -84,3 +84,83 @@ def test_existing_connection_config_is_sourced_without_shell_quote_breakage(tmp_
     client = Portal.configured(package="known")
     assert client.host == "127.0.0.1"
     assert client.package == "known"
+
+
+def recovery_job(tmp_path, client, state):
+    job = {
+        "job_id": "recovery",
+        "purpose": "functional",
+        "config": {},
+        "spec": {},
+    }
+    original = dict(job)
+    for key in ("initialization", "data", "indices"):
+        p = tmp_path / (key + ".bin")
+        p.write_bytes(key.encode())
+        descriptor = {
+            "path": p.name,
+            "bytes": p.stat().st_size,
+            "sha256": hashlib.sha256(p.read_bytes()).hexdigest(),
+        }
+        job[key] = descriptor
+        original[key] = descriptor
+    digest = hashlib.sha256(json.dumps(job, sort_keys=True).encode()).hexdigest()
+    (tmp_path / "job.json").write_text(json.dumps(original))
+    (tmp_path / "submitted.json").write_text(
+        json.dumps({"package": client.package, "job": job, "sha256": digest})
+    )
+    client.get = Mock(
+        return_value=json.dumps({"package": client.package, "hardware_gpu": True}).encode()
+    )
+    report = {
+        "state": state,
+        "job_sha256": digest,
+        "checkpoint": {"path": "results/recovery/checkpoint.json"},
+    }
+    client.status = Mock(return_value=report)
+    client.submit = Mock()
+    client.resume = Mock()
+    client.retrieve = Mock()
+    return report
+
+
+@pytest.mark.parametrize("state", ["running", "completed"])
+def test_recovery_reuses_bound_job_without_resubmission(tmp_path, state):
+    client = portal()
+    recovery_job(tmp_path, client, state)
+    assert client.recover(tmp_path, purpose="functional", acceptance=None)["job_id"] == "recovery"
+    client.resume.assert_not_called()
+    client.submit.assert_not_called()
+
+
+def test_recovery_interruption_verifies_checkpoint_before_resume(tmp_path):
+    client = portal()
+    report = recovery_job(tmp_path, client, "interrupted")
+    client.recover(tmp_path, purpose="functional", acceptance=None)
+    client.retrieve.assert_called_once_with(
+        report["checkpoint"], tmp_path / "recovery-checkpoint.json"
+    )
+    client.resume.assert_called_once_with(tmp_path, report["checkpoint"])
+
+
+def test_recovery_rejects_changed_asset_and_failed_remote_job(tmp_path):
+    client = portal()
+    recovery_job(tmp_path, client, "failed")
+    with pytest.raises(RuntimeError, match="diagnosis"):
+        client.recover(tmp_path, purpose="functional", acceptance=None)
+    (tmp_path / "data.bin").write_bytes(b"changed")
+    with pytest.raises(RuntimeError, match="integrity"):
+        client.recover(tmp_path, purpose="functional", acceptance=None)
+
+
+def test_wait_records_transport_loss_without_cancel(monkeypatch):
+    client = portal()
+    client.status = Mock(
+        side_effect=[OSError("offline"), {"state": "completed", "job_sha256": "same"}]
+    )
+    client.cancel = Mock()
+    log = Mock()
+    monkeypatch.setattr("floppylm.xbox_portal.time.sleep", lambda _: None)
+    assert client.wait("job", log=log, expected_sha="same")["state"] == "completed"
+    assert "transport_failure" in log.call_args_list[0].args[0]
+    client.cancel.assert_not_called()

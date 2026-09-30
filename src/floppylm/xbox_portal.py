@@ -120,7 +120,21 @@ class Portal:
             if response.status == 404:
                 raise FileNotFoundError(path)
             if not 200 <= response.status < 300:
-                raise RuntimeError(f"Device Portal {method} failed: HTTP {response.status}")
+                detail = {}
+                try:
+                    error_body = json.loads(payload)
+                    if isinstance(error_body, dict):
+                        detail = {
+                            k: error_body[k]
+                            for k in ("ErrorCode", "ErrorMessage", "HResult")
+                            if k in error_body
+                        }
+                except (ValueError, UnicodeDecodeError):
+                    pass
+                raise RuntimeError(
+                    f"Device Portal {method} failed: HTTP {response.status} "
+                    + json.dumps(detail)[:1000]
+                )
             return json.loads(payload) if json_result else payload
         finally:
             connection.close()
@@ -138,9 +152,7 @@ class Portal:
     def files(self, directory: str = "inbox") -> dict[str, int]:
         listing = self.request("GET", self.path("files", directory), json_result=True)
         return {
-            item["Name"]: int(item.get("FileSize", item.get("Size", 0)))
-            for item in listing.get("Items", [])
-            if not item.get("IsDirectory", False)
+            item["Name"]: int(item["FileSize"]) for item in listing["Items"] if item["Type"] == 32
         }
 
     def get(self, filename: str, directory: str = "inbox") -> bytes:
@@ -203,6 +215,8 @@ class Portal:
         if purpose == "scientific":
             from .xbox import zero_row_gate
 
+            if job["config"]["scale_policy"] not in ("row16", "row8log"):
+                raise RuntimeError("ADR 0011 excludes tensor16 from scientific E0")
             gate = zero_row_gate(job["config"]["scale_policy"], job["config"]["core_fmt"])
             runlog.write_json(root / "zero-row-gate.json", gate)
             if not gate["ok"]:
@@ -227,12 +241,29 @@ class Portal:
 
     def wait(self, job_id: str, log=print, *, expected_sha: str | None = None) -> dict:
         previous = None
+        transport_failures = 0
         while True:
             try:
                 report = self.status(job_id)
             except FileNotFoundError:
                 time.sleep(2)
                 continue
+            except (OSError, http.client.HTTPException) as error:
+                transport_failures += 1
+                log(
+                    json.dumps(
+                        {
+                            "event": "transport_failure",
+                            "attempt": transport_failures,
+                            "error": type(error).__name__,
+                        }
+                    )
+                )
+                if transport_failures >= 5:
+                    raise
+                time.sleep(2**transport_failures)
+                continue
+            transport_failures = 0
             if expected_sha and report.get("job_sha256") != expected_sha:
                 if report["state"] == "failed":
                     return report
@@ -282,24 +313,95 @@ class Portal:
                 time.sleep(2)
         raise TimeoutError("Xbox fixture did not finish")
 
-    def train(self, root: Path, model, spec, on_branch, *, purpose: str, acceptance: Path | None):
+    def recover(self, root: Path, *, purpose: str, acceptance: Path | None) -> dict:
+        binding = json.loads((root / "submitted.json").read_text())
+        job = binding["job"]
+        if binding["package"] != self.package or job["purpose"] != purpose:
+            raise RuntimeError("recovery package or purpose mismatch")
+        if (
+            hashlib.sha256(json.dumps(job, sort_keys=True).encode()).hexdigest()
+            != binding["sha256"]
+        ):
+            raise RuntimeError("recovery submission hash mismatch")
+        device = json.loads(self.get("device.json", ""))
+        if device.get("package") != self.package or not device.get("hardware_gpu"):
+            raise RuntimeError("recovery requires the original hardware package")
+        if purpose == "scientific":
+            proof = json.loads(acceptance.read_text()) if acceptance else {}
+            if (
+                not proof.get("ok")
+                or not proof.get("kernels", {}).get("ok")
+                or proof.get("commit") != device.get("commit")
+                or proof.get("package") != self.package
+                or runlog.sha256_file(acceptance) != job["acceptance_sha256"]
+            ):
+                raise RuntimeError("recovery acceptance mismatch")
+        original = json.loads((root / "job.json").read_text())
+        for key in ("job_id", "config", "spec"):
+            if original[key] != job[key]:
+                raise RuntimeError("recovery recipe mismatch")
+        for key in ("initialization", "data", "indices"):
+            path = root / original[key]["path"]
+            if (
+                path.stat().st_size != job[key]["bytes"]
+                or runlog.sha256_file(path) != job[key]["sha256"]
+            ):
+                raise RuntimeError("recovery asset integrity failed")
+        report = self.status(job["job_id"])
+        if report.get("job_sha256") != binding["sha256"]:
+            raise RuntimeError("recovery remote submission mismatch")
+        if report["state"] == "interrupted":
+            self.retrieve(report["checkpoint"], root / "recovery-checkpoint.json")
+            history_path = root / "execution-segments.json"
+            history = json.loads(history_path.read_text()) if history_path.exists() else []
+            if not any(r["job_sha256"] == report["job_sha256"] for r in history):
+                history.append(report)
+                runlog.write_json(history_path, history)
+            self.resume(root, report["checkpoint"])
+        elif report["state"] not in ("running", "completed"):
+            raise RuntimeError("failed jobs require diagnosis before recovery")
+        return job
+
+    def train(
+        self,
+        root: Path,
+        model,
+        spec,
+        on_branch,
+        *,
+        purpose: str,
+        acceptance: Path | None,
+        recover: bool = False,
+    ):
         from .xbox import restore_tensors
 
-        submitted = self.submit(root, purpose=purpose, acceptance=acceptance)
+        submitted = (
+            self.recover(root, purpose=purpose, acceptance=acceptance)
+            if recover
+            else self.submit(root, purpose=purpose, acceptance=acceptance)
+        )
         job_id = submitted["job_id"]
         try:
             report = self.wait(
                 job_id, expected_sha=json.loads((root / "submitted.json").read_text())["sha256"]
             )
-        except BaseException:
+        except KeyboardInterrupt:
             self.cancel(job_id)
             raise
-        runlog.write_json(root / "result.json", report)
         binding = json.loads((root / "submitted.json").read_text())
         if report.get("job_sha256") != binding["sha256"] or not report.get("hardware_gpu"):
             raise RuntimeError("Xbox result does not match submitted hardware job")
         if report["state"] != "completed" or len(report["branches"]) != 3:
+            runlog.write_json(root / "result.json", report)
             raise RuntimeError("Xbox job did not complete: " + report["state"])
+        history_path = root / "execution-segments.json"
+        if history_path.exists():
+            segments = json.loads(history_path.read_text()) + [dict(report)]
+            for key in ("wall_seconds", "gpu_seconds", "dispatches", "transfer_bytes"):
+                report[key] = sum(segment[key] for segment in segments)
+            report["peak_memory_bytes"] = max(segment["peak_memory_bytes"] for segment in segments)
+            report["execution_segments"] = segments
+        runlog.write_json(root / "result.json", report)
         for branch in sorted(report["branches"], key=lambda b: b["end_step"]):
             path = root / ("branch-" + str(branch["end_step"]) + ".json")
             self.retrieve(branch["artifact"], path)

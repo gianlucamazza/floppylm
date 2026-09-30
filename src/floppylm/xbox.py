@@ -7,7 +7,7 @@ backend receives train data only. A reference result cannot certify GPU acceptan
 from __future__ import annotations
 
 import json
-import shutil
+import os
 import subprocess
 from dataclasses import asdict
 from pathlib import Path
@@ -70,9 +70,8 @@ def prepare_job(root: Path, model: TinyGPT, train_file: Path, spec: TrainSpec, j
     if spec.branches != 3 or spec.warmup_frac != 0.02 or spec.cooldown_frac != 0.1:
         raise ValueError("Xbox E0 requires the declared three-branch WSD protocol")
     root.mkdir(parents=True, exist_ok=False)
-    # A reflink/copy or an immutable shared corpus can be optimized only after measuring
-    # transfers; the initial implementation binds the local complete training file.
-    shutil.copyfile(train_file, root / "train.bin")
+    # Share the hash-bound corpus inode; never modify a prepared training corpus.
+    os.link(train_file, root / "train.bin")
     runlog.write_json(
         root / "initial.json", {"config": model.cfg.to_dict(), "tensors": tensors(model)}
     )
