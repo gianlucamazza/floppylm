@@ -1,0 +1,32 @@
+[project]
+name = "floppylm"
+version = "0.0.0"
+description = "Best LM that fits a real 1.44 MB floppy: sub-bit core codes vs scalar quantization"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = ["numpy>=2.0", "torch>=2.4"]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0", "ruff>=0.6"]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+
+[tool.ruff]
+target-version = "py312"
+src = ["src", "tests", "experiments"]
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "W"]
+
+[tool.ruff.lint.per-file-ignores]
+"experiments/*.py" = ["E402"]

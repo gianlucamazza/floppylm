@@ -1,0 +1,9 @@
+# corpus, checkpoints, artifacts, images, caches
+data/
+runs/
+*.img
+*.flp
+!tests/fixtures/*.flp
+__pycache__/
+.pytest_cache/
+.ruff_cache/
