@@ -12,20 +12,21 @@ gate appaiato > max(0.02 bpb, 2σ). Se F1 scatta, E2–E4 sono _won't run_.
 
 | #   | Passo                                                                     | Dove      | Costo stimato     |
 | --- | ------------------------------------------------------------------------- | --------- | ----------------- |
-| 1   | E0 v2: codice e smoke (fatto), campagna a–e dopo l'approvazione di S1–S10 | CPU       | ore–giorni di run |
+| 1   | E0 v2: codice e smoke (fatto), campagna a–e dopo accettazione hardware | Xbox GPU       | ore–giorni di run |
 | 2   | σ appaiata e congelamento dell'avversario (passo e)                       | CPU       | 5 seed            |
 | 3   | E1 pilota a 1/16, K=1                                                     | CPU       | 1–2 giorni di run |
 | 4   | Decisione: ADR GPU per 1/4 e 1×, oppure stop                              | —         | —                 |
 | 5   | E1a ricorsione, E1 a 1/4, E1b trellis/segni                               | GPU       | ~$5–20            |
 | 6   | E2 → E3 → E4                                                              | GPU + CPU | —                 |
 
-## E0 v2 — Scelte da approvare
+## E0 v2 — Accepted numerical choices
 
-Le decisioni approvate stanno in [ADR 0005](adr/0005-e0v2-protocol.md). Queste sono le **scelte
-numeriche nuove**, implementate come default nel codice ma **non ancora approvate**; nessuna campagna
-parte finché non lo sono.
+S1-S10 were accepted on 2026-09-30 in [ADR 0008](adr/0008-e0-numeric-protocol.md).
+The owner selected a dedicated Series S GPU backend: [ADR 0009](adr/0009-xbox-e0-backend.md).
+Hardware acceptance precedes the campaign; numerical gates are recorded in
+[ADR 0010](adr/0010-independent-numerical-gates.md).
 
-| #   | Scelta                         | Default proposto                                                                                                                                                                                  |
+| #   | Scelta                         | Accepted choice                                                                                                                                                                                  |
 | --- | ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | S1  | Base di token T                | 20 × parametri stoccati; cooldown che terminano a T, 2T, 4T                                                                                                                                       |
 | S2  | Forma del WSD                  | warmup lineare sul 2% di T; cooldown lineare a zero sul 10% dei token di ogni ramo                                                                                                                |
@@ -62,9 +63,9 @@ E0-lite pre-v2 è diagnostica ([pre-v2](evidence/e0-lite/pre-v2/notes.md)).
   `train()` viene rifiutato; modifiche dirette a configurazione o parametri vengono rilevate
   prima del risalvataggio. Per riprendere il training usare un checkpoint del tronco.
 
-Campagna (non avviata; richiede S1–S10 approvate):
+Campaign (not started; requires hardware acceptance):
 
-a. Velocità: 4 run × 1 thread contro 1 run × 4 thread; `torch.compile` solo se funziona e accelera.
+a. Measure sustained Xbox GPU throughput, transfers and peak memory before scientific runs.
 b. A/B neutri a pari byte, ternario, 2 seed: politica delle scale; GELU vs SwiGLU vs ReLU².
 c. Tuning con budget S4 per ternario e 2-bit.
 d. Griglia del solver con WSD: curva di saturazione e parità per forma.

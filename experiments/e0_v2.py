@@ -11,8 +11,9 @@ Usage:
   python experiments/e0_v2.py --verify-data
 
 Training and tuning read only train/val. The test split is read only by --final-test, on a
-frozen selection whose artifact hashes are re-verified. Long runs: nohup, outside
-background.slice (ADR 0003 amendment); use `python -u`.
+frozen selection whose artifact hashes are re-verified. CPU training jobs must use the
+host `bg` wrapper. Xbox training executes in the
+separate GPU app after hardware acceptance.
 """
 
 from __future__ import annotations
@@ -123,9 +124,44 @@ def cmd_run(a: argparse.Namespace) -> int:
     tag = ("smoke" if a.smoke else f"b{round(1 / a.budget_frac)}") + (
         f"-{cfg.core_fmt}-d{cfg.d}-l{cfg.n_layers}-f{cfg.d_ff}-s{a.seed}"
     )
-    run_id = runlog.new_run_id(tag)
+    run_id = getattr(a, "run_id", None) or runlog.new_run_id(tag)
+    if not run_id or any(
+        c not in "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_" for c in run_id
+    ):
+        raise ValueError("invalid run id")
     run_dir = runlog.make_exclusive_dir(RUNS / run_id)
     ev_dir = runlog.make_exclusive_dir(EVIDENCE / "runs" / run_id)
+    runlog.set_status(run_dir, "running", pid=os.getpid())
+    runlog.write_json(
+        ev_dir / "summary.json",
+        {
+            "run_id": run_id,
+            "status": "running",
+            "smoke": a.smoke,
+            "branches": [],
+        },
+    )
+
+    def on_signal(signum, frame):
+        raise KeyboardInterrupt(f"signal {signum}")
+
+    previous = signal.signal(signal.SIGTERM, on_signal)
+    try:
+        return _execute_run(a, cfg, model, spec, run_id, run_dir, ev_dir)
+    except BaseException as error:
+        state = "interrupted" if isinstance(error, KeyboardInterrupt) else "failed"
+        partial = json.loads((ev_dir / "summary.json").read_text())
+        partial.update(status=state, error=repr(error))
+        runlog.write_json(ev_dir / "summary.json", partial)
+        runlog.set_status(run_dir, state, error=traceback.format_exc())
+        if state == "interrupted":
+            return 130
+        raise
+    finally:
+        signal.signal(signal.SIGTERM, previous)
+
+
+def _execute_run(a, cfg, model, spec, run_id, run_dir, ev_dir) -> int:
     target = budget_bits(a.budget_frac) / 8
     manifest = {
         "run_id": run_id,
@@ -136,20 +172,30 @@ def cmd_run(a: argparse.Namespace) -> int:
         "budget_bits": budget_bits(a.budget_frac),
         "target_bytes": target,
         "smoke": a.smoke,
+        "retry_of": getattr(a, "retry_of", None),
+        "retry_count": getattr(a, "retry_count", 0),
+        "repair_ratio": getattr(a, "repair_ratio", None),
+        "token_policy": "fixed" if a.tokens else "per_parameter",
         "data": data_mod.manifest(DATA, RAW),
         "sources": runlog.sources(ROOT),
         "environment": runlog.environment(a.threads),
         "argv": sys.argv,
+        "backend": getattr(a, "backend", "cpu"),
     }
     runlog.write_json(run_dir / "manifest.json", manifest)
     runlog.set_status(run_dir, "running", pid=os.getpid())
     summary = {
         "run_id": run_id,
         "smoke": a.smoke,
+        "retry_of": manifest["retry_of"],
+        "retry_count": manifest["retry_count"],
+        "repair_ratio": manifest["repair_ratio"],
+        "token_policy": manifest["token_policy"],
         "config": cfg.to_dict(),
         "spec": asdict(spec),
         "target_bytes": target,
         "environment": manifest["environment"],
+        "backend_name": manifest["backend"],
         "sources": manifest["sources"],
         "data_sha256": {
             s: v["sha256"] for s, v in manifest["data"]["verified"]["prepared"].items()
@@ -193,11 +239,22 @@ def cmd_run(a: argparse.Namespace) -> int:
             flush=True,
         )
 
-    def on_signal(signum, frame):  # noqa: ARG001
-        raise KeyboardInterrupt(f"signal {signum}")
+    if getattr(a, "backend", "cpu") == "xbox":
+        from floppylm.xbox import prepare_job
+        from floppylm.xbox_portal import Portal
 
-    signal.signal(signal.SIGTERM, on_signal)
-    try:
+        job_root = run_dir / "xbox"
+        prepare_job(job_root, model, DATA / "train.bin", spec, run_id)
+        acct = Portal.configured().train(
+            job_root,
+            model,
+            spec,
+            on_branch,
+            purpose="functional" if a.smoke else "scientific",
+            acceptance=Path(a.xbox_acceptance) if a.xbox_acceptance else None,
+        )
+        summary["backend"] = acct["backend"]
+    else:
         acct = train_wsd(
             model,
             train,
@@ -206,17 +263,6 @@ def cmd_run(a: argparse.Namespace) -> int:
             on_checkpoint,
             log=lambda s: print(f"[{run_id}] {s}", flush=True),
         )
-    except KeyboardInterrupt as e:
-        summary["status"] = "interrupted"
-        runlog.write_json(ev_dir / "summary.json", summary)
-        runlog.set_status(run_dir, "interrupted", reason=str(e))
-        return 130
-    except Exception as e:
-        summary["status"] = "failed"
-        summary["error"] = repr(e)
-        runlog.write_json(ev_dir / "summary.json", summary)
-        runlog.set_status(run_dir, "failed", error=traceback.format_exc())
-        raise
 
     bs = summary["branches"]
     if len(bs) >= 3:
@@ -263,12 +309,75 @@ def _summary(run_id: str) -> dict:
     return s
 
 
+def selection_branch(summary: dict, functional: bool = False) -> dict:
+    branches = summary["branches"]
+    if not branches:
+        raise SystemExit("run has no cooldown artifacts")
+    if functional:
+        return branches[-1]
+    if len(branches) < 3:
+        raise SystemExit("scientific selection requires T, 2T and 4T artifacts")
+    return branches[2]
+
+
+def verified_branch(branch: dict) -> dict:
+    artifact = ROOT / branch["artifact"]
+    if not artifact.is_file():
+        raise SystemExit("missing artifact: " + branch["artifact"])
+    if artifact.stat().st_size != branch["model_bytes"]:
+        raise SystemExit("artifact size does not match summary")
+    if runlog.sha256_file(artifact) != branch["sha256"]:
+        raise SystemExit("artifact hash mismatch")
+    return branch
+
+
+def repair_shape(summary: dict) -> tuple[GPTConfig, float]:
+    """S3: one measured adjustment, preserving width, layers and recipe."""
+    if summary["smoke"] or summary.get("retry_count", 0):
+        raise SystemExit("retry requires an original non-smoke run; at most one retry")
+    b = verified_branch(selection_branch(summary))
+    if parity.admissible({"4T": b["model_bytes"]}, summary["target_bytes"])[0]:
+        raise SystemExit("run already meets individual byte parity")
+    cfg = GPTConfig(**summary["config"])
+    ratio = b["model_bytes"] * 8 / cfg.nominal_bits()
+    repaired = shapes.fill_d_ff(cfg, summary["target_bytes"] * 8, ratio=ratio)
+    k = 2 / 3 if cfg.mlp == "swiglu" else 1
+    if repaired is None or not 2 * k * cfg.d <= repaired.d_ff <= 6 * k * cfg.d:
+        raise SystemExit("S3 adjustment excluded: no valid d_ff in the declared shape range")
+    if repaired == cfg:
+        raise SystemExit("S3 adjustment excluded: solver returned the same shape")
+    return repaired, ratio
+
+
+def cmd_retry(a: argparse.Namespace) -> int:
+    previous = _summary(a.retry)
+    cfg, ratio = repair_shape(previous)
+    a.smoke = False
+    a.backend = previous.get("backend_name", "cpu")
+    a.d, a.layers, a.d_ff = cfg.d, cfg.n_layers, cfg.d_ff
+    a.fmt, a.mlp, a.scale_policy = cfg.core_fmt, cfg.mlp, cfg.scale_policy
+    a.ctx, a.delta, a.qk_norm = cfg.ctx, cfg.delta, cfg.qk_norm
+    a.budget_frac = previous["target_bytes"] * 8 / FULL_BUDGET_BITS
+    spec = previous["spec"]
+    a.batch, a.lr, a.wd, a.seed = spec["batch"], spec["lr"], spec["wd"], spec["seed"]
+    a.branches = 3
+    a.tokens = 0 if previous.get("token_policy") == "per_parameter" else spec["tokens"]
+    a.retry_of, a.retry_count, a.repair_ratio = a.retry, 1, ratio
+    reservation = RUNS / a.retry / "repair.reservation.json"
+    try:
+        with reservation.open("x") as f:
+            json.dump({"started": runlog.now(), "ratio": ratio, "config": cfg.to_dict()}, f)
+    except FileExistsError:
+        raise SystemExit("at most one retry: repair reservation exists") from None
+    return cmd_run(a)
+
+
 def cmd_parity(a: argparse.Namespace) -> int:
     sums = {r: _summary(r) for r in a.parity}
     targets = {s["target_bytes"] for s in sums.values()}
     if len(targets) != 1:
         raise SystemExit("runs have different byte targets")
-    sizes = {r: s["branches"][-1]["model_bytes"] for r, s in sums.items()}
+    sizes = {r: verified_branch(selection_branch(s))["model_bytes"] for r, s in sums.items()}
     ok, reasons = parity.admissible(sizes, targets.pop())
     print(json.dumps({"admissible": ok, "sizes": sizes, "reasons": reasons}, indent=1))
     return 0 if ok else 1
@@ -284,13 +393,9 @@ def cmd_freeze(a: argparse.Namespace) -> int:
                 raise SystemExit(f"{r}: functional selections require smoke runs")
         elif summary["smoke"] or summary["saturation"]["verdict"] != "saturo":
             raise SystemExit(f"{r}: scientific selections require saturated, non-smoke runs")
-        b = summary["branches"][-1]
-        artifact = ROOT / b["artifact"]
-        if runlog.sha256_file(artifact) != b["sha256"]:
-            raise SystemExit(f"{r}: artifact hash mismatch")
-        size = artifact.stat().st_size
-        if size != b["model_bytes"]:
-            raise SystemExit(f"{r}: artifact size does not match summary")
+        b = selection_branch(summary, functional=a.functional)
+        verified_branch(b)
+        size = b["model_bytes"]
         sizes[r] = size
         targets.add(summary["target_bytes"])
         items.append(
@@ -327,25 +432,45 @@ def cmd_final_test(a: argparse.Namespace) -> int:
     out = EVIDENCE / "selections" / f"{a.final_test}.test.json"
     if out.exists():
         raise SystemExit(f"{out} exists: the final test runs once per selection")
-    test = data_mod.load(DATA, "test")
-    results = []
-    for it in sel["items"]:
-        blob = (ROOT / it["artifact"]).read_bytes()
-        if runlog.sha256_bytes(blob) != it["sha256"]:
-            raise SystemExit(f"{it['run_id']}: artifact hash mismatch")
-        bpb, n = sliding_bpb(unpack(blob), test, TEST_BYTES)
-        results.append({**it, "test_bpb": bpb, "test_scored_bytes": n})
-    runlog.write_json(
-        out,
-        {
-            "selection": a.final_test,
-            "purpose": sel["purpose"],
-            "evaluated_at": runlog.now(),
-            "test_sha256": data_mod.manifest(DATA, RAW)["verified"]["prepared"]["test"]["sha256"],
-            "results": results,
-        },
-    )
-    print(out)
+    reservation = out.with_suffix(".reservation.json")
+    try:
+        with reservation.open("x") as f:
+            json.dump({"state": "running", "started": runlog.now(), "pid": os.getpid()}, f)
+    except FileExistsError:
+        raise SystemExit("the final test runs once per selection: reservation exists") from None
+    try:
+        test = data_mod.load(DATA, "test")
+        results = []
+        for it in sel["items"]:
+            blob = (ROOT / it["artifact"]).read_bytes()
+            if runlog.sha256_bytes(blob) != it["sha256"]:
+                raise SystemExit(f"{it['run_id']}: artifact hash mismatch")
+            bpb, n = sliding_bpb(unpack(blob), test, TEST_BYTES)
+            results.append({**it, "test_bpb": bpb, "test_scored_bytes": n})
+        runlog.write_json(
+            out,
+            {
+                "selection": a.final_test,
+                "purpose": sel["purpose"],
+                "evaluated_at": runlog.now(),
+                "test_sha256": data_mod.manifest(DATA, RAW)["verified"]["prepared"]["test"][
+                    "sha256"
+                ],
+                "results": results,
+            },
+        )
+        print(out)
+    except BaseException as error:
+        runlog.write_json(
+            reservation,
+            {
+                "state": "failed",
+                "error": repr(error),
+                "finished": runlog.now(),
+            },
+        )
+        raise
+    runlog.write_json(reservation, {"state": "completed", "finished": runlog.now()})
     return 0
 
 
@@ -369,6 +494,8 @@ def cmd_grid(a: argparse.Namespace) -> int:
     base = GPTConfig(
         mlp=a.mlp, core_fmt=a.fmt, scale_policy=a.scale_policy, delta=a.delta, ctx=a.ctx
     )
+    if getattr(a, "backend", "cpu") == "xbox" and a.jobs != 1:
+        raise SystemExit("Xbox has one training worker; --grid requires --jobs 1")
     cfgs = shapes.grid(base, budget_bits(a.budget_frac))
     log_dir = runlog.make_exclusive_dir(RUNS / runlog.new_run_id("grid"))
     procs: list[subprocess.Popen] = []
@@ -415,6 +542,9 @@ def cmd_grid(a: argparse.Namespace) -> int:
             "--threads",
             "1",
         ] + (["--qk-norm"] if a.qk_norm else [])
+        cmd += ["--backend", getattr(a, "backend", "cpu")]
+        if getattr(a, "xbox_acceptance", None):
+            cmd += ["--xbox-acceptance", a.xbox_acceptance]
         with open(log_dir / f"{i:02d}.log", "w") as f:
             procs.append(subprocess.Popen(cmd, stdout=f, stderr=subprocess.STDOUT))
     codes = [p.wait() for p in procs]
@@ -434,6 +564,7 @@ def main() -> int:
     mode = ap.add_mutually_exclusive_group()
     mode.add_argument("--plan", action="store_true")
     mode.add_argument("--run", action="store_true")
+    mode.add_argument("--retry", metavar="RUN_ID", help="S3: one fresh byte-budget repair")
     mode.add_argument("--grid", action="store_true")
     mode.add_argument("--parity", nargs="+", metavar="RUN_ID")
     mode.add_argument("--freeze", nargs="+", metavar="RUN_ID")
@@ -458,6 +589,11 @@ def main() -> int:
     ap.add_argument("--lr", type=float, default=3e-3)
     ap.add_argument("--wd", type=float, default=0.1)
     ap.add_argument("--seed", type=int, default=0)
+    ap.add_argument("--run-id", help="exclusive explicit identity for campaign orchestration")
+    ap.add_argument("--backend", choices=("cpu", "xbox"), default="cpu")
+    ap.add_argument(
+        "--xbox-acceptance", help="hardware acceptance evidence for scientific Xbox runs"
+    )
     ap.add_argument("--threads", type=int, default=4)
     ap.add_argument("--jobs", type=int, default=4)
     ap.add_argument("--val-bytes", type=int, default=VAL_BYTES)
@@ -472,6 +608,8 @@ def main() -> int:
         return cmd_plan(a)
     if a.run:
         return cmd_run(a)
+    if a.retry:
+        return cmd_retry(a)
     if a.grid:
         return cmd_grid(a)
     if a.parity:

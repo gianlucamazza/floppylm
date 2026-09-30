@@ -21,3 +21,6 @@ Non è un brainstorm, non è una survey, non è un TODO. Stesse regole di
 | [0005](0005-e0v2-protocol.md)            | Protocollo E0 v2: parità sui byte serializzati, WSD, saturazione, compute, selezione protetta, tracciabilità |
 | [0006](0006-flp2-only.md)                | FLP2 unico formato; FLP1 rifiutato, leggibile solo alla revisione `f9e0732`                                  |
 | [0007](0007-e0v2-review-gates.md)        | Review gates: scientific/functional freeze, exact grid arguments, inference-only artifacts, tracked evidence |
+| [0008](0008-e0-numeric-protocol.md) | Accepted S1-S10 numerical recipe, bounded byte repair and paired seeds |
+| [0009](0009-xbox-e0-backend.md) | Independent Python oracle and separate Xbox GPU training backend |
+| [0010](0010-independent-numerical-gates.md) | Identical-input optimizer and accepted mixed floating-point gate |

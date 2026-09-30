@@ -102,7 +102,8 @@ def fixture_run(tmp_path, name, size=1000, target=1000, smoke=False, verdict="sa
                 "model_bytes": size,
                 "val_bpb": 2.0,
             }
-        ],
+        ]
+        * (1 if smoke else 3),
     }
 
 
@@ -227,3 +228,98 @@ def test_final_test_propagates_functional_purpose(tmp_path, monkeypatch):
     assert json.loads((selections / "smoke.test.json").read_text())["purpose"] == "functional"
     with pytest.raises(SystemExit, match="once"):
         e0.cmd_final_test(argparse.Namespace(final_test="smoke"))
+
+
+def test_scientific_selection_uses_4t_not_last_branch(tmp_path, monkeypatch):
+    s = fixture_run(tmp_path, "a")
+    s["branches"].append({"artifact": "missing-8t.flp"})
+    assert freeze(tmp_path, monkeypatch, {"a": s}) == 0
+
+
+def test_parity_checks_actual_artifact(tmp_path, monkeypatch):
+    s = fixture_run(tmp_path, "a")
+    monkeypatch.setattr(e0, "_summary", lambda r: s)
+    Path(s["branches"][2]["artifact"]).write_bytes(b"changed")
+    with pytest.raises(SystemExit, match="size"):
+        e0.cmd_parity(argparse.Namespace(parity=["a"]))
+
+
+def test_final_test_existing_reservation_does_not_read_test(tmp_path, monkeypatch):
+    selections = tmp_path / "selections"
+    selections.mkdir()
+    (selections / "a.json").write_text('{"purpose": "scientific", "items": []}')
+    (selections / "a.test.reservation.json").write_text('{"state": "running"}')
+    monkeypatch.setattr(e0, "EVIDENCE", tmp_path)
+    monkeypatch.setattr(e0.data_mod, "load", lambda *a: pytest.fail("test was read"))
+    with pytest.raises(SystemExit, match="reservation"):
+        e0.cmd_final_test(argparse.Namespace(final_test="a"))
+
+
+def test_run_data_failure_records_failed_status(tmp_path, monkeypatch):
+    monkeypatch.setattr(e0, "RUNS", tmp_path / "runs")
+    monkeypatch.setattr(e0, "EVIDENCE", tmp_path / "evidence")
+    monkeypatch.setattr(e0.data_mod, "manifest", lambda *a: {"verified": {"prepared": {}}})
+    monkeypatch.setattr(e0.data_mod, "load", lambda *a: (_ for _ in ()).throw(OSError("data")))
+    a = argparse.Namespace(
+        smoke=True,
+        d=32,
+        layers=1,
+        d_ff=48,
+        ctx=64,
+        budget_frac=1 / 16,
+        tokens=8192,
+        batch=8,
+        val_bytes=65,
+        mlp="gelu",
+        fmt="ternary",
+        scale_policy="row16",
+        delta=0.5,
+        qk_norm=False,
+        seed=0,
+        threads=1,
+        branches=3,
+        lr=0.003,
+        wd=0.1,
+    )
+    with pytest.raises(OSError, match="data"):
+        e0.cmd_run(a)
+    states = list((tmp_path / "runs").glob("*/status.json"))
+    assert len(states) == 1 and json.loads(states[0].read_text())["state"] == "failed"
+    summaries = list((tmp_path / "evidence/runs").glob("*/summary.json"))
+    assert json.loads(summaries[0].read_text())["status"] == "failed"
+
+
+def test_byte_repair_preserves_shape_recipe_and_rejects_second_attempt(tmp_path, monkeypatch):
+    cfg = GPTConfig(d=64, n_layers=6, n_heads=4, d_ff=318, ctx=256)
+    previous = fixture_run(tmp_path, "original", size=100000, target=11000000 / 16 / 8)
+    previous.update(
+        config=cfg.to_dict(),
+        retry_count=0,
+        backend_name="xbox",
+        token_policy="per_parameter",
+        spec={"tokens": 1234, "batch": 32, "lr": 0.001, "wd": 0.1, "seed": 3},
+    )
+    repaired, ratio = e0.repair_shape(previous)
+    assert (repaired.d, repaired.n_layers) == (cfg.d, cfg.n_layers)
+    assert repaired.d_ff < cfg.d_ff
+    assert ratio == 100000 * 8 / cfg.nominal_bits()
+    (tmp_path / "original").mkdir()
+    monkeypatch.setattr(e0, "RUNS", tmp_path)
+    monkeypatch.setattr(e0, "_summary", lambda _: previous)
+    calls = []
+    monkeypatch.setattr(e0, "cmd_run", lambda args: calls.append(vars(args).copy()) or 0)
+    args = argparse.Namespace(retry="original")
+    assert e0.cmd_retry(args) == 0
+    assert calls[0]["backend"] == "xbox"
+    assert calls[0]["tokens"] == 0
+    assert (calls[0]["batch"], calls[0]["lr"], calls[0]["wd"], calls[0]["seed"]) == (
+        32,
+        0.001,
+        0.1,
+        3,
+    )
+    with pytest.raises(SystemExit, match="reservation exists"):
+        e0.cmd_retry(args)
+    previous["retry_count"] = 1
+    with pytest.raises(SystemExit, match="at most one retry"):
+        e0.repair_shape(previous)
