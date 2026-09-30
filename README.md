@@ -3,7 +3,7 @@
 Lab per il miglior language model che stia **intero** su un floppy 3.5" reale: descrizione dei
 pesi, tokenizer e runtime in 1 474 560 byte. Il nome `floppy_4mb` è simbolico.
 Status: S1-S10 accepted; Xbox GPU backend implemented and validated on Series S
-with 36 numerical fixtures and exact checkpoint resume. The representative
+with 52 independent operation cases, 36 model fixtures and exact checkpoint resume. The representative
 throughput trial completed; scientific E0 remains gated on the tensor16/S9 decision.
 Commands and provenance: [Xbox E0](docs/xbox-e0.md).
 

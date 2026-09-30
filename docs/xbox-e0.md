@@ -91,5 +91,11 @@ baseline is retained in `runs/kernel-baseline-20260930T171719Z-0be030`.
 Both defects were corrected without changing the approved numerical thresholds.
 All 52 active-operation cases and the full 143-test host suite pass after cleanup.
 Scientific submissions now also require a successful per-operation hardware proof.
-The new source `762628a` must pass console acceptance before scientific execution;
-the earlier package proof above does not cover these changes.
+CI run `36751689355` installed package `0.1.0.19` from PR merge commit
+`6dbc407`; its tree equals branch source `762628a`. All 52 operation cases,
+36 model fixtures, identical-input AdamW and exact checkpoint resume passed on
+Series S. The earlier package proof above does not cover these changes.
+See [the new package evidence](evidence/xbox-e0-20260930-kernels/notes.md).
+
+The new representative synthetic trial completed at 959.012 token/s,
+153.758 seconds wall time and 91,238,400 bytes peak app memory.
