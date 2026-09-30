@@ -1,0 +1,12 @@
+{
+ "name": "smoke-functional",
+ "frozen_at": "2026-09-30T08:19:54+00:00",
+ "items": [
+  {
+   "run_id": "smoke-ternary-d32-l1-f48-s0-20260930T081747Z-973ccb",
+   "artifact": "runs/smoke-ternary-d32-l1-f48-s0-20260930T081747Z-973ccb/branch-32.flp",
+   "sha256": "587aa5d21f8176f2151aa432935a62d4b2ae948c302f6355e9e6e0bb875030e4",
+   "val_bpb": 4.3817887941119835
+  }
+ ]
+}

@@ -1,0 +1,15 @@
+{
+ "evaluated_at": "2026-09-30T08:20:07+00:00",
+ "results": [
+  {
+   "artifact": "runs/smoke-ternary-d32-l1-f48-s0-20260930T081747Z-973ccb/branch-32.flp",
+   "run_id": "smoke-ternary-d32-l1-f48-s0-20260930T081747Z-973ccb",
+   "sha256": "587aa5d21f8176f2151aa432935a62d4b2ae948c302f6355e9e6e0bb875030e4",
+   "test_bpb": 4.394229011600879,
+   "test_scored_bytes": 2097151,
+   "val_bpb": 4.3817887941119835
+  }
+ ],
+ "selection": "smoke-functional",
+ "test_sha256": "0970122cf1728509e77b2aede4bf25c536ef72ee7cc0aa242858af20ea971df5"
+}

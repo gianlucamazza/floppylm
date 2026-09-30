@@ -4,6 +4,8 @@
 
 Accepted — 2026-09-30. Amended — 2026-09-30.
 
+Superseded in parte da [ADR 0005](0005-e0v2-protocol.md): §2 e §7.
+
 ## Context
 
 SmallerGPT ha chiuso due linee perché l'idea esotica non batteva un avversario banale; le

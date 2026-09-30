@@ -2,38 +2,75 @@ import numpy as np
 import pytest
 import torch
 
-from floppylm.codec import SCALE_POLICIES, scalar
+from floppylm.codec import FP16_MIN, SCALE_POLICIES, CodecError, scalar
 
 FORMATS = ("ternary", "2bit", "4bit")
+ALL = [(f, p) for f in FORMATS for p in SCALE_POLICIES]
 
 
-@pytest.mark.parametrize("policy", SCALE_POLICIES)
-@pytest.mark.parametrize("fmt", FORMATS)
-def test_symbols_in_range_and_roundtrip(fmt: str, policy: str) -> None:
+@pytest.mark.parametrize(("fmt", "policy"), ALL)
+def test_symbols_in_range_and_decode_matches_forward(fmt: str, policy: str) -> None:
     c = scalar(fmt, policy)
     w = torch.randn(24, 40)
     sym, scale = c.encode(w)
     assert sym.min() >= 0 and sym.max() < c.levels
     assert len(scale) == c.scale_nbytes(24)
     back = c.decode(sym, scale, (24, 40))
-    assert torch.allclose(back, c.weight(w).detach(), rtol=1e-5, atol=1e-7)
+    assert torch.equal(back, c.weight(w).detach())
 
 
-def test_ternary_is_idempotent() -> None:
-    # absmean-scaled even-level formats are not idempotent by design (unpack freezes weights)
-    c = scalar("ternary")
-    w = torch.randn(16, 32)
-    q1 = c.weight(w).detach()
-    assert torch.allclose(c.weight(q1).detach(), q1, rtol=1e-3, atol=1e-6)
+@pytest.mark.parametrize(("fmt", "policy"), ALL)
+def test_zero_rows_reconstruct_exactly_zero(fmt: str, policy: str) -> None:
+    c = scalar(fmt, policy)
+    w = torch.randn(6, 16)
+    w[2] = 0
+    sym, scale = c.encode(w)
+    back = c.decode(sym, scale, (6, 16))
+    assert torch.isfinite(back).all()
+    if policy != "tensor16":
+        assert torch.equal(back[2], torch.zeros(16))
+    zero = torch.zeros(4, 8)
+    assert torch.equal(c.decode(*c.encode(zero), (4, 8)), zero)
+
+
+@pytest.mark.parametrize(("fmt", "policy"), ALL)
+def test_tiny_weights_stay_finite_and_bounded(fmt: str, policy: str) -> None:
+    c = scalar(fmt, policy)
+    w = torch.randn(5, 16) * 1e-9
+    back = c.decode(*c.encode(w), (5, 16))
+    assert torch.isfinite(back).all()
+    assert back.abs().max() <= c.half * FP16_MIN * 1.01
+
+
+@pytest.mark.parametrize(("fmt", "policy"), ALL)
+def test_non_finite_weights_and_overflow_raise(fmt: str, policy: str) -> None:
+    c = scalar(fmt, policy)
+    for bad in (float("nan"), float("inf")):
+        w = torch.randn(3, 8)
+        w[1, 2] = bad
+        with pytest.raises(CodecError):
+            c.encode(w)
+    with pytest.raises(CodecError):
+        c.encode(torch.full((2, 8), 1e6))
 
 
 @pytest.mark.parametrize("policy", SCALE_POLICIES)
-def test_zero_row_has_no_nan(policy: str) -> None:
-    w = torch.randn(4, 8)
-    w[1] = 0
-    for fmt in FORMATS:
-        q = scalar(fmt, policy).weight(w)
-        assert torch.isfinite(q).all()
+def test_corrupt_scale_bytes_raise(policy: str) -> None:
+    c = scalar("2bit", policy)
+    sym, scale = c.encode(torch.randn(4, 8))
+    with pytest.raises(CodecError):
+        c.decode(sym, scale[:-1], (4, 8))
+    nan = np.array([np.nan], dtype="<f2").tobytes()
+    with pytest.raises(CodecError):
+        c.decode(sym, nan + scale[2:], (4, 8))
+    with pytest.raises(CodecError):
+        c.decode(sym[:-1], scale, (4, 8))
+
+
+def test_ternary_is_idempotent() -> None:
+    c = scalar("ternary")
+    q1 = c.weight(torch.randn(16, 32)).detach()
+    assert torch.allclose(c.weight(q1).detach(), q1, rtol=1e-3, atol=1e-6)
 
 
 def test_ternary_delta_controls_sparsity() -> None:
@@ -47,9 +84,8 @@ def test_ternary_delta_controls_sparsity() -> None:
 
 
 def test_4bit_edges_clamp() -> None:
-    c = scalar("4bit")
     w = torch.cat([torch.tensor([100.0, -100.0]), torch.full((100,), 0.01)]).view(1, -1)
-    sym, _ = c.quantize(w)
+    sym, _ = scalar("4bit").quantize(w)
     assert sym.min() == 0 and sym.max() == 15
 
 

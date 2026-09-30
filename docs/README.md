@@ -33,11 +33,15 @@ Vocabolario di stato: **specified** (scritto, non eseguito), **stub**, **running
 ## Codice
 
 ```
-src/floppylm/rans.py      rANS statico, tabella di frequenze dentro lo stream
-src/floppylm/quant.py     formati ternary / 2bit / 4bit, scale fp16 per riga, STE
-src/floppylm/model.py     TinyGPT: core quantizzato, embedding tied 4 bit, norme fp16
-src/floppylm/pack.py      modello ↔ byte del floppy; len(pack) è il conteggio (ADR 0003)
-src/floppylm/data.py      TinyStoriesV2: dedup esatta, split per hash, file a byte
-experiments/e0_lite.py    E0-lite: --plan / --smoke / --run / --full
-tests/                    rANS, quantizzatori, pack, bpb, split, CLI
+src/floppylm/codec.py     ScalarCodec: ternary / 2bit / 4bit, scale row16 | row8log | tensor16
+src/floppylm/rans.py      rANS 15 bit e bitpack, scelta del più corto per tensore, errori espliciti
+src/floppylm/model.py     GPTConfig validata, TinyGPT, bit nominali e FLOP per token
+src/floppylm/pack.py      FLP2 ↔ modello; pack(unpack(b)) == b; FLP1 rifiutato (ADR 0006)
+src/floppylm/shapes.py    solver di forma: d, n_layers, d_ff libero a 99.5–100% del budget
+src/floppylm/train.py     WSD con tronco e cooldown, checkpoint, valutazione scorrevole
+src/floppylm/parity.py    ammissibilità sui byte serializzati, σ appaiata
+src/floppylm/runlog.py    id univoci, directory esclusive, scritture atomiche, stato, manifest
+src/floppylm/data.py      TinyStoriesV2: dedup esatta, split per hash, manifest, riproducibilità
+experiments/e0_v2.py      --plan / --run / --grid / --parity / --freeze / --final-test / --verify-data
+tests/                    regressioni di tutti i moduli, fixture FLP1 per il test di rifiuto
 ```

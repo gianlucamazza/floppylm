@@ -24,9 +24,8 @@ from .codec import CodecError
 from .model import GPTConfig, QLinear, TinyGPT
 
 MAGIC = b"FLP2"
-MAGIC_V1 = b"FLP1"
-V1_HEADER = "<HHBBBBH"
-V1_FORMATS = ("ternary", "2bit", "4bit")  # FLP1 format ids
+LEGACY_MAGIC = b"FLP1"
+LEGACY_REVISION = "f9e0732"  # last git revision that reads FLP1 (ADR 0006)
 
 
 class FormatError(ValueError):
@@ -60,31 +59,8 @@ def _record(t: QLinear) -> bytes:
     return scale + struct.pack("<I", len(stream)) + stream
 
 
-def _pack_v1(m: TinyGPT) -> bytes:
-    """Legacy FLP1: re-save only, from records kept verbatim by `unpack`."""
-    ids = {name: i for i, name in enumerate(V1_FORMATS)}
-    c = m.cfg
-    out = bytearray(
-        MAGIC_V1
-        + struct.pack(
-            V1_HEADER, c.vocab, c.d, c.n_layers, c.n_heads, ids[c.core_fmt], ids[c.emb_fmt], c.ctx
-        )
-    )
-    for t in m.stored_tensors():
-        if not isinstance(t, QLinear):
-            out += t.weight.detach().half().numpy().astype("<f2").tobytes()
-        elif t.frozen and t.canonical is not None:
-            out += t.canonical
-        else:
-            raise FormatError("FLP1 is read-only: only unpacked legacy records can be re-saved")
-    return bytes(out)
-
-
 def pack_sections(m: TinyGPT) -> tuple[bytes, dict[str, int]]:
     """Return the blob and its exact byte breakdown by section (sums to len(blob))."""
-    if m.cfg.rule == "flp1":
-        b = _pack_v1(m)
-        return b, {"legacy_flp1": len(b)}
     header = _header(m.cfg)
     shared = b"".join(t.codec.shared_state() for t in m.stored_tensors() if isinstance(t, QLinear))
     out = bytearray(MAGIC + struct.pack("<H", len(header)) + header)
@@ -120,23 +96,9 @@ def pack(m: TinyGPT) -> bytes:
 
 def _read_config(r: _Reader) -> GPTConfig:
     magic = r.take(4, "magic")
-    if magic == MAGIC_V1:
-        v, d, n, h, cf, ef, ctx = struct.unpack(
-            V1_HEADER, r.take(struct.calcsize(V1_HEADER), "header")
-        )
-        if cf >= len(V1_FORMATS) or ef >= len(V1_FORMATS):
-            raise FormatError("unknown FLP1 format id")
-        return GPTConfig(
-            vocab=v,
-            d=d,
-            n_layers=n,
-            n_heads=h,
-            d_ff=4 * d,
-            mlp="gelu",
-            core_fmt=V1_FORMATS[cf],
-            emb_fmt=V1_FORMATS[ef],
-            ctx=ctx,
-            rule="flp1",
+    if magic == LEGACY_MAGIC:
+        raise FormatError(
+            f"FLP1 (pre-v2) is no longer supported; read it with git revision {LEGACY_REVISION}"
         )
     if magic != MAGIC:
         raise FormatError(f"unknown magic {magic!r}")
@@ -160,8 +122,7 @@ def unpack(blob: bytes) -> TinyGPT:
     """Rebuild the model exactly as stored. Raises FormatError on any malformed input."""
     r = _Reader(bytes(blob))
     cfg = _read_config(r)
-    legacy = cfg.rule == "flp1"
-    if not legacy and r.take(r.u32("shared length"), "shared section"):
+    if r.take(r.u32("shared length"), "shared section"):
         raise FormatError("scalar codecs carry no shared section")
     m = TinyGPT(cfg)
     with torch.no_grad():
@@ -177,11 +138,7 @@ def unpack(blob: bytes) -> TinyGPT:
             scale = r.take(t.codec.scale_nbytes(w.shape[0]), f"scales {i}")
             stream = r.take(r.u32(f"stream length {i}"), f"stream {i}")
             try:
-                if legacy:
-                    sym = rans.rans_decode(stream, rans.LEGACY_PROB_BITS)
-                else:
-                    sym = rans.decode_best(stream)
-                w.copy_(t.codec.decode(sym, scale, tuple(w.shape)))
+                w.copy_(t.codec.decode(rans.decode_best(stream), scale, tuple(w.shape)))
             except (rans.StreamError, CodecError) as e:
                 raise FormatError(f"tensor {i}: {e}") from e
             t.frozen = True

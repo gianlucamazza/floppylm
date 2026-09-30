@@ -5,9 +5,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def test_e0_lite_without_flags_exits_2() -> None:
+def test_e0_v2_without_flags_exits_2() -> None:
     r = subprocess.run(
-        [sys.executable, str(ROOT / "experiments" / "e0_lite.py")],
+        [sys.executable, str(ROOT / "experiments" / "e0_v2.py")],
         check=False,
         capture_output=True,
         text=True,

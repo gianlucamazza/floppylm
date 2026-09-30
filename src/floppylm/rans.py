@@ -14,7 +14,6 @@ import struct
 import numpy as np
 
 PROB_BITS = 15
-LEGACY_PROB_BITS = 12  # FLP1 streams
 L = 1 << 23
 MAX_ALPHABET = 1 << 16
 TAG_RANS, TAG_BITPACK = 0, 1

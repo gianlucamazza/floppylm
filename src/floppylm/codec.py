@@ -24,7 +24,6 @@ import torch
 FP16_MIN = 6.103515625e-05  # smallest normal fp16
 FP16_MAX = 65504.0
 SCALE_POLICIES = ("row16", "row8log", "tensor16")
-RULES = ("v2", "flp1")
 LOG_STEPS_PER_OCTAVE = 16
 
 
@@ -55,10 +54,9 @@ class ScalarCodec:
     mult: float = 1.0
     delta: float = 0.5
     policy: str = "row16"
-    rule: str = "v2"  # "flp1": legacy E0-lite scale rules, read and re-save only
 
     def __post_init__(self) -> None:
-        if self.policy not in SCALE_POLICIES or self.rule not in RULES or self.levels < 2:
+        if self.policy not in SCALE_POLICIES or self.levels < 2:
             raise CodecError(f"invalid codec {self}")
 
     @property
@@ -131,10 +129,6 @@ class ScalarCodec:
 
     def _raw_scale(self, w: torch.Tensor) -> torch.Tensor:
         a = w.abs()
-        if self.rule == "flp1":
-            if self.levels == 16:
-                return a.amax(1, keepdim=True) / self.half
-            return a.mean(1, keepdim=True)
         m = self._mean_abs(a)
         if self.levels == 3:
             keep = a > self.delta * m
@@ -150,7 +144,7 @@ class ScalarCodec:
         if not torch.isfinite(w).all():
             raise CodecError("weights contain NaN or Inf")
         s = self.store_scale(self._raw_scale(w))
-        if self.levels == 3 and self.rule == "v2":
+        if self.levels == 3:
             q = torch.sign(w) * (w.abs() > self.delta * self._mean_abs(w.abs()))
         else:
             x = torch.where(
@@ -168,7 +162,7 @@ class ScalarCodec:
     def weight(self, w: torch.Tensor) -> torch.Tensor:
         """Straight-through fake quantization used in the forward pass."""
         sym, s = self.quantize(w)
-        return w + (self.dequant(sym, s) - w).detach()
+        return self.dequant(sym, s) + (w - w.detach())  # exact value, identity gradient
 
     # -- storage --------------------------------------------------------------------------
 
@@ -190,12 +184,7 @@ class ScalarCodec:
         return b""
 
 
-def scalar(name: str, policy: str = "row16", delta: float = 0.5, rule: str = "v2") -> ScalarCodec:
-    if rule == "flp1":
-        levels = {"ternary": 3, "2bit": 4, "4bit": 16}.get(name)
-        if levels is None:
-            raise CodecError(f"unknown format {name!r}")
-        return ScalarCodec(name, levels, 1.0, 0.5, "row16", "flp1")
+def scalar(name: str, policy: str = "row16", delta: float = 0.5) -> ScalarCodec:
     if name == "ternary":
         return ScalarCodec("ternary", 3, delta=delta, policy=policy)
     if name == "2bit":

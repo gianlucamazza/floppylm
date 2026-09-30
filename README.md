@@ -2,7 +2,8 @@
 
 Lab per il miglior language model che stia **intero** su un floppy 3.5" reale: descrizione dei
 pesi, tokenizer e runtime in 1 474 560 byte. Il nome `floppy_4mb` è simbolico.
-Stato: **specified** — concept, survey e roadmap; nessun codice, nessun numero proprio.
+Stato: banco **E0 v2** implementato e verificato con uno smoke (prova funzionale); la campagna
+E0 v2 non è partita. Nessun risultato scientifico proprio ancora.
 
 ## L'idea in trenta secondi
 
@@ -27,3 +28,4 @@ Il [docs/README.md](docs/README.md) dice quale file possiede quale fatto.
 | [docs/positioning.md](docs/positioning.md)                 | Vs Quant-Noise, Sign Lock-In, QTIP, SeedLM, Parameter Golf |
 | [docs/adr/](docs/adr/README.md)                            | Budget, avversari, pratiche di laboratorio                 |
 | [docs/research/](docs/research/README.md)                  | Survey R1–R7                                               |
+| [docs/evidence/](docs/evidence/README.md)                  | Numeri misurati e stato dei run                            |

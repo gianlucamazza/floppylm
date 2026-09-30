@@ -29,7 +29,6 @@ class GPTConfig:
     delta: float = 0.5
     qk_norm: bool = False
     ctx: int = 256
-    rule: str = "v2"  # "flp1" only for legacy artifacts (read and re-save)
 
     def __post_init__(self) -> None:
         ints = ("vocab", "d", "n_layers", "n_heads", "d_ff", "ctx")
@@ -39,7 +38,7 @@ class GPTConfig:
             raise ValueError("d must split into heads of even size")
         if self.mlp not in MLPS or self.core_fmt not in FORMATS or self.emb_fmt not in FORMATS:
             raise ValueError(f"unknown mlp or format: {self}")
-        if self.scale_policy not in SCALE_POLICIES or self.rule not in ("v2", "flp1"):
+        if self.scale_policy not in SCALE_POLICIES:
             raise ValueError(f"unknown scale policy: {self}")
         if not (0 <= self.delta < 4) or not isinstance(self.qk_norm, bool):
             raise ValueError(f"invalid delta or qk_norm: {self}")
@@ -65,8 +64,8 @@ class GPTConfig:
 
     def codecs(self) -> tuple[ScalarCodec, ScalarCodec]:
         """(embedding codec, core codec)."""
-        emb = scalar(self.emb_fmt, self.scale_policy, rule=self.rule)
-        return emb, scalar(self.core_fmt, self.scale_policy, self.delta, rule=self.rule)
+        emb = scalar(self.emb_fmt, self.scale_policy)
+        return emb, scalar(self.core_fmt, self.scale_policy, self.delta)
 
     def nominal_bits(self) -> float:
         emb, core = self.codecs()
@@ -80,7 +79,7 @@ class GPTConfig:
 
 
 def _fp16(w: torch.Tensor) -> torch.Tensor:
-    return w + (w.half().float() - w).detach()
+    return w.detach().half().float() + (w - w.detach())
 
 
 class QLinear(nn.Module):

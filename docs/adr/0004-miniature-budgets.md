@@ -4,6 +4,8 @@
 
 Accepted — 2026-09-30. Amended — 2026-09-30.
 
+Superseded in parte da [ADR 0005](0005-e0v2-protocol.md): la regola dei 20 token per parametro (Decision §1).
+
 ## Context
 
 Il prodotto ha byte fissi e training illimitato; il lab ha una CPU
