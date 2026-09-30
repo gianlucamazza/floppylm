@@ -1,7 +1,7 @@
 # Experiments roadmap
 
 Owner delle definizioni E0–E4. Non possiede i risultati ([`evidence/`](evidence/README.md)).
-Stato: E0 v2 **stub → codice pronto, campagna non avviata**; tutti gli altri E* **specified** (2026-09-30). Tesi: [concept v0.2](concept.md).
+Stato: E0 v2 **stub → codice pronto, campagna non avviata**; tutti gli altri E\* **specified** (2026-09-30). Tesi: [concept v0.2](concept.md).
 
 Regole comuni ([ADR 0002](adr/0002-adversary-dense-frontier.md), [ADR 0003](adr/0003-lab-practices.md),
 [ADR 0004](adr/0004-miniature-budgets.md)): budget 1/16, 1/4, 1× di 11 Mbit; in miniatura contano
@@ -51,7 +51,16 @@ E0-lite pre-v2 è diagnostica ([pre-v2](evidence/e0-lite/pre-v2/notes.md)).
 - **Forma**: il solver (`floppylm.shapes`) propone forme a 99.5–100% dei bit nominali; ammissibilità
   sui byte serializzati (`--parity`).
 - **Training**: WSD con tronco e cooldown a T/2T/4T, checkpoint del tronco, saturazione a 4T.
-- **Selezione e test**: `--freeze` congela gli hash; `--final-test` legge il test una sola volta.
+- **Selezione e test**: `--freeze` richiede run completati, non smoke, saturi, con target uguali
+  e parità individuale/reciproca verificata sui file reali. `--freeze ... --functional` ammette
+  solo smoke e marca selezione e risultato finale come funzionali. `--final-test` valuta una
+  selezione una sola volta. Dettagli in [ADR 0007](adr/0007-e0v2-review-gates.md).
+- **Griglia**: i figli ricevono la forma esatta del solver e i limiti `--tokens`, `--branches`,
+  `--val-bytes`; un thread per figlio. La griglia è verificata anche tramite un processo reale
+  su dati sintetici temporanei, senza avviare la campagna.
+- **Artefatti caricati**: `unpack` restituisce un modello per inferenza, con gradienti disabilitati.
+  `train()` viene rifiutato; modifiche dirette a configurazione o parametri vengono rilevate
+  prima del risalvataggio. Per riprendere il training usare un checkpoint del tronco.
 
 Campagna (non avviata; richiede S1–S10 approvate):
 

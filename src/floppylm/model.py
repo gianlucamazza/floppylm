@@ -176,6 +176,11 @@ class TinyGPT(nn.Module):
             x = blk(x)
         return F.linear(self.norm(x), w)
 
+    def train(self, mode: bool = True):
+        if mode and hasattr(self, "_artifact_state"):
+            raise RuntimeError("Loaded FLP2 models are inference-only; resume a trunk checkpoint")
+        return super().train(mode)
+
     def stored_tensors(self) -> list[QLinear | RMSNorm]:
         """Fixed serialization order."""
         out: list[QLinear | RMSNorm] = [self.emb]

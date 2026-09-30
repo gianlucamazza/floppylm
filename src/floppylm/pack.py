@@ -61,6 +61,13 @@ def _record(t: QLinear) -> bytes:
 
 def pack_sections(m: TinyGPT) -> tuple[bytes, dict[str, int]]:
     """Return the blob and its exact byte breakdown by section (sums to len(blob))."""
+    if hasattr(m, "_artifact_state"):
+        current = dict(m.named_parameters())
+        if m.cfg != m._artifact_config or current.keys() != m._artifact_state.keys():
+            raise FormatError("loaded model configuration or parameters were modified")
+        for name, original in m._artifact_state.items():
+            if not torch.equal(current[name].detach().cpu(), original):
+                raise FormatError(f"loaded inference model was modified: {name}")
     header = _header(m.cfg)
     shared = b"".join(t.codec.shared_state() for t in m.stored_tensors() if isinstance(t, QLinear))
     out = bytearray(MAGIC + struct.pack("<H", len(header)) + header)
@@ -145,4 +152,8 @@ def unpack(blob: bytes) -> TinyGPT:
             t.canonical = r.blob[start : r.off]
     if r.off != len(r.blob):
         raise FormatError(f"{len(r.blob) - r.off} trailing bytes")
+    m.requires_grad_(False)
+    m._artifact_config = m.cfg
+    m._artifact_state = {name: p.detach().cpu().clone() for name, p in m.named_parameters()}
+    m.eval()
     return m

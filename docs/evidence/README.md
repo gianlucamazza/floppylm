@@ -13,6 +13,10 @@ evidence/e0-v2/selections/<name>.test.json  # test finale, una sola volta per se
 ```
 
 Manifest completo, stato e artefatti di ogni run stanno in `runs/<run_id>/` (fuori da Git).
+Summary e note in questa cartella sono versionati: solo `/runs/` alla radice è ignorato.
+Le selezioni storiche `smoke-functional*.json`, precedenti ad ADR 0007, restano inalterate.
+Le nuove selezioni dichiarano `purpose: scientific | functional`; gli smoke richiedono
+`--freeze ... --functional` e non possono certificare una baseline scientifica.
 
 ## Presente
 

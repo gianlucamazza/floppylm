@@ -1,6 +1,6 @@
 # corpus, checkpoints, artifacts, images, caches
 data/
-runs/
+/runs/
 *.img
 *.flp
 !tests/fixtures/*.flp

@@ -6,7 +6,7 @@ Usage:
   python experiments/e0_v2.py --run --smoke            # functional check, not a result
   python experiments/e0_v2.py --grid --jobs 4 [...]    # solver grid, one thread per run
   python experiments/e0_v2.py --parity RUN_ID [RUN_ID ...]
-  python experiments/e0_v2.py --freeze RUN_ID [...] --name NAME
+  python experiments/e0_v2.py --freeze RUN_ID [...] --name NAME [--functional]
   python experiments/e0_v2.py --final-test NAME
   python experiments/e0_v2.py --verify-data
 
@@ -275,24 +275,55 @@ def cmd_parity(a: argparse.Namespace) -> int:
 
 
 def cmd_freeze(a: argparse.Namespace) -> int:
-    items = []
-    for r in a.freeze:
-        b = _summary(r)["branches"][-1]
-        if runlog.sha256_file(ROOT / b["artifact"]) != b["sha256"]:
+    summaries = {r: _summary(r) for r in a.freeze}
+    purpose = "functional" if a.functional else "scientific"
+    items, sizes, targets = [], {}, set()
+    for r, summary in summaries.items():
+        if a.functional:
+            if not summary["smoke"]:
+                raise SystemExit(f"{r}: functional selections require smoke runs")
+        elif summary["smoke"] or summary["saturation"]["verdict"] != "saturo":
+            raise SystemExit(f"{r}: scientific selections require saturated, non-smoke runs")
+        b = summary["branches"][-1]
+        artifact = ROOT / b["artifact"]
+        if runlog.sha256_file(artifact) != b["sha256"]:
             raise SystemExit(f"{r}: artifact hash mismatch")
+        size = artifact.stat().st_size
+        if size != b["model_bytes"]:
+            raise SystemExit(f"{r}: artifact size does not match summary")
+        sizes[r] = size
+        targets.add(summary["target_bytes"])
         items.append(
-            {"run_id": r, "artifact": b["artifact"], "sha256": b["sha256"], "val_bpb": b["val_bpb"]}
+            {
+                "run_id": r,
+                "artifact": b["artifact"],
+                "sha256": b["sha256"],
+                "model_bytes": size,
+                "val_bpb": b["val_bpb"],
+            }
         )
+    if not a.functional:
+        if len(targets) != 1:
+            raise SystemExit("runs have different byte targets")
+        ok, reasons = parity.admissible(sizes, next(iter(targets)))
+        if not ok:
+            raise SystemExit("selection fails byte parity: " + "; ".join(reasons))
     path = EVIDENCE / "selections" / f"{a.name}.json"
     path.parent.mkdir(parents=True, exist_ok=True)
-    with open(path, "x") as f:  # a selection is written once
-        json.dump({"name": a.name, "frozen_at": runlog.now(), "items": items}, f, indent=1)
+    with open(path, "x") as f:
+        json.dump(
+            {"name": a.name, "purpose": purpose, "frozen_at": runlog.now(), "items": items},
+            f,
+            indent=1,
+        )
     print(path)
     return 0
 
 
 def cmd_final_test(a: argparse.Namespace) -> int:
     sel = json.loads((EVIDENCE / "selections" / f"{a.final_test}.json").read_text())
+    if sel.get("purpose") not in ("functional", "scientific"):
+        raise SystemExit("selection has no explicit purpose; preserve it as historical evidence")
     out = EVIDENCE / "selections" / f"{a.final_test}.test.json"
     if out.exists():
         raise SystemExit(f"{out} exists: the final test runs once per selection")
@@ -308,6 +339,7 @@ def cmd_final_test(a: argparse.Namespace) -> int:
         out,
         {
             "selection": a.final_test,
+            "purpose": sel["purpose"],
             "evaluated_at": runlog.now(),
             "test_sha256": data_mod.manifest(DATA, RAW)["verified"]["prepared"]["test"]["sha256"],
             "results": results,
@@ -352,6 +384,14 @@ def cmd_grid(a: argparse.Namespace) -> int:
             str(c.d),
             "--layers",
             str(c.n_layers),
+            "--d-ff",
+            str(c.d_ff),
+            "--tokens",
+            str(a.tokens),
+            "--branches",
+            str(a.branches),
+            "--val-bytes",
+            str(a.val_bytes),
             "--fmt",
             a.fmt,
             "--mlp",
@@ -401,6 +441,7 @@ def main() -> int:
     mode.add_argument("--verify-data", action="store_true")
     ap.add_argument("--smoke", action="store_true", help="with --run: tiny functional check")
     ap.add_argument("--name", help="selection name for --freeze")
+    ap.add_argument("--functional", action="store_true", help="with --freeze: smoke selection only")
     ap.add_argument("--budget-frac", type=float, default=1 / 16)
     ap.add_argument("--fmt", choices=("ternary", "2bit"), default="ternary")
     ap.add_argument("--mlp", choices=("gelu", "relu2", "swiglu"), default="gelu")
@@ -421,6 +462,12 @@ def main() -> int:
     ap.add_argument("--jobs", type=int, default=4)
     ap.add_argument("--val-bytes", type=int, default=VAL_BYTES)
     a = ap.parse_args()
+    if a.functional and not a.freeze:
+        ap.error("--functional requires --freeze")
+    if a.smoke and not a.run:
+        ap.error("--smoke requires --run")
+    if a.jobs < 1 or a.branches < 1 or a.tokens < 0 or a.val_bytes < 2:
+        ap.error("jobs/branches must be positive, tokens nonnegative, val-bytes >= 2")
     if a.plan:
         return cmd_plan(a)
     if a.run:

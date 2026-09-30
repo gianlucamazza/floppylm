@@ -1,0 +1,65 @@
+{
+ "branches": [],
+ "config": {
+  "core_fmt": "ternary",
+  "ctx": 64,
+  "d": 32,
+  "d_ff": 48,
+  "delta": 0.5,
+  "emb_fmt": "4bit",
+  "mlp": "gelu",
+  "n_heads": 2,
+  "n_layers": 1,
+  "qk_norm": false,
+  "scale_policy": "row16",
+  "vocab": 256
+ },
+ "data_sha256": {
+  "test": "0970122cf1728509e77b2aede4bf25c536ef72ee7cc0aa242858af20ea971df5",
+  "train": "8745f0d0f0c2ede79305e35393f90b35ff15c91fa1d85abed2acafdf4046e092",
+  "val": "511546bff5b4c512b0e1bbc5c4cc5fa6a73b24e2b55ca4e3cbceb5f312fb7a05"
+ },
+ "environment": {
+  "cpu": "11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz",
+  "numpy": "2.4.4",
+  "platform": "Linux-7.2.6-arch2-1-x86_64-with-glibc2.44",
+  "python": "3.14.7",
+  "torch": "2.11.0+cu130",
+  "torch_threads": 4
+ },
+ "run_id": "smoke-ternary-d32-l1-f48-s0-20260930T081826Z-e393da",
+ "smoke": true,
+ "sources": {
+  "files": {
+   "experiments/e0_v2.py": "3e644525dd08849d7f38552a67e46cbba4db8d2e081b3230eb2688c0200d555d",
+   "src/floppylm/__init__.py": "7f2f61b038b0618bf2a758162e40609e32dc2a7522cb481aeac175109905f510",
+   "src/floppylm/codec.py": "1bd657359f16e597de154b88cc77cf46fab092444335fb6164d99b531f5e462f",
+   "src/floppylm/data.py": "f675a5b2392631d5382c346d97365dc18ec11fa00c6de178d2e97e42af9263bb",
+   "src/floppylm/metrics.py": "ca90d1ecd537d102758d422a3af4e2e3403abd6e84a92f63bb09bcc15e4e200f",
+   "src/floppylm/model.py": "b946a3baf03d52293759d597fd69d4ad4ec9cafbc65e33fd1c206b478af08a64",
+   "src/floppylm/pack.py": "e2bd223588e34e794ad86a85d02c621aa6752441d9a7cded1bcdc025c26943df",
+   "src/floppylm/parity.py": "3020c298c38f58f7ba71a5afbc84de4b349fd254860d9c3c0584c269c86df659",
+   "src/floppylm/rans.py": "281c640d1b54eaff6164de6c942d5c1c0a3ca5233a896d3bf067ed20348ee37b",
+   "src/floppylm/runlog.py": "73a3ee5f033b9a9edf2189fd7be7af35b7cb5fc5713167fd39e87839cd6ec22c",
+   "src/floppylm/seed.py": "694dd86fef042e51edd0dac601958cfda4192677a8aeb264ffc63935df7d7713",
+   "src/floppylm/shapes.py": "2da4f4211742a6c5befc7f8c5a24617a9fcbefa31af56e4b64627a0e7ac4b1cb",
+   "src/floppylm/train.py": "bfa70a82df33f75cded83bd25ba6a627e70538d9a6dcb080e30d7528ebbe1005"
+  },
+  "git": {
+   "commit": "f9e0732ce5e29d364abf2cb78279c16bcc330eef",
+   "dirty": true
+  }
+ },
+ "spec": {
+  "batch": 8,
+  "branches": 3,
+  "cooldown_frac": 0.1,
+  "lr": 0.003,
+  "seed": 0,
+  "tokens": 400000,
+  "warmup_frac": 0.02,
+  "wd": 0.1
+ },
+ "status": "interrupted",
+ "target_bytes": 85937.5
+}
