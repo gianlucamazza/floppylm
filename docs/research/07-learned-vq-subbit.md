@@ -146,7 +146,7 @@ codebook vs learned codebook LLM ablation". On Parameter Golf I searched with `g
 for the terms vector quantization, VQ, codebook, k-means, kmeans, product quantization, lattice, E8,
 trellis, QTIP, AQLM, clustering, sub-bit, binary, "codebook QAT", "random codebook".
 
-The full counter-example does not exist. No work trains from scratch a small LM (≤30M) with VQ weights
+The bounded search above did not identify the full counter-example. No reviewed work trains from scratch a small LM (≤30M) with VQ weights
 and a learned codebook below 1 bit/weight, and none compares at equal rate, with the codebook bytes
 counted, learned codebook vs seeded codebook vs ternary. The pieces exist separately. From scratch there
 are binary (BitNet), sub-bit non-VQ (Sign Lock-In, CharLM) and PQ at ~1.3 bits with noise but a post-hoc
@@ -159,7 +159,7 @@ matter. With 11 Mbit, an FP16 codebook of 2^16 × 8 (AQLM's) costs 8 Mbit on its
 ## Implication for the thesis
 
 **F0.** See verdict. The combination "learned VQ + from scratch + below one bit + tiny LM + seed control
-at equal rate + recursion" is new; none of its components is.
+at equal rate + recursion" is a candidate comparative contribution; none of its components is new.
 
 **F1** (learned VQ + recursion does not beat by ≥max(0.02, 2σ) the best of ternary/2-bit dense and
 ternary recursion at equal bytes). The prior is unfavorable for three reasons. First, below one bit PTQ
