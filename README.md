@@ -34,7 +34,8 @@ python experiments/e0_v2.py --run --smoke   # functional CPU smoke; needs data/,
 python scripts/e0_status.py --campaign runs/<campaign-dir>   # read-only campaign state
 ```
 
-Requirements: Python ≥ 3.12 with `numpy` and `torch` ≥ 2.4, plus `pytest` and `ruff` for development
+Requirements: Python ≥ 3.12 with `numpy` and `torch` ≥ 2.4, plus the `dev` extras (`pytest`, `ruff`,
+`jsonschema`, `cryptography`) for development
 ([pyproject.toml](pyproject.toml)); no install step is needed, since scripts and pytest put `src/` on the path.
 Training reads the prepared TinyStoriesV2-GPT4 corpus in `data/tinystories/`: download the raw
 files listed in `floppylm.data.SOURCES` into `data/raw/` and call the Python function
