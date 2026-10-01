@@ -19,7 +19,14 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
-from e0_v2 import EVIDENCE, FULL_BUDGET_BITS, _summary, selection_branch, verified_branch
+from e0_v2 import (
+    EVIDENCE,
+    FULL_BUDGET_BITS,
+    SATURATED,
+    _summary,
+    selection_branch,
+    verified_branch,
+)
 from floppylm import parity, runlog, shapes
 from floppylm.model import GPTConfig
 
@@ -205,7 +212,7 @@ class Campaign:
             parity.admissible(
                 {"4T": selection_branch(summary)["model_bytes"]}, summary["target_bytes"]
             )[0]
-            and summary["saturation"]["verdict"] == "saturo"
+            and summary["saturation"]["verdict"] == SATURATED
         )
         record.update(status="eligible" if eligible else "excluded", result=summary["run_id"])
         self.save()

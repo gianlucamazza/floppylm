@@ -11,9 +11,9 @@ Usage:
   python experiments/e0_v2.py --verify-data
 
 Training and tuning read only train/val. The test split is read only by --final-test, on a
-frozen selection whose artifact hashes are re-verified. CPU training jobs must use the
-host `bg` wrapper. Xbox training executes in the
-separate GPU app after hardware acceptance.
+frozen selection whose artifact hashes are re-verified. Long CPU jobs run under nohup outside
+background.slice (ADR 0003 amendment). Xbox training executes in the separate GPU app after
+hardware acceptance.
 """
 
 from __future__ import annotations
@@ -50,6 +50,14 @@ FULL_BUDGET_BITS = 11_000_000
 SAT_THRESHOLD = 0.01
 TOKENS_PER_PARAM = 20  # roadmap S1
 VAL_BYTES, TEST_BYTES = 1 << 20, 1 << 21  # roadmap S7
+# Saturation verdicts are stored tokens compared by e0_campaign and --freeze; keep their values.
+SATURATED, NOT_SATURATED = "saturo", "non saturo"
+UNDETERMINED = "non determinato (meno di 3 cooldown)"
+VERDICT_TEXT = {
+    SATURATED: "saturated",
+    NOT_SATURATED: "not saturated",
+    UNDETERMINED: "not determined (fewer than 3 cooldowns)",
+}
 FLOP_FORMULA = "3 * (2 * stored_params + 4 * n_layers * (ctx / 2) * d) * tokens"
 
 
@@ -83,7 +91,7 @@ def flops(model: TinyGPT, tokens: int) -> float:
 
 
 def notes_md(s: dict) -> str:
-    kind = "**Smoke: prova funzionale, non un risultato scientifico.**\n\n" if s["smoke"] else ""
+    kind = "**Smoke: functional check, not a scientific result.**\n\n" if s["smoke"] else ""
     rows = "\n".join(
         f"| {b['end_step']} | {b['tokens_seen']:,} | {b['model_bytes']:,} | {b['fill']:.4f} | "
         f"{b['val_bpb']:.4f} | `{b['sha256'][:12]}` |"
@@ -92,20 +100,20 @@ def notes_md(s: dict) -> str:
     sat = s["saturation"]
     return f"""# {s["run_id"]}
 
-{kind}Stato: **{s["status"]}**. Configurazione e ambiente completi in `summary.json`; manifest in
+{kind}Status: **{s["status"]}**. Full configuration and environment in `summary.json`; manifest in
 `runs/{s["run_id"]}/manifest.json`.
 
-| Fine cooldown (step) | Token visti | Byte | Riempimento | val bpb | sha256 |
+| Cooldown end (step) | Tokens seen | Bytes | Fill | val bpb | sha256 |
 | --- | --- | --- | --- | --- | --- |
 {rows}
 
-- Saturazione: {sat["verdict"]} (bpb(4T) − bpb(2T) = {sat["delta_signed"]}).
-- Parità individuale ±1% sul target: {s["parity_individual_ok"]}.
-- Compute stimato: {s["compute"]["total_flops"]:.3e} FLOP ({FLOP_FORMULA}), wall
-  {s["compute"]["wall_seconds"]:.0f} s a {s["environment"]["torch_threads"]} thread.
+- Saturation: {VERDICT_TEXT[sat["verdict"]]} (bpb(4T) − bpb(2T) = {sat["delta_signed"]}).
+- Individual parity ±1% of target: {s["parity_individual_ok"]}.
+- Estimated compute: {s["compute"]["total_flops"]:.3e} FLOP ({FLOP_FORMULA}), wall
+  {s["compute"]["wall_seconds"]:.0f} s at {s["environment"]["torch_threads"]} threads.
 
-Non misurato qui: test (solo `--final-test` su selezione congelata), σ appaiata, confronto fra
-bracci.
+Not measured here: test (only `--final-test` on a frozen selection), paired σ, comparison
+between arms.
 """
 
 
@@ -288,9 +296,9 @@ def _execute_run(a, cfg, model, spec, run_id, run_dir, ev_dir) -> int:
     bs = summary["branches"]
     if len(bs) >= 3:
         delta = bs[2]["val_bpb"] - bs[1]["val_bpb"]
-        verdict = "saturo" if abs(delta) < SAT_THRESHOLD else "non saturo"
+        verdict = SATURATED if abs(delta) < SAT_THRESHOLD else NOT_SATURATED
     else:
-        delta, verdict = None, "non determinato (meno di 3 cooldown)"
+        delta, verdict = None, UNDETERMINED
     trunk_tokens = acct["trunk_tokens"]
     cd_tokens = sum(c["cooldown_steps"] for c in acct["cooldowns"]) * spec.batch * cfg.ctx
     summary |= {
@@ -458,7 +466,7 @@ def cmd_freeze(a: argparse.Namespace) -> int:
         if a.functional:
             if not summary["smoke"]:
                 raise SystemExit(f"{r}: functional selections require smoke runs")
-        elif summary["smoke"] or summary["saturation"]["verdict"] != "saturo":
+        elif summary["smoke"] or summary["saturation"]["verdict"] != SATURATED:
             raise SystemExit(f"{r}: scientific selections require saturated, non-smoke runs")
         b = selection_branch(summary, functional=a.functional)
         verified_branch(b)

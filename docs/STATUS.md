@@ -24,30 +24,22 @@ python scripts/e0_status.py --campaign runs/e0-campaign-20261001-e01
 
 ## Next (the campaign has stopped)
 
-No campaign is bound to the frozen sources any more. Prepared and tested on branches, to apply in
-this order:
+Done since the stop: Xbox execution moved to `floppylm_xbox` with generic Device Portal settings
+and a pinned certificate (`~/.config/floppylm/xbox.env`, see the [runbook](operations/xbox-e0.md));
+English run notes; no `bg` instruction left in the harness.
 
-1. Rename the local working directory to `floppylm`; then `git worktree repair` for the `research/e1-qualification` and
-   `chore/xbox-package` worktrees and move the Claude project memory to the new path.
-2. Merge `chore/xbox-package`, which completes the [ADR 0012](adr/0012-repo-boundaries.md)
-   follow-ups together with the published [`schemas/`](../schemas/README.md) (checked by
-   xbox-gpu-training PR #22):
-   - Device Portal settings from the environment or `~/.config/floppylm/xbox.env`, with a pinned
-     certificate (`XBOX_CERT_SHA256`, see the runbook) instead of unverified TLS. Write that file
-     before the next Xbox job;
-   - Xbox execution moved to the `floppylm_xbox` package; the core no longer depends on it and the
-     frozen-source list covers it.
-3. In `experiments/e0_v2.py`: English `notes_md` template; drop the "host `bg` wrapper" docstring
-   line (jobs run under `nohup` outside `background.slice`).
-4. Merge the code of `research/e1-qualification` (its docs are already on `main`; keep `main`'s
+1. Merge the code of `research/e1-qualification` (its docs are already on `main`; keep `main`'s
    versions on conflict) and move its `floppylm.xbox` import (`scripts/e1_cpu_profile.py`) to
    `floppylm_xbox.jobs`.
-5. Regenerate `tests/fixtures/contracts/` and rerun the suite after the merges.
-6. Install the package from xbox-gpu-training PR #20 (on-console dashboard; `run_job` also
+2. Publish the remaining interface contracts (checkpoint, fixture, kernels, optimizer, acceptance,
+   constants, inbox protocol, device capabilities) and have xbox-gpu-training consume them.
+3. Install the package from xbox-gpu-training PR #20 (on-console dashboard; `run_job` also
    publishes schedule and phase), rerun acceptance and the bit-identity comparison, record the
    evidence, then mark the PR ready.
-7. Decide the [saturation proposal](adr/proposals/e0-saturation-proposal.md) before any new
+4. Decide the [saturation proposal](adr/proposals/e0-saturation-proposal.md) before any new
    campaign.
+5. Rename the local working directory to `floppylm` at a session boundary (it is this session's
+   working directory), then `git worktree repair` and move the Claude project memory path.
 
 Status vocabulary: **specified** (written, not executed), **stub**, **running**, **stopped** (halted
 deliberately, kept as a record), **measured**
