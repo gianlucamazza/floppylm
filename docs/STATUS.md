@@ -8,7 +8,7 @@ bump or campaign start/stop. Last updated: **2026-10-01**.
 | Thesis               | [concept v0.2](concept.md), **specified**                                                                                                                                               |
 | E0 v2 software       | **measured**: harness, gates and smoke ([evidence](evidence/README.md))                                                                                                                 |
 | S1–S10, scale policy | accepted ([ADR 0008](adr/0008-e0-numeric-protocol.md), [ADR 0011](adr/0011-e0-row-scale-selection.md))                                                                                  |
-| Xbox package         | `GianlucaMazza.XgpuE0_0.1.0.28_x64__g0p5dcfz4t9z4` (E0.1), CI run 36839565773, source `25f8bc3966ffae940658be94161d31edd83492c9` — [acceptance](evidence/xbox-e0-20261001-e01/notes.md) |
+| Xbox package         | `GianlucaMazza.XgpuE0_0.1.0.56_x64__g0p5dcfz4t9z4` (E0.1), CI run 36885338811, source `53ab3c25c21dff633b8dba6913ddf3f8020b4f65` — [acceptance](evidence/xbox-e0-20261001-dashboard/notes.md) |
 | E0 campaign          | `e0-20261001T090514Z-4236fd` (0.1.0.28), **stopped** 2026-10-01 13:44 CEST at `neutral-scale`: both row16 seeds not saturated — [record](evidence/e0-v2/campaigns/e0-20261001T090514Z-4236fd/notes.md) |
 | Previous campaign    | `e0-20261001T074326Z-503df0` (0.1.0.24), **stopped**, [record](evidence/e0-v2/campaigns/e0-20261001T074326Z-503df0/notes.md)                                                            |
 | E0 saturation gate   | not met at 1/16 (Δ 2T→4T ≈ −0.08 vs 0.01, three trials); no new campaign until the owner decides the [proposal](adr/proposals/e0-saturation-proposal.md) |
@@ -29,12 +29,14 @@ Xbox execution moved to `floppylm_xbox` with generic Device Portal settings
 and a pinned certificate (`~/.config/floppylm/xbox.env`, see the [runbook](operations/xbox-e0.md));
 English run notes; no `bg` instruction left in the harness; E1 qualification code merged.
 
-1. Install the package built from xbox-gpu-training `main` at `7a335bc` (on-console dashboard;
-   `run_job` publishes schedule and phase; constants checked against floppylm; device
-   capabilities), rerun acceptance and the bit-identity comparison against 0.1.0.28, record the
-   evidence and a dashboard screenshot.
-2. Finish the boundary consolidation in xbox-gpu-training: its docs link floppylm instead of
-   restating decisions, the Win32 diagnostic lane is archived, and evidence lives with its owner.
+Completed release: dashboard package signed and installed with pinned TLS; full acceptance,
+worker/recovery/suspension tests, exact numerical comparison and screenshot recorded in
+[both-repository release evidence](evidence/xbox-e0-20261001-dashboard/notes.md).
+Backend ADR 0005 and canonical documentation links were merged in PR #27.
+
+1. Obtain independent GPU attribution: the global idle counter stayed high in twelve
+   controlled modes, including CoreWindow without XAML/D3D12. GPU reduction is **unvalidated**.
+2. Review the separate native/harness audit remediations and accepted ADR 0014 recovery.
 3. Decide the [saturation proposal](adr/proposals/e0-saturation-proposal.md) before any new
    campaign.
 4. Rename the local working directory to `floppylm` at a session boundary (it is this session's
