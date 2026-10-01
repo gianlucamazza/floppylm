@@ -2,6 +2,7 @@
 
 import hashlib
 import json
+from pathlib import Path
 from unittest.mock import Mock
 
 import pytest
@@ -52,7 +53,7 @@ def test_scientific_submit_rejects_different_source_commit(tmp_path):
     proof.write_text(
         json.dumps(
             {
-                "schema": "floppylm_xbox.jobs.acceptance.v1",
+                "schema": "floppylm.xbox.acceptance.v1",
                 "ok": True,
                 "package": client.package,
                 "commit": "old",
@@ -287,3 +288,23 @@ def test_wait_records_transport_loss_without_cancel(monkeypatch):
     assert client.wait("job", log=log, expected_sha="same")["state"] == "completed"
     assert "transport_failure" in log.call_args_list[0].args[0]
     client.cancel.assert_not_called()
+
+
+def test_committed_acceptance_proofs_keep_their_schema_and_bind_scientific_runs():
+    from floppylm_xbox.portal import ACCEPTANCE_SCHEMA, check_acceptance
+
+    root = Path(__file__).resolve().parents[1] / "docs/evidence"
+    proofs = sorted(root.glob("xbox-e0-*/acceptance.json"))
+    assert proofs
+    for path in proofs:
+        proof = json.loads(path.read_text())
+        assert proof["schema"] == ACCEPTANCE_SCHEMA, path
+        device = {"commit": proof["commit"]}
+        if proof.get("kernels", {}).get("ok"):
+            check_acceptance(proof, device, proof["package"])
+        else:
+            # Proofs older than the per-operation gate cannot bind a scientific run.
+            with pytest.raises(RuntimeError, match="per-operation"):
+                check_acceptance(proof, device, proof["package"])
+        with pytest.raises(RuntimeError, match="different package"):
+            check_acceptance({**proof, "kernels": {"ok": True}}, device, "other")

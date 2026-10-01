@@ -22,7 +22,7 @@ from floppylm.seed import seed_all
 from floppylm.train import TrainSpec
 from floppylm_xbox.jobs import check_fixture, fixture, prepare_job, verify_optimizer
 from floppylm_xbox.kernels import verify as verify_kernels
-from floppylm_xbox.portal import Portal
+from floppylm_xbox.portal import ACCEPTANCE_SCHEMA, Portal
 
 
 def main():
@@ -37,7 +37,7 @@ def main():
     if device.get("state") != "ready" or not device.get("hardware_gpu"):
         raise RuntimeError("Xbox hardware app is not ready")
     proof = {
-        "schema": "floppylm_xbox.jobs.acceptance.v1",
+        "schema": ACCEPTANCE_SCHEMA,
         "purpose": "functional",
         "package": portal.package,
         "commit": device["commit"],

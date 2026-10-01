@@ -49,6 +49,21 @@ def read_env_file(path: Path) -> dict[str, str]:
     return values
 
 
+ACCEPTANCE_SCHEMA = "floppylm.xbox.acceptance.v1"
+
+
+def check_acceptance(proof: dict, device: dict, package: str) -> None:
+    """Scientific runs bind a passing acceptance measured on this exact package and commit."""
+    if proof.get("schema") != ACCEPTANCE_SCHEMA or not proof.get("ok"):
+        raise RuntimeError("invalid Xbox acceptance evidence")
+    if not proof.get("kernels", {}).get("ok"):
+        raise RuntimeError("scientific Xbox runs require per-operation acceptance evidence")
+    if not device.get("commit") or proof.get("commit") != device.get("commit"):
+        raise RuntimeError("acceptance source commit differs from running package")
+    if proof.get("package") != package:
+        raise RuntimeError("acceptance was measured on a different package")
+
+
 def certificate_fingerprint(value: str) -> str:
     """Normalize a SHA-256 certificate fingerprint (hex, colons and case ignored)."""
     digest = value.replace(":", "").strip().lower()
@@ -240,15 +255,7 @@ class Portal:
         if purpose == "scientific":
             if acceptance is None:
                 raise RuntimeError("scientific Xbox runs require acceptance evidence")
-            proof = json.loads(acceptance.read_text())
-            if proof.get("schema") != "floppylm_xbox.jobs.acceptance.v1" or not proof.get("ok"):
-                raise RuntimeError("invalid Xbox acceptance evidence")
-            if not proof.get("kernels", {}).get("ok"):
-                raise RuntimeError("scientific Xbox runs require per-operation acceptance evidence")
-            if proof.get("commit") != device.get("commit") or not device.get("commit"):
-                raise RuntimeError("acceptance source commit differs from running package")
-            if proof.get("package") != self.package:
-                raise RuntimeError("acceptance was measured on a different package")
+            check_acceptance(json.loads(acceptance.read_text()), device, self.package)
         job = json.loads((root / "job.json").read_text())
         if purpose == "scientific":
             from .jobs import zero_row_gate
@@ -365,15 +372,9 @@ class Portal:
         if device.get("package") != self.package or not device.get("hardware_gpu"):
             raise RuntimeError("recovery requires the original hardware package")
         if purpose == "scientific":
-            proof = json.loads(acceptance.read_text()) if acceptance else {}
-            if (
-                not proof.get("ok")
-                or not proof.get("kernels", {}).get("ok")
-                or proof.get("commit") != device.get("commit")
-                or proof.get("package") != self.package
-                or runlog.sha256_file(acceptance) != job["acceptance_sha256"]
-            ):
+            if acceptance is None or runlog.sha256_file(acceptance) != job["acceptance_sha256"]:
                 raise RuntimeError("recovery acceptance mismatch")
+            check_acceptance(json.loads(acceptance.read_text()), device, self.package)
         original = json.loads((root / "job.json").read_text())
         for key in ("job_id", "config", "spec"):
             if original[key] != job[key]:
