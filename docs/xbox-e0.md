@@ -1,7 +1,9 @@
 # Xbox E0 operating guide
 
 The separate DX12/UWP trainer is validated on retail Series S. Scientific campaign
-`e0-20261001T074326Z-503df0` is running; selection and quality results remain pending.
+`e0-20261001T090514Z-4236fd` is running on the GPU-resident E0.1 package; selection and
+quality results remain pending. The first campaign `e0-20261001T074326Z-503df0`
+(package 0.1.0.24) was stopped cleanly at trunk step 455 for E0.1 and is kept as a record.
 [Current evidence](evidence/xbox-e0-20261001/notes.md) owns measured results and lineage.
 [Validation history](xbox-e0-history.md) preserves earlier packages and failed baselines.
 
@@ -14,22 +16,24 @@ The separate DX12/UWP trainer is validated on retail Series S. Scientific campai
 Python owns corpus preparation, ordered samples, initial weights, canonical FLP2
 and sliding evaluation. The app owns GPU training and verified checkpoints.
 
-Current package: `GianlucaMazza.XgpuE0_0.1.0.24_x64__g0p5dcfz4t9z4`.
-Its exact source is `6a124021d7ae450c5e12056bd70503ed9298f9bd`; merged native code
-at `aec1a2a` is identical. Acceptance and benchmark must bind this package/source.
+Current package: `GianlucaMazza.XgpuE0_0.1.0.28_x64__g0p5dcfz4t9z4` (E0.1, CI run
+36839565773). Its exact source is `25f8bc3966ffae940658be94161d31edd83492c9`. It is
+bit-identical to 0.1.0.24 on every acceptance case, trained weight and benchmark artifact,
+and runs the representative benchmark at 10224 token/s instead of 963.6
+([xbox-gpu-training evidence](https://github.com/gianlucamazza/xbox-gpu-training/tree/main/docs/evidence/e0-20261001-resident)). Acceptance and benchmark must bind this package/source.
 Set the explicit package when several versions are installed:
 
 ```bash
-export XGPU_E0_PACKAGE=GianlucaMazza.XgpuE0_0.1.0.24_x64__g0p5dcfz4t9z4
+export XGPU_E0_PACKAGE=GianlucaMazza.XgpuE0_0.1.0.28_x64__g0p5dcfz4t9z4
 ```
 
 ## Inspect the running campaign
 
 ```bash
 # Local manifest, source drift, trial reservation and host state; no network.
-python scripts/e0_status.py --campaign runs/e0-campaign-20261001
+python scripts/e0_status.py --campaign runs/e0-campaign-20261001-e01
 # Also verify live package/source and the bound console job hash.
-python scripts/e0_status.py --campaign runs/e0-campaign-20261001 --xbox
+python scripts/e0_status.py --campaign runs/e0-campaign-20261001-e01 --xbox
 ```
 
 Both commands read state only. A reservation is not proof of GPU progress; the
@@ -37,7 +41,7 @@ Both commands read state only. A reservation is not proof of GPU progress; the
 wall time. Nonempty `issues` returns exit code 1. Network failures surface as
 errors rather than a cached claim of current progress.
 
-Durable state: `runs/e0-campaign-20261001/campaign.json`. The launcher log and one
+Durable state: `runs/e0-campaign-20261001-e01/campaign.json`. The launcher log and one
 log per trial are in the same directory. Trial manifests, jobs and artifacts are
 in `runs/<run_id>/`; tracked summaries are in `docs/evidence/e0-v2/runs/<run_id>/`.
 These summaries remain partial until host retrieval and evaluation complete.
@@ -55,8 +59,8 @@ For a new campaign, use an exclusive output directory and the current proofs:
 ```bash
 /home/gianluca/.local/bin/bg python experiments/e0_campaign.py \
   --out runs/e0-campaign-UNIQUE \
-  --acceptance runs/xbox-acceptance-20261001-ci36792707081/acceptance.json \
-  --benchmark runs/xbox-benchmark-20261001-ci36792707081/summary.json
+  --acceptance runs/xbox-acceptance-20261001-ci36839565773/acceptance.json \
+  --benchmark runs/xbox-benchmark-20261001-ci36839565773/summary.json
 ```
 
 The running campaign already has its worker. If it stops, diagnose the recorded
@@ -67,12 +71,12 @@ acceptance decision before scientific continuation.
 ```bash
 # Only after the prior campaign worker has exited:
 /home/gianluca/.local/bin/bg python experiments/e0_campaign.py \
-  --out runs/e0-campaign-20261001 --recover \
-  --acceptance runs/xbox-acceptance-20261001-ci36792707081/acceptance.json \
-  --benchmark runs/xbox-benchmark-20261001-ci36792707081/summary.json
+  --out runs/e0-campaign-20261001-e01 --recover \
+  --acceptance runs/xbox-acceptance-20261001-ci36839565773/acceptance.json \
+  --benchmark runs/xbox-benchmark-20261001-ci36839565773/summary.json
 # Standalone bound run, when no campaign worker owns it:
 /home/gianluca/.local/bin/bg python experiments/e0_v2.py --resume RUN_ID \
-  --xbox-acceptance runs/xbox-acceptance-20261001-ci36792707081/acceptance.json
+  --xbox-acceptance runs/xbox-acceptance-20261001-ci36839565773/acceptance.json
 ```
 
 Recovery verifies package, acceptance, recipe and asset hashes. Existing evaluated

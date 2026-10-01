@@ -78,3 +78,12 @@ See [the new package evidence](evidence/xbox-e0-20260930-kernels/notes.md).
 The new representative synthetic trial completed at 959.012 token/s,
 153.758 seconds wall time and 91,238,400 bytes peak app memory.
 
+## Campaign stop and E0.1 (2026-10-01)
+
+Campaign `e0-20261001T074326Z-503df0` on 0.1.0.24 was stopped by SIGTERM to its trial.
+The console checkpointed at trunk step 455. It had spent 329 GPU seconds of 3848 wall
+seconds, because every operation uploaded inputs and waited for its result. Package 0.1.0.28
+(xbox-gpu-training PR #18) keeps tensors GPU-resident with the same shader and accumulation
+order. It passed acceptance, worker, recovery and real-suspension proofs, matched 0.1.0.24
+bit for bit, and measured 10224 token/s. Campaign `e0-20261001T090514Z-4236fd` replaced the
+stopped one; the stopped record stays under `docs/evidence/e0-v2/campaigns/`.

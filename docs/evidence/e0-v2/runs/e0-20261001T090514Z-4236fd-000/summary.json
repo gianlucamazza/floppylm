@@ -28,11 +28,10 @@
   "torch": "2.11.0+cu130",
   "torch_threads": 2
  },
- "error": "KeyboardInterrupt('signal 15')",
  "repair_ratio": null,
  "retry_count": 0,
  "retry_of": null,
- "run_id": "e0-20261001T074326Z-503df0-000",
+ "run_id": "e0-20261001T090514Z-4236fd-000",
  "smoke": false,
  "sources": {
   "files": {
@@ -60,8 +59,8 @@
    "src/floppylm/xbox_portal.py": "42d13497462ad782398aef6a2ab4869b137fc088e82dd354efc70417d6b81886"
   },
   "git": {
-   "commit": "6ccc6a2db1becebb5cb4829c43419f4e5549c1fc",
-   "dirty": false
+   "commit": "44e38d3ace2a3063b2edfdd24104631878ca6195",
+   "dirty": true
   }
  },
  "spec": {
@@ -74,7 +73,7 @@
   "warmup_frac": 0.02,
   "wd": 0.1
  },
- "status": "interrupted",
+ "status": "running",
  "target_bytes": 85937.5,
  "token_policy": "per_parameter"
 }

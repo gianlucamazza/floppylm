@@ -66,7 +66,7 @@ E0-lite pre-v2 è diagnostica ([pre-v2](evidence/e0-lite/pre-v2/notes.md)).
   `train()` viene rifiutato; modifiche dirette a configurazione o parametri vengono rilevate
   prima del risalvataggio. Per riprendere il training usare un checkpoint del tronco.
 
-Campaign: hardware accepted on package 0.1.0.24; scale selection follows ADR 0011.
+Campaign: hardware accepted on package 0.1.0.28 (E0.1, bit-identical to 0.1.0.24, ~10× faster); scale selection follows ADR 0011.
 The current [functional evidence](evidence/xbox-e0-20261001/notes.md) includes real
 suspension, exact runner recovery and a representative throughput measurement.
 The executable campaign freezes source hashes, recipes, acceptance and benchmark

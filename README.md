@@ -9,7 +9,7 @@ Scientific campaign `e0-20261001T074326Z-503df0` is running; quality results rem
 Commands and provenance: [Xbox E0](docs/xbox-e0.md).
 
 ```bash
-python scripts/e0_status.py --campaign runs/e0-campaign-20261001 --xbox
+python scripts/e0_status.py --campaign runs/e0-campaign-20261001-e01 --xbox
 ```
 
 Reads live GPU progress and verifies frozen source/package/job hashes without
