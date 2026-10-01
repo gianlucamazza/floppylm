@@ -8,7 +8,7 @@ bump or campaign start/stop. Last updated: **2026-10-01**.
 | Thesis               | [concept v0.2](concept.md), **specified**                                                                                                                                               |
 | E0 v2 software       | **measured**: harness, gates and smoke ([evidence](evidence/README.md))                                                                                                                 |
 | S1–S10, scale policy | accepted ([ADR 0008](adr/0008-e0-numeric-protocol.md), [ADR 0011](adr/0011-e0-row-scale-selection.md))                                                                                  |
-| Xbox package         | **installed** `GianlucaMazza.XgpuE0_0.1.0.68_x64__g0p5dcfz4t9z4`, `device.json` ready, GPU true, source `3cc47d2e` (PR 31 dashboard, CI 36925453940). Acceptance in flight (no t700). fdab67 stays bound to 0.1.0.56. |
+| Xbox package         | **accepted** `GianlucaMazza.XgpuE0_0.1.0.68_x64__g0p5dcfz4t9z4` source `3cc47d2e` ([evidence](evidence/xbox-e0-20261001-068/notes.md)). Fence still `INFINITE`. fdab67 stays bound to 0.1.0.56. |
 | E0 campaign          | `e0-20261001T163456Z-fdab67` host **stopped**; 001 native interrupt at trunk 1583 (checkpoint `afcc2c98`, branch 879); `--recover` not launched. Do not resume fdab67 onto 0.1.0.65. |
 | Previous campaign    | `e0-20261001T090514Z-4236fd` (0.1.0.28), **stopped** 2026-10-01 13:44 CEST at `neutral-scale`: both row16 seeds not saturated — [record](evidence/e0-v2/campaigns/e0-20261001T090514Z-4236fd/notes.md) |
 | E0 saturation gate   | recorded, not an eligibility gate ([ADR 0015](adr/0015-e0-fixed-data-frontier.md)); campaign `fdab67` launched |

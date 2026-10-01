@@ -1,0 +1,69 @@
+{
+ "checkpoint_interruption": {
+  "adapter": "SraKmd_arden",
+  "branches": [
+   {
+    "artifact": {
+     "bytes": 311964,
+     "path": "results/lifecycle-20261001T212038Z-ad1207-suspended/branch-512.json",
+     "sha256": "d7a4754f70f3e82611305ad0d4871ca05cdd3aa16370851b0ed9584814e0067e"
+    },
+    "cooldown_seconds": 0.099473144,
+    "cooldown_start": 461,
+    "cooldown_steps": 51,
+    "end_step": 512,
+    "tokens_seen": 8192
+   },
+   {
+    "artifact": {
+     "bytes": 310825,
+     "path": "results/lifecycle-20261001T212038Z-ad1207-suspended/branch-1024.json",
+     "sha256": "f62d6cbeb46059144c9e49e570de9d8596a904b4667b05c025232481d0a70a0e"
+    },
+    "cooldown_seconds": 0.194022632,
+    "cooldown_start": 922,
+    "cooldown_steps": 102,
+    "end_step": 1024,
+    "tokens_seen": 16384
+   }
+  ],
+  "checkpoint": {
+   "bytes": 1009167,
+   "path": "results/lifecycle-20261001T212038Z-ad1207-suspended/checkpoint.json",
+   "sha256": "3d2993d770827e844449715c56c7d7c716138930cb0ade965ef3a074a6002bcd"
+  },
+  "dispatches": 181780,
+  "gpu_seconds": 1.193012250626851,
+  "hardware_gpu": true,
+  "job_id": "lifecycle-20261001T212038Z-ad1207-suspended",
+  "job_sha256": "710aa017717421e7c8dd966dc601cbe301f0bcb80dacbc3104412a304fe7e634",
+  "last_loss": 0.09503909218256013,
+  "peak_memory_bytes": 96071680,
+  "phase": "trunk",
+  "schedule": {
+   "T": 512,
+   "cooldown_starts": [
+    461,
+    922,
+    1844
+   ],
+   "ends": [
+    512,
+    1024,
+    2048
+   ],
+   "tokens_per_step": 16,
+   "warmup": 10
+  },
+  "schema": "floppylm.e0.result.v1",
+  "state": "interrupted",
+  "transfer_bytes": 276734720,
+  "trunk_step": 1337,
+  "wall_seconds": 3.195069324
+ },
+ "commit": "3cc47d2edb7c949a3b0e6b1fe9fb1d3ba9fdc0e5",
+ "ok": true,
+ "package": "GianlucaMazza.XgpuE0_0.1.0.68_x64__g0p5dcfz4t9z4",
+ "purpose": "functional",
+ "suspend_marker": "suspend"
+}

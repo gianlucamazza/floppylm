@@ -51,6 +51,7 @@ until host retrieval and evaluation complete.
 | [xbox-e0-20261001](xbox-e0-20261001/notes.md)                 | 0.1.0.24 | full acceptance, worker, recovery, real suspension, data reproducibility, campaign launch |
 | [xbox-e0-20261001-e01](xbox-e0-20261001-e01/notes.md)         | 0.1.0.28 | E0.1 acceptance, worker, recovery, lifecycle, throughput                                  |
 | [xbox-e0-20261001-dashboard](xbox-e0-20261001-dashboard/notes.md) | 0.1.0.56 | full hardware gates, pinned deployment, bit identity, screenshot; idle attribution open |
+| [xbox-e0-20261001-068](xbox-e0-20261001-068/notes.md) | 0.1.0.68 | PR 31 dashboard; full hardware gates, bit-identical to 0.1.0.56; fence still INFINITE |
 
 ### E1 functional qualification
 
