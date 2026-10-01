@@ -43,3 +43,17 @@ row16 and row8log. No legacy operation aliases or implicit trial migration were
 introduced. This evidence certifies functional execution, not language-model
 quality. The sequential scientific campaign and its single reserved final test
 must finish before quality, selection or paired statistics can be reported.
+
+## Merge and scientific launch
+
+PR #17 merged as `aec1a2a` after green CI and an engineering PASS review on
+`fbe5b78` (review 5375892366, owner COMMENTED; no self-approval). The merged native
+sources, shaders, UWP project, CMake and build script equal validated `6a124021`.
+
+Campaign `e0-20261001T074326Z-503df0` is running with source and protocol hashes
+frozen before its first result. `campaign-launch.json` records the bound job hash,
+actual GPU progress, checkpoint and immutable-corpus hard link. It is a snapshot,
+not a completed scientific result. Durable state and logs remain in
+`runs/e0-campaign-20261001/`; final reports are emitted by the campaign on completion
+or an explicit gate failure. Recovery requires reopening with `--recover` using
+the same acceptance and benchmark; no implicit new training run is launched.

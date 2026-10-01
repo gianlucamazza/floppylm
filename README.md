@@ -5,6 +5,7 @@ pesi, tokenizer e runtime in 1 474 560 byte. Il nome `floppy_4mb` è simbolico.
 Status: S1-S10 accepted; Xbox GPU backend implemented and validated on Series S
 with 52 independent operation cases, 36 model fixtures and exact checkpoint resume. The representative
 throughput trial completed; ADR 0011 accepts row16/row8log for scientific E0.
+Scientific campaign `e0-20261001T074326Z-503df0` is running; quality results remain pending.
 Commands and provenance: [Xbox E0](docs/xbox-e0.md).
 
 ## L'idea in trenta secondi

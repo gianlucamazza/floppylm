@@ -2,7 +2,7 @@
 
 Owner delle definizioni E0–E4. Non possiede i risultati ([`evidence/`](evidence/README.md)).
 Status (2026-10-01): E0 v2 software and Series S functional acceptance are **measured**;
-scientific campaign completion is pending. E1–E4 remain **specified** and gated by E0. Tesi: [concept v0.2](concept.md).
+scientific campaign `e0-20261001T074326Z-503df0` is **running**, completion pending. E1–E4 remain **specified** and gated by E0. Tesi: [concept v0.2](concept.md).
 
 Regole comuni ([ADR 0002](adr/0002-adversary-dense-frontier.md), [ADR 0003](adr/0003-lab-practices.md),
 [ADR 0004](adr/0004-miniature-budgets.md)): budget 1/16, 1/4, 1× di 11 Mbit; in miniatura contano
