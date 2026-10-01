@@ -57,3 +57,7 @@ not a completed scientific result. Durable state and logs remain in
 `runs/e0-campaign-20261001/`; final reports are emitted by the campaign on completion
 or an explicit gate failure. Recovery requires reopening with `--recover` using
 the same acceptance and benchmark; no implicit new training run is launched.
+
+Later note (2026-10-01): campaign `503df0` was stopped at trunk step 455 and replaced by
+`e0-20261001T090514Z-4236fd` on package 0.1.0.28, whose durable state is
+`runs/e0-campaign-20261001-e01/`. See [xbox-e0-20261001-e01](../xbox-e0-20261001-e01/notes.md).

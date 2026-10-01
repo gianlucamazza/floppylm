@@ -1,50 +1,53 @@
 # FloppyLM documentation
 
-Il [README root](../README.md) è la storia pubblica. Questa pagina dice **quale documento possiede
-quale fatto**. Aggiornare il documento owner; non copiare tabelle di stato.
+The [root README](../README.md) is the public story. This page tells you **which document owns
+which fact** and where to start.
 
-## Percorso da 5 minuti
+## Reading paths
 
-| #   | Domanda                         | Leggi                                                                      |
-| --- | ------------------------------- | -------------------------------------------------------------------------- |
-| 1   | Qual è la tesi e cosa la uccide | [concept](concept.md)                                                      |
-| 2   | Cosa c'è già e cosa no          | [positioning](positioning.md), poi [R2](research/02-procedural-weights.md) |
-| 3   | Cosa conta nel budget           | [ADR 0001](adr/0001-floppy-budget.md)                                      |
-| 4   | Cosa si misura, in che ordine   | [experiments-roadmap](experiments-roadmap.md)                              |
+**Newcomer (15 minutes)**
 
-## Ownership
+1. [vision](vision.md): what success means.
+2. [concept](concept.md): the thesis and what kills it (F0–F4).
+3. [positioning](positioning.md): what already exists.
+4. [ADR 0001](adr/0001-floppy-budget.md): what counts toward the floppy.
+5. [roadmap](roadmap.md): what is measured, in which order.
+6. [STATUS](STATUS.md): where things stand today.
 
-| Documento                                          | Possiede                          | Non possiede          |
-| -------------------------------------------------- | --------------------------------- | --------------------- |
-| `README.md` (root)                                 | Storia pubblica, stato, mappa     | F*, definizioni E*    |
-| [`vision.md`](vision.md)                           | Mission, successo v0.1, non-goals | Tesi                  |
-| [`concept.md`](concept.md)                         | Tesi, principi P1–P4, F0–F4       | Numeri, codice        |
-| [`positioning.md`](positioning.md)                 | Confronto con lo stato dell'arte  | Survey complete       |
-| [`glossary.md`](glossary.md)                       | Una riga + owner per termine      | Definizioni di record |
-| [`stack.md`](stack.md)                             | Toolchain, macchina               | Status, tesi          |
-| [`experiments-roadmap.md`](experiments-roadmap.md) | Definizioni E0–E4 e gate          | Risultati             |
-| [`adr/`](adr/README.md)                            | Decisioni accettate               | Brainstorm            |
-| [`research/`](research/README.md)                  | Letteratura e gap                 | Design normativo      |
-| [`evidence/`](evidence/README.md)                  | Numeri misurati                   | Design                |
+**Operator** (running E0): [STATUS](STATUS.md) → [Xbox runbook](operations/xbox-e0.md) →
+[code map](operations/code-map.md) → [stack](stack.md).
 
-Vocabolario di stato: **specified** (scritto, non eseguito), **stub**, **running**, **measured**
-(un file in `evidence/` possiede il numero), **killed** (un F\* è scattato), **won't run**.
+**Reviewer** (checking a claim): [evidence](evidence/README.md) → the owning [ADR](adr/README.md)
+→ [glossary](glossary.md).
 
-## Codice
+## Fact owners
 
-```
-src/floppylm/codec.py     ScalarCodec: ternary / 2bit / 4bit, scale row16 | row8log | tensor16
-src/floppylm/rans.py      rANS 15 bit e bitpack, scelta del più corto per tensore, errori espliciti
-src/floppylm/model.py     GPTConfig validata, TinyGPT, bit nominali e FLOP per token
-src/floppylm/pack.py      FLP2 ↔ modello; pack(unpack(b)) == b; FLP1 rifiutato (ADR 0006)
-src/floppylm/shapes.py    solver di forma: d, n_layers, d_ff libero a 99.5–100% del budget
-src/floppylm/train.py     WSD con tronco e cooldown, checkpoint, valutazione scorrevole
-src/floppylm/parity.py    ammissibilità sui byte serializzati, σ appaiata
-src/floppylm/runlog.py    id univoci, directory esclusive, scritture atomiche, stato, manifest
-src/floppylm/data.py      TinyStoriesV2: dedup esatta, split per hash, manifest, riproducibilità
-experiments/e0_v2.py      --plan / --run / --resume / --grid / --parity / --freeze / --final-test / --verify-data
-experiments/e0_campaign.py sequential frozen Xbox E0 campaign, explicit --recover
-scripts/e0_status.py      read-only local/live campaign state and frozen-source checks
-src/floppylm/xbox_portal.py verified assets, submission binding, transport and recovery
-tests/                    regressioni di tutti i moduli, fixture FLP1 per il test di rifiuto
-```
+Update the owner; every other document links to it instead of copying.
+
+| Fact                                           | Owner                                                                                                                              |
+| ---------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| Live state: package, campaign, what is running | [STATUS](STATUS.md)                                                                                                                |
+| Mission, success, non-goals                    | [vision](vision.md)                                                                                                                |
+| Thesis, principles P1–P5, F0–F4, v0.1 record   | [concept](concept.md)                                                                                                              |
+| Prior art comparison                           | [positioning](positioning.md)                                                                                                      |
+| Floppy budget and what counts                  | [ADR 0001](adr/0001-floppy-budget.md)                                                                                              |
+| Adversaries and the paired gate                | [ADR 0002](adr/0002-adversary-dense-frontier.md) (amendment), [ADR 0005](adr/0005-e0v2-protocol.md) §7                             |
+| E0 protocol and S1–S10                         | [ADR 0005](adr/0005-e0v2-protocol.md), [ADR 0008](adr/0008-e0-numeric-protocol.md), [ADR 0011](adr/0011-e0-row-scale-selection.md) |
+| E0–E4 definitions and completion gates         | [roadmap](roadmap.md)                                                                                                              |
+| Xbox procedure                                 | [runbook](operations/xbox-e0.md)                                                                                                   |
+| Modules and CLI flags                          | [code map](operations/code-map.md)                                                                                                 |
+| Toolchain and machines                         | [stack](stack.md)                                                                                                                  |
+| Measured numbers                               | [evidence](evidence/README.md)                                                                                                     |
+| Literature and gaps                            | [research](research/README.md)                                                                                                     |
+| Terms                                          | [glossary](glossary.md)                                                                                                            |
+| Superseded narratives                          | [archive](archive/xbox-e0-history.md)                                                                                              |
+
+## Conventions
+
+1. **One owner per fact.** Never copy a number, status line or table from its owner; link to it.
+2. **Live state only in [STATUS](STATUS.md).** A package bump or campaign start/stop edits that page alone.
+3. **Current vs archive.** Superseded documents move to `archive/` with a banner naming their successor.
+4. **ADRs are not rewritten** ([rules](adr/README.md)); proposals live in `adr/proposals/`.
+5. **Evidence is frozen.** Only translation and dated "Later note" pointers are allowed.
+6. **English** for all docs and code comments; kebab-case file names; no links outside the repository
+   except to public URLs.

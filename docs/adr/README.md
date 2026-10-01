@@ -1,28 +1,45 @@
-# ADR — decisioni strutturali
+# ADRs — structural decisions
 
-Un ADR esiste solo per una decisione **già presa** e costosa da ribaltare.
-Non è un brainstorm, non è una survey, non è un TODO. Stesse regole di
-[SmallerGPT](../../../smallergpt/docs/adr/README.md).
+An ADR exists only for a decision that is **already taken** and expensive to reverse.
+It is not a brainstorm, a survey or a TODO.
 
-## Regole
+## Rules
 
-1. Status: `accepted` | `amended` | `superseded`. Niente `proposed`: le proposte vivono in `concept.md`.
-2. Un ADR non si riscrive in silenzio: si amenda con data o si supersede.
-3. Il design normativo applica gli ADR, non li duplica.
+1. **Status token**, first line of `## Status`: `accepted` | `amended` | `superseded-in-part` |
+   `superseded`, followed by the dates. When several apply, the most significant wins
+   (`superseded` > `superseded-in-part` > `amended` > `accepted`).
+2. **No silent rewrites.** An ADR is amended with a dated `## Amendment — <date>` section, or
+   superseded by a new ADR. Translation and link fixes are not amendments.
+3. **Reciprocal links.** Every relation (supersedes, amends, completes, clarifies) is stated in the
+   Status of both ADRs.
+4. **Structure**: `# ADR NNNN: Title`, then `## Status`, `## Context`, `## Decision`,
+   `## Consequences`, optionally `## Alternatives` and amendments.
+5. **Proposals** live in [`proposals/`](#proposals) while under review. Accepting one creates an
+   ADR; the proposal then states `accepted — <date>; recorded in ADR NNNN` and stays as context.
+6. Normative design ([concept](../concept.md), [roadmap](../roadmap.md)) applies ADRs and does not
+   duplicate them. No ADR "for completeness": a negative result that closes a line needs a
+   roadmap paragraph and a [STATUS](../STATUS.md) update, not a cancellation ADR.
 
-## Indice
+## Index
 
-| ADR                                      | Decisione                                                                                                    |
-| ---------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| [0001](0001-floppy-budget.md)            | Budget = 1 474 560 byte per l'immagine intera; cosa conta e cosa no                                          |
-| [0002](0002-adversary-dense-frontier.md) | Avversari fissati prima: frontiera densa, ricorsione ternaria; distillazione e doppia parità per tutti       |
-| [0003](0003-lab-practices.md)            | Invarianti di laboratorio: bit-accounting, seed, evidence, stop su F\*                                       |
-| [0004](0004-miniature-budgets.md)        | Budget 1/16, 1/4, 1×: solo byte del modello, embedding ~15%, CPU per il pilota, GPU con ADR                  |
-| [0005](0005-e0v2-protocol.md)            | Protocollo E0 v2: parità sui byte serializzati, WSD, saturazione, compute, selezione protetta, tracciabilità |
-| [0006](0006-flp2-only.md)                | FLP2 unico formato; FLP1 rifiutato, leggibile solo alla revisione `f9e0732`                                  |
-| [0007](0007-e0v2-review-gates.md)        | Review gates: scientific/functional freeze, exact grid arguments, inference-only artifacts, tracked evidence |
-| [0008](0008-e0-numeric-protocol.md) | Accepted S1-S10 numerical recipe, bounded byte repair and paired seeds |
-| [0009](0009-xbox-e0-backend.md) | Independent Python oracle and separate Xbox GPU training backend |
-| [0010](0010-independent-numerical-gates.md) | Identical-input optimizer and accepted mixed floating-point gate |
-| [0011](0011-e0-row-scale-selection.md) | Scientific E0 selects row16/row8log while preserving S9 and FLP2 |
-| [0012](0012-repo-boundaries.md) | floppylm owns FloppyLM semantics and contracts; xbox-gpu-training is the only native backend; no FloppyLM in xllama |
+| ADR                                         | Decision                                                                                                       | Status             |
+| ------------------------------------------- | -------------------------------------------------------------------------------------------------------------- | ------------------ |
+| [0001](0001-floppy-budget.md)               | The budget is the floppy, not the parameters: ≤ 1 457 664 B of FAT12 data area; what counts and what does not  | accepted           |
+| [0002](0002-adversary-dense-frontier.md)    | Adversaries fixed before the thesis: dense frontier, ternary recursion; distillation and double parity for all | amended            |
+| [0003](0003-lab-practices.md)               | Lab invariants: bit accounting, seeds, evidence, stop on F\*                                                   | superseded-in-part |
+| [0004](0004-miniature-budgets.md)           | Budgets 1/16, 1/4, 1×: model bytes only, embedding ~15%; GPU only with an ADR                                  | superseded-in-part |
+| [0005](0005-e0v2-protocol.md)               | E0 v2 protocol: serialized-byte parity, WSD, saturation, compute, protected selection, traceability            | superseded-in-part |
+| [0006](0006-flp2-only.md)                   | FLP2 is the only format; FLP1 is rejected, readable only at revision `f9e0732`                                 | accepted           |
+| [0007](0007-e0v2-review-gates.md)           | Review gates: scientific/functional freeze, exact grid arguments, inference-only artifacts, tracked evidence   | accepted           |
+| [0008](0008-e0-numeric-protocol.md)         | S1–S10 numerical recipe, bounded byte repair and paired seeds                                                  | superseded-in-part |
+| [0009](0009-xbox-e0-backend.md)             | Independent Python oracle and a separate Xbox GPU training backend for E0 at 1/16                              | superseded-in-part |
+| [0010](0010-independent-numerical-gates.md) | Identical-input optimizer and accepted mixed floating-point gate                                               | accepted           |
+| [0011](0011-e0-row-scale-selection.md)      | Scientific E0 uses row16/row8log only, preserving S9 and FLP2                                                  | accepted           |
+| [0012](0012-repo-boundaries.md)             | floppylm owns FloppyLM semantics; xbox-gpu-training is the only native backend; no FloppyLM in xllama          | accepted           |
+
+## Proposals
+
+| Proposal                                                                  | Outcome             |
+| ------------------------------------------------------------------------- | ------------------- |
+| [E0 numerical validation refinement](proposals/e0-validation-proposal.md) | accepted → ADR 0010 |
+| [E0 zero-row gate correction](proposals/e0-zero-row-proposal.md)          | accepted → ADR 0011 |

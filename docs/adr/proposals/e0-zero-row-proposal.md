@@ -1,4 +1,4 @@
-# E0 zero-row gate: proposed correction
+# E0 zero-row gate correction (proposal)
 
 Status: accepted — 2026-10-01; recorded in ADR 0011.
 This is separate from the accepted numerical refinement in ADR 0010.

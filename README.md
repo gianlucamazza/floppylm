@@ -1,41 +1,62 @@
 # FloppyLM
 
-Lab per il miglior language model che stia **intero** su un floppy 3.5" reale: descrizione dei
-pesi, tokenizer e runtime in 1 474 560 byte. Il nome `floppy_4mb` è simbolico.
-Status: S1-S10 accepted; Xbox GPU backend implemented and validated on Series S
-with 52 independent operation cases, 36 model fixtures and exact checkpoint resume. The representative
-throughput trial completed; ADR 0011 accepts row16/row8log for scientific E0.
-Scientific campaign `e0-20261001T074326Z-503df0` is running; quality results remain pending.
-Commands and provenance: [Xbox E0](docs/xbox-e0.md).
+A lab for the best language model that fits **entirely** on a real 3.5" floppy: weight description,
+tokenizer and runtime inside one 1 474 560-byte disk ([what counts](docs/adr/0001-floppy-budget.md)).
+The repository name `floppy_4mb` is symbolic.
+
+**Status:** the E0 scalar baseline is running on an Xbox Series S GPU backend; no quality result
+yet. Live state: [docs/STATUS.md](docs/STATUS.md).
+
+## The idea in thirty seconds
+
+The floppy limits bits at rest, not RAM at runtime. A dense ternary model in 11 Mbit stops at ~7M
+parameters; beyond that is the **sub-bit regime**, where only one thing matters: where the bits
+are — in the transformer core. The thesis (v0.2): a recursive core whose weights are indices into a
+vector code at 0.5–0.75 bits/weight, trained from scratch, beats the best ternary/2-bit core at
+equal coded bytes. Three codes compete — seed-generated, computed trellis, learned codebook — with
+a declared prior: the computed codes, at zero bytes, are favoured.
+
+v0.1 (seed perturbations of the recursive blocks) was closed before any code was written: it acted
+on ~0.1% of the bits and seeds carry no information ([stress test](docs/concept.md#stress-test-v01)).
+
+## How the work is staged
+
+E0 measures the scalar frontier (ternary and 2-bit cores at miniature budgets) that every vector
+code must beat. It runs on a separate DX12 trainer on an Xbox Series S, checked op by op against the
+Python oracle in this repository ([ADR 0009](docs/adr/0009-xbox-e0-backend.md)). E1–E4 then test
+the vector core, coding, full scale and the real disk image ([roadmap](docs/roadmap.md)).
+
+## Quickstart
 
 ```bash
-python scripts/e0_status.py --campaign runs/e0-campaign-20261001-e01 --xbox
+pip install -e '.[dev]'          # Python ≥ 3.12, PyTorch ≥ 2.4
+pytest                            # full host test suite
+python experiments/e0_v2.py --run --smoke   # functional CPU smoke run, not a result
+python scripts/e0_status.py --campaign runs/<campaign-dir>   # read-only campaign state
 ```
 
-Reads live GPU progress and verifies frozen source/package/job hashes without
-changing the campaign. Omit `--xbox` for local state only.
+Training reads the prepared TinyStoriesV2-GPT4 corpus in `data/tinystories/`: download the raw
+files listed in `floppylm.data.SOURCES` into `data/raw/` and prepare them with
+`floppylm.data.prepare`; `python experiments/e0_v2.py --verify-data` checks reproducibility.
+Flags and the Xbox procedure: [code map](docs/operations/code-map.md),
+[runbook](docs/operations/xbox-e0.md).
 
-## L'idea in trenta secondi
+## Map
 
-Il floppy limita i bit a riposo, non la RAM a runtime. Un denso ternario in 11 Mbit si ferma a
-~7M parametri; oltre si entra nel **regime sotto il bit**, e lì conta solo dove stanno i bit: nel
-core del transformer. La tesi (v0.2): un core ricorsivo i cui pesi sono indici in un codice
-vettoriale a 0.5–0.75 bit/peso, addestrato da zero, batte a parità di byte codificati il miglior
-core ternario/2-bit. Tre codici in gara — generato da seed, trellis calcolato, codebook appreso —
-con un prior dichiarato: i codici calcolati, a zero byte, sono favoriti.
+[docs/README.md](docs/README.md) gives reading paths and says which file owns which fact.
 
-La v0.1 (perturbazioni da seed sui blocchi ricorsivi) è stata chiusa prima di scrivere codice:
-agiva su ~0.1% dei bit e i seed non trasportano informazione ([stress test](docs/concept.md#stress-test-v01)).
+| Document                                                             | Owns                                                       |
+| -------------------------------------------------------------------- | ---------------------------------------------------------- |
+| [docs/STATUS.md](docs/STATUS.md)                                     | Live state                                                 |
+| [docs/vision.md](docs/vision.md)                                     | Mission, success, non-goals                                |
+| [docs/concept.md](docs/concept.md)                                   | Thesis v0.2, principles, F0–F4, v0.1 stress test           |
+| [docs/roadmap.md](docs/roadmap.md)                                   | E0–E4 and their gates                                      |
+| [docs/positioning.md](docs/positioning.md)                           | Vs Quant-Noise, Sign Lock-In, QTIP, SeedLM, Parameter Golf |
+| [docs/adr/](docs/adr/README.md)                                      | Accepted decisions                                         |
+| [docs/research/](docs/research/README.md)                            | Surveys R1–R7                                              |
+| [docs/evidence/](docs/evidence/README.md)                            | Measured numbers                                           |
+| [docs/stack.md](docs/stack.md), [docs/glossary.md](docs/glossary.md) | Toolchain and machines; terms                              |
 
-## Mappa
+## License
 
-Il [docs/README.md](docs/README.md) dice quale file possiede quale fatto.
-
-| Documento                                                  | Possiede                                                   |
-| ---------------------------------------------------------- | ---------------------------------------------------------- |
-| [docs/concept.md](docs/concept.md)                         | Tesi v0.2, principi, F0–F4, stress test v0.1               |
-| [docs/experiments-roadmap.md](docs/experiments-roadmap.md) | E0–E4 e gate                                               |
-| [docs/positioning.md](docs/positioning.md)                 | Vs Quant-Noise, Sign Lock-In, QTIP, SeedLM, Parameter Golf |
-| [docs/adr/](docs/adr/README.md)                            | Budget, avversari, pratiche di laboratorio                 |
-| [docs/research/](docs/research/README.md)                  | Survey R1–R7                                               |
-| [docs/evidence/](docs/evidence/README.md)                  | Numeri misurati e stato dei run                            |
+Not yet chosen.

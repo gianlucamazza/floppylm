@@ -32,5 +32,8 @@ The final package corrected each layer and passed the repeated gates and benchma
 Independent S9 diagnostics also found that tensor16 cannot preserve individual
 zero rows in mixed tensors with an even-level grid. Matching the Python oracle
 had concealed this protocol mismatch. Scientific submission now checks this
-invariant separately. The [correction proposal](../../e0-zero-row-proposal.md)
+invariant separately. The [correction proposal](../../adr/proposals/e0-zero-row-proposal.md)
 awaits owner acceptance; no scientific training or held-out final test has run.
+
+Later note (2026-10-01): the tensor16/S9 proposal was accepted as
+[ADR 0011](../../adr/0011-e0-row-scale-selection.md).

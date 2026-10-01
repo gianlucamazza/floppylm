@@ -1,39 +1,49 @@
 # Evidence
 
-Questa cartella possiede i **numeri**. Un claim che dice "funziona" senza un file qui è teatro.
+This directory owns the **numbers**. A claim that something "works" without a file here is theatre.
+Records are frozen: they may only be translated or receive a dated "Later note" pointer at the end.
 
-Formato di un run E0 v2 ([ADR 0005](../adr/0005-e0v2-protocol.md)):
+## Layout
 
 ```
 evidence/e0-v2/runs/<run_id>/
-  summary.json     # stato, config, byte e hash per cooldown, val bpb, saturazione, compute
-  notes.md         # una pagina generata: setup, risultati, cosa non si è misurato
-evidence/e0-v2/selections/<name>.json       # selezione congelata con hash degli artefatti
-evidence/e0-v2/selections/<name>.test.json  # test finale, una sola volta per selezione
+  summary.json     # state, config, bytes and hashes per cooldown, val bpb, saturation, compute
+  notes.md         # one generated page: setup, results, what was not measured
+evidence/e0-v2/campaigns/<campaign_id>/      # generated campaign report (summary.json, notes.md)
+evidence/e0-v2/selections/<name>.json        # frozen selection with artifact hashes
+evidence/e0-v2/selections/<name>.test.json   # final test, once per selection
+evidence/xbox-e0-YYYYMMDD[-tag]/             # hand-written package acceptance: notes.md + JSON proofs
+evidence/e0-lite/pre-v2/                     # stopped pre-v2 grid, diagnostic only
 ```
 
-Manifest completo, stato e artefatti di ogni run stanno in `runs/<run_id>/` (fuori da Git).
-Summary e note in questa cartella sono versionati: solo `/runs/` alla radice è ignorato.
-Le selezioni storiche `smoke-functional*.json`, precedenti ad ADR 0007, restano inalterate.
-Le nuove selezioni dichiarano `purpose: scientific | functional`; gli smoke richiedono
-`--freeze ... --functional` e non possono certificare una baseline scientifica.
+The full manifest, state and artifacts of each run live in `runs/<run_id>/` (outside Git; only
+`/runs/` at the root is ignored). Historical `smoke-functional*.json` selections predate ADR 0007
+and remain unchanged. New selections declare `purpose: scientific | functional`; smoke runs require
+`--freeze ... --functional` and cannot certify a scientific baseline. Run summaries stay partial
+until host retrieval and evaluation complete.
 
-## Presente
+## Inventory
 
-| Evidenza                                                                                                                                    | Tipo                                                                 | Stato       |
+### E0 v2 runs and campaigns
+
+| Evidence                                                                                                                                    | Kind                                                                 | State       |
 | ------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- | ----------- |
-| [`e0-v2/runs/smoke-ternary-d32-l1-f48-s0-20260930T081747Z-973ccb`](e0-v2/runs/smoke-ternary-d32-l1-f48-s0-20260930T081747Z-973ccb/notes.md) | smoke, **prova funzionale, non scientifica**                         | completed   |
-| `e0-v2/runs/smoke-ternary-d32-l1-f48-s0-20260930T081826Z-e393da`                                                                            | test del percorso SIGTERM, smoke interrotto apposta                  | interrupted |
-| `e0-v2/selections/smoke-functional*.json`                                                                                                   | prova funzionale di `--freeze` / `--final-test` sullo smoke          | —           |
-| [`e0-lite/pre-v2`](e0-lite/pre-v2/notes.md)                                                                                                 | griglia E0-lite fermata; diagnostica esclusa dai verdetti, blob FLP1 | —           |
+| [`e0-v2/runs/smoke-ternary-d32-l1-f48-s0-20260930T081747Z-973ccb`](e0-v2/runs/smoke-ternary-d32-l1-f48-s0-20260930T081747Z-973ccb/notes.md) | smoke, **functional proof, not scientific**                          | completed   |
+| `e0-v2/runs/smoke-ternary-d32-l1-f48-s0-20260930T081826Z-e393da`                                                                            | SIGTERM path test, smoke interrupted on purpose                      | interrupted |
+| `e0-v2/selections/smoke-functional*.json`                                                                                                   | functional proof of `--freeze` / `--final-test` on smoke             | —           |
+| [`e0-v2/campaigns/e0-20261001T074326Z-503df0`](e0-v2/campaigns/e0-20261001T074326Z-503df0/notes.md)                                         | first scientific campaign, package 0.1.0.24                          | stopped     |
+| `e0-v2/runs/e0-20261001T074326Z-503df0-000`                                                                                                 | its only trial, checkpointed at trunk step 455                       | stopped     |
+| `e0-v2/runs/e0-20261001T090514Z-4236fd-000`                                                                                                 | first trial of the current campaign ([STATUS](../STATUS.md))         | partial     |
+| [`e0-lite/pre-v2`](e0-lite/pre-v2/notes.md)                                                                                                 | stopped E0-lite grid; diagnostic, excluded from verdicts, FLP1 blobs | —           |
 
-## Xbox execution evidence
+### Xbox package acceptance
 
-[Current package acceptance](xbox-e0-20261001/notes.md) owns the measured GPU parity,
-throughput, memory, real suspension and recovery results. Earlier evidence remains
-unchanged as a historical record, including failed baselines.
+| Evidence                                                      | Package  | Scope                                                                                     |
+| ------------------------------------------------------------- | -------- | ----------------------------------------------------------------------------------------- |
+| [xbox-e0-20260930](xbox-e0-20260930/notes.md)                 | 0.1.0.11 | fixtures, optimizer, resume, first throughput, zero-row diagnostic                        |
+| [xbox-e0-20260930-kernels](xbox-e0-20260930-kernels/notes.md) | 0.1.0.19 | 52 per-operation cases after kernel fixes                                                 |
+| [xbox-e0-20261001](xbox-e0-20261001/notes.md)                 | 0.1.0.24 | full acceptance, worker, recovery, real suspension, data reproducibility, campaign launch |
+| [xbox-e0-20261001-e01](xbox-e0-20261001-e01/notes.md)         | 0.1.0.28 | E0.1 acceptance, worker, recovery, lifecycle, throughput                                  |
 
-Scientific E0 results remain pending. S1–S10 and the row16/row8log decision are
-accepted; the [roadmap](../experiments-roadmap.md) defines completion gates.
-Campaign reports appear under `e0-v2/campaigns/<campaign_id>/`; the local durable
-manifest and trial logs are under `runs/e0-campaign-20261001/`.
+A dated narrative of these packages is in the [archive](../archive/xbox-e0-history.md).
+Scientific E0 results are pending; the [roadmap](../roadmap.md) defines completion gates.

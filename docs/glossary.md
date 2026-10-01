@@ -1,22 +1,32 @@
 # Glossary
 
-| Termine                        | In una riga                                                               | Owner                                                         |
-| ------------------------------ | ------------------------------------------------------------------------- | ------------------------------------------------------------- |
-| `image_bytes`                  | Byte allocati sull'immagine FAT12, tutto incluso                          | [ADR 0001](adr/0001-floppy-budget.md)                         |
-| Regime sotto il bit            | Meno di 1 bit stoccato per peso unico (o effettivo)                       | [concept](concept.md)                                         |
-| Parametri effettivi            | Parametri del modello espanso in RAM al boot, ricorsione inclusa          | [concept](concept.md)                                         |
-| Core                           | Pesi dei blocchi transformer, esclusi embedding e norme                   | [concept](concept.md)                                         |
-| Core vettoriale                | Core scritto come indici in un codice su blocchi di `v` pesi              | [concept](concept.md)                                         |
-| VQ-seed / trellis / VQ-appreso | I tre decodificatori del core in gara                                     | [concept](concept.md), [R7](research/07-learned-vq-subbit.md) |
-| Byte codificati                | Byte dopo entropy coding, base di ogni confronto                          | [concept](concept.md) P3                                      |
-| Budget in miniatura            | 1/16 e 1/4 di 11 Mbit, dove i bracci saturano su CPU                      | [ADR 0004](adr/0004-miniature-budgets.md)                     |
-| Frontiera scalare              | Miglior ternario/2-bit/int4 dopo ricerca di forma                         | [ADR 0002](adr/0002-adversary-dense-frontier.md)              |
-| Rate loss / MDL                | `NLL + λ·bit(descrizione)`                                                | [R3](research/03-mdl-compression.md)                          |
-| bpb                            | Bit per byte di testo held-out, dal runtime C                             | [R5](research/05-eval-tiny.md)                                |
-| Boot                           | Mount → decodifica/espansione → primo token                               | [ADR 0001](adr/0001-floppy-budget.md)                         |
-| Tronco / cooldown              | Training a LR costante; rami che scendono a LR 0 e terminano a T, 2T, 4T  | [ADR 0005](adr/0005-e0v2-protocol.md)                         |
-| Saturo                         | \|bpb(4T) − bpb(2T)\| < 0.01 sul val                                      | [ADR 0005](adr/0005-e0v2-protocol.md)                         |
-| Parità dei byte                | Ognuno entro ±1% del target e max/min − 1 ≤ 1% sui byte serializzati      | [ADR 0005](adr/0005-e0v2-protocol.md)                         |
-| σ appaiata                     | Deviazione standard delle differenze fra due condizioni sugli stessi seed | [ADR 0005](adr/0005-e0v2-protocol.md)                         |
-| Selezione congelata            | Artefatti scelti sul val, fissati con hash prima del test                 | [ADR 0005](adr/0005-e0v2-protocol.md)                         |
-| FLP2                           | Unico formato del blob; FLP1 (pre-v2) rifiutato                           | [ADR 0006](adr/0006-flp2-only.md)                             |
+One line per term; the owner holds the definition of record.
+
+| Term                             | In one line                                                                    | Owner                                                                     |
+| -------------------------------- | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------- |
+| `image_bytes`                    | Bytes allocated on the FAT12 image, everything included                        | [ADR 0001](adr/0001-floppy-budget.md)                                     |
+| Sub-bit regime                   | Less than 1 stored bit per unique (or effective) weight                        | [concept](concept.md)                                                     |
+| Effective parameters             | Parameters of the model expanded in RAM at boot, recursion included            | [concept](concept.md)                                                     |
+| Core                             | Transformer block weights, excluding embedding and norms                       | [concept](concept.md)                                                     |
+| Vector core                      | Core written as indices into a code over blocks of `v` weights                 | [concept](concept.md)                                                     |
+| VQ-seed / trellis / learned VQ   | The three competing core decoders                                              | [concept](concept.md), [R7](research/07-learned-vq-subbit.md)             |
+| Coded bytes                      | Bytes after entropy coding, the basis of every comparison                      | [concept](concept.md) P3                                                  |
+| Miniature budget                 | 1/16 and 1/4 of 11 Mbit, where all arms saturate                               | [ADR 0004](adr/0004-miniature-budgets.md)                                 |
+| Scalar frontier                  | Best ternary/2-bit/int4 after shape search                                     | [ADR 0002](adr/0002-adversary-dense-frontier.md)                          |
+| Rate loss / MDL                  | `NLL + λ·bits(description)`                                                    | [R3](research/03-mdl-compression.md)                                      |
+| bpb                              | Bits per byte of held-out text, from the C runtime                             | [R5](research/05-eval-tiny.md)                                            |
+| Boot                             | Mount → decode/expand → first token                                            | [ADR 0001](adr/0001-floppy-budget.md)                                     |
+| Trunk / cooldown                 | Constant-LR training; branches decaying to LR 0 and ending at T, 2T, 4T        | [ADR 0005](adr/0005-e0v2-protocol.md)                                     |
+| Saturated                        | \|bpb(4T) − bpb(2T)\| < 0.01 on val                                            | [ADR 0005](adr/0005-e0v2-protocol.md)                                     |
+| Byte parity                      | Each within ±1% of target and max/min − 1 ≤ 1% on serialized bytes             | [ADR 0005](adr/0005-e0v2-protocol.md)                                     |
+| Paired σ                         | Standard deviation of the differences between two conditions on the same seeds | [ADR 0005](adr/0005-e0v2-protocol.md)                                     |
+| Frozen selection                 | Artifacts chosen on val, fixed by hash before the test                         | [ADR 0005](adr/0005-e0v2-protocol.md)                                     |
+| S1–S10                           | The accepted E0 numerical choices                                              | [ADR 0008](adr/0008-e0-numeric-protocol.md)                               |
+| FLP2                             | The only blob format; FLP1 (pre-v2) is rejected                                | [ADR 0006](adr/0006-flp2-only.md)                                         |
+| `row16` / `row8log` / `tensor16` | Scale policies; scientific E0 uses only the first two                          | [ADR 0011](adr/0011-e0-row-scale-selection.md)                            |
+| Python oracle                    | The host PyTorch implementation every native result is checked against         | [ADR 0009](adr/0009-xbox-e0-backend.md)                                   |
+| Xbox backend / package           | The DX12/UWP E0 trainer; a package is one signed, installed build              | [ADR 0009](adr/0009-xbox-e0-backend.md), [runbook](operations/xbox-e0.md) |
+| E0.1                             | Backend generation with GPU-resident tensors, bit-identical to its predecessor | [evidence](evidence/xbox-e0-20261001-e01/notes.md)                        |
+| Acceptance                       | Hardware proof (operations, fixtures, optimizer, resume) a campaign binds to   | [ADR 0010](adr/0010-independent-numerical-gates.md)                       |
+| Campaign                         | Frozen sequential E0 execution (sources, recipes, seeds) with one worker       | [runbook](operations/xbox-e0.md)                                          |
+| Recovery                         | Explicit `--recover`: reconnect or resume a verified checkpoint, never retrain | [runbook](operations/xbox-e0.md)                                          |

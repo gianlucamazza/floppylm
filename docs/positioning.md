@@ -1,19 +1,19 @@
 # Positioning
 
-Owner del confronto con lo stato dell'arte. Le survey complete stanno in [`research/`](research/README.md).
+Owner of the comparison with prior work. Full surveys live in [`research/`](research/README.md).
 
-| Lavoro                       | Cosa fa                                                                | Differenza con FloppyLM                                              |
-| ---------------------------- | ---------------------------------------------------------------------- | -------------------------------------------------------------------- |
-| Quant-Noise                  | LM da zero con PQ, ~1.3 bit/peso, condivisione di layer                | Sopra il bit per peso unico; nessun confronto con codici casuali     |
-| Sign Lock-In (ICML 2026)     | Template di segni low-rank, LM a caratteri da zero a ~0.5–0.7 bit/peso | Non VQ; candidato ibrido per E1b                                     |
-| QTIP                         | Codici trellis calcolati, pari a codebook appresi su LLM               | Post-training a ≥ 2 bit; qui è un braccio favorito del core          |
-| SeedLM                       | Seed LFSR per blocco, post-training, 3–4 bit/peso                      | Qui il codebook da seed è un braccio, da zero e sotto il bit         |
-| AQLM / VPTQ / GPTVQ          | VQ appreso post-training a ~2 bit                                      | Codebook troppo grandi per 11 Mbit; qui codebook condiviso e contato |
-| BTC-LLM / GLVQ               | Codebook appresi a 0.7–1.0 bit, post-training                          | Non da zero, non tiny                                                |
-| Parameter Golf #1110 / #1113 | Ricorsione (1.22 bpb) batte seed + LoRA (1.37) a ~5 MB                 | Motivo della chiusura di v0.1                                        |
-| VBQ (2026)                   | Più grande a meno bit batte più piccolo su TinyStories                 | Regime ≥ 1.8 bit/peso                                                |
-| llama2.c stories260K         | LM denso che sta su un floppy                                          | Nessuna metrica per byte; punto della frontiera E0                   |
-| Hutter Prize / cmix / NNCP   | Decompressore contato nel budget                                       | Stesso principio di accounting                                       |
+| Work                         | What it does                                                          | Difference from FloppyLM                                         |
+| ---------------------------- | --------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| Quant-Noise                  | From-scratch LM with PQ, ~1.3 bits/weight, layer sharing              | Above one bit per unique weight; no comparison with random codes |
+| Sign Lock-In (ICML 2026)     | Low-rank sign templates, from-scratch char LM at ~0.5–0.7 bits/weight | Not VQ; hybrid candidate for E1b                                 |
+| QTIP                         | Computed trellis codes, on par with learned codebooks on LLMs         | Post-training at ≥ 2 bits; here a favoured core arm              |
+| SeedLM                       | Per-block LFSR seeds, post-training, 3–4 bits/weight                  | Here the seed codebook is an arm, from scratch and below one bit |
+| AQLM / VPTQ / GPTVQ          | Post-training learned VQ at ~2 bits                                   | Codebooks too large for 11 Mbit; here a shared, counted codebook |
+| BTC-LLM / GLVQ               | Learned codebooks at 0.7–1.0 bits, post-training                      | Not from scratch, not tiny                                       |
+| Parameter Golf #1110 / #1113 | Recursion (1.22 bpb) beats seed + LoRA (1.37) at ~5 MB                | Reason v0.1 was closed                                           |
+| VBQ (2026)                   | Larger at fewer bits beats smaller on TinyStories                     | Regime ≥ 1.8 bits/weight                                         |
+| llama2.c stories260K         | Dense LM that fits on a floppy                                        | No per-byte metric; a point on the E0 frontier                   |
+| Hutter Prize / cmix / NNCP   | Decompressor counted in the budget                                    | Same accounting principle                                        |
 
-Riferimenti e numeri: [R2](research/02-procedural-weights.md), [R7](research/07-learned-vq-subbit.md),
+References and numbers: [R2](research/02-procedural-weights.md), [R7](research/07-learned-vq-subbit.md),
 [R1](research/01-tiny-lms.md).

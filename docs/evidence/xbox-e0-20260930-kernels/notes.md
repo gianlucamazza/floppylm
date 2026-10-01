@@ -29,3 +29,6 @@ Thresholds were unchanged. Local raw acceptance and benchmark artifacts are in
 These are functional synthetic-corpus results. Scientific E0 and its held-out final
 test have not run; the tensor16/S9 protocol proposal still awaits owner acceptance.
 CodeRabbit skipped review because PR #17 is a draft; its green status is not review.
+
+Later note (2026-10-01): the tensor16/S9 proposal was accepted as
+[ADR 0011](../../adr/0011-e0-row-scale-selection.md).
