@@ -401,11 +401,12 @@ class Portal:
         deadline = time.monotonic() + 300
         acknowledged = False
         progress = time.monotonic()
+        observed_sha = None
         while True:
             if not acknowledged and time.monotonic() >= deadline:
                 raise TimeoutError(
                     f"Xbox acknowledgment timeout: job={job_id}, "
-                    f"expected={expected_sha}, phase=status"
+                    f"expected={expected_sha}, observed={observed_sha}, phase=status"
                 )
             try:
                 report = self.status(job_id)
@@ -433,6 +434,19 @@ class Portal:
                 continue
             transport_failures = 0
             if expected_sha and report.get("job_sha256") != expected_sha:
+                if observed_sha != report.get("job_sha256"):
+                    observed_sha = report.get("job_sha256")
+                    log(
+                        json.dumps(
+                            {
+                                "event": "awaiting_ack",
+                                "job_id": job_id,
+                                "expected_sha256": expected_sha,
+                                "observed_sha256": observed_sha,
+                                "phase": "status",
+                            }
+                        )
+                    )
                 if report["state"] == "failed" or (acknowledged and time.monotonic() >= deadline):
                     raise RuntimeError(
                         f"Xbox status mismatch: expected={expected_sha}, "
