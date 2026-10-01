@@ -18,3 +18,6 @@ The transport crash window has a separate owner-approved decision,
 ADR 0014 (durable Xbox publication), and separate recovery implementation.
 The E0 saturation proposal remains an owner decision; this audit does not restart the campaign
 or alter historical evidence.
+
+Later note (2026-10-01): the proposal is accepted as
+[ADR 0015](../../adr/0015-e0-fixed-data-frontier.md) (option B). This record is unchanged.

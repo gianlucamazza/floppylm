@@ -5,6 +5,7 @@
 `superseded-in-part` — accepted 2026-09-30. The owner accepted roadmap S1–S10 and requested implementation.
 Completes [ADR 0005](0005-e0v2-protocol.md) without changing its scientific thresholds.
 Superseded in part by [ADR 0011](0011-e0-row-scale-selection.md): the tensor16 option in decision 8.
+Superseded in part by [ADR 0015](0015-e0-fixed-data-frontier.md): unsaturated runs may be selected; decision 1 (token base) is unchanged.
 
 ## Context
 
@@ -33,9 +34,11 @@ declare its recipe and search budget before observing scientific results.
 
 ## Consequences
 
-No automatic training beyond 4T. Byte failures and non-saturated candidates are
-diagnostics, not scientific selections. Retry cost is part of the reported search cost.
-The actual token count after step rounding remains recorded alongside requested T.
+No automatic training beyond 4T. Byte failures remain diagnostics, not scientific
+selections. Saturation is recorded; [ADR 0015](0015-e0-fixed-data-frontier.md) allows
+unsaturated, byte-admissible runs into selection. Retry cost is part of the reported
+search cost. The actual token count after step rounding remains recorded alongside
+requested T.
 
 ## Alternatives
 

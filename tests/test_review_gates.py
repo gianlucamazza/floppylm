@@ -115,12 +115,19 @@ def freeze(tmp_path, monkeypatch, summaries, functional=False):
     )
 
 
-@pytest.mark.parametrize("kwargs", [{"smoke": True}, {"verdict": "non saturo"}, {"size": 900}])
+@pytest.mark.parametrize("kwargs", [{"smoke": True}, {"size": 900}])
 def test_scientific_freeze_rejects_ineligible(tmp_path, monkeypatch, kwargs):
     s = fixture_run(tmp_path, "a", **kwargs)
     with pytest.raises(SystemExit):
         freeze(tmp_path, monkeypatch, {"a": s})
     assert not (tmp_path / "evidence/selections/selection.json").exists()
+
+
+def test_scientific_freeze_accepts_unsaturated_byte_ok_runs(tmp_path, monkeypatch):
+    s = fixture_run(tmp_path, "a", verdict="non saturo")
+    assert freeze(tmp_path, monkeypatch, {"a": s}) == 0
+    sel = json.loads((tmp_path / "evidence/selections/selection.json").read_text())
+    assert sel["purpose"] == "scientific"
 
 
 def test_freeze_rejects_pairwise_spread(tmp_path, monkeypatch):

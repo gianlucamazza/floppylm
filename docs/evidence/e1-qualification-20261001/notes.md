@@ -55,3 +55,7 @@ tokenizer/context fairness, actual backend parity and equal tuning/sample budget
 must be fixed by a later accepted scientific protocol. Xbox vector performance
 has not been measured; the console is reserved for E0. E1 science remains gated
 by E0 completion. No F1/F2 verdict follows from these probes.
+
+Later note (2026-10-01): long jobs must not run through `bg` / `background.slice`
+([ADR 0003](../../adr/0003-lab-practices.md) amendment). Reproduce with `python`
+(or `nohup python` and a log under `runs/`), not `/home/gianluca/.local/bin/bg python`.

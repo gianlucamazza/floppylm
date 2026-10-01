@@ -470,8 +470,8 @@ def cmd_freeze(a: argparse.Namespace) -> int:
         if a.functional:
             if not summary["smoke"]:
                 raise SystemExit(f"{r}: functional selections require smoke runs")
-        elif summary["smoke"] or summary["saturation"]["verdict"] != SATURATED:
-            raise SystemExit(f"{r}: scientific selections require saturated, non-smoke runs")
+        elif summary["smoke"]:
+            raise SystemExit(f"{r}: scientific selections require non-smoke runs")
         b = selection_branch(summary, functional=a.functional)
         verified_branch(b)
         size = b["model_bytes"]

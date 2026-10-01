@@ -2,9 +2,10 @@
 
 ## Status
 
-`superseded-in-part` — accepted 2026-09-30, amended 2026-09-30.
+`superseded-in-part` — accepted 2026-09-30, amended 2026-09-30, amended 2026-10-01.
 Superseded in part by [ADR 0005](0005-e0v2-protocol.md): the 20 tokens per parameter rule (Decision §1).
 Superseded in part by [ADR 0009](0009-xbox-e0-backend.md): the CPU-only execution requirement for E0 at 1/16 (Amendment §3, "all of E0 … on CPU"); other budgets are unchanged.
+Superseded in part by [ADR 0015](0015-e0-fixed-data-frontier.md): Decision §1's flat-loss eligibility premise at miniature budgets.
 
 ## Context
 
@@ -41,3 +42,9 @@ a false negative caused by the lab's compute, not by the floppy's bytes.
    (~$5–20 for the E1 grid) is decided by an ADR only if the pilot shows a signal.
 4. Point 2 of the Decision applies to the final verdict; the pilot at 1/16 gives a signal, not a
    verdict.
+
+## Amendment — 2026-10-01
+
+[ADR 0015](0015-e0-fixed-data-frontier.md) keeps the three miniature budgets and the
+equal-token comparison. A flat loss curve is recorded, not required for eligibility.
+Miniature verdicts are a fixed-data frontier with rank stability across T, 2T and 4T.

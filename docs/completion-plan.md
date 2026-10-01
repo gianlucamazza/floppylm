@@ -51,8 +51,9 @@ commit `8b76068` assigned 0012 to repository boundaries; the decision is unchang
 
 Continue in this order:
 
-1. Let the existing E0 worker complete scale/MLP selection, tuning, saturation,
-   actual-byte gates and paired seeds; publish its reserved final test and costs.
+1. Campaign `4236fd` is stopped. New E0 campaigns use [ADR 0015](adr/0015-e0-fixed-data-frontier.md):
+   scale/MLP selection, tuning, recorded saturation, actual-byte gates, rank stability and
+   paired seeds; publish the reserved final test and costs. Launch is a separate, explicit step.
 2. Use E0 results and these functional limits to prepare the scientific E1 ADR:
    full model/container accounting, shape budgets, persistent assignment/checkpoint
    semantics, dead-code policy, tokenizer/context fairness and final-test reservation.

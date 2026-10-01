@@ -131,7 +131,8 @@ artifacts are SHA-256 verified. Transport loss is logged and retried up to five 
 failures without cancelling GPU work. An explicit interrupt writes a cancel marker; real suspension
 publishes a verified checkpoint.
 
-The campaign enforces actual-byte parity and saturation before comparison. It freezes ten selected
+The campaign enforces actual-byte parity and rank stability before comparison; saturation is
+recorded ([ADR 0015](../adr/0015-e0-fixed-data-frontier.md)). It freezes ten selected
 artifact hashes and makes an exclusive durable reservation before opening the held-out test; that
 reservation is never reset automatically. Final reports under
 `docs/evidence/e0-v2/campaigns/<campaign_id>/` include paired statistics, recipes, exclusions,

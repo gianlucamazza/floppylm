@@ -2,8 +2,9 @@
 
 ## Status
 
-`accepted` — accepted 2026-09-30, through approval of the four review corrections.
+`superseded-in-part` — accepted 2026-09-30, through approval of the four review corrections.
 Clarifies [ADR 0005](0005-e0v2-protocol.md): selection and artifact invariants; does not change scientific thresholds.
+Superseded in part by [ADR 0015](0015-e0-fixed-data-frontier.md): scientific freeze no longer requires a saturated verdict.
 
 ## Context
 
@@ -32,3 +33,9 @@ without a purpose remain historical evidence and cannot be evaluated again by th
 
 Automatic requantization would silently change the loaded model. Keeping parity as an optional
 command would leave the scientific selection boundary unenforced. Both are rejected.
+
+## Amendment — 2026-10-01
+
+Scientific freeze still requires completed, non-smoke runs with equal byte targets and
+artifact-verified individual and pairwise parity. The saturated-verdict requirement is
+removed by [ADR 0015](0015-e0-fixed-data-frontier.md). Functional freeze is unchanged.
