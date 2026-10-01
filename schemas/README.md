@@ -19,8 +19,8 @@ descriptor, tensor). Schemas reference each other by `$id`; load all of them int
 
 - A schema describes what the producers write today, including their failure variants.
   Changing a producer without updating the schema fails `tests/test_contracts.py`.
-- A breaking change adds a new `vN` schema and file; a published `v1` only gains corrections
-  that make it match its producers.
+- A published `vN` may only gain optional fields, added here before any producer emits them,
+  and corrections that make it match its producers. Removing or redefining a field needs `vN+1`.
 - Golden instances live in `tests/fixtures/contracts/{valid,invalid}/<schema>--<case>.json`
   and are regenerated with `python scripts/contract_fixtures.py`. Valid ones come from the real
   producers and measured native evidence; each invalid one breaks exactly one rule.

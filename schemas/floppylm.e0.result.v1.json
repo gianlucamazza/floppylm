@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/gianlucamazza/floppylm/schemas/floppylm.e0.result.v1.json",
   "title": "E0 job status/result (native backend to host)",
-  "description": "results/<job_id>/status.json from native run_job. A job that fails before run_job writes its first status (App worker) carries only job_id, state=failed and error. The host's result.json may add execution_segments, one full report per resumed segment.",
+  "description": "results/<job_id>/status.json from native run_job. A job that fails before run_job writes its first status (App worker) carries only job_id, state=failed and error. The host's result.json may add execution_segments, one full report per resumed segment. Producers from xbox-gpu-training PR #20 onward also publish schedule and phase, including status updates during cooldowns.",
   "$defs": {
     "branch": {
       "type": "object",
@@ -133,6 +133,22 @@
         },
         "error": {
           "type": "string"
+        },
+        "schedule": {
+          "$ref": "#/$defs/schedule"
+        },
+        "phase": {
+          "enum": [
+            "trunk",
+            "cooldown"
+          ]
+        },
+        "cooldown_end": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "cooldown_step": {
+          "$ref": "floppylm.e0.common.v1.json#/$defs/count"
         }
       },
       "allOf": [
@@ -165,6 +181,52 @@
               "error"
             ]
           }
+        },
+        {
+          "if": {
+            "properties": {
+              "phase": {
+                "const": "cooldown"
+              }
+            },
+            "required": [
+              "phase"
+            ]
+          },
+          "then": {
+            "required": [
+              "cooldown_end",
+              "cooldown_step"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "phase": {
+                "const": "trunk"
+              }
+            },
+            "required": [
+              "phase"
+            ]
+          },
+          "then": {
+            "not": {
+              "anyOf": [
+                {
+                  "required": [
+                    "cooldown_end"
+                  ]
+                },
+                {
+                  "required": [
+                    "cooldown_step"
+                  ]
+                }
+              ]
+            }
+          }
         }
       ]
     },
@@ -175,6 +237,49 @@
         }
       ],
       "unevaluatedProperties": false
+    },
+    "schedule": {
+      "description": "WSD schedule as executed by run_job; steps are optimizer steps.",
+      "type": "object",
+      "required": [
+        "T",
+        "warmup",
+        "tokens_per_step",
+        "ends",
+        "cooldown_starts"
+      ],
+      "properties": {
+        "T": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "warmup": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "tokens_per_step": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "ends": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "minItems": 3,
+          "maxItems": 3
+        },
+        "cooldown_starts": {
+          "type": "array",
+          "items": {
+            "$ref": "floppylm.e0.common.v1.json#/$defs/count"
+          },
+          "minItems": 3,
+          "maxItems": 3
+        }
+      },
+      "additionalProperties": false
     }
   },
   "oneOf": [

@@ -67,6 +67,20 @@ def instances() -> dict[str, dict]:
         "floppylm.e0.result.v1/completed": recovery[0],
         "floppylm.e0.result.v1/resumed": recovery[1],
         "floppylm.e0.result.v1/failed": failed,
+        # Optional fields first emitted by xbox-gpu-training PR #20; no measured instance yet.
+        "floppylm.e0.result.v1/cooldown-phase": {
+            **running,
+            "schedule": {
+                "T": 879,
+                "warmup": 17,
+                "tokens_per_step": 8192,
+                "ends": [879, 1758, 3516],
+                "cooldown_starts": [792, 1583, 3165],
+            },
+            "phase": "cooldown",
+            "cooldown_end": 879,
+            "cooldown_step": 800,
+        },
         "floppylm.e0.result.v1/early-failure": {
             "job_id": "tiny",
             "state": "failed",
@@ -110,6 +124,15 @@ def instances() -> dict[str, dict]:
         ),
         "floppylm.e0.result.v1/failed-without-error": broken(
             "floppylm.e0.result.v1/interrupted", lambda r: r.update(state="failed")
+        ),
+        "floppylm.e0.result.v1/cooldown-without-step": broken(
+            "floppylm.e0.result.v1/cooldown-phase", lambda r: r.pop("cooldown_step")
+        ),
+        "floppylm.e0.result.v1/trunk-with-cooldown-end": broken(
+            "floppylm.e0.result.v1/cooldown-phase", lambda r: r.update(phase="trunk")
+        ),
+        "floppylm.e0.result.v1/short-schedule": broken(
+            "floppylm.e0.result.v1/cooldown-phase", lambda r: r["schedule"]["ends"].pop()
         ),
         "floppylm.e0.result.v1/unknown-key": broken(
             "floppylm.e0.result.v1/completed", lambda r: r.update(val_bpb=1.0)
