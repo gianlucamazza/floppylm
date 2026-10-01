@@ -45,3 +45,4 @@ It is not a brainstorm, a survey or a TODO.
 | [E0 numerical validation refinement](proposals/e0-validation-proposal.md) | accepted → ADR 0010 |
 | [E0 zero-row gate correction](proposals/e0-zero-row-proposal.md)          | accepted → ADR 0011 |
 | [Isolated E1 functional qualification](proposals/e1-qualification-proposal.md) | accepted → ADR 0013 |
+| [E0 saturation gate at 1/16](proposals/e0-saturation-proposal.md) | **proposed**, owner decision pending |
