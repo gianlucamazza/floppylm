@@ -69,7 +69,7 @@ def test_interrupted_trial_is_not_silently_retrained(tmp_path, monkeypatch, camp
 
     monkeypatch.setattr(campaign_module, "_summary", interrupted)
     process = Mock()
-    monkeypatch.setattr(campaign_module.subprocess, "run", process)
+    monkeypatch.setattr(campaign, "run_command", process)
     with pytest.raises(SystemExit, match="interrupted"):
         campaign.execute("fixed", ["unused"])
     process.assert_not_called()
@@ -98,7 +98,7 @@ def test_campaign_recovery_uses_resume_instead_of_fresh_training(
         assert "--resume" in cmd and "fixed" in cmd and "--run" not in cmd
         path.write_text(json.dumps(completed))
 
-    monkeypatch.setattr(campaign_module.subprocess, "run", process)
+    monkeypatch.setattr(campaign, "run_command", process)
     monkeypatch.setattr(campaign_module, "selection_branch", lambda _: {})
     monkeypatch.setattr(campaign_module, "verified_branch", lambda _: {})
     assert campaign.execute("fixed", ["fresh-training"]) == completed

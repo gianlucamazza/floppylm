@@ -183,7 +183,27 @@ def instances(binary: Path) -> dict[str, dict]:
     running = read(EVIDENCE / "xbox-e0-20261001/campaign-launch.json")["status"]
     device = read(e01 / "acceptance.json")["device"]
 
+    # Produced by the same WorkerRuntime / claim code used by the console app.
+    runtime_binary = binary.parent / "xgpu_e0_runtime_lifecycle_test"
+    native_source = next(
+        parent for parent in binary.parents if (parent / "contracts/floppylm/PIN.json").is_file()
+    )
+    with tempfile.TemporaryDirectory() as temp:
+        subprocess.run(
+            [
+                str(runtime_binary),
+                str(native_source),
+                temp,
+            ],
+            check=True,
+            capture_output=True,
+        )
+        worker = read(Path(temp) / "worker.json")
+        claim = read(Path(temp) / "claim.json")
+
     valid = {
+        "floppylm.worker.v1/native": worker,
+        "floppylm.claim.v1/native": claim,
         "floppylm.e0.job.v1/prepared": native["tiny"],
         "floppylm.e0.job.v1/submitted": submitted,
         "floppylm.e0.job.v1/stop-after": read(e01 / "resume-job-submitted.json")["job"],
@@ -247,6 +267,12 @@ def instances(binary: Path) -> dict[str, dict]:
         return base
 
     invalid = {
+        "floppylm.worker.v1/no-identity": broken(
+            "floppylm.worker.v1/native", lambda w: w.pop("worker_id")
+        ),
+        "floppylm.claim.v1/bad-sha": broken(
+            "floppylm.claim.v1/native", lambda c: c.update(job_sha256="bad")
+        ),
         "floppylm.e0.job.v1/two-branches": broken(
             "floppylm.e0.job.v1/prepared", lambda j: j["spec"].update(branches=2)
         ),
