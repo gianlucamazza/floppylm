@@ -34,6 +34,8 @@ Bound proofs: `runs/xbox-acceptance-20261001-ci36839565773/acceptance.json` and
   - rename the local working directory to `floppylm` (the running campaign holds absolute paths to
     the current one), then repair the `research/e1-qualification` worktree with `git worktree repair`
     and move the Claude project memory to the new path;
+  - merge branch `chore/generic-config` (generic Device Portal settings) and copy the console
+    credentials to `~/.config/floppylm/xbox.env` before the next Xbox job;
   - merge the code of branch `research/e1-qualification` (its docs are already on `main`; keep `main`'s versions on conflict).
 
 Status vocabulary: **specified** (written, not executed), **stub**, **running**, **stopped** (halted
