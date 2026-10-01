@@ -387,3 +387,22 @@ def test_scientific_resume_refuses_changed_implementation_before_training(tmp_pa
     monkeypatch.setattr(e0.runlog, "sources", lambda _: {"files": {"engine.py": "changed"}})
     with pytest.raises(RuntimeError, match="frozen trial sources"):
         e0.cmd_resume(argparse.Namespace(resume="frozen"))
+
+
+def test_final_test_rejects_invalid_flp2_before_protected_data(tmp_path, monkeypatch):
+    selections = tmp_path / "selections"
+    selections.mkdir()
+    artifact = tmp_path / "invalid.flp"
+    artifact.write_bytes(b"invalid FLP2")
+    selection = {
+        "purpose": "functional",
+        "items": [
+            {"run_id": "a", "artifact": str(artifact), "sha256": e0.runlog.sha256_file(artifact)}
+        ],
+    }
+    (selections / "a.json").write_text(json.dumps(selection))
+    monkeypatch.setattr(e0, "EVIDENCE", tmp_path)
+    monkeypatch.setattr(e0.data_mod, "load", lambda *a: pytest.fail("protected data was read"))
+    with pytest.raises(FormatError):
+        e0.cmd_final_test(argparse.Namespace(final_test="a"))
+    assert not (selections / "a.test.reservation.json").exists()

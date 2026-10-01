@@ -513,7 +513,7 @@ def cmd_final_test(a: argparse.Namespace) -> int:
     if reservation.exists():
         raise SystemExit("the final test runs once per selection: reservation exists")
     # Refuse invalid input before reserving or opening the protected test split.
-    blobs = []
+    models = []
     frozen_test_hashes = set()
     for item in sel["items"]:
         blob = (ROOT / item["artifact"]).read_bytes()
@@ -524,9 +524,9 @@ def cmd_final_test(a: argparse.Namespace) -> int:
         if sel["purpose"] == "scientific":
             summary = _summary(item["run_id"])
             frozen_test_hashes.add(summary["data_sha256"]["test"])
-        blobs.append(blob)
+        models.append(unpack(blob))
     if sel["purpose"] == "scientific":
-        if not blobs or len(frozen_test_hashes) != 1:
+        if not models or len(frozen_test_hashes) != 1:
             raise SystemExit("scientific selection needs one frozen test corpus")
         if runlog.sha256_file(DATA / "test.bin") != next(iter(frozen_test_hashes)):
             raise SystemExit("test corpus differs from frozen trial data")
@@ -539,8 +539,8 @@ def cmd_final_test(a: argparse.Namespace) -> int:
     try:
         test = data_mod.load(DATA, "test")
         results = []
-        for it, blob in zip(sel["items"], blobs, strict=True):
-            bpb, n = sliding_bpb(unpack(blob), test, TEST_BYTES)
+        for it, model in zip(sel["items"], models, strict=True):
+            bpb, n = sliding_bpb(model, test, TEST_BYTES)
             results.append({**it, "test_bpb": bpb, "test_scored_bytes": n})
         runlog.write_json(
             out,
