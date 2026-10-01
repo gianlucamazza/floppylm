@@ -32,17 +32,20 @@ Prepared and tested on branches, to apply in this order once it stops:
 
 1. Rename the local working directory to `floppylm` (the running campaign holds absolute paths
    to the current one); then `git worktree repair` for the `research/e1-qualification` and
-   `chore/generic-config` worktrees and move the Claude project memory to the new path.
-2. Merge `chore/generic-config`: Device Portal settings from the environment or
-   `~/.config/floppylm/xbox.env` and a pinned certificate (`XBOX_CERT_SHA256`, see the
-   runbook) instead of unverified TLS. Write that file before the next Xbox job.
+   `chore/xbox-package` worktrees and move the Claude project memory to the new path.
+2. Merge `chore/xbox-package`, which completes the [ADR 0012](adr/0012-repo-boundaries.md)
+   follow-ups together with the published [`schemas/`](../schemas/README.md) (checked by
+   xbox-gpu-training PR #22):
+   - Device Portal settings from the environment or `~/.config/floppylm/xbox.env`, with a pinned
+     certificate (`XBOX_CERT_SHA256`, see the runbook) instead of unverified TLS. Write that file
+     before the next Xbox job;
+   - Xbox execution moved to the `floppylm_xbox` package; the core no longer depends on it and the
+     frozen-source list covers it.
 3. In `experiments/e0_v2.py`: English `notes_md` template; drop the "host `bg` wrapper" docstring
    line (jobs run under `nohup` outside `background.slice`).
 4. Merge the code of `research/e1-qualification` (its docs are already on `main`; keep `main`'s
    versions on conflict).
-5. [ADR 0012](adr/0012-repo-boundaries.md) follow-ups: contracts are published in
-   [`schemas/`](../schemas/README.md) and checked by xbox-gpu-training PR #22; moving Xbox
-   operations out of the core package remains.
+5. Regenerate `tests/fixtures/contracts/` and rerun the suite after the merges.
 6. Install the package from xbox-gpu-training PR #20 (on-console dashboard; `run_job` also
    publishes schedule and phase), rerun acceptance and the bit-identity comparison, record the
    evidence, then mark the PR ready.
