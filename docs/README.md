@@ -7,7 +7,7 @@ which fact** and where to start.
 
 **Newcomer (15 minutes)**
 
-1. [vision](vision.md): what success means.
+1. [architecture](architecture.md): what is stored, reconstructed and executed; then [vision](vision.md) for success.
 2. [concept](concept.md): the thesis and what kills it (F0–F4).
 3. [positioning](positioning.md): what already exists.
 4. [ADR 0001](adr/0001-floppy-budget.md): what counts toward the floppy.
@@ -53,3 +53,9 @@ Update the owner; every other document links to it instead of copying.
 5. **Evidence is frozen.** Only translation and dated "Later note" pointers are allowed.
 6. **English** for all docs and code comments; kebab-case file names; no links outside the repository
    except to public URLs.
+
+## Excellence review
+
+[Excellence plan](excellence-plan.md): prioritized findings and acceptance criteria.
+[Paper scaffold](paper-outline.md): evidence required for a publication draft.
+These supplement the owners above and do not change accepted experiment gates.
