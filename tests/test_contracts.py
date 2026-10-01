@@ -1,6 +1,7 @@
 """floppylm.*.v1 JSON Schemas against golden fixtures, measured evidence and live producers."""
 
 import json
+import sys
 from pathlib import Path
 
 import pytest
@@ -68,16 +69,27 @@ def native_reports(value, schema):
             yield from native_reports(child, schema)
 
 
-@pytest.mark.parametrize("schema", ["floppylm.e0.result.v1", "floppylm.device.v1"])
-def test_every_measured_native_report_matches_the_contract(schema):
+# Contracts whose instances carry their own name in a "schema" field (in any branch).
+SELF_NAMED = sorted(p.stem for p in SCHEMA_FILES if f'"const": "{p.stem}"' in p.read_text())
+
+
+@pytest.mark.parametrize("schema", SELF_NAMED)
+def test_every_evidence_object_naming_a_contract_matches_it(schema):
     check = validator(schema)
-    found = 0
     for path in EVIDENCE.rglob("*.json"):
         for report in native_reports(load(path), schema):
-            # Execution segments are validated as part of their enclosing report.
+            # Nested reports (execution segments, resume reports) are validated in place too.
             check.validate(report)
-            found += 1
-    assert found > 0
+
+
+def test_evidence_covers_the_native_reports():
+    found = {
+        name
+        for path in EVIDENCE.rglob("*.json")
+        for name in SELF_NAMED
+        if any(True for _ in native_reports(load(path), name))
+    }
+    assert {"floppylm.e0.result.v1", "floppylm.device.v1", "floppylm.xbox.acceptance.v1"} <= found
 
 
 def test_live_producers_match_the_contract(tmp_path):
@@ -90,3 +102,27 @@ def test_live_producers_match_the_contract(tmp_path):
     validator("floppylm.e0.initialization.v1").validate(load(tmp_path / "job/initial.json"))
     weights = {"schema": "floppylm.e0.weights.v1", "config": model.cfg.to_dict()}
     validator("floppylm.e0.weights.v1").validate(weights | {"tensors": tensors(model)})
+
+
+def test_published_constants_match_the_code():
+    sys.path.insert(0, str(ROOT / "scripts"))
+    from contract_fixtures import CONSTANTS, constants
+
+    assert load(CONSTANTS) == json.loads(json.dumps(constants()))
+    validator("floppylm.e0.constants.v1").validate(load(CONSTANTS))
+
+
+def test_grad_clip_eps_is_torch_behaviour():
+    import torch
+
+    c = load(SCHEMAS / "values/floppylm.e0.constants.v1.json")["optimizer"]
+    p = torch.nn.Parameter(torch.zeros(1))
+    p.grad = torch.tensor([2.0])
+    torch.nn.utils.clip_grad_norm_([p], c["grad_clip"])
+
+    def clipped(eps: float) -> float:
+        norm = torch.tensor(2.0)
+        return (torch.tensor(2.0) * (c["grad_clip"] / (norm + eps))).item()
+
+    assert p.grad.item() == clipped(c["grad_clip_eps"])
+    assert p.grad.item() != clipped(10 * c["grad_clip_eps"])

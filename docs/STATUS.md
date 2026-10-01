@@ -28,8 +28,9 @@ Done since the stop: Xbox execution moved to `floppylm_xbox` with generic Device
 and a pinned certificate (`~/.config/floppylm/xbox.env`, see the [runbook](operations/xbox-e0.md));
 English run notes; no `bg` instruction left in the harness; E1 qualification code merged.
 
-1. Publish the remaining interface contracts (checkpoint, fixture, kernels, optimizer, acceptance,
-   constants, inbox protocol, device capabilities) and have xbox-gpu-training consume them.
+1. Have xbox-gpu-training consume the full contract set ([schemas](../schemas/README.md), [inbox
+   protocol](contracts/inbox-protocol.md), constants, device capabilities): re-pin PR #22, constants
+   and capabilities in PR #20.
 2. Install the package from xbox-gpu-training PR #20 (on-console dashboard; `run_job` also
    publishes schedule and phase), rerun acceptance and the bit-identity comparison, record the
    evidence, then mark the PR ready.
