@@ -4,7 +4,7 @@
  "commit": "6a124021d7ae450c5e12056bd70503ed9298f9bd",
  "created": "2026-10-01T07:43:26+00:00",
  "decisions": {},
- "error": "CalledProcessError(130, ['/usr/sbin/python', '-u', '/home/gianluca/Workspace/experiments/floppy_4mb/experiments/e0_v2.py', '--run-id', 'e0-20261001T074326Z-503df0-000', '--backend', 'xbox', '--xbox-acceptance', '/home/gianluca/Workspace/experiments/floppy_4mb/runs/xbox-acceptance-20261001-ci36792707081/acceptance.json', '--threads', '2', '--run', '--d', '96', '--layers', '3', '--d-ff', '391', '--fmt', 'ternary', '--mlp', 'gelu', '--scale-policy', 'row16', '--delta', '0.5', '--ctx', '256', '--seed', '0', '--batch', '32', '--lr', '0.003', '--wd', '0.1'])",
+ "error": "CalledProcessError(130, ['/usr/sbin/python', '-u', 'experiments/e0_v2.py', '--run-id', 'e0-20261001T074326Z-503df0-000', '--backend', 'xbox', '--xbox-acceptance', 'runs/xbox-acceptance-20261001-ci36792707081/acceptance.json', '--threads', '2', '--run', '--d', '96', '--layers', '3', '--d-ff', '391', '--fmt', 'ternary', '--mlp', 'gelu', '--scale-policy', 'row16', '--delta', '0.5', '--ctx', '256', '--seed', '0', '--batch', '32', '--lr', '0.003', '--wd', '0.1'])",
  "id": "e0-20261001T074326Z-503df0",
  "package": "GianlucaMazza.XgpuE0_0.1.0.24_x64__g0p5dcfz4t9z4",
  "phase": "neutral-scale",

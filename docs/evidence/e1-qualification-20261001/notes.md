@@ -42,7 +42,7 @@ reproduced with the committed runner and frozen train hash:
 
 ```bash
 /home/gianluca/.local/bin/bg python scripts/e1_qualify.py \
-  --train /home/gianluca/Workspace/experiments/floppy_4mb/data/tinystories/train.bin \
+  --train data/tinystories/train.bin \
   --train-sha256 8745f0d0f0c2ede79305e35393f90b35ff15c91fa1d85abed2acafdf4046e092 \
   --out runs/e1-functional-new
 ```

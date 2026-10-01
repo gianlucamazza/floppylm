@@ -2,6 +2,7 @@
 
 This directory owns the **numbers**. A claim that something "works" without a file here is theatre.
 Records are frozen: they may only be translated or receive a dated "Later note" pointer at the end.
+Host-absolute paths inside records are normalized to repository-relative paths.
 
 ## Layout
 

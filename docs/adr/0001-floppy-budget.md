@@ -6,7 +6,7 @@
 
 ## Context
 
-The name `floppy_4mb` is symbolic: the target is a real 3.5" HD floppy,
+The target is a real 3.5" HD floppy,
 2880 sectors of 512 B = 1 474 560 B. Without a counting rule written before E0, every
 comparison can be gamed (tokenizer outside the budget, "system" runtime, dynamic libraries).
 
@@ -37,5 +37,5 @@ leaves ~264 KB free.
 
 ## Amendment — 2026-10-01 (project name)
 
-The project and repository are named **floppylm**; the former working name `floppy_4mb` in the
-Context above is historical. The budget decision is unchanged.
+The project and repository are named **floppylm**; the Context no longer refers to the former
+working name. The budget decision is unchanged.
