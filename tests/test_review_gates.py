@@ -367,3 +367,23 @@ def test_final_test_rejects_changed_scientific_corpus_before_reservation(tmp_pat
     with pytest.raises(SystemExit, match="test corpus differs"):
         e0.cmd_final_test(argparse.Namespace(final_test="a"))
     assert not (selections / "a.test.reservation.json").exists()
+
+
+def test_scientific_resume_refuses_changed_implementation_before_training(tmp_path, monkeypatch):
+    run = tmp_path / "runs/frozen"
+    run.mkdir(parents=True)
+    (run / "xbox").mkdir()
+    (run / "xbox/submitted.json").write_text("{}")
+    (run / "manifest.json").write_text(
+        json.dumps(
+            {"backend": "xbox", "smoke": False, "sources": {"files": {"engine.py": "frozen"}}}
+        )
+    )
+    evidence = tmp_path / "evidence/runs/frozen"
+    evidence.mkdir(parents=True)
+    (evidence / "summary.json").write_text('{"status": "interrupted"}')
+    monkeypatch.setattr(e0, "RUNS", tmp_path / "runs")
+    monkeypatch.setattr(e0, "EVIDENCE", tmp_path / "evidence")
+    monkeypatch.setattr(e0.runlog, "sources", lambda _: {"files": {"engine.py": "changed"}})
+    with pytest.raises(RuntimeError, match="frozen trial sources"):
+        e0.cmd_resume(argparse.Namespace(resume="frozen"))
