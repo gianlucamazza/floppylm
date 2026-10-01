@@ -75,7 +75,8 @@ This synthetic corpus is a throughput diagnostic, not language-model quality.
 A separate mixed zero/nonzero-row gate exposed a pre-existing incompatibility
 between tensor16 and S9. Scientific submission now checks S9 independently from
 Python/native parity. The proposed correction is in
-[e0-zero-row-proposal.md](e0-zero-row-proposal.md), awaiting explicit acceptance.
+[e0-zero-row-proposal.md](e0-zero-row-proposal.md); the accepted decision is
+[ADR 0011](adr/0011-e0-row-scale-selection.md).
 
 ## Current kernel validation
 
@@ -104,12 +105,13 @@ The new representative synthetic trial completed at 959.012 token/s,
 
 ADR 0011 records the owner's exclusion of tensor16 from scientific E0. The
 campaign compares row16 and row8log; the codec diagnostic remains available.
-Use the same installed package `0.1.0.19` and its acceptance/benchmark evidence.
+Use installed package `0.1.0.24` and its acceptance/benchmark evidence.
+See [current execution acceptance](evidence/xbox-e0-20261001/notes.md).
 
 ```bash
 python experiments/e0_campaign.py --out runs/e0-campaign-UNIQUE \
-  --acceptance runs/xbox-acceptance-20260930-ci36751689355/acceptance.json \
-  --benchmark runs/xbox-benchmark-20260930-ci36751689355/summary.json
+  --acceptance runs/xbox-acceptance-20261001-ci36792707081/acceptance.json \
+  --benchmark runs/xbox-benchmark-20261001-ci36792707081/summary.json
 python experiments/e0_v2.py --resume RUN_ID --xbox-acceptance ACCEPTANCE_JSON
 # Reopen the campaign with --recover to recover existing bound trials.
 ```

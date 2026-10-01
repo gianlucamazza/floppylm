@@ -42,6 +42,8 @@ src/floppylm/train.py     WSD con tronco e cooldown, checkpoint, valutazione sco
 src/floppylm/parity.py    ammissibilità sui byte serializzati, σ appaiata
 src/floppylm/runlog.py    id univoci, directory esclusive, scritture atomiche, stato, manifest
 src/floppylm/data.py      TinyStoriesV2: dedup esatta, split per hash, manifest, riproducibilità
-experiments/e0_v2.py      --plan / --run / --grid / --parity / --freeze / --final-test / --verify-data
+experiments/e0_v2.py      --plan / --run / --resume / --grid / --parity / --freeze / --final-test / --verify-data
+experiments/e0_campaign.py sequential frozen Xbox E0 campaign, explicit --recover
+src/floppylm/xbox_portal.py verified assets, submission binding, transport and recovery
 tests/                    regressioni di tutti i moduli, fixture FLP1 per il test di rifiuto
 ```

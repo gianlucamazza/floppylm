@@ -27,5 +27,13 @@ Le nuove selezioni dichiarano `purpose: scientific | functional`; gli smoke rich
 | `e0-v2/selections/smoke-functional*.json`                                                                                                   | prova funzionale di `--freeze` / `--final-test` sullo smoke          | —           |
 | [`e0-lite/pre-v2`](e0-lite/pre-v2/notes.md)                                                                                                 | griglia E0-lite fermata; diagnostica esclusa dai verdetti, blob FLP1 | —           |
 
-Nessun risultato scientifico E0 v2: la campagna non è partita (scelte S1–S10 da approvare,
-[roadmap](../experiments-roadmap.md#e0-v2--scelte-da-approvare)).
+## Xbox execution evidence
+
+[Current package acceptance](xbox-e0-20261001/notes.md) owns the measured GPU parity,
+throughput, memory, real suspension and recovery results. Earlier evidence remains
+unchanged as a historical record, including failed baselines.
+
+Scientific E0 results remain pending. S1–S10 and the row16/row8log decision are
+accepted; the [roadmap](../experiments-roadmap.md) defines completion gates.
+Campaign reports appear under `e0-v2/campaigns/<campaign_id>/`; the local durable
+manifest and trial logs are under `runs/e0-campaign-20261001/`.

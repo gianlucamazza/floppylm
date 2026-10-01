@@ -1,7 +1,8 @@
 # Experiments roadmap
 
 Owner delle definizioni E0–E4. Non possiede i risultati ([`evidence/`](evidence/README.md)).
-Stato: E0 v2 **stub → codice pronto, campagna non avviata**; tutti gli altri E\* **specified** (2026-09-30). Tesi: [concept v0.2](concept.md).
+Status (2026-10-01): E0 v2 software and Series S functional acceptance are **measured**;
+scientific campaign completion is pending. E1–E4 remain **specified** and gated by E0. Tesi: [concept v0.2](concept.md).
 
 Regole comuni ([ADR 0002](adr/0002-adversary-dense-frontier.md), [ADR 0003](adr/0003-lab-practices.md),
 [ADR 0004](adr/0004-miniature-budgets.md)): budget 1/16, 1/4, 1× di 11 Mbit; in miniatura contano
@@ -12,12 +13,14 @@ gate appaiato > max(0.02 bpb, 2σ). Se F1 scatta, E2–E4 sono _won't run_.
 
 | #   | Passo                                                                     | Dove      | Costo stimato     |
 | --- | ------------------------------------------------------------------------- | --------- | ----------------- |
-| 1   | E0 v2: codice e smoke (fatto), campagna a–e dopo accettazione hardware | Xbox GPU       | ore–giorni di run |
-| 2   | σ appaiata e congelamento dell'avversario (passo e)                       | CPU       | 5 seed            |
+| 1   | E0 v2: codice e smoke (fatto), campagna a–e dopo accettazione hardware | Xbox GPU       | 55–56 sequential runs; weeks |
+| 2   | σ appaiata e congelamento dell'avversario (passo e)                       | Xbox GPU + host       | 5 seed            |
 | 3   | E1 pilota a 1/16, K=1                                                     | CPU       | 1–2 giorni di run |
 | 4   | Decisione: ADR GPU per 1/4 e 1×, oppure stop                              | —         | —                 |
 | 5   | E1a ricorsione, E1 a 1/4, E1b trellis/segni                               | GPU       | ~$5–20            |
 | 6   | E2 → E3 → E4                                                              | GPU + CPU | —                 |
+
+<a id="e0-v2--scelte-da-approvare"></a>
 
 ## E0 v2 — Accepted numerical choices
 
@@ -63,7 +66,24 @@ E0-lite pre-v2 è diagnostica ([pre-v2](evidence/e0-lite/pre-v2/notes.md)).
   `train()` viene rifiutato; modifiche dirette a configurazione o parametri vengono rilevate
   prima del risalvataggio. Per riprendere il training usare un checkpoint del tronco.
 
-Campaign: hardware accepted; scale selection follows ADR 0011.
+Campaign: hardware accepted on package 0.1.0.24; scale selection follows ADR 0011.
+The current [functional evidence](evidence/xbox-e0-20261001/notes.md) includes real
+suspension, exact runner recovery and a representative throughput measurement.
+The executable campaign freezes source hashes, recipes, acceptance and benchmark
+before the first scientific trial. See [execution and recovery](xbox-e0.md#scientific-execution-and-recovery-2026-10-01).
+
+Completion order:
+
+1. Run scale/MLP selection, tuning, solver grids and five paired seeds sequentially.
+2. Enforce saturation and actual-byte gates; allow only the preregistered byte repair.
+3. Freeze ten selected artifact hashes, reserve final test once, then publish paired
+   statistics, costs, exclusions and limitations from the generated campaign report.
+4. Review E0's result before specifying and accepting any structural E1 decision.
+   The 1/4 tokenizer/embedding issue remains an explicit later ADR gate.
+
+The representative short run extrapolates to about nine hours per original trial,
+excluding transfer and evaluation. This is an estimate, not a duration limit.
+No final scientific result is available yet.
 
 a. Measure sustained Xbox GPU throughput, transfers and peak memory before scientific runs.
 b. A/B neutri a pari byte, ternario, 2 seed: politica delle scale; GELU vs SwiGLU vs ReLU².
