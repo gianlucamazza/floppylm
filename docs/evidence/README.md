@@ -57,7 +57,7 @@ until host retrieval and evaluation complete.
 [e1-qualification-20261001](e1-qualification-20261001/notes.md): CPU scalar profiling, BPE512
 round trips, vector storage/reconstruction probes and deterministic partial-quantization canaries
 under [ADR 0013](../adr/0013-e1-functional-qualification.md). It is neither scientific E1 nor Xbox
-vector acceptance; the producing code is on branch `research/e1-qualification`.
+vector acceptance; the producing code is `scripts/e1_qualify.py` on `main`.
 
 A dated narrative of these packages is in the [archive](../archive/xbox-e0-history.md).
 Scientific E0 results are pending; the [roadmap](../roadmap.md) defines completion gates.

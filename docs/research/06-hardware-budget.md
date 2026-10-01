@@ -123,3 +123,7 @@ Decode-like inference (chain of fp32 matvecs, batch 1, one token):
 - **E4** (CPU): real FAT12 image + boot from a clean host, end-to-end measurement of expansion
   time and tok/s.
 - Before E0: a 30-min `bg` run at d=256 to pin the real sustained/burst factor.
+
+Later note (2026-10-01): the `bg` instructions above (overnight rate, `bg` nights, 30-min
+pin) are superseded by [ADR 0003](../adr/0003-lab-practices.md). Reproduce with
+`nohup python` and a log under `runs/`. The 2026-09-30 estimates are unchanged.
