@@ -7,7 +7,7 @@ frontiers; it does not trigger an alternative scalar-floppy product.
 | Stage | Required result | Current status |
 | --- | --- | --- |
 | E0 | Complete scalar campaign, paired statistics, one reserved final test | E0.1 running; earlier 0.1.0.24 campaign intentionally stopped |
-| E1 qualification | Vector/BPE oracles, storage feasibility, CPU profile, later Xbox canary | [ADR 0012 proposal](e1-qualification-proposal.md); CPU/scalar diagnostics measured |
+| E1 qualification | Vector/BPE oracles, storage feasibility, CPU profile, later Xbox canary | [ADR 0013 accepted](adr/0013-e1-functional-qualification.md); CPU functional qualification measured; Xbox vector qualification pending |
 | E1 protocol | Accepted format, tokenizer/context, recipes, byte parity, backend and reservation | Await qualification results; no scientific E1 authorization yet |
 | E1 pilot | 1/16 scalar/vector comparison with paired seeds | Gated by E0 and E1 protocol |
 | E1a/E1/E1b | Recursion selection, 1/4 confirmation, trellis/sign hybrid | Gated by pilot and respective preregistered protocols |
@@ -37,3 +37,30 @@ installed. Never recover a deliberately retired campaign into a replacement pack
 - Operational failure, unsaturated training and invalid byte parity do not prove
   the vector hypothesis false; preserve and diagnose them separately.
 - New structural choices remain proposals until accepted; accepted ADRs are not rewritten.
+
+## Completed qualification and next execution gates
+
+[CPU evidence](evidence/e1-qualification-20261001/notes.md) includes BPE512 trained
+on the frozen train prefix, 16 vector storage/reconstruction configurations,
+12 deterministic QAT/snapping recipes, independent PCG/assignment/gradient oracles
+and scalar CPU profiling. No validation/test split or console job was used.
+The accepted record is administratively renumbered 0013 because concurrent main
+commit `8b76068` assigned 0012 to repository boundaries; the decision is unchanged.
+
+Continue in this order:
+
+1. Let the existing E0 worker complete scale/MLP selection, tuning, saturation,
+   actual-byte gates and paired seeds; publish its reserved final test and costs.
+2. Use E0 results and these functional limits to prepare the scientific E1 ADR:
+   full model/container accounting, shape budgets, persistent assignment/checkpoint
+   semantics, dead-code policy, tokenizer/context fairness and final-test reservation.
+3. After E0 releases the console, qualify any Xbox vector executor against the CPU
+   oracle with identical inputs and artifact bytes. Choose backend/tokenizer only
+   from the controlled qualification required by the owner. A scalar throughput
+   measurement does not qualify a vector backend.
+4. Once the scientific protocol is accepted, integrate the model/format and run
+   the paired 1/16 pilot; proceed through E1a/E1/E1b and E2–E4 only on passing gates.
+   Keep local-judge qualification and actual 30 blind human ratings explicit at E4.
+
+Do not merge this branch into the active checkout until the frozen E0 source gate
+is released. No full-project completion claim is justified yet.

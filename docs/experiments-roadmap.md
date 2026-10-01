@@ -2,7 +2,11 @@
 
 Owner delle definizioni E0–E4. Non possiede i risultati ([`evidence/`](evidence/README.md)).
 Status (2026-10-01): E0 v2 software and Series S functional acceptance are **measured**;
-scientific campaign `e0-20261001T074326Z-503df0` is **running**, completion pending. E1–E4 remain **specified** and gated by E0. Tesi: [concept v0.2](concept.md).
+scientific E0.1 campaign `e0-20261001T090514Z-4236fd` is **running**, completion pending.
+The earlier package 0.1.0.24 campaign was deliberately retired, not recovered.
+E1 CPU functional qualification is measured under [ADR 0013](adr/0013-e1-functional-qualification.md);
+scientific E1–E4 remain gated. See the [completion ledger](e1-completion-plan.md).
+Tesi: [concept v0.2](concept.md).
 
 Regole comuni ([ADR 0002](adr/0002-adversary-dense-frontier.md), [ADR 0003](adr/0003-lab-practices.md),
 [ADR 0004](adr/0004-miniature-budgets.md)): budget 1/16, 1/4, 1× di 11 Mbit; in miniatura contano
@@ -13,12 +17,12 @@ gate appaiato > max(0.02 bpb, 2σ). Se F1 scatta, E2–E4 sono _won't run_.
 
 | #   | Passo                                                                     | Dove      | Costo stimato     |
 | --- | ------------------------------------------------------------------------- | --------- | ----------------- |
-| 1   | E0 v2: codice e smoke (fatto), campagna a–e dopo accettazione hardware | Xbox GPU       | 55–56 sequential runs; weeks |
+| 1   | E0 v2: codice e smoke (fatto), campagna a–e dopo accettazione hardware | Xbox GPU       | 55–56 sequential runs; measured costs in campaign reports |
 | 2   | σ appaiata e congelamento dell'avversario (passo e)                       | Xbox GPU + host       | 5 seed            |
-| 3   | E1 pilota a 1/16, K=1                                                     | CPU       | 1–2 giorni di run |
-| 4   | Decisione: ADR GPU per 1/4 e 1×, oppure stop                              | —         | —                 |
-| 5   | E1a ricorsione, E1 a 1/4, E1b trellis/segni                               | GPU       | ~$5–20            |
-| 6   | E2 → E3 → E4                                                              | GPU + CPU | —                 |
+| 3   | E1 functional qualification, then accepted scientific pilot protocol     | CPU oracle; Xbox candidate | Controlled measurements before backend/tokenizer selection |
+| 4   | E1 pilot at 1/16, K=1; preregister next gate                            | Qualified local backend | No GPU rental |
+| 5   | E1a recursion, E1 at 1/4, E1b trellis/signs                              | Local Xbox/CPU | Gated by pilot and accepted protocols |
+| 6   | E2 → E3 → E4                                                             | Local Xbox/CPU | Gated; local judge and 30 blind human reviews |
 
 <a id="e0-v2--scelte-da-approvare"></a>
 
@@ -81,8 +85,9 @@ Completion order:
 4. Review E0's result before specifying and accepting any structural E1 decision.
    The 1/4 tokenizer/embedding issue remains an explicit later ADR gate.
 
-The representative short run extrapolates to about nine hours per original trial,
-excluding transfer and evaluation. This is an estimate, not a duration limit.
+The old nine-hour estimate came from package 0.1.0.24. Package 0.1.0.28 has a
+GPU-resident engine; use current benchmark and campaign timings for costs,
+including transfers and evaluation. Do not reuse the retired estimate.
 No final scientific result is available yet.
 
 a. Measure sustained Xbox GPU throughput, transfers and peak memory before scientific runs.
@@ -106,7 +111,8 @@ E1 a 1/4 va deciso fra BPE 512 o un vincolo di quota rilassato; non tocca il pil
   ([R7](research/07-learned-vq-subbit.md)).
 - **Segnale F1**: il miglior vettoriale batte il miglior scalare di max(0.02, 2σ).
 - **Segnale F1-abl**: VQ-appreso contro VQ-seed, codebook incluso (prior: seed ≥ appreso).
-- Il pilota non è un verdetto ([ADR 0004](adr/0004-miniature-budgets.md)): decide se pagare la GPU.
+- The pilot is not a final verdict ([ADR 0004](adr/0004-miniature-budgets.md));
+  it gates further local Xbox/CPU work. No rented GPU or paid API is authorized.
 
 ## E1a — Diversità fra iterazioni (chiude v0.1, sceglie la ricorsione)
 
@@ -152,3 +158,7 @@ _Won't run_ finché E1 ed E2 non passano.
 - bpb dal runtime; coerenza con giudice LLM a versione fissata, 50 prompt × 4 campioni,
   TinyStories-8M nella stessa sessione, 30 campioni in revisione umana cieca
   ([R5](research/05-eval-tiny.md)).
+- The judge runs locally and must be qualified before use. Actual blind human
+  ratings are required; generated placeholders cannot close E4. If a scientific
+  gate fails, publish the measured result and stop subsequent phases without
+  creating an alternative scalar-floppy product.

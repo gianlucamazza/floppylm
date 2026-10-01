@@ -37,3 +37,10 @@ Scientific E0 results remain pending. S1–S10 and the row16/row8log decision ar
 accepted; the [roadmap](../experiments-roadmap.md) defines completion gates.
 Campaign reports appear under `e0-v2/campaigns/<campaign_id>/`; the local durable
 manifest and trial logs are under `runs/e0-campaign-20261001/`.
+
+## Isolated E1 qualification
+
+[CPU functional qualification](e1-qualification-20261001/notes.md) records scalar
+profiling, BPE512 round trips, vector book/byte probes and deterministic partial
+quantization canaries under ADR 0013. It is neither scientific E1 nor Xbox vector
+acceptance; the current E0.1 campaign directory is `runs/e0-campaign-20261001-e01/`.
