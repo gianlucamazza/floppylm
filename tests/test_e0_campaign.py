@@ -34,7 +34,7 @@ def test_campaign_freezes_protocol_and_disallows_second_worker(tmp_path, campaig
     first = campaign_module.Campaign(tmp_path / "campaign", proof, speed)
     state = json.loads(first.path.read_text())
     assert state["trials"] == {}
-    assert state["protocol_adr"] == "0011"
+    assert state["protocol_adr"] == "0015"
     assert state["protocol"]["scale_order"] == ["row16", "row8log"]
     assert state["protocol"]["paired_seeds"] == [0, 1, 2, 3, 4]
     with pytest.raises(BlockingIOError):
@@ -42,6 +42,16 @@ def test_campaign_freezes_protocol_and_disallows_second_worker(tmp_path, campaig
     first.lock.close()
     proof.write_text(json.dumps({"ok": True, "package": "package", "commit": "different"}))
     with pytest.raises(RuntimeError, match="same hardware package"):
+        campaign_module.Campaign(tmp_path / "campaign", proof, speed)
+
+
+def test_existing_0011_campaign_is_not_migrated(tmp_path, campaign_module):
+    proof, speed = inputs(tmp_path)
+    first = campaign_module.Campaign(tmp_path / "campaign", proof, speed)
+    first.state["protocol_adr"] = "0011"
+    first.save()
+    first.lock.close()
+    with pytest.raises(RuntimeError, match="no implicit migration"):
         campaign_module.Campaign(tmp_path / "campaign", proof, speed)
 
 
@@ -125,3 +135,63 @@ def test_final_report_reads_seed_metadata_from_bound_trial_summaries(
     assert report["test_paired"]["mean"] == pytest.approx(-0.1)
     assert report["frozen_gate_bpb"] == 0.02
     campaign.lock.close()
+
+
+def _branches(bpb_t, bpb_2t, bpb_4t, size=1000):
+    return [
+        {"model_bytes": size, "val_bpb": bpb_t},
+        {"model_bytes": size, "val_bpb": bpb_2t},
+        {"model_bytes": size, "val_bpb": bpb_4t},
+    ]
+
+
+def _summary_run(run_id, bpb_t, bpb_2t, bpb_4t, size=1000, verdict="non saturo"):
+    return {
+        "run_id": run_id,
+        "target_bytes": size,
+        "saturation": {"verdict": verdict},
+        "branches": _branches(bpb_t, bpb_2t, bpb_4t, size),
+    }
+
+
+def test_unsaturated_byte_ok_trial_is_eligible(tmp_path, monkeypatch, campaign_module):
+    proof, speed = inputs(tmp_path)
+    campaign = campaign_module.Campaign(tmp_path / "campaign", proof, speed)
+    summary = _summary_run("trial", 1.5, 1.4, 1.32)
+    monkeypatch.setattr(campaign, "execute", lambda *a: summary)
+    monkeypatch.setattr(campaign_module, "selection_branch", lambda s: s["branches"][2])
+    cfg = campaign_module.GPTConfig(d=32, n_layers=1, n_heads=2, d_ff=48, ctx=16)
+    assert campaign.trial("k", cfg, 0) is summary
+    assert campaign.state["trials"]["k"]["status"] == "eligible"
+    campaign.lock.close()
+
+
+def test_rank_stable_accepts_shared_minimizer(campaign_module):
+    valid = [
+        (0, [_summary_run("a0", 1.4, 1.3, 1.2), _summary_run("a1", 1.42, 1.32, 1.22)]),
+        (1, [_summary_run("b0", 1.5, 1.4, 1.3), _summary_run("b1", 1.52, 1.42, 1.32)]),
+    ]
+    assert campaign_module.Campaign.rank_stable("neutral-scale", valid) == 0
+
+
+def test_rank_stable_rejects_flip(campaign_module):
+    valid = [
+        (0, [_summary_run("a0", 1.5, 1.3, 1.2), _summary_run("a1", 1.52, 1.32, 1.22)]),
+        (1, [_summary_run("b0", 1.4, 1.4, 1.3), _summary_run("b1", 1.42, 1.42, 1.32)]),
+    ]
+    with pytest.raises(RuntimeError, match="rank unstable"):
+        campaign_module.Campaign.rank_stable("neutral-scale", valid)
+
+
+def test_paired_rank_stable_requires_matching_sign(campaign_module):
+    stable = {
+        "ternary": [_summary_run("t0", 1.4, 1.3, 1.2)],
+        "2bit": [_summary_run("b0", 1.5, 1.4, 1.3)],
+    }
+    campaign_module.Campaign.paired_rank_stable(stable)
+    flipped = {
+        "ternary": [_summary_run("t0", 1.6, 1.3, 1.2)],
+        "2bit": [_summary_run("b0", 1.5, 1.4, 1.3)],
+    }
+    with pytest.raises(RuntimeError, match="rank unstable at T"):
+        campaign_module.Campaign.paired_rank_stable(flipped)

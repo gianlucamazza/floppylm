@@ -264,6 +264,8 @@ class Portal:
         return result
 
     def submit(self, root: Path, *, purpose: str, acceptance: Path | None = None) -> dict:
+        if (root / "publication.json").exists() or (root / "submitted.json").exists():
+            raise RuntimeError("existing publication requires explicit recovery")
         device = json.loads(self.get("device.json", directory=""))
         if device.get("state") != "ready" or not device.get("hardware_gpu"):
             raise RuntimeError("E0 app is not ready on a hardware GPU")
@@ -274,6 +276,12 @@ class Portal:
                 raise RuntimeError("scientific Xbox runs require acceptance evidence")
             check_acceptance(json.loads(acceptance.read_text()), device, self.package)
         job = json.loads((root / "job.json").read_text())
+        try:
+            self.status(job["job_id"])
+        except FileNotFoundError:
+            pass
+        else:
+            raise RuntimeError("remote execution already exists; explicit recovery required")
         check_capabilities(job["config"], device)
         if purpose == "scientific":
             from .jobs import zero_row_gate
@@ -286,29 +294,127 @@ class Portal:
                 raise RuntimeError("scientific scale policy violates accepted S9 zero-row gate")
         existing = self.files()
         for key in ("initialization", "data", "indices"):
-            job[key] = self.asset(root / job[key]["path"], existing)
+            path = root / job[key]["path"]
+            digest = runlog.sha256_file(path)
+            job[key] = {"path": digest + ".bin", "bytes": path.stat().st_size, "sha256": digest}
+            if existing.get(job[key]["path"]) != job[key]["bytes"]:
+                chunks = []
+                with path.open("rb") as file:
+                    while block := file.read(CHUNK_BYTES):
+                        sha = hashlib.sha256(block).hexdigest()
+                        chunks.append({"path": sha + ".chunk", "bytes": len(block), "sha256": sha})
+                job[key]["chunks"] = chunks
         job["purpose"] = purpose
         if acceptance:
             job["acceptance_sha256"] = runlog.sha256_file(acceptance)
-        payload = json.dumps(job, sort_keys=True).encode()
-        self.upload(job["job_id"] + ".job.json", payload)
-        runlog.write_json(
-            root / "submitted.json",
-            {"job": job, "sha256": hashlib.sha256(payload).hexdigest(), "package": self.package},
-        )
-        self.upload(job["job_id"] + ".ready", b"ready")
+        self._publish(root, job, "submit")
         return job
+
+    @staticmethod
+    def _durable_json(path: Path, value: dict) -> None:
+        runlog.write_json(path, value)
+        with path.open("rb") as file:
+            os.fsync(file.fileno())
+        descriptor = os.open(path.parent, os.O_RDONLY | os.O_DIRECTORY)
+        try:
+            os.fsync(descriptor)
+        finally:
+            os.close(descriptor)
+
+    def _publish(self, root: Path, job: dict, kind: str) -> None:
+        journal_path = root / "publication.json"
+        if journal_path.exists():
+            raise RuntimeError("pending publication requires recovery")
+        committed = root / "submitted.json"
+        payload = json.dumps(job, sort_keys=True).encode()
+        journal = {
+            "schema": "floppylm.xbox.publication.v1",
+            "kind": kind,
+            "previous": json.loads(committed.read_text()) if committed.exists() else None,
+            "candidate": {
+                "job": job,
+                "sha256": hashlib.sha256(payload).hexdigest(),
+                "package": self.package,
+            },
+        }
+        self._durable_json(journal_path, journal)
+        self._replay_publication(root, journal)
+        self._ack_publication(root, journal)
+
+    def _replay_publication(self, root: Path, journal: dict) -> None:
+        job = journal["candidate"]["job"]
+        original = json.loads((root / "job.json").read_text())
+        for key in ("initialization", "data", "indices"):
+            path = root / original[key]["path"]
+            expected = job[key]
+            if (
+                path.stat().st_size != expected["bytes"]
+                or runlog.sha256_file(path) != expected["sha256"]
+            ):
+                raise RuntimeError("publication asset integrity failed")
+            if "chunks" in expected:
+                with path.open("rb") as file:
+                    for chunk in expected["chunks"]:
+                        block = file.read(chunk["bytes"])
+                        if hashlib.sha256(block).hexdigest() != chunk["sha256"]:
+                            raise RuntimeError("publication chunk integrity failed")
+                        self.upload(chunk["path"], block)
+        self.upload(job["job_id"] + ".job.json", json.dumps(job, sort_keys=True).encode())
+        if journal["kind"] == "resume":
+            try:
+                self.request("DELETE", self.path("file", "inbox", job["job_id"] + ".cancel"))
+            except FileNotFoundError:
+                pass
+        self.upload(
+            job["job_id"] + ".ready", b"resume" if journal["kind"] == "resume" else b"ready"
+        )
+
+    def _commit_publication(self, root: Path, journal: dict) -> None:
+        self._durable_json(root / "submitted.json", journal["candidate"])
+        (root / "publication.json").unlink()
+        descriptor = os.open(root, os.O_RDONLY | os.O_DIRECTORY)
+        try:
+            os.fsync(descriptor)
+        finally:
+            os.close(descriptor)
+
+    def _ack_publication(self, root: Path, journal: dict) -> None:
+        candidate = journal["candidate"]
+        self.wait(
+            candidate["job"]["job_id"], expected_sha=candidate["sha256"], acknowledgment_only=True
+        )
+        self._commit_publication(root, journal)
 
     def status(self, job_id: str) -> dict:
         return json.loads(self.get("status.json", "inbox/results/" + job_id))
 
-    def wait(self, job_id: str, log=print, *, expected_sha: str | None = None) -> dict:
+    def wait(
+        self,
+        job_id: str,
+        log=print,
+        *,
+        expected_sha: str | None = None,
+        acknowledgment_only: bool = False,
+    ) -> dict:
         previous = None
         transport_failures = 0
+        deadline = time.monotonic() + 300
+        acknowledged = False
+        progress = time.monotonic()
+        observed_sha = None
         while True:
+            if not acknowledged and time.monotonic() >= deadline:
+                raise TimeoutError(
+                    f"Xbox acknowledgment timeout: job={job_id}, "
+                    f"expected={expected_sha}, observed={observed_sha}, phase=status"
+                )
             try:
                 report = self.status(job_id)
             except FileNotFoundError:
+                if acknowledged and time.monotonic() >= deadline:
+                    raise TimeoutError(
+                        f"Xbox status disappeared: job={job_id}, expected={expected_sha}"
+                    )
                 time.sleep(2)
                 continue
             except (OSError, http.client.HTTPException) as error:
@@ -328,10 +434,30 @@ class Portal:
                 continue
             transport_failures = 0
             if expected_sha and report.get("job_sha256") != expected_sha:
-                if report["state"] == "failed":
-                    return report
+                if observed_sha != report.get("job_sha256"):
+                    observed_sha = report.get("job_sha256")
+                    log(
+                        json.dumps(
+                            {
+                                "event": "awaiting_ack",
+                                "job_id": job_id,
+                                "expected_sha256": expected_sha,
+                                "observed_sha256": observed_sha,
+                                "phase": "status",
+                            }
+                        )
+                    )
+                if report["state"] == "failed" or (acknowledged and time.monotonic() >= deadline):
+                    raise RuntimeError(
+                        f"Xbox status mismatch: expected={expected_sha}, "
+                        f"observed={report.get('job_sha256')}, phase=status"
+                    )
                 time.sleep(2)
                 continue
+            acknowledged = True
+            deadline = time.monotonic() + 300
+            if acknowledgment_only:
+                return report
             marker = (report["state"], report.get("trunk_step"))
             if marker != previous:
                 log(
@@ -340,6 +466,19 @@ class Portal:
                     )
                 )
                 previous = marker
+                progress = time.monotonic()
+            elif time.monotonic() - progress >= 600:
+                log(
+                    json.dumps(
+                        {
+                            "event": "no_progress",
+                            "job_id": job_id,
+                            "expected_sha256": expected_sha,
+                            "observed": marker,
+                        }
+                    )
+                )
+                progress = time.monotonic()
             if report["state"] != "running":
                 return report
             time.sleep(2)
@@ -377,7 +516,11 @@ class Portal:
         raise TimeoutError("Xbox fixture did not finish")
 
     def recover(self, root: Path, *, purpose: str, acceptance: Path | None) -> dict:
-        binding = json.loads((root / "submitted.json").read_text())
+        journal_path = root / "publication.json"
+        journal = json.loads(journal_path.read_text()) if journal_path.exists() else None
+        binding = (
+            journal["candidate"] if journal else json.loads((root / "submitted.json").read_text())
+        )
         job = binding["job"]
         if binding["package"] != self.package or job["purpose"] != purpose:
             raise RuntimeError("recovery package or purpose mismatch")
@@ -404,6 +547,37 @@ class Portal:
                 or runlog.sha256_file(path) != job[key]["sha256"]
             ):
                 raise RuntimeError("recovery asset integrity failed")
+        if journal:
+            if journal.get("schema") != "floppylm.xbox.publication.v1" or journal["kind"] not in (
+                "submit",
+                "resume",
+            ):
+                raise RuntimeError("unsupported publication journal")
+            committed = root / "submitted.json"
+            current = json.loads(committed.read_text()) if committed.exists() else None
+            if current not in (journal["previous"], binding):
+                raise RuntimeError("publication committed binding mismatch")
+            try:
+                pending_report = self.status(job["job_id"])
+            except FileNotFoundError:
+                pending_report = None
+            if pending_report and pending_report.get("job_sha256") == binding["sha256"]:
+                self._commit_publication(root, journal)
+            else:
+                previous = journal["previous"]
+                if pending_report:
+                    if not previous or pending_report.get("job_sha256") != previous["sha256"]:
+                        raise RuntimeError("publication remote submission mismatch")
+                    if pending_report["state"] not in ("interrupted", "completed"):
+                        raise RuntimeError(
+                            "publication replay requires a stopped previous execution"
+                        )
+                elif previous:
+                    raise RuntimeError("publication cannot prove previous execution stopped")
+                if journal["kind"] == "resume":
+                    self.retrieve(job["resume"], root / "recovery-checkpoint.json")
+                self._replay_publication(root, journal)
+                self._ack_publication(root, journal)
         report = self.status(job["job_id"])
         if report.get("job_sha256") != binding["sha256"]:
             raise RuntimeError("recovery remote submission mismatch")
@@ -483,21 +657,12 @@ class Portal:
         if binding["package"] != self.package:
             raise RuntimeError("resume package mismatch")
         job = binding["job"]
+        previous = self.status(job["job_id"])
+        if previous.get("job_sha256") != binding["sha256"]:
+            raise RuntimeError("resume remote submission mismatch")
+        if previous.get("state") != "interrupted" or previous.get("checkpoint") != checkpoint:
+            raise RuntimeError("resume requires the bound interrupted checkpoint")
         job.pop("stop_after", None)
         job["resume"] = checkpoint
-        payload = json.dumps(job, sort_keys=True).encode()
-        self.upload(job["job_id"] + ".job.json", payload)
-        runlog.write_json(
-            root / "submitted.json",
-            {
-                "job": job,
-                "sha256": hashlib.sha256(payload).hexdigest(),
-                "package": self.package,
-            },
-        )
-        try:
-            self.request("DELETE", self.path("file", "inbox", job["job_id"] + ".cancel"))
-        except FileNotFoundError:
-            pass
-        self.upload(job["job_id"] + ".ready", b"resume")
-        return hashlib.sha256(payload).hexdigest()
+        self._publish(root, job, "resume")
+        return hashlib.sha256(json.dumps(job, sort_keys=True).encode()).hexdigest()

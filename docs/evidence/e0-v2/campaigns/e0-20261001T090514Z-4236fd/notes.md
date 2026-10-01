@@ -12,3 +12,5 @@ had completed and were not saturated (Δ 2T→4T −0.0818 / −0.0791 after rep
 `neutral()` could no longer select row16 and the preregistered gate was not expected to pass with
 row8log on the same shape. Analysis and options:
 [saturation proposal](../../../../adr/proposals/e0-saturation-proposal.md).
+Accepted as [ADR 0015](../../../../adr/0015-e0-fixed-data-frontier.md) (option B); this campaign
+is not migrated.

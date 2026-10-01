@@ -22,11 +22,12 @@ sys.path.insert(0, str(ROOT / "src"))
 from e0_v2 import (
     EVIDENCE,
     FULL_BUDGET_BITS,
-    SATURATED,
     _summary,
     selection_branch,
     verified_branch,
 )
+
+PROTOCOL_ADR = "0015"
 from floppylm import parity, runlog, shapes
 from floppylm.model import GPTConfig
 
@@ -44,7 +45,7 @@ class Campaign:
         self.path = root / "campaign.json"
         if self.path.exists():
             self.state = json.loads(self.path.read_text())
-            if self.state.get("protocol_adr") != "0011":
+            if self.state.get("protocol_adr") != PROTOCOL_ADR:
                 raise RuntimeError("campaign protocol differs; no implicit migration")
             if self.state["benchmark_sha256"] != runlog.sha256_file(benchmark):
                 raise RuntimeError("campaign benchmark changed")
@@ -53,7 +54,7 @@ class Campaign:
         else:
             self.state = {
                 "schema": "floppylm.e0.campaign.v1",
-                "protocol_adr": "0011",
+                "protocol_adr": PROTOCOL_ADR,
                 "sources": runlog.sources(ROOT),
                 "id": runlog.new_run_id("e0"),
                 "created": runlog.now(),
@@ -85,7 +86,10 @@ class Campaign:
                     "grid_embedding_share": [0.08, 0.20],
                     "grid_min_nominal_fill": 0.995,
                     "selection": "minimum mean 4T val bpb; declared enumeration order breaks ties",
-                    "eligibility": "actual individual and reciprocal byte parity; saturation at 4T",
+                    "eligibility": (
+                        "actual individual and reciprocal byte parity; saturation recorded"
+                    ),
+                    "rank_stability": "4T winner is a minimizer of mean val bpb at T and 2T",
                     "byte_repair": "at most one fresh attempt per trial, preserving recipe",
                 },
                 "trials": {},
@@ -208,12 +212,9 @@ class Campaign:
                 record["status"] = "excluded-byte-repair"
                 self.save()
                 return None
-        eligible = (
-            parity.admissible(
-                {"4T": selection_branch(summary)["model_bytes"]}, summary["target_bytes"]
-            )[0]
-            and summary["saturation"]["verdict"] == SATURATED
-        )
+        eligible = parity.admissible(
+            {"4T": selection_branch(summary)["model_bytes"]}, summary["target_bytes"]
+        )[0]
         record.update(status="eligible" if eligible else "excluded", result=summary["run_id"])
         self.save()
         return summary if eligible else None
@@ -227,6 +228,33 @@ class Campaign:
             summaries[0]["target_bytes"],
         )[0]
 
+    @staticmethod
+    def _mean_bpb(summaries, branch):
+        return statistics.fmean(s["branches"][branch]["val_bpb"] for s in summaries)
+
+    @classmethod
+    def rank_stable(cls, phase, valid):
+        """Return the 4T winner index; raise if it is not a minimizer at T and 2T."""
+        best = min(valid, key=lambda item: cls._mean_bpb(item[1], 2))[0]
+        for branch, label in ((0, "T"), (1, "2T")):
+            means = {index: cls._mean_bpb(group, branch) for index, group in valid}
+            if means[best] != min(means.values()):
+                raise RuntimeError(
+                    f"{phase}: rank unstable: 4T winner is not a minimizer at {label}"
+                )
+        return best
+
+    @classmethod
+    def paired_rank_stable(cls, paired):
+        def sign(value):
+            return (value > 0) - (value < 0)
+
+        delta_4t = cls._mean_bpb(paired["ternary"], 2) - cls._mean_bpb(paired["2bit"], 2)
+        for branch, label in ((0, "T"), (1, "2T")):
+            delta = cls._mean_bpb(paired["ternary"], branch) - cls._mean_bpb(paired["2bit"], branch)
+            if sign(delta) != sign(delta_4t):
+                raise RuntimeError(f"paired-seeds: rank unstable at {label}")
+
     def neutral(self, phase, candidates):
         self.state["phase"] = phase
         self.save()
@@ -235,11 +263,8 @@ class Campaign:
             groups.append([self.trial(f"{phase}-{index}-{seed}", cfg, seed) for seed in (0, 1)])
         valid = [(index, group) for index, group in enumerate(groups) if self.comparable(group)]
         if not valid or not self.comparable([s for _, group in valid for s in group]):
-            raise RuntimeError(phase + ": neutral candidates do not meet byte/saturation gates")
-        best = min(
-            valid,
-            key=lambda item: statistics.fmean(selection_branch(s)["val_bpb"] for s in item[1]),
-        )[0]
+            raise RuntimeError(phase + ": neutral candidates do not meet byte parity")
+        best = self.rank_stable(phase, valid)
         self.state["decisions"][phase] = candidates[best].to_dict()
         self.save()
         return candidates[best]
@@ -381,7 +406,8 @@ class Campaign:
         }
         all_runs = [s for group in paired.values() for s in group]
         if not self.comparable(all_runs):
-            raise RuntimeError("paired comparison fails byte/saturation gates")
+            raise RuntimeError("paired comparison fails byte parity")
+        self.paired_rank_stable(paired)
         sigma = parity.paired_sigma(
             *[
                 {seed: selection_branch(s)["val_bpb"] for seed, s in enumerate(paired[fmt])}

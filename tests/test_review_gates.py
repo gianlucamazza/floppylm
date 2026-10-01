@@ -115,12 +115,19 @@ def freeze(tmp_path, monkeypatch, summaries, functional=False):
     )
 
 
-@pytest.mark.parametrize("kwargs", [{"smoke": True}, {"verdict": "non saturo"}, {"size": 900}])
+@pytest.mark.parametrize("kwargs", [{"smoke": True}, {"size": 900}])
 def test_scientific_freeze_rejects_ineligible(tmp_path, monkeypatch, kwargs):
     s = fixture_run(tmp_path, "a", **kwargs)
     with pytest.raises(SystemExit):
         freeze(tmp_path, monkeypatch, {"a": s})
     assert not (tmp_path / "evidence/selections/selection.json").exists()
+
+
+def test_scientific_freeze_accepts_unsaturated_byte_ok_runs(tmp_path, monkeypatch):
+    s = fixture_run(tmp_path, "a", verdict="non saturo")
+    assert freeze(tmp_path, monkeypatch, {"a": s}) == 0
+    sel = json.loads((tmp_path / "evidence/selections/selection.json").read_text())
+    assert sel["purpose"] == "scientific"
 
 
 def test_freeze_rejects_pairwise_spread(tmp_path, monkeypatch):
@@ -323,3 +330,86 @@ def test_byte_repair_preserves_shape_recipe_and_rejects_second_attempt(tmp_path,
     previous["retry_count"] = 1
     with pytest.raises(SystemExit, match="at most one retry"):
         e0.repair_shape(previous)
+
+
+@pytest.mark.parametrize("purpose", ["functional", "scientific"])
+def test_final_test_checks_all_artifacts_before_reservation(tmp_path, monkeypatch, purpose):
+    selections = tmp_path / "selections"
+    selections.mkdir()
+    good = tmp_path / "good.flp"
+    good.write_bytes(pack(model()))
+    bad = tmp_path / "bad.flp"
+    bad.write_bytes(b"tampered")
+    items = [
+        {"run_id": "good", "artifact": str(good), "sha256": e0.runlog.sha256_file(good)},
+        {"run_id": "bad", "artifact": str(bad), "sha256": "expected"},
+    ]
+    (selections / "a.json").write_text(json.dumps({"purpose": purpose, "items": items}))
+    monkeypatch.setattr(e0, "EVIDENCE", tmp_path)
+    monkeypatch.setattr(e0, "_summary", lambda _: {"data_sha256": {"test": "frozen"}})
+    monkeypatch.setattr(e0.data_mod, "load", lambda *a: pytest.fail("protected data was read"))
+    monkeypatch.setattr(e0, "sliding_bpb", lambda *a: pytest.fail("earlier model was evaluated"))
+    with pytest.raises(SystemExit, match="artifact hash"):
+        e0.cmd_final_test(argparse.Namespace(final_test="a"))
+    assert not (selections / "a.test.reservation.json").exists()
+
+
+def test_final_test_rejects_changed_scientific_corpus_before_reservation(tmp_path, monkeypatch):
+    selections = tmp_path / "selections"
+    selections.mkdir()
+    artifact = tmp_path / "model.flp"
+    artifact.write_bytes(pack(model()))
+    (tmp_path / "test.bin").write_bytes(b"different corpus")
+    selection = {
+        "purpose": "scientific",
+        "items": [
+            {"run_id": "a", "artifact": str(artifact), "sha256": e0.runlog.sha256_file(artifact)}
+        ],
+    }
+    (selections / "a.json").write_text(json.dumps(selection))
+    monkeypatch.setattr(e0, "EVIDENCE", tmp_path)
+    monkeypatch.setattr(e0, "DATA", tmp_path)
+    monkeypatch.setattr(e0, "_summary", lambda _: {"data_sha256": {"test": "frozen"}})
+    monkeypatch.setattr(e0.data_mod, "load", lambda *a: pytest.fail("protected data was read"))
+    with pytest.raises(SystemExit, match="test corpus differs"):
+        e0.cmd_final_test(argparse.Namespace(final_test="a"))
+    assert not (selections / "a.test.reservation.json").exists()
+
+
+def test_scientific_resume_refuses_changed_implementation_before_training(tmp_path, monkeypatch):
+    run = tmp_path / "runs/frozen"
+    run.mkdir(parents=True)
+    (run / "xbox").mkdir()
+    (run / "xbox/submitted.json").write_text("{}")
+    (run / "manifest.json").write_text(
+        json.dumps(
+            {"backend": "xbox", "smoke": False, "sources": {"files": {"engine.py": "frozen"}}}
+        )
+    )
+    evidence = tmp_path / "evidence/runs/frozen"
+    evidence.mkdir(parents=True)
+    (evidence / "summary.json").write_text('{"status": "interrupted"}')
+    monkeypatch.setattr(e0, "RUNS", tmp_path / "runs")
+    monkeypatch.setattr(e0, "EVIDENCE", tmp_path / "evidence")
+    monkeypatch.setattr(e0.runlog, "sources", lambda _: {"files": {"engine.py": "changed"}})
+    with pytest.raises(RuntimeError, match="frozen trial sources"):
+        e0.cmd_resume(argparse.Namespace(resume="frozen"))
+
+
+def test_final_test_rejects_invalid_flp2_before_protected_data(tmp_path, monkeypatch):
+    selections = tmp_path / "selections"
+    selections.mkdir()
+    artifact = tmp_path / "invalid.flp"
+    artifact.write_bytes(b"invalid FLP2")
+    selection = {
+        "purpose": "functional",
+        "items": [
+            {"run_id": "a", "artifact": str(artifact), "sha256": e0.runlog.sha256_file(artifact)}
+        ],
+    }
+    (selections / "a.json").write_text(json.dumps(selection))
+    monkeypatch.setattr(e0, "EVIDENCE", tmp_path)
+    monkeypatch.setattr(e0.data_mod, "load", lambda *a: pytest.fail("protected data was read"))
+    with pytest.raises(FormatError):
+        e0.cmd_final_test(argparse.Namespace(final_test="a"))
+    assert not (selections / "a.test.reservation.json").exists()

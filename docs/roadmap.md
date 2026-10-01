@@ -59,11 +59,13 @@ E0-lite grid is diagnostic only ([pre-v2](evidence/e0-lite/pre-v2/notes.md)).
   GELU / ReLU² / SwiGLU MLP, optional QK-norm.
 - **Shape**: the solver (`floppylm.shapes`) proposes shapes at 99.5–100% of nominal bits; eligibility
   is checked on serialized bytes (`--parity`).
-- **Training**: WSD with trunk and cooldowns at T/2T/4T, trunk checkpoints, saturation at 4T.
-- **Selection and test**: `--freeze` requires completed, non-smoke, saturated runs with equal targets
-  and individual/reciprocal parity verified on the real files. `--freeze ... --functional` admits
+- **Training**: WSD with trunk and cooldowns at T/2T/4T, trunk checkpoints; saturation is
+  recorded at 4T ([ADR 0015](adr/0015-e0-fixed-data-frontier.md)).
+- **Selection and test**: `--freeze` requires completed, non-smoke, byte-admissible runs with
+  equal targets and individual/reciprocal parity verified on the real files. `--freeze ... --functional` admits
   only smoke runs and marks selection and final result as functional. `--final-test` evaluates a
-  selection exactly once. Details in [ADR 0007](adr/0007-e0v2-review-gates.md).
+  selection exactly once. Details in [ADR 0007](adr/0007-e0v2-review-gates.md),
+  [ADR 0015](adr/0015-e0-fixed-data-frontier.md).
 - **Grid**: children receive the solver's exact shape and the `--tokens`, `--branches`,
   `--val-bytes` limits; one thread per child. The grid is also verified through a real process
   on temporary synthetic data, without launching the campaign.
@@ -83,7 +85,7 @@ e. Paired σ over 5 seeds at the best point → gate; adversary freeze; `notes.m
 Completion gates:
 
 1. Run scale/MLP selection, tuning, solver grids and five paired seeds sequentially.
-2. Enforce saturation and actual-byte gates; allow only the preregistered byte repair.
+2. Enforce actual-byte gates and rank stability; record saturation; allow only the preregistered byte repair.
 3. Freeze ten selected artifact hashes, reserve the final test once, then publish paired
    statistics, costs, exclusions and limitations from the generated campaign report.
 4. Review E0's result before specifying and accepting any structural E1 decision.

@@ -8,6 +8,7 @@ parameter" rule of [ADR 0004](0004-miniature-budgets.md) §1. ADRs 0003 and 0004
 Superseded in part by [ADR 0006](0006-flp2-only.md): the "including the legacy `FLP1`" part of §10 (no FLP1).
 Clarified by [ADR 0007](0007-e0v2-review-gates.md): selection and artifact invariants.
 Completed by [ADR 0008](0008-e0-numeric-protocol.md): the numerical choices this ADR left not yet approved (S1–S10) are resolved there.
+Superseded in part by [ADR 0015](0015-e0-fixed-data-frontier.md): §4 saturation as an eligibility gate; the signed delta is still recorded.
 
 ## Context
 
@@ -51,3 +52,9 @@ choices, not yet approved at the time, were recorded separately and are resolved
 - Pre-v2 results remain as diagnostics in [`evidence/e0-lite/pre-v2`](../evidence/e0-lite/pre-v2/notes.md).
 - No E0 v2 campaign starts before the choices to be approved are approved
   (done in [ADR 0008](0008-e0-numeric-protocol.md)).
+
+## Amendment — 2026-10-01
+
+[ADR 0015](0015-e0-fixed-data-frontier.md) keeps the §4 criterion and the signed
+delta on every completed run, and removes saturation from eligibility and from
+scientific freeze. Token base, cooldown ends and "no automatic extension" stand.

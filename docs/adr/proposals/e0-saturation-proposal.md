@@ -2,8 +2,9 @@
 
 ## Status
 
-Proposed — 2026-10-01. Awaiting an owner decision; nothing below is accepted. Campaign
-`e0-20261001T090514Z-4236fd` was stopped on 2026-10-01 after both row16 seeds proved unsaturated.
+`accepted` — 2026-10-01; recorded in [ADR 0015](../0015-e0-fixed-data-frontier.md)
+(option B). Campaign `e0-20261001T090514Z-4236fd` was stopped on 2026-10-01 after both
+row16 seeds proved unsaturated. The options below are context; they are not the protocol.
 
 ## Context
 

@@ -72,8 +72,10 @@ chosen in E0.
   ([ADR 0002](adr/0002-adversary-dense-frontier.md)).
 - **P3 — Coded bytes, not nominal bits.** VQ indices are near maximum entropy, while sparse
   ternary gains from entropy coding: comparisons happen after coding (R7, F2).
-- **P4 — Convergence before the verdict.** F1 is decided at the miniature budgets where all arms
-  saturate ([ADR 0004](adr/0004-miniature-budgets.md)).
+- **P4 — Equal tokens before the verdict.** F1 is decided at the miniature budgets at equal
+  tokens, with rank stability across T, 2T and 4T. Saturation is recorded; unsaturated
+  comparisons are a fixed-data frontier
+  ([ADR 0015](adr/0015-e0-fixed-data-frontier.md), [ADR 0004](adr/0004-miniature-budgets.md)).
 - **P5 — Quality per byte, not "runs on a floppy".** Held-out bpb from the C runtime; TinyStories
   coherence is secondary ([R5](research/05-eval-tiny.md)).
 

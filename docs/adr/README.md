@@ -28,15 +28,17 @@ It is not a brainstorm, a survey or a TODO.
 | [0002](0002-adversary-dense-frontier.md) | Adversaries fixed before the thesis: dense low-bit frontier and pure recursion (+ ternary recursion from 1/4); double token/FLOP parity; paired gate | amended            |
 | [0003](0003-lab-practices.md)               | Lab invariants: bit accounting, seeds, evidence, stop on F\*                                                   | superseded-in-part |
 | [0004](0004-miniature-budgets.md) | Budgets 1/16, 1/4, 1×: model bytes only in miniature (whole image at 1×), embedding ~15%; GPU only with an ADR | superseded-in-part |
-| [0005](0005-e0v2-protocol.md)               | E0 v2 protocol: serialized-byte parity, WSD, saturation, compute, protected selection, traceability            | superseded-in-part |
+| [0005](0005-e0v2-protocol.md)               | E0 v2 protocol: serialized-byte parity, WSD, saturation recorded, compute, protected selection, traceability | superseded-in-part |
 | [0006](0006-flp2-only.md)                   | FLP2 is the only format; FLP1 is rejected, readable only at revision `f9e0732`                                 | accepted           |
-| [0007](0007-e0v2-review-gates.md)           | Review gates: scientific/functional freeze, exact grid arguments, inference-only artifacts, tracked evidence   | accepted           |
+| [0007](0007-e0v2-review-gates.md)           | Review gates: scientific/functional freeze, exact grid arguments, inference-only artifacts, tracked evidence   | superseded-in-part |
 | [0008](0008-e0-numeric-protocol.md)         | S1–S10 numerical recipe, bounded byte repair and paired seeds                                                  | superseded-in-part |
 | [0009](0009-xbox-e0-backend.md)             | Independent Python oracle and a separate Xbox GPU training backend for E0 at 1/16                              | superseded-in-part |
 | [0010](0010-independent-numerical-gates.md) | Identical-input optimizer and accepted mixed floating-point gate                                               | accepted           |
 | [0011](0011-e0-row-scale-selection.md)      | Scientific E0 uses row16/row8log only, preserving S9 and FLP2                                                  | accepted           |
 | [0012](0012-repo-boundaries.md)             | floppylm owns FloppyLM semantics; xbox-gpu-training is the only native backend; no FloppyLM in xllama          | accepted           |
 | [0013](0013-e1-functional-qualification.md) | Isolated E1 functional qualification (vector/BPE oracles); scientific E1 remains gated | accepted |
+| [0014](0014-durable-xbox-publication.md) | Journaled Xbox publication, acknowledged bindings and bounded recovery | accepted |
+| [0015](0015-e0-fixed-data-frontier.md) | E0 eligibility is byte parity; saturation is recorded; rank stability at T/2T/4T | accepted |
 
 ## Proposals
 
@@ -45,4 +47,4 @@ It is not a brainstorm, a survey or a TODO.
 | [E0 numerical validation refinement](proposals/e0-validation-proposal.md) | accepted → ADR 0010 |
 | [E0 zero-row gate correction](proposals/e0-zero-row-proposal.md)          | accepted → ADR 0011 |
 | [Isolated E1 functional qualification](proposals/e1-qualification-proposal.md) | accepted → ADR 0013 |
-| [E0 saturation gate at 1/16](proposals/e0-saturation-proposal.md) | **proposed**, owner decision pending |
+| [E0 saturation gate at 1/16](proposals/e0-saturation-proposal.md) | accepted → ADR 0015 (option B) |
