@@ -27,20 +27,27 @@ Bound proofs: `runs/xbox-acceptance-20261001-ci36839565773/acceptance.json` and
 
 ## Pending after the campaign
 
-- Frozen sources must stay untouched while the campaign runs. Afterwards:
-  - translate the generated run-note template in `experiments/e0_v2.py` (`notes_md`) to English;
-  - drop the "host `bg` wrapper" instruction from the `experiments/e0_v2.py` docstring (jobs run
-    under `nohup` outside `background.slice`);
-  - finish the [ADR 0012](adr/0012-repo-boundaries.md) follow-ups: contracts are published in
-    [`schemas/`](../schemas/README.md); move Xbox operations out of the core package;
-  - rename the local working directory to `floppylm` (the running campaign holds absolute paths to
-    the current one), then repair the `research/e1-qualification` worktree with `git worktree repair`
-    and move the Claude project memory to the new path;
-  - merge branch `chore/generic-config` (generic Device Portal settings) and copy the console
-    credentials to `~/.config/floppylm/xbox.env` before the next Xbox job;
-  - install the package built from xbox-gpu-training PR #20 (on-console dashboard; no training
-    code changes), then rerun acceptance and the bit-identity comparison before any new campaign;
-  - merge the code of branch `research/e1-qualification` (its docs are already on `main`; keep `main`'s versions on conflict).
+Frozen sources (`src/floppylm/*.py`, `experiments/*.py`) stay untouched while the campaign runs.
+Prepared and tested on branches, to apply in this order once it stops:
+
+1. Rename the local working directory to `floppylm` (the running campaign holds absolute paths
+   to the current one); then `git worktree repair` for the `research/e1-qualification` and
+   `chore/generic-config` worktrees and move the Claude project memory to the new path.
+2. Merge `chore/generic-config`: Device Portal settings from the environment or
+   `~/.config/floppylm/xbox.env` and a pinned certificate (`XBOX_CERT_SHA256`, see the
+   runbook) instead of unverified TLS. Write that file before the next Xbox job.
+3. In `experiments/e0_v2.py`: English `notes_md` template; drop the "host `bg` wrapper" docstring
+   line (jobs run under `nohup` outside `background.slice`).
+4. Merge the code of `research/e1-qualification` (its docs are already on `main`; keep `main`'s
+   versions on conflict).
+5. [ADR 0012](adr/0012-repo-boundaries.md) follow-ups: contracts are published in
+   [`schemas/`](../schemas/README.md) and checked by xbox-gpu-training PR #22; moving Xbox
+   operations out of the core package remains.
+6. Install the package from xbox-gpu-training PR #20 (on-console dashboard; `run_job` also
+   publishes schedule and phase), rerun acceptance and the bit-identity comparison, record the
+   evidence, then mark the PR ready.
+7. Decide the [saturation proposal](adr/proposals/e0-saturation-proposal.md) before any new
+   campaign.
 
 Status vocabulary: **specified** (written, not executed), **stub**, **running**, **stopped** (halted
 deliberately, kept as a record), **measured**
