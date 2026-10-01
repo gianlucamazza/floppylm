@@ -1,0 +1,52 @@
+{
+  "branch_weights_identical": {
+    "16": true,
+    "32": true,
+    "8": true
+  },
+  "candidate_acknowledged_and_committed": true,
+  "checkpoint_numeric_state_identical": true,
+  "completed_recovery_idempotent": true,
+  "device": {
+    "adapter": "SraKmd_arden",
+    "capabilities": {
+      "core_fmt": [
+        "ternary",
+        "2bit"
+      ],
+      "delta": {
+        "exclusive_maximum": 4.0,
+        "minimum": 0.0
+      },
+      "emb_fmt": [
+        "4bit"
+      ],
+      "mlp": [
+        "gelu",
+        "relu2",
+        "swiglu"
+      ],
+      "scale_policy": [
+        "row16",
+        "row8log",
+        "tensor16"
+      ],
+      "vocab": [
+        256
+      ]
+    },
+    "commit": "53ab3c25c21dff633b8dba6913ddf3f8020b4f65",
+    "hardware_gpu": true,
+    "package": "GianlucaMazza.XgpuE0_0.1.0.56_x64__g0p5dcfz4t9z4",
+    "schema": "floppylm.device.v1",
+    "state": "ready"
+  },
+  "injected_failure": "transport loss before ready, after durable journal and candidate job upload",
+  "journal_removed_after_commit": true,
+  "ok": true,
+  "package": "GianlucaMazza.XgpuE0_0.1.0.56_x64__g0p5dcfz4t9z4",
+  "previous_binding_preserved_at_fault": true,
+  "purpose": "functional",
+  "runner_commit": "25b9cd26e3a744b77d334bd2372fa9e3d2d39fef",
+  "schema": "floppylm.xbox.publication.acceptance.v1"
+}
