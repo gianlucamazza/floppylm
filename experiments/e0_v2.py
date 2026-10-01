@@ -259,8 +259,8 @@ def _execute_run(a, cfg, model, spec, run_id, run_dir, ev_dir) -> int:
         )
 
     if getattr(a, "backend", "cpu") == "xbox":
-        from floppylm.xbox import prepare_job
-        from floppylm.xbox_portal import Portal
+        from floppylm_xbox.jobs import prepare_job
+        from floppylm_xbox.portal import Portal
 
         job_root = run_dir / "xbox"
         if not getattr(a, "resume", None):

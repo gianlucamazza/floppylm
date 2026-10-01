@@ -10,8 +10,9 @@ from pathlib import Path
 import torch
 import torch.nn.functional as F
 
-from . import runlog
-from .xbox import compare
+from floppylm import runlog
+
+from .jobs import compare
 
 
 def fixtures(seed: int = 41) -> tuple[dict, dict]:

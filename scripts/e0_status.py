@@ -3,12 +3,13 @@
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "src"))
+from floppylm import runlog  # noqa: E402
 
 
 def read(path: Path) -> dict:
@@ -18,12 +19,7 @@ def read(path: Path) -> dict:
 def report(campaign: Path, *, workspace: Path = ROOT, portal=None) -> dict:
     state = read(campaign / "campaign.json")
     frozen = state["sources"]["files"]
-    files = sorted((workspace / "src/floppylm").glob("*.py")) + sorted(
-        (workspace / "experiments").glob("*.py")
-    )
-    actual = {
-        str(p.relative_to(workspace)): hashlib.sha256(p.read_bytes()).hexdigest() for p in files
-    }
+    actual = runlog.source_files(workspace)
     drift = sorted(
         name for name in frozen.keys() | actual.keys() if frozen.get(name) != actual.get(name)
     )
@@ -98,8 +94,7 @@ def main() -> int:
     args = parser.parse_args()
     portal = None
     if args.xbox:
-        sys.path.insert(0, str(ROOT / "src"))
-        from floppylm.xbox_portal import Portal
+        from floppylm_xbox.portal import Portal
 
         portal = Portal.configured(read(args.campaign / "campaign.json")["package"])
     result = report(args.campaign, portal=portal)

@@ -10,7 +10,7 @@ from referencing import Registry, Resource
 from floppylm.model import GPTConfig, TinyGPT
 from floppylm.seed import seed_all
 from floppylm.train import TrainSpec
-from floppylm.xbox import prepare_job, tensors
+from floppylm_xbox.jobs import prepare_job, tensors
 
 ROOT = Path(__file__).resolve().parents[1]
 SCHEMAS = ROOT / "schemas"

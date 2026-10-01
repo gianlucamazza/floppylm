@@ -17,8 +17,8 @@ from floppylm import runlog, shapes
 from floppylm.model import GPTConfig, TinyGPT
 from floppylm.seed import seed_all
 from floppylm.train import TrainSpec, schedule
-from floppylm.xbox import prepare_job
-from floppylm.xbox_portal import Portal
+from floppylm_xbox.jobs import prepare_job
+from floppylm_xbox.portal import Portal
 
 
 def main():

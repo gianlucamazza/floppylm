@@ -10,7 +10,7 @@ Owner of languages, toolchain and machine constraints. It does not own the thesi
   `src/` to the path); no virtualenv while the bench is running.
 - Xbox backend: a separate DX12/UWP trainer in the
   [xbox-gpu-training](https://github.com/gianlucamazza/xbox-gpu-training) repository, driven from
-  here through Device Portal (`src/floppylm/xbox*.py`). This repository owns all FloppyLM semantics;
+  here through Device Portal (`src/floppylm_xbox/`). This repository owns all FloppyLM semantics;
   the backend only executes them ([ADR 0009](adr/0009-xbox-e0-backend.md),
   [ADR 0012](adr/0012-repo-boundaries.md)).
 - Runtime (E3/E4, not yet written): C99 derived from llama2.c's `run.c`, static with musl, `-Os`,

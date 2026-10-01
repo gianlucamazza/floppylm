@@ -19,7 +19,7 @@ sys.path.insert(0, str(ROOT / "src"))
 from floppylm.model import GPTConfig, TinyGPT  # noqa: E402
 from floppylm.seed import seed_all  # noqa: E402
 from floppylm.train import TrainSpec  # noqa: E402
-from floppylm.xbox import prepare_job  # noqa: E402
+from floppylm_xbox.jobs import prepare_job  # noqa: E402
 
 OUT = ROOT / "tests/fixtures/contracts"
 EVIDENCE = ROOT / "docs/evidence"

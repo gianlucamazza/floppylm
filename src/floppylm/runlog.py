@@ -69,14 +69,17 @@ def git_state(root: Path) -> dict:
     }
 
 
+# Everything that defines an E0 run; a campaign freezes these hashes before its first result.
+SOURCE_DIRS = ("src/floppylm", "src/floppylm_xbox", "experiments")
+
+
+def source_files(root: Path) -> dict[str, str]:
+    files = [p for d in SOURCE_DIRS for p in sorted((root / d).glob("*.py"))]
+    return {str(p.relative_to(root)): sha256_file(p) for p in files}
+
+
 def sources(root: Path) -> dict:
-    files = sorted((root / "src" / "floppylm").glob("*.py")) + sorted(
-        (root / "experiments").glob("*.py")
-    )
-    return {
-        "git": git_state(root),
-        "files": {str(p.relative_to(root)): sha256_file(p) for p in files},
-    }
+    return {"git": git_state(root), "files": source_files(root)}
 
 
 def environment(threads: int) -> dict:

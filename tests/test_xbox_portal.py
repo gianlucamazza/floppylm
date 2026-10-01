@@ -6,7 +6,7 @@ from unittest.mock import Mock
 
 import pytest
 
-from floppylm.xbox_portal import (
+from floppylm_xbox.portal import (
     CREDENTIAL_KEYS,
     Portal,
     certificate_fingerprint,
@@ -52,7 +52,7 @@ def test_scientific_submit_rejects_different_source_commit(tmp_path):
     proof.write_text(
         json.dumps(
             {
-                "schema": "floppylm.xbox.acceptance.v1",
+                "schema": "floppylm_xbox.jobs.acceptance.v1",
                 "ok": True,
                 "package": client.package,
                 "commit": "old",
@@ -73,7 +73,7 @@ def test_resume_wait_ignores_previous_interrupted_status(monkeypatch):
             {"state": "completed", "job_sha256": "new", "trunk_step": 29},
         ]
     )
-    monkeypatch.setattr("floppylm.xbox_portal.time.sleep", lambda _: None)
+    monkeypatch.setattr("floppylm_xbox.portal.time.sleep", lambda _: None)
     assert client.wait("job", log=lambda _: None, expected_sha="new")["state"] == "completed"
 
 
@@ -95,7 +95,7 @@ def test_env_file_is_parsed_without_a_shell(tmp_path, monkeypatch):
         "# Device Portal\nexport XBOX_IP=127.0.0.1\nXBOX_PORT=12000\n"
         f"XBOX_USER=test\nXBOX_PASS='test $literal' # comment\nXBOX_CERT_SHA256={PIN}\n"
     )
-    monkeypatch.setattr("floppylm.xbox_portal.Path.home", lambda: tmp_path)
+    monkeypatch.setattr("floppylm_xbox.portal.Path.home", lambda: tmp_path)
     client = Portal.configured(package="known")
     assert (client.host, client.port, client.package) == ("127.0.0.1", 12000, "known")
     assert read_env_file(config)["XBOX_PASS"] == "test $literal"
@@ -113,7 +113,7 @@ def test_environment_overrides_env_file(tmp_path, monkeypatch):
 
 def test_missing_settings_name_the_keys(tmp_path, monkeypatch):
     clear_portal_env(monkeypatch)
-    monkeypatch.setattr("floppylm.xbox_portal.Path.home", lambda: tmp_path)
+    monkeypatch.setattr("floppylm_xbox.portal.Path.home", lambda: tmp_path)
     with pytest.raises(RuntimeError, match="XBOX_IP, XBOX_USER, XBOX_PASS, XBOX_CERT_SHA256"):
         Portal.configured(package="known")
 
@@ -283,7 +283,7 @@ def test_wait_records_transport_loss_without_cancel(monkeypatch):
     )
     client.cancel = Mock()
     log = Mock()
-    monkeypatch.setattr("floppylm.xbox_portal.time.sleep", lambda _: None)
+    monkeypatch.setattr("floppylm_xbox.portal.time.sleep", lambda _: None)
     assert client.wait("job", log=log, expected_sha="same")["state"] == "completed"
     assert "transport_failure" in log.call_args_list[0].args[0]
     client.cancel.assert_not_called()

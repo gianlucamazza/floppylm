@@ -12,7 +12,7 @@ import torch
 from floppylm.model import GPTConfig, TinyGPT
 from floppylm.seed import seed_all
 from floppylm.train import TrainSpec
-from floppylm.xbox import (
+from floppylm_xbox.jobs import (
     compare,
     descriptor,
     prepare_job,
@@ -125,7 +125,7 @@ def test_prepared_indices_match_numpy_stream(tmp_path):
 
 @pytest.mark.parametrize("fmt", ["ternary", "2bit"])
 def test_scientific_zero_row_gate_is_independent_of_backend_parity(fmt):
-    from floppylm.xbox import zero_row_gate
+    from floppylm_xbox.jobs import zero_row_gate
 
     assert zero_row_gate("row16", fmt)["ok"]
     assert zero_row_gate("row8log", fmt)["ok"]
@@ -135,7 +135,7 @@ def test_scientific_zero_row_gate_is_independent_of_backend_parity(fmt):
 
 @pytest.mark.skipif(not BINARY.exists(), reason="native E0 binary not built")
 def test_every_kernel_matches_independent_autograd_including_hidden_boundaries(tmp_path):
-    from floppylm.xbox_kernels import verify
+    from floppylm_xbox.kernels import verify
 
     report = verify(tmp_path / "kernels", binary=BINARY, hardware=False)
     assert report["case_count"] == 52

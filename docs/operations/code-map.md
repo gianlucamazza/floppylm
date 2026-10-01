@@ -16,9 +16,16 @@ metrics.py       bits per byte (byte tokenizer: one token is one byte)
 seed.py          single RNG entry point (ADR 0003 §3)
 runlog.py        unique ids, exclusive directories, atomic writes, state, manifests
 data.py          TinyStoriesV2: exact dedup, hash split, manifest, reproducibility
-xbox.py          portable E0 jobs and independent numerical gates for the native backend
-xbox_kernels.py  independent PyTorch/autograd oracle for each native tensor operation
-xbox_portal.py   Device Portal: verified assets, submission binding, transport, recovery
+```
+
+## Xbox execution — `src/floppylm_xbox/`
+
+Depends on the core package; the core never imports it ([ADR 0012](../adr/0012-repo-boundaries.md)).
+
+```
+jobs.py          portable E0 jobs and independent numerical gates for the native backend
+kernels.py       independent PyTorch/autograd oracle for each native tensor operation
+portal.py        Device Portal: settings, pinned TLS, verified assets, submission, recovery
 ```
 
 ## Experiments — `experiments/`

@@ -19,7 +19,7 @@ from http.cookies import SimpleCookie
 from pathlib import Path
 from urllib.parse import urlencode, urlsplit
 
-from . import runlog
+from floppylm import runlog
 
 CHUNK_BYTES = 2 << 20
 CREDENTIAL_KEYS = ("XBOX_IP", "XBOX_USER", "XBOX_PASS", "XBOX_CERT_SHA256")
@@ -241,7 +241,7 @@ class Portal:
             if acceptance is None:
                 raise RuntimeError("scientific Xbox runs require acceptance evidence")
             proof = json.loads(acceptance.read_text())
-            if proof.get("schema") != "floppylm.xbox.acceptance.v1" or not proof.get("ok"):
+            if proof.get("schema") != "floppylm_xbox.jobs.acceptance.v1" or not proof.get("ok"):
                 raise RuntimeError("invalid Xbox acceptance evidence")
             if not proof.get("kernels", {}).get("ok"):
                 raise RuntimeError("scientific Xbox runs require per-operation acceptance evidence")
@@ -251,7 +251,7 @@ class Portal:
                 raise RuntimeError("acceptance was measured on a different package")
         job = json.loads((root / "job.json").read_text())
         if purpose == "scientific":
-            from .xbox import zero_row_gate
+            from .jobs import zero_row_gate
 
             if job["config"]["scale_policy"] not in ("row16", "row8log"):
                 raise RuntimeError("ADR 0011 excludes tensor16 from scientific E0")
@@ -411,7 +411,7 @@ class Portal:
         acceptance: Path | None,
         recover: bool = False,
     ):
-        from .xbox import restore_tensors
+        from .jobs import restore_tensors
 
         submitted = (
             self.recover(root, purpose=purpose, acceptance=acceptance)

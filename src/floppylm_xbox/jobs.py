@@ -16,11 +16,11 @@ import numpy as np
 import torch
 import torch.nn.functional as F
 
-from . import runlog
-from .codec import scalar
-from .model import GPTConfig, QLinear, TinyGPT
-from .seed import seed_all
-from .train import DataStream, TrainSpec, _optimizer, schedule
+from floppylm import runlog
+from floppylm.codec import scalar
+from floppylm.model import GPTConfig, QLinear, TinyGPT
+from floppylm.seed import seed_all
+from floppylm.train import DataStream, TrainSpec, _optimizer, schedule
 
 ABS_GATE, REL_GATE, REL_FLOOR = 1e-5, 1e-4, 1e-2
 

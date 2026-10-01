@@ -15,8 +15,8 @@ from floppylm import runlog
 from floppylm.model import GPTConfig, TinyGPT
 from floppylm.seed import seed_all
 from floppylm.train import TrainSpec
-from floppylm.xbox import prepare_job, tensors
-from floppylm.xbox_portal import Portal
+from floppylm_xbox.jobs import prepare_job, tensors
+from floppylm_xbox.portal import Portal
 
 
 def main():
