@@ -36,7 +36,7 @@
   "chunks": [
    {
     "bytes": 2097152,
-    "path": "dab40f940dbcfe78e95a8f586531ffe9b01deaa010806798e8a0ed7f3fb3c2e2.chunk",
+    "path": "part-0.bin",
     "sha256": "dab40f940dbcfe78e95a8f586531ffe9b01deaa010806798e8a0ed7f3fb3c2e2"
    },
    {

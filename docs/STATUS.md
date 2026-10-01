@@ -44,7 +44,8 @@ Prepared and tested on branches, to apply in this order once it stops:
 3. In `experiments/e0_v2.py`: English `notes_md` template; drop the "host `bg` wrapper" docstring
    line (jobs run under `nohup` outside `background.slice`).
 4. Merge the code of `research/e1-qualification` (its docs are already on `main`; keep `main`'s
-   versions on conflict).
+   versions on conflict) and move its `floppylm.xbox` import (`scripts/e1_cpu_profile.py`) to
+   `floppylm_xbox.jobs`.
 5. Regenerate `tests/fixtures/contracts/` and rerun the suite after the merges.
 6. Install the package from xbox-gpu-training PR #20 (on-console dashboard; `run_job` also
    publishes schedule and phase), rerun acceptance and the bit-identity comparison, record the

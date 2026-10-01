@@ -43,13 +43,10 @@ def tiny_job() -> tuple[dict, dict]:
 
 def instances() -> dict[str, dict]:
     job, initial = tiny_job()
-    submitted = {
-        **job,
-        "purpose": "scientific",
-        "acceptance_sha256": "0" * 64,
-        "stop_after": 9,
-        "resume": {"path": "results/tiny/checkpoint.json", "bytes": 1, "sha256": "1" * 64},
-    }
+    # The exact scientific job sent to the console for a byte repair, with chunk lists.
+    submitted = read(EVIDENCE / "e0-v2/runs/e0-20261001T090514Z-4236fd-000-repair/submitted.json")[
+        "job"
+    ]
     e01 = EVIDENCE / "xbox-e0-20261001-e01"
     recovery = read(e01 / "recovery.json")["reports"]
     interrupted = read(e01 / "lifecycle.json")["checkpoint_interruption"]
@@ -60,6 +57,7 @@ def instances() -> dict[str, dict]:
     valid = {
         "floppylm.e0.job.v1/prepared": job,
         "floppylm.e0.job.v1/submitted": submitted,
+        "floppylm.e0.job.v1/stop-after": read(e01 / "resume-job-submitted.json")["job"],
         "floppylm.e0.initialization.v1/tiny": initial,
         "floppylm.e0.weights.v1/tiny": {"schema": "floppylm.e0.weights.v1", **initial},
         "floppylm.e0.result.v1/running": running,
@@ -109,6 +107,10 @@ def instances() -> dict[str, dict]:
         ),
         "floppylm.e0.job.v1/bad-sha": broken(
             "floppylm.e0.job.v1/prepared", lambda j: j["data"].update(sha256="xyz")
+        ),
+        "floppylm.e0.job.v1/chunk-not-content-addressed": broken(
+            "floppylm.e0.job.v1/submitted",
+            lambda j: j["initialization"]["chunks"][0].update(path="part-0.bin"),
         ),
         "floppylm.e0.job.v1/bad-scale-policy": broken(
             "floppylm.e0.job.v1/prepared", lambda j: j["config"].update(scale_policy="row4")

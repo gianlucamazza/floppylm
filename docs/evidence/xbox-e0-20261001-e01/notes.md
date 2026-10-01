@@ -14,6 +14,8 @@ copies of the local proofs under `runs/*-20261001-ci36839565773/`
 - `recovery.json`: interrupted recovery is exact; completed retrieval leaves results
   unchanged; runner resume of completed work is idempotent.
 - `lifecycle.json`: a real `suspend` marker produced a verified checkpoint at trunk step 461.
+- `resume-job-submitted.json`: the functional job submitted with `stop_after` for the exact-resume
+  gate, as bound to the package (`submitted.json` of that run).
 - `throughput.json`: representative d=96/layers=3/d_ff=391/ctx=256/batch=32 synthetic
   benchmark, 147456 tokens in 14.422 s wall (11.851 GPU s), 10224.282 token/s, peak app
   memory 110366720 bytes.
