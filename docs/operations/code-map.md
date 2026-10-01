@@ -33,9 +33,15 @@ xbox_portal.py   Device Portal: verified assets, submission binding, transport, 
 | `xbox_recovery_acceptance.py`  | Interrupted and completed recovery                     | `--out` `--acceptance`                                                                                                                                                                                           |
 | `xbox_lifecycle_acceptance.py` | Real suspension and checkpoint lifecycle               | `--out` `--acceptance`                                                                                                                                                                                           |
 
+## Contracts — `schemas/`
+
+JSON Schemas of every file exchanged with the native backend; see [schemas/README.md](../../schemas/README.md).
+
 ## Scripts and tests
 
 - `scripts/e0_status.py --campaign DIR [--xbox]`: read-only local/live campaign state and
   frozen-source checks; exit code 1 on issues.
+- `scripts/contract_fixtures.py`: regenerate the golden contract instances in
+  `tests/fixtures/contracts/`.
 - `tests/`: regressions for every module, including the FLP1 fixture for the rejection test.
   Run with `pytest`.

@@ -31,7 +31,8 @@ Bound proofs: `runs/xbox-acceptance-20261001-ci36839565773/acceptance.json` and
   - translate the generated run-note template in `experiments/e0_v2.py` (`notes_md`) to English;
   - drop the "host `bg` wrapper" instruction from the `experiments/e0_v2.py` docstring (jobs run
     under `nohup` outside `background.slice`);
-  - apply the [ADR 0012](adr/0012-repo-boundaries.md) follow-ups;
+  - finish the [ADR 0012](adr/0012-repo-boundaries.md) follow-ups: contracts are published in
+    [`schemas/`](../schemas/README.md); move Xbox operations out of the core package;
   - rename the local working directory to `floppylm` (the running campaign holds absolute paths to
     the current one), then repair the `research/e1-qualification` worktree with `git worktree repair`
     and move the Claude project memory to the new path;

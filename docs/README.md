@@ -36,6 +36,7 @@ Update the owner; every other document links to it instead of copying.
 | Approved completion scope and execution order  | [completion plan](completion-plan.md) |
 | E0–E4 definitions and completion gates         | [roadmap](roadmap.md)                                                                                                              |
 | Xbox procedure                                 | [runbook](operations/xbox-e0.md)                                                                                                   |
+| Native backend contracts (`floppylm.*.v1`)      | [schemas](../schemas/README.md) |
 | Modules and CLI flags                          | [code map](operations/code-map.md)                                                                                                 |
 | Toolchain and machines                         | [stack](stack.md)                                                                                                                  |
 | Measured numbers                               | [evidence](evidence/README.md)                                                                                                     |
