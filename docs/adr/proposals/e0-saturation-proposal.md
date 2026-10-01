@@ -3,7 +3,7 @@
 ## Status
 
 Proposed — 2026-10-01. Awaiting an owner decision; nothing below is accepted. Campaign
-`e0-20261001T090514Z-4236fd` keeps running unchanged until its preregistered gate decides.
+`e0-20261001T090514Z-4236fd` was stopped on 2026-10-01 after both row16 seeds proved unsaturated.
 
 ## Context
 
@@ -28,7 +28,10 @@ Its preregistered S3 byte repair (d_ff 391 → 400, T = 892 steps) reached byte 
 (fill 0.999–1.001) and confirmed the curve: val bpb 1.5155, 1.3951, 1.3160, Δ(2T→4T) = −0.0791,
 still not saturated, so the trial was excluded
 ([repair summary](../../evidence/e0-v2/runs/e0-20261001T090514Z-4236fd-000-repair/summary.json)).
-Because `neutral()` needs both seeds of a candidate, row16 can no longer be selected.
+Because `neutral()` needs both seeds of a candidate, row16 can no longer be selected. The second
+row16 seed (`4236fd-001`) gave val bpb 1.5273, 1.4052, 1.3204 (Δ(2T→4T) = −0.0848): the gap is
+stable across seeds. The owner stopped the campaign at that point
+([record](../../evidence/e0-v2/campaigns/e0-20261001T090514Z-4236fd/notes.md)).
 The gate fails by a factor of eight. If the next three neutral trials behave alike, the campaign
 stops at `neutral-scale` before tuning, grids or paired seeds.
 

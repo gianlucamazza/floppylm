@@ -1,0 +1,229 @@
+{
+ "backend": {
+  "adapter": "SraKmd_arden",
+  "branches": [
+   {
+    "artifact": {
+     "bytes": 7446225,
+     "path": "results/e0-20261001T090514Z-4236fd-001/branch-879.json",
+     "sha256": "11f8ba79ce3a06100992be014d374fba7becc8c78ba2451449dd0f4bcc5974ad"
+    },
+    "cooldown_seconds": 64.059329967,
+    "cooldown_start": 792,
+    "cooldown_steps": 87,
+    "end_step": 879,
+    "tokens_seen": 7200768
+   },
+   {
+    "artifact": {
+     "bytes": 7413374,
+     "path": "results/e0-20261001T090514Z-4236fd-001/branch-1758.json",
+     "sha256": "57faac55435803e3aeee43cb1b80423f3d36a900fbaea91df527dbdac2d704fd"
+    },
+    "cooldown_seconds": 128.863476202,
+    "cooldown_start": 1583,
+    "cooldown_steps": 175,
+    "end_step": 1758,
+    "tokens_seen": 14401536
+   },
+   {
+    "artifact": {
+     "bytes": 7369650,
+     "path": "results/e0-20261001T090514Z-4236fd-001/branch-3516.json",
+     "sha256": "e4f6f2a59471973f2beb265a60675519c85aa8cce9adb92cbef0d75c7f70222c"
+    },
+    "cooldown_seconds": 258.968998827,
+    "cooldown_start": 3165,
+    "cooldown_steps": 351,
+    "end_step": 3516,
+    "tokens_seen": 28803072
+   }
+  ],
+  "checkpoint": {
+   "bytes": 23685432,
+   "path": "results/e0-20261001T090514Z-4236fd-001/checkpoint.json",
+   "sha256": "1faef5f1c41c44859e10233b1ca77a74ed283dca19418f69cb10c5b457d37a82"
+  },
+  "dispatches": 19464256,
+  "gpu_seconds": 2484.0498039435843,
+  "hardware_gpu": true,
+  "job_id": "e0-20261001T090514Z-4236fd-001",
+  "job_sha256": "9029ccd3f1219c9246749e40daee3478e0e2d890bd98ab1c1e5a39645c18e16a",
+  "last_loss": 1.065639662390911,
+  "peak_memory_bytes": 117727232,
+  "schema": "floppylm.e0.result.v1",
+  "state": "completed",
+  "transfer_bytes": 180552372992,
+  "trunk_step": 3165,
+  "wall_seconds": 2797.151364473
+ },
+ "backend_name": "xbox",
+ "branches": [
+  {
+   "artifact": "runs/e0-20261001T090514Z-4236fd-001/branch-879.flp",
+   "cooldown_flops": 1856360153088.0,
+   "cooldown_seconds": 64.059329967,
+   "cooldown_start": 792,
+   "cooldown_steps": 87,
+   "end_step": 879,
+   "eval_seconds": 115.04892063140869,
+   "fill": 0.9890094545454545,
+   "model_bytes": 84993,
+   "sections": {
+    "core": 66751,
+    "emb": 10982,
+    "header": 178,
+    "norms": 1344,
+    "scales": 5738,
+    "shared": 0
+   },
+   "sha256": "087c92c153acf977190c1a6ea6ef7365af3f2bf3538fe06dd8c97ee852132b95",
+   "tokens_seen": 7200768,
+   "val_bpb": 1.5273379115680321,
+   "val_scored_bytes": 1048575
+  },
+  {
+   "artifact": "runs/e0-20261001T090514Z-4236fd-001/branch-1758.flp",
+   "cooldown_flops": 3734057779200.0,
+   "cooldown_seconds": 128.863476202,
+   "cooldown_start": 1583,
+   "cooldown_steps": 175,
+   "end_step": 1758,
+   "eval_seconds": 146.37573623657227,
+   "fill": 0.9886952727272728,
+   "model_bytes": 84966,
+   "sections": {
+    "core": 66764,
+    "emb": 10942,
+    "header": 178,
+    "norms": 1344,
+    "scales": 5738,
+    "shared": 0
+   },
+   "sha256": "7aa833f465516f6a4b0df51c9857c959f6a5c822db36c4342b775b030954e68e",
+   "tokens_seen": 14401536,
+   "val_bpb": 1.4052237285360016,
+   "val_scored_bytes": 1048575
+  },
+  {
+   "artifact": "runs/e0-20261001T090514Z-4236fd-001/branch-3516.flp",
+   "cooldown_flops": 7489453031424.0,
+   "cooldown_seconds": 258.968998827,
+   "cooldown_start": 3165,
+   "cooldown_steps": 351,
+   "end_step": 3516,
+   "eval_seconds": 184.24009895324707,
+   "fill": 0.9870778181818182,
+   "model_bytes": 84827,
+   "sections": {
+    "core": 66737,
+    "emb": 10830,
+    "header": 178,
+    "norms": 1344,
+    "scales": 5738,
+    "shared": 0
+   },
+   "sha256": "116e7643ec37f438bdc06544054873bbf77433c83d6406141679be95a518cb49",
+   "tokens_seen": 28803072,
+   "val_bpb": 1.3204428088422502,
+   "val_scored_bytes": 1048575
+  }
+ ],
+ "compute": {
+  "cooldown_flops": 13079870963712.0,
+  "cooldown_tokens": 5021696,
+  "eval_seconds": 445.664755821228,
+  "flops_per_token_forward": 868224.0,
+  "formula": "3 * (2 * stored_params + 4 * n_layers * (ctx / 2) * d) * tokens",
+  "native_execution_seconds": 2797.151364473,
+  "total_flops": 80612973084672.0,
+  "total_tokens": 30949376,
+  "trunk_flops": 67533102120960.0,
+  "trunk_seconds": 2345.259559477,
+  "trunk_tokens": 25927680,
+  "wall_scope": "current host attempt",
+  "wall_seconds": 3267.199683904648
+ },
+ "config": {
+  "core_fmt": "ternary",
+  "ctx": 256,
+  "d": 96,
+  "d_ff": 391,
+  "delta": 0.5,
+  "emb_fmt": "4bit",
+  "mlp": "gelu",
+  "n_heads": 6,
+  "n_layers": 3,
+  "qk_norm": false,
+  "scale_policy": "row16",
+  "vocab": 256
+ },
+ "data_sha256": {
+  "test": "0970122cf1728509e77b2aede4bf25c536ef72ee7cc0aa242858af20ea971df5",
+  "train": "8745f0d0f0c2ede79305e35393f90b35ff15c91fa1d85abed2acafdf4046e092",
+  "val": "511546bff5b4c512b0e1bbc5c4cc5fa6a73b24e2b55ca4e3cbceb5f312fb7a05"
+ },
+ "environment": {
+  "cpu": "11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz",
+  "numpy": "2.4.4",
+  "platform": "Linux-7.2.6-arch2-1-x86_64-with-glibc2.44",
+  "python": "3.14.7",
+  "torch": "2.11.0+cu130",
+  "torch_threads": 2
+ },
+ "finished": "2026-10-01T11:41:56+00:00",
+ "parity_individual_ok": false,
+ "repair_ratio": null,
+ "retry_count": 0,
+ "retry_of": null,
+ "run_id": "e0-20261001T090514Z-4236fd-001",
+ "saturation": {
+  "criterion": "|bpb(4T) - bpb(2T)| < 0.01",
+  "delta_signed": -0.08478091969375146,
+  "verdict": "non saturo"
+ },
+ "smoke": false,
+ "sources": {
+  "files": {
+   "experiments/e0_campaign.py": "1e454c60ae413bae8fc70eb44dda5d4b605fe2236d8b3883c3e4f60b9d9d54bd",
+   "experiments/e0_v2.py": "8f69e5bb4696675f166858141d59af7e40e1f611087a4e3f85c1fba42e7bd366",
+   "experiments/xbox_acceptance.py": "8aac1b8fc0b1ffc76820945263beb0605a71fd63be0116ce353ff7a50cfdc042",
+   "experiments/xbox_benchmark.py": "18901665a8867d2aadd16bd5982bc5a9c4cb280f5bc13116e2c0f77c132bfe48",
+   "experiments/xbox_lifecycle_acceptance.py": "20891bb3c11ef8e58f62f844d0332d7d971ce958210608450b67407cc02e156d",
+   "experiments/xbox_recovery_acceptance.py": "12a8f12a5d537347002e84f1695e13868ea32e000cc76de3042e19c24c23bd7a",
+   "experiments/xbox_worker_acceptance.py": "9ec1404f4bf0c897259dfe154346bbce17a494bb92ed296acb6a738090911284",
+   "src/floppylm/__init__.py": "7f2f61b038b0618bf2a758162e40609e32dc2a7522cb481aeac175109905f510",
+   "src/floppylm/codec.py": "1bd657359f16e597de154b88cc77cf46fab092444335fb6164d99b531f5e462f",
+   "src/floppylm/data.py": "ee77ecbc3993a0a2101adaba8d70a905cb95a328d62acc3a2d457b6d85e74611",
+   "src/floppylm/metrics.py": "ca90d1ecd537d102758d422a3af4e2e3403abd6e84a92f63bb09bcc15e4e200f",
+   "src/floppylm/model.py": "9a8c2da790c9836083af91ff1ba77c9009e9fc4d6f9bb2ab5059f5aae27febf0",
+   "src/floppylm/pack.py": "5d733a3265b800dc0cf635f046b2d55bc4b6bf5a863260a9e0802e4fd8a19898",
+   "src/floppylm/parity.py": "3020c298c38f58f7ba71a5afbc84de4b349fd254860d9c3c0584c269c86df659",
+   "src/floppylm/rans.py": "281c640d1b54eaff6164de6c942d5c1c0a3ca5233a896d3bf067ed20348ee37b",
+   "src/floppylm/runlog.py": "73a3ee5f033b9a9edf2189fd7be7af35b7cb5fc5713167fd39e87839cd6ec22c",
+   "src/floppylm/seed.py": "694dd86fef042e51edd0dac601958cfda4192677a8aeb264ffc63935df7d7713",
+   "src/floppylm/shapes.py": "2da4f4211742a6c5befc7f8c5a24617a9fcbefa31af56e4b64627a0e7ac4b1cb",
+   "src/floppylm/train.py": "bfa70a82df33f75cded83bd25ba6a627e70538d9a6dcb080e30d7528ebbe1005",
+   "src/floppylm/xbox.py": "b9714ee06873253b2ab619aa598ba86e7970b6ded866241cc9f03d5677f148f8",
+   "src/floppylm/xbox_kernels.py": "2e01e3a6d20b265a96c6889973bcb39625fb8dd2b29245d905ff91781cd0e2af",
+   "src/floppylm/xbox_portal.py": "42d13497462ad782398aef6a2ab4869b137fc088e82dd354efc70417d6b81886"
+  },
+  "git": {
+   "commit": "c6b6ba2d5b88bf3f6cdf07deda34cca8d4dc3c6f",
+   "dirty": true
+  }
+ },
+ "spec": {
+  "batch": 32,
+  "branches": 3,
+  "cooldown_frac": 0.1,
+  "lr": 0.003,
+  "seed": 1,
+  "tokens": 7207680,
+  "warmup_frac": 0.02,
+  "wd": 0.1
+ },
+ "status": "completed",
+ "target_bytes": 85937.5,
+ "token_policy": "per_parameter"
+}

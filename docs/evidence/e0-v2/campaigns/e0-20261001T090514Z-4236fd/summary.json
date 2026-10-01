@@ -1,0 +1,185 @@
+{
+ "campaign": "e0-20261001T090514Z-4236fd",
+ "commit": "25f8bc3966ffae940658be94161d31edd83492c9",
+ "cost": {
+  "eval_seconds": 877.0865681171417,
+  "native_execution_seconds": 8442.401666124,
+  "total_flops": 244032328433664.0,
+  "total_tokens": 93315072,
+  "wall_seconds": 9377.268009901047
+ },
+ "cost_scope": "completed trial compute; host wall per recorded host attempt",
+ "cost_unavailable_trials": [
+  "e0-20261001T090514Z-4236fd-001-repair"
+ ],
+ "decisions": {},
+ "original_trials": 2,
+ "package": "GianlucaMazza.XgpuE0_0.1.0.28_x64__g0p5dcfz4t9z4",
+ "repair_trials": 2,
+ "status": "stopped",
+ "trials": [
+  {
+   "compute": {
+    "cooldown_flops": 13079870963712.0,
+    "cooldown_tokens": 5021696,
+    "eval_seconds": 284.73402404785156,
+    "flops_per_token_forward": 868224.0,
+    "formula": "3 * (2 * stored_params + 4 * n_layers * (ctx / 2) * d) * tokens",
+    "native_execution_seconds": 2794.610053927,
+    "total_flops": 80612973084672.0,
+    "total_tokens": 30949376,
+    "trunk_flops": 67533102120960.0,
+    "trunk_seconds": 2343.242236554,
+    "trunk_tokens": 25927680,
+    "wall_scope": "current host attempt",
+    "wall_seconds": 3095.9563999176025
+   },
+   "eligibility": "excluded",
+   "key": "neutral-scale-0-0",
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 391,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "gelu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row16",
+     "vocab": 256
+    },
+    "lr": 0.003,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "run_id": "e0-20261001T090514Z-4236fd-000",
+   "saturation": {
+    "criterion": "|bpb(4T) - bpb(2T)| < 0.01",
+    "delta_signed": -0.08184694643023382,
+    "verdict": "non saturo"
+   },
+   "status": "completed"
+  },
+  {
+   "compute": {
+    "cooldown_flops": 13451988566016.0,
+    "cooldown_tokens": 5103616,
+    "eval_seconds": 146.68778824806213,
+    "flops_per_token_forward": 878592.0,
+    "formula": "3 * (2 * stored_params + 4 * n_layers * (ctx / 2) * d) * tokens",
+    "native_execution_seconds": 2850.640247724,
+    "total_flops": 82806382264320.0,
+    "total_tokens": 31416320,
+    "trunk_flops": 69354393698304.0,
+    "trunk_seconds": 2390.301808011,
+    "trunk_tokens": 26312704,
+    "wall_scope": "current host attempt",
+    "wall_seconds": 3014.1119260787964
+   },
+   "eligibility": "excluded",
+   "key": "neutral-scale-0-0",
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 391,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "gelu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row16",
+     "vocab": 256
+    },
+    "lr": 0.003,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "run_id": "e0-20261001T090514Z-4236fd-000-repair",
+   "saturation": {
+    "criterion": "|bpb(4T) - bpb(2T)| < 0.01",
+    "delta_signed": -0.07907501984609122,
+    "verdict": "non saturo"
+   },
+   "status": "completed"
+  },
+  {
+   "compute": {
+    "cooldown_flops": 13079870963712.0,
+    "cooldown_tokens": 5021696,
+    "eval_seconds": 445.664755821228,
+    "flops_per_token_forward": 868224.0,
+    "formula": "3 * (2 * stored_params + 4 * n_layers * (ctx / 2) * d) * tokens",
+    "native_execution_seconds": 2797.151364473,
+    "total_flops": 80612973084672.0,
+    "total_tokens": 30949376,
+    "trunk_flops": 67533102120960.0,
+    "trunk_seconds": 2345.259559477,
+    "trunk_tokens": 25927680,
+    "wall_scope": "current host attempt",
+    "wall_seconds": 3267.199683904648
+   },
+   "eligibility": "reserved",
+   "key": "neutral-scale-0-1",
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 391,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "gelu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row16",
+     "vocab": 256
+    },
+    "lr": 0.003,
+    "seed": 1,
+    "wd": 0.1
+   },
+   "run_id": "e0-20261001T090514Z-4236fd-001",
+   "saturation": {
+    "criterion": "|bpb(4T) - bpb(2T)| < 0.01",
+    "delta_signed": -0.08478091969375146,
+    "verdict": "non saturo"
+   },
+   "status": "completed"
+  },
+  {
+   "compute": null,
+   "eligibility": "reserved",
+   "key": "neutral-scale-0-1",
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 391,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "gelu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row16",
+     "vocab": 256
+    },
+    "lr": 0.003,
+    "seed": 1,
+    "wd": 0.1
+   },
+   "run_id": "e0-20261001T090514Z-4236fd-001-repair",
+   "saturation": null,
+   "status": "interrupted"
+  }
+ ],
+ "validation_paired": null
+}

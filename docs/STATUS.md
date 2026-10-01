@@ -9,29 +9,25 @@ bump or campaign start/stop. Last updated: **2026-10-01**.
 | E0 v2 software       | **measured**: harness, gates and smoke ([evidence](evidence/README.md))                                                                                                                 |
 | S1–S10, scale policy | accepted ([ADR 0008](adr/0008-e0-numeric-protocol.md), [ADR 0011](adr/0011-e0-row-scale-selection.md))                                                                                  |
 | Xbox package         | `GianlucaMazza.XgpuE0_0.1.0.28_x64__g0p5dcfz4t9z4` (E0.1), CI run 36839565773, source `25f8bc3966ffae940658be94161d31edd83492c9` — [acceptance](evidence/xbox-e0-20261001-e01/notes.md) |
-| E0 campaign          | `e0-20261001T090514Z-4236fd`, **running**, phase `neutral-scale`; state in `runs/e0-campaign-20261001-e01/`; launched with `bg`, moved live at 11:59 CEST to `app.slice/floppy-e0-campaign-e01.scope` (no CPU quota); wall times before that ran under the 1-core cap                                                                             |
+| E0 campaign          | `e0-20261001T090514Z-4236fd` (0.1.0.28), **stopped** 2026-10-01 13:44 CEST at `neutral-scale`: both row16 seeds not saturated — [record](evidence/e0-v2/campaigns/e0-20261001T090514Z-4236fd/notes.md) |
 | Previous campaign    | `e0-20261001T074326Z-503df0` (0.1.0.24), **stopped**, [record](evidence/e0-v2/campaigns/e0-20261001T074326Z-503df0/notes.md)                                                            |
-| E0 saturation risk   | trial 0 not saturated (Δ 2T→4T = −0.082 vs 0.01); the campaign is expected to stop at `neutral-scale` — [proposal](adr/proposals/e0-saturation-proposal.md) awaits an owner decision |
+| E0 saturation gate   | not met at 1/16 (Δ 2T→4T ≈ −0.08 vs 0.01, three trials); no new campaign until the owner decides the [proposal](adr/proposals/e0-saturation-proposal.md) |
 | E0 quality results   | pending                                                                                                                                                                                 |
 | E1 qualification     | CPU functional qualification **measured** ([ADR 0013](adr/0013-e1-functional-qualification.md), [evidence](evidence/e1-qualification-20261001/notes.md)); Xbox vector qualification pending; code on branch `research/e1-qualification` |
 | Scientific E1–E4     | **specified**, gated by E0 and an accepted E1 protocol ([roadmap](roadmap.md), [completion plan](completion-plan.md)) |
 
-Check the live campaign (read-only):
+The console is idle. Inspect the stopped campaign record (read-only):
 
 ```bash
-python scripts/e0_status.py --campaign runs/e0-campaign-20261001-e01 --xbox
+python scripts/e0_status.py --campaign runs/e0-campaign-20261001-e01
 ```
 
-Bound proofs: `runs/xbox-acceptance-20261001-ci36839565773/acceptance.json` and
-`runs/xbox-benchmark-20261001-ci36839565773/summary.json`.
+## Next (the campaign has stopped)
 
-## Pending after the campaign
+No campaign is bound to the frozen sources any more. Prepared and tested on branches, to apply in
+this order:
 
-Frozen sources (`src/floppylm/*.py`, `experiments/*.py`) stay untouched while the campaign runs.
-Prepared and tested on branches, to apply in this order once it stops:
-
-1. Rename the local working directory to `floppylm` (the running campaign holds absolute paths
-   to the current one); then `git worktree repair` for the `research/e1-qualification` and
+1. Rename the local working directory to `floppylm`; then `git worktree repair` for the `research/e1-qualification` and
    `chore/xbox-package` worktrees and move the Claude project memory to the new path.
 2. Merge `chore/xbox-package`, which completes the [ADR 0012](adr/0012-repo-boundaries.md)
    follow-ups together with the published [`schemas/`](../schemas/README.md) (checked by
