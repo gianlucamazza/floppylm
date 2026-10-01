@@ -24,7 +24,7 @@ It is not a brainstorm, a survey or a TODO.
 
 | ADR                                         | Decision                                                                                                       | Status             |
 | ------------------------------------------- | -------------------------------------------------------------------------------------------------------------- | ------------------ |
-| [0001](0001-floppy-budget.md)               | The budget is the floppy, not the parameters: ≤ 1 457 664 B of FAT12 data area; what counts and what does not  | accepted           |
+| [0001](0001-floppy-budget.md)               | The budget is the floppy, not the parameters: ≤ 1 457 664 B of FAT12 data area; what counts and what does not  | amended            |
 | [0002](0002-adversary-dense-frontier.md) | Adversaries fixed before the thesis: dense low-bit frontier and pure recursion (+ ternary recursion from 1/4); double token/FLOP parity; paired gate | amended            |
 | [0003](0003-lab-practices.md)               | Lab invariants: bit accounting, seeds, evidence, stop on F\*                                                   | superseded-in-part |
 | [0004](0004-miniature-budgets.md) | Budgets 1/16, 1/4, 1×: model bytes only in miniature (whole image at 1×), embedding ~15%; GPU only with an ADR | superseded-in-part |

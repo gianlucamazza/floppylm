@@ -2,7 +2,7 @@
 
 ## Status
 
-`accepted` — accepted 2026-09-30.
+`amended` — accepted 2026-09-30, amended 2026-10-01 (project name only).
 
 ## Context
 
@@ -34,3 +34,8 @@ leaves ~264 KB free.
 - Runtime RAM is free up to 1 GB: this is the asymmetry the thesis exploits
   ([concept](../concept.md)).
 - The tokenizer is inside the budget: large vocabularies cost twice (file + embedding).
+
+## Amendment — 2026-10-01 (project name)
+
+The project and repository are named **floppylm**; the former working name `floppy_4mb` in the
+Context above is historical. The budget decision is unchanged.

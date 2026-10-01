@@ -31,6 +31,9 @@ Bound proofs: `runs/xbox-acceptance-20261001-ci36839565773/acceptance.json` and
   - drop the "host `bg` wrapper" instruction from the `experiments/e0_v2.py` docstring (jobs run
     under `nohup` outside `background.slice`);
   - apply the [ADR 0012](adr/0012-repo-boundaries.md) follow-ups;
+  - rename the working directory `floppy_4mb` → `floppylm` (the running campaign holds absolute
+    paths to it), then repair the `research/e1-qualification` worktree with `git worktree repair`
+    and move the Claude project memory to the new path;
   - merge the code of branch `research/e1-qualification` (its docs are already on `main`; keep `main`'s versions on conflict).
 
 Status vocabulary: **specified** (written, not executed), **stub**, **running**, **stopped** (halted

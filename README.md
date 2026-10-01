@@ -2,7 +2,6 @@
 
 A lab for the best language model that fits **entirely** on a real 3.5" floppy: weight description,
 tokenizer and runtime inside one 1 474 560-byte disk ([what counts](docs/adr/0001-floppy-budget.md)).
-The repository name `floppy_4mb` is symbolic.
 
 **Status:** the E0 scalar baseline runs on an Xbox Series S GPU backend; live state, including
 whether any quality result exists, is in [docs/STATUS.md](docs/STATUS.md).
