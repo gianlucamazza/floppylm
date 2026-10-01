@@ -144,3 +144,15 @@ development certificate. Every executable, shader, resource and manifest entry i
 byte against the downloaded CI package; ZIP metadata, block map and signature hashes are recorded
 separately (`package-lineage.json` in the evidence). Neither installation nor CI success is a
 scientific result.
+
+
+### Interrupted publication
+
+[ADR 0014](../adr/0014-durable-xbox-publication.md) governs upload recovery.
+`publication.json` is the durable pending transaction; `submitted.json` is the last
+console-acknowledged binding. Preserve both files after a transport failure. Explicit
+`--recover` validates the package, recipe and assets, then reconciles the pending hash.
+Acknowledged jobs are reattached; an unacknowledged upload is replayed only with proof
+that previous work has stopped. Do not delete the journal or edit hashes to force recovery.
+Initial acknowledgment and missing/mismatched statuses are bounded to 300 seconds.
+Ten minutes without numerical progress emits a diagnostic and keeps valid work running.

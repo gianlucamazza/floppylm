@@ -38,6 +38,8 @@ It is not a brainstorm, a survey or a TODO.
 | [0012](0012-repo-boundaries.md)             | floppylm owns FloppyLM semantics; xbox-gpu-training is the only native backend; no FloppyLM in xllama          | accepted           |
 | [0013](0013-e1-functional-qualification.md) | Isolated E1 functional qualification (vector/BPE oracles); scientific E1 remains gated | accepted |
 
+| [0014](0014-durable-xbox-publication.md) | Journaled Xbox publication, acknowledged bindings and bounded recovery | accepted |
+
 ## Proposals
 
 | Proposal                                                                  | Outcome             |
