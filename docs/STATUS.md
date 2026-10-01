@@ -36,6 +36,8 @@ Bound proofs: `runs/xbox-acceptance-20261001-ci36839565773/acceptance.json` and
     and move the Claude project memory to the new path;
   - merge branch `chore/generic-config` (generic Device Portal settings) and copy the console
     credentials to `~/.config/floppylm/xbox.env` before the next Xbox job;
+  - install the package built from xbox-gpu-training PR #20 (on-console dashboard; no training
+    code changes), then rerun acceptance and the bit-identity comparison before any new campaign;
   - merge the code of branch `research/e1-qualification` (its docs are already on `main`; keep `main`'s versions on conflict).
 
 Status vocabulary: **specified** (written, not executed), **stub**, **running**, **stopped** (halted
