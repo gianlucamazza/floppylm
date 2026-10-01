@@ -21,6 +21,8 @@ from urllib.parse import urlencode, urlsplit
 
 from floppylm import runlog
 
+from .runtime import RuntimeMonitor, owns, validate_worker
+
 CHUNK_BYTES = 2 << 20
 CREDENTIAL_KEYS = ("XBOX_IP", "XBOX_USER", "XBOX_PASS", "XBOX_CERT_SHA256")
 DEFAULT_PORT = 11443
@@ -292,6 +294,9 @@ class Portal:
             runlog.write_json(root / "zero-row-gate.json", gate)
             if not gate["ok"]:
                 raise RuntimeError("scientific scale policy violates accepted S9 zero-row gate")
+        worker = self.live_worker(commit=device.get("commit"))
+        if worker["state"] != "ready" or worker["active_job"] is not None:
+            raise RuntimeError("worker is not idle; refusing another job")
         existing = self.files()
         for key in ("initialization", "data", "indices"):
             path = root / job[key]["path"]
@@ -313,13 +318,6 @@ class Portal:
     @staticmethod
     def _durable_json(path: Path, value: dict) -> None:
         runlog.write_json(path, value)
-        with path.open("rb") as file:
-            os.fsync(file.fileno())
-        descriptor = os.open(path.parent, os.O_RDONLY | os.O_DIRECTORY)
-        try:
-            os.fsync(descriptor)
-        finally:
-            os.close(descriptor)
 
     def _publish(self, root: Path, job: dict, kind: str) -> None:
         journal_path = root / "publication.json"
@@ -388,6 +386,65 @@ class Portal:
     def status(self, job_id: str) -> dict:
         return json.loads(self.get("status.json", "inbox/results/" + job_id))
 
+    def worker(self, *, commit: str | None = None) -> dict:
+        try:
+            record = json.loads(self.get("worker.json", ""))
+        except FileNotFoundError as error:
+            raise RuntimeError(
+                "worker contract missing; new runtime acceptance required"
+            ) from error
+        return validate_worker(record, self.package, commit)
+
+    def live_worker(self, *, commit: str | None = None) -> dict:
+        """Require two advancing heartbeats of one instance before recovery authority."""
+        deadline = time.monotonic() + 30
+        previous = None
+        while time.monotonic() < deadline:
+            current = self.worker(commit=commit)
+            if current["state"] == "failed" or current["fault"] is not None:
+                raise RuntimeError("GPU worker failed; explicit app restart required")
+            if previous is not None and current["worker_id"] != previous["worker_id"]:
+                raise RuntimeError("worker instance changed during liveness verification")
+            if previous is not None:
+                if current["heartbeat_seq"] < previous["heartbeat_seq"]:
+                    raise RuntimeError("worker heartbeat regressed")
+                if current["heartbeat_seq"] > previous["heartbeat_seq"] and current["state"] in (
+                    "ready",
+                    "running",
+                ):
+                    return current
+            previous = current
+            time.sleep(1)
+        raise TimeoutError("worker heartbeat did not advance within 30 seconds")
+
+    @staticmethod
+    def _runtime_event(root: Path | None, event: dict, log) -> None:
+        payload = {"observed_at": runlog.now(), **event}
+        if root is not None:
+            root.mkdir(parents=True, exist_ok=True)
+            with (root / "runtime-events.jsonl").open("a") as file:
+                file.write(json.dumps(payload, sort_keys=True) + "\n")
+                file.flush()
+                os.fsync(file.fileno())
+        if root is not None and payload.get("event") in (
+            "transport_failure",
+            "worker_transport_unknown",
+        ):
+            runlog.write_json(
+                root / "runtime.json",
+                {
+                    "observed_at": payload["observed_at"],
+                    "liveness": "unknown",
+                    "progress": "unverified",
+                    "event": payload["event"],
+                },
+            )
+        text = json.dumps(payload)
+        if log is print:
+            print(text, flush=True)
+        else:
+            log(text)
+
     def wait(
         self,
         job_id: str,
@@ -395,12 +452,14 @@ class Portal:
         *,
         expected_sha: str | None = None,
         acknowledgment_only: bool = False,
+        observation_dir: Path | None = None,
     ) -> dict:
         previous = None
         transport_failures = 0
         deadline = time.monotonic() + 300
         acknowledged = False
-        progress = time.monotonic()
+        monitor = None
+        observation_saved = float("-inf")
         observed_sha = None
         while True:
             if not acknowledged and time.monotonic() >= deadline:
@@ -419,14 +478,15 @@ class Portal:
                 continue
             except (OSError, http.client.HTTPException) as error:
                 transport_failures += 1
-                log(
-                    json.dumps(
-                        {
-                            "event": "transport_failure",
-                            "attempt": transport_failures,
-                            "error": type(error).__name__,
-                        }
-                    )
+                self._runtime_event(
+                    observation_dir,
+                    {
+                        "event": "transport_failure",
+                        "liveness": "unknown",
+                        "attempt": transport_failures,
+                        "error": type(error).__name__,
+                    },
+                    log,
                 )
                 if transport_failures >= 5:
                     raise
@@ -458,27 +518,77 @@ class Portal:
             deadline = time.monotonic() + 300
             if acknowledgment_only:
                 return report
-            marker = (report["state"], report.get("trunk_step"))
-            if marker != previous:
-                log(
-                    json.dumps(
-                        {k: report[k] for k in ("state", "trunk_step", "last_loss") if k in report}
-                    )
-                )
-                previous = marker
-                progress = time.monotonic()
-            elif time.monotonic() - progress >= 600:
-                log(
-                    json.dumps(
+            if report["state"] == "running":
+                try:
+                    worker = self.worker()
+                except (OSError, http.client.HTTPException) as error:
+                    self._runtime_event(
+                        observation_dir,
                         {
-                            "event": "no_progress",
+                            "event": "worker_transport_unknown",
+                            "error": type(error).__name__,
+                            "job_id": job_id,
+                        },
+                        log,
+                    )
+                    time.sleep(2)
+                    continue
+                monitor = monitor or RuntimeMonitor(job_id, expected_sha or report["job_sha256"])
+                observation = monitor.observe(report, worker, time.monotonic())
+                for event in observation["events"]:
+                    self._runtime_event(
+                        observation_dir,
+                        {
+                            "event": event,
                             "job_id": job_id,
                             "expected_sha256": expected_sha,
-                            "observed": marker,
-                        }
+                            "worker_id": worker["worker_id"],
+                            "progress_age_seconds": observation["progress_age_seconds"],
+                        },
+                        log,
                     )
+                for event in observation["cleared"]:
+                    self._runtime_event(
+                        observation_dir,
+                        {
+                            "event": "runtime_alarm_cleared",
+                            "alarm": event,
+                            "job_id": job_id,
+                        },
+                        log,
+                    )
+                if observation_dir is not None and time.monotonic() - observation_saved >= 5:
+                    observation_dir.mkdir(parents=True, exist_ok=True)
+                    self._durable_json(
+                        observation_dir / "runtime.json",
+                        {
+                            "observed_at": runlog.now(),
+                            "job_id": job_id,
+                            "job_sha256": report["job_sha256"],
+                            **observation,
+                        },
+                    )
+                    observation_saved = time.monotonic()
+            marker = (
+                report["state"],
+                report.get("trunk_step"),
+                report.get("phase"),
+                report.get("cooldown_step"),
+            )
+            if marker != previous:
+                self._runtime_event(
+                    observation_dir,
+                    {
+                        "event": "job_progress",
+                        **{
+                            k: report[k]
+                            for k in ("state", "trunk_step", "phase", "cooldown_step", "last_loss")
+                            if k in report
+                        },
+                    },
+                    log,
                 )
-                progress = time.monotonic()
+                previous = marker
             if report["state"] != "running":
                 return report
             time.sleep(2)
@@ -499,6 +609,9 @@ class Portal:
         self.upload(job_id + ".cancel", b"cancel")
 
     def fixture(self, initial: dict, job_id: str, *, timeout: float = 300) -> dict:
+        worker = self.live_worker()
+        if worker["state"] != "ready" or worker["active_job"] is not None:
+            raise RuntimeError("worker is not idle; fixture refused")
         self.upload(job_id + ".job.json", json.dumps(initial).encode())
         self.upload(job_id + ".ready", b"ready")
         deadline = time.monotonic() + timeout
@@ -536,6 +649,7 @@ class Portal:
             if acceptance is None or runlog.sha256_file(acceptance) != job["acceptance_sha256"]:
                 raise RuntimeError("recovery acceptance mismatch")
             check_acceptance(json.loads(acceptance.read_text()), device, self.package)
+        worker = self.live_worker(commit=device.get("commit"))
         original = json.loads((root / "job.json").read_text())
         for key in ("job_id", "config", "spec"):
             if original[key] != job[key]:
@@ -574,6 +688,8 @@ class Portal:
                         )
                 elif previous:
                     raise RuntimeError("publication cannot prove previous execution stopped")
+                if worker["state"] != "ready" or worker["active_job"] is not None:
+                    raise RuntimeError("worker is not idle; publication replay refused")
                 if journal["kind"] == "resume":
                     self.retrieve(job["resume"], root / "recovery-checkpoint.json")
                 self._replay_publication(root, journal)
@@ -581,7 +697,17 @@ class Portal:
         report = self.status(job["job_id"])
         if report.get("job_sha256") != binding["sha256"]:
             raise RuntimeError("recovery remote submission mismatch")
+        if journal:
+            worker = self.live_worker(commit=device.get("commit"))
+        if report["state"] == "running" and not owns(worker, job["job_id"], binding["sha256"]):
+            raise RuntimeError(
+                "orphan running report; native reconciliation required before recovery"
+            )
         if report["state"] == "interrupted":
+            # Refresh after reconciliation/acknowledgment; no live owner may be overwritten.
+            worker = self.live_worker(commit=device.get("commit"))
+            if worker["state"] != "ready" or worker["active_job"] is not None:
+                raise RuntimeError("worker is not idle; resume refused")
             self.retrieve(report["checkpoint"], root / "recovery-checkpoint.json")
             history_path = root / "execution-segments.json"
             history = json.loads(history_path.read_text()) if history_path.exists() else []
@@ -614,7 +740,9 @@ class Portal:
         job_id = submitted["job_id"]
         try:
             report = self.wait(
-                job_id, expected_sha=json.loads((root / "submitted.json").read_text())["sha256"]
+                job_id,
+                expected_sha=json.loads((root / "submitted.json").read_text())["sha256"],
+                observation_dir=root,
             )
         except KeyboardInterrupt:
             self.cancel(job_id)

@@ -40,6 +40,8 @@ It is not a brainstorm, a survey or a TODO.
 | [0014](0014-durable-xbox-publication.md) | Journaled Xbox publication, acknowledged bindings and bounded recovery | accepted |
 | [0015](0015-e0-fixed-data-frontier.md) | E0 eligibility is byte parity; saturation is recorded; rank stability at T/2T/4T | accepted |
 
+| [0017](0017-runtime-liveness.md) | Bounded GPU waits, worker ownership and explicit runtime recovery; hardware after E0 | accepted |
+
 ## Proposals
 
 | Proposal                                                                  | Outcome             |

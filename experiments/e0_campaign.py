@@ -11,6 +11,8 @@ import argparse
 import fcntl
 import itertools
 import json
+import os
+import signal
 import statistics
 import subprocess
 import sys
@@ -36,6 +38,9 @@ class Campaign:
     def __init__(self, root: Path, acceptance: Path, benchmark: Path, *, recover: bool = False):
         self.root, self.acceptance = root, acceptance.resolve()
         self.recover_trials = recover
+        self.child = None
+        self.stop_signal = None
+        self.launching = self.stopping = False
         proof, speed = json.loads(acceptance.read_text()), json.loads(benchmark.read_text())
         if not proof["ok"] or any(proof[k] != speed[k] for k in ("package", "commit")):
             raise RuntimeError("benchmark and acceptance must bind the same hardware package")
@@ -98,7 +103,86 @@ class Campaign:
             # Exclusive creation freezes choices before any scientific result.
             with self.path.open("x") as file:
                 json.dump(self.state, file, indent=1)
+        self.state.update(pid=os.getpid(), process_identity=runlog.process_identity())
         self.save()
+
+    def event(self, event, **fields):
+        record = {"at": runlog.now(), "event": event, **fields}
+        with (self.root / "runtime-events.jsonl").open("a") as file:
+            file.write(json.dumps(record, sort_keys=True) + "\n")
+            file.flush()
+            os.fsync(file.fileno())
+        directory = os.open(self.root, os.O_RDONLY | os.O_DIRECTORY)
+        try:
+            os.fsync(directory)
+        finally:
+            os.close(directory)
+
+    def on_signal(self, signum, _frame):
+        self.stop_signal = self.stop_signal or signum
+        if not self.launching and not self.stopping:
+            raise KeyboardInterrupt(f"signal {signum}")
+
+    def run_command(self, command, **kwargs):
+        """Keep the campaign lock until an explicitly interrupted child is reaped."""
+        was_stopping = self.stopping
+        try:
+            self.launching = True
+            try:
+                self.child = subprocess.Popen(command, start_new_session=True, **kwargs)
+            finally:
+                self.launching = False
+            if self.stop_signal is not None:
+                raise KeyboardInterrupt(f"signal {self.stop_signal}")
+            returncode = self.child.wait()
+            if returncode:
+                raise subprocess.CalledProcessError(returncode, command)
+        except BaseException:
+            self.stopping = True
+            if self.child is not None and self.child.poll() is None:
+                signum = self.stop_signal or signal.SIGTERM
+                try:
+                    self.state.update(status="stopping", child_pid=self.child.pid, signal=signum)
+                    self.save()
+                    self.event("child_stop_requested", pid=self.child.pid, signal=signum)
+                finally:
+                    # Even a journal/disk failure must not orphan the active child.
+                    try:
+                        os.killpg(self.child.pid, signum)
+                    except ProcessLookupError:
+                        pass
+                    finally:
+                        # Cancellation may persist a GPU checkpoint. Keep the lock
+                        # until cleanup finishes; never escalate to automatic hard kill.
+                        self.child.wait()
+                self.event("child_reaped", pid=self.child.pid, returncode=self.child.returncode)
+            raise
+        finally:
+            self.child = None
+            self.stopping = was_stopping
+
+    def run_managed(self):
+        previous = {s: signal.signal(s, self.on_signal) for s in (signal.SIGINT, signal.SIGTERM)}
+        try:
+            self.state.update(
+                status="running", pid=os.getpid(), process_identity=runlog.process_identity()
+            )
+            self.save()
+            self.event("worker_started", process_identity=self.state["process_identity"])
+            self.run()
+        except BaseException as error:
+            self.stopping = True
+            self.state.update(status="stopped", error=repr(error), stopped=runlog.now())
+            if self.stop_signal is not None:
+                self.state["signal"] = self.stop_signal
+            self.save()
+            self.event("worker_stopped", error=repr(error), signal=self.stop_signal)
+            self.report()
+            raise
+        finally:
+            for signum, handler in previous.items():
+                signal.signal(signum, handler)
+            self.lock.close()
 
     def save(self):
         runlog.write_json(self.path, self.state)
@@ -152,11 +236,11 @@ class Campaign:
         path = EVIDENCE / "runs" / run_id / "summary.json"
         if not path.exists():
             with (self.root / (run_id + ".log")).open("x") as log:
-                subprocess.run(cmd, stdout=log, stderr=subprocess.STDOUT, check=True)
+                self.run_command(cmd, stdout=log, stderr=subprocess.STDOUT)
         if path.exists():
             partial = json.loads(path.read_text())
             if partial["status"] != "completed" and self.recover_trials:
-                subprocess.run(
+                self.run_command(
                     [
                         sys.executable,
                         str(ROOT / "experiments/e0_v2.py"),
@@ -165,7 +249,6 @@ class Campaign:
                         "--xbox-acceptance",
                         str(self.acceptance),
                     ],
-                    check=True,
                 )
         summary = _summary(run_id)
         if summary.get("backend_name") != "xbox" or not summary.get("backend", {}).get(
@@ -418,7 +501,7 @@ class Campaign:
         name = self.state["id"]
         selection = EVIDENCE / "selections" / (name + ".json")
         if not selection.exists():
-            subprocess.run(
+            self.run_command(
                 [
                     sys.executable,
                     str(ROOT / "experiments/e0_v2.py"),
@@ -427,13 +510,11 @@ class Campaign:
                     "--name",
                     name,
                 ],
-                check=True,
             )
         final = EVIDENCE / "selections" / (name + ".test.json")
         if not final.exists():
-            subprocess.run(
+            self.run_command(
                 [sys.executable, str(ROOT / "experiments/e0_v2.py"), "--final-test", name],
-                check=True,
             )
         self.state.update(
             status="completed", phase="completed", finished=runlog.now(), selection=name
@@ -450,13 +531,7 @@ def main():
     parser.add_argument("--recover", action="store_true", help="recover existing bound trials")
     a = parser.parse_args()
     campaign = Campaign(a.out, a.acceptance, a.benchmark, recover=a.recover)
-    try:
-        campaign.run()
-    except BaseException as error:
-        campaign.state.update(status="stopped", error=repr(error), stopped=runlog.now())
-        campaign.save()
-        campaign.report()
-        raise
+    campaign.run_managed()
     return 0
 
 

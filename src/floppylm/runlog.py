@@ -33,16 +33,89 @@ def make_exclusive_dir(path: Path) -> Path:
 
 def write_atomic(path: Path, data: bytes | str) -> None:
     tmp = path.with_name(f".{path.name}.{uuid.uuid4().hex[:8]}.tmp")
-    tmp.write_bytes(data.encode() if isinstance(data, str) else data)
-    os.replace(tmp, path)
+    try:
+        with tmp.open("wb") as file:
+            file.write(data.encode() if isinstance(data, str) else data)
+            file.flush()
+            os.fsync(file.fileno())
+        os.replace(tmp, path)
+        directory = os.open(path.parent, os.O_RDONLY | os.O_DIRECTORY)
+        try:
+            os.fsync(directory)
+        finally:
+            os.close(directory)
+    finally:
+        tmp.unlink(missing_ok=True)
 
 
 def write_json(path: Path, obj: dict) -> None:
     write_atomic(path, json.dumps(obj, indent=1, sort_keys=True, default=str) + "\n")
 
 
+def process_identity(pid: int | None = None) -> dict | None:
+    """Bind Linux PID to its boot and start tick; a reused PID is a different owner."""
+    pid = os.getpid() if pid is None else pid
+    if type(pid) is not int or pid <= 0:
+        return None
+    try:
+        fields = Path(f"/proc/{pid}/stat").read_text().rpartition(")")[2].split()
+        if fields[0] == "Z":
+            return None
+        return {
+            "pid": pid,
+            "boot_id": Path("/proc/sys/kernel/random/boot_id").read_text().strip(),
+            "start_ticks": int(fields[19]),
+        }
+    except (OSError, ValueError, IndexError):
+        return None
+
+
+def host_liveness(status: dict, lock_path: Path) -> str:
+    """A snapshot's timestamp is not a heartbeat. Verify process identity and lock."""
+    if status.get("state") != "running":
+        return status.get("state", "unknown")
+    pid = status.get("pid")
+    if type(pid) is not int or pid <= 0:
+        return "unknown"
+    actual = process_identity(pid)
+    if actual is None:
+        return "dead"
+    expected = status.get("process_identity")
+    if expected is None:
+        return "unverified"
+    if actual != expected:
+        return "identity_mismatch"
+    try:
+        import fcntl
+
+        with lock_path.open("r") as file:
+            try:
+                fcntl.flock(file, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            except BlockingIOError:
+                stat = os.fstat(file.fileno())
+                for line in Path("/proc/locks").read_text().splitlines():
+                    fields = line.split()
+                    if len(fields) < 6 or fields[1] != "FLOCK":
+                        continue
+                    major, minor, inode = fields[5].split(":")
+                    if (int(major, 16), int(minor, 16), int(inode)) == (
+                        os.major(stat.st_dev),
+                        os.minor(stat.st_dev),
+                        stat.st_ino,
+                    ):
+                        return "live" if int(fields[4]) == pid else "lock_owner_mismatch"
+                return "lock_unverified"
+            fcntl.flock(file, fcntl.LOCK_UN)
+        return "lock_abandoned"
+    except OSError:
+        return "lock_unavailable"
+
+
 def set_status(run_dir: Path, state: str, **extra) -> None:
     assert state in STATES
+    if state == "running":
+        extra.setdefault("pid", os.getpid())
+        extra["process_identity"] = process_identity(extra["pid"])
     write_json(run_dir / "status.json", {"state": state, "updated": now(), **extra})
 
 

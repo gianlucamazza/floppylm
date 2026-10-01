@@ -26,6 +26,10 @@ the backend vendors them at a pinned floppylm commit and tests against that copy
 descriptor, tensors, moments, execution statistics, gates). Schemas reference each other by
 `$id`; load all of them into one registry.
 
+`floppylm.worker.v1` describes `worker.json`; `floppylm.claim.v1` describes the immutable
+`inbox/<job_id>.owner.json` execution binding (ADR 0017). Their golden instances are
+emitted by the native `xgpu_e0_runtime_lifecycle_test` producer, built beside `xgpu_e0_train`.
+
 ## Rules
 
 - A schema describes what the producers write, including their failure variants and the

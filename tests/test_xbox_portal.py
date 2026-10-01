@@ -19,6 +19,28 @@ from floppylm_xbox.portal import (
 PIN = "ab" * 32
 
 
+def worker(job_id=None, sha=None, heartbeat=1):
+    return {
+        "schema": "floppylm.worker.v1",
+        "worker_id": "instance-1",
+        "pid": 123,
+        "package": "test-package",
+        "commit": "source",
+        "heartbeat_seq": heartbeat,
+        "state": "running" if job_id else "ready",
+        "active_job": {"job_id": job_id, "job_sha256": sha} if job_id else None,
+        "progress": {
+            "sequence": 0,
+            "phase": "trunk",
+            "trunk_step": 0,
+            "cooldown_step": 0,
+            "operation": "",
+            "completed_fence": 0,
+        },
+        "fault": None,
+    }
+
+
 def portal():
     return Portal("https://127.0.0.1:11443", "test", "test", "test-package", cert_sha256=PIN)
 
@@ -76,6 +98,7 @@ def test_resume_wait_ignores_previous_interrupted_status(monkeypatch):
         ]
     )
     monkeypatch.setattr("floppylm_xbox.portal.time.sleep", lambda _: None)
+    client.worker = Mock(return_value=worker("job", "new"))
     assert client.wait("job", log=lambda _: None, expected_sha="new")["state"] == "completed"
 
 
@@ -243,6 +266,9 @@ def recovery_job(tmp_path, client, state):
         "checkpoint": {"path": "results/recovery/checkpoint.json"},
     }
     client.status = Mock(return_value=report)
+    client.live_worker = Mock(
+        return_value=worker("recovery", digest) if state == "running" else worker()
+    )
     client.submit = Mock()
     client.resume = Mock()
     client.retrieve = Mock()

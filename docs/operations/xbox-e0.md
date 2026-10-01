@@ -113,17 +113,24 @@ If a campaign stops, diagnose the recorded error first. Explicit recovery reconn
 completed work, or resumes a verified interrupted checkpoint. Failed native jobs require a fix and a
 new acceptance decision before scientific continuation.
 
-Device Portal `status.json` can lag the native file. A frozen `trunk_step` is not by itself a hang:
-the host may keep serving an old copy while the trainer has moved on. Confirm with `XgpuE0.exe`
-CPU usage and a changing checkpoint sha256. Whole-console engine 5 is the unvalidated idle
-counter; it is not proof of training.
+Runtime recovery follows [ADR 0017](../adr/0017-runtime-liveness.md). Verify the exact
+package/source and an advancing `worker.json` heartbeat before reattaching. A running
+report alone is not a live execution: its job/hash must match the worker's active owner.
+An interrupted result requires an idle live worker and a verified checkpoint. After a
+runtime GPU fault, explicitly restart the same app and let native reconciliation verify
+its immutable owner, checkpoint and branch hashes before requesting resume. Failed
+numerical or integrity results remain refused.
 
-`.cancel` is checked after an optimizer step returns. It cannot unstick
-`WaitForSingleObjectEx(..., INFINITE)`. If CPU stays at 0 and the checkpoint sha256 is unchanged
-past the host `no_progress` window (ten minutes), stop the campaign worker, terminate the UWP app
-(same installed package, no reinstall), relaunch it, and wait until `device.json` is `ready` with
-`hardware_gpu`. `--recover` resumes only when remote state is `interrupted` and the checkpoint
-bytes hash-check. Do not retrain from step 0. Do not install a new package mid-campaign.
+A frozen trunk counter alone does not prove a hang: cooldown steps and completed GPU
+fences are separate progress. Heartbeat unchanged for 30 seconds is unavailable liveness;
+transport errors are unknown. No completed work for ten minutes records a durable alarm.
+Neither alarm cancels, restarts or resubmits work. Device Portal CPU counters alone do not
+establish the cause of a stall.
+
+The runtime upgrade and its hardware fault probes are gated until the currently frozen
+E0 campaign closes. That historical package does not have the new worker contract. Keep
+its frozen source/package and recorded recovery procedure; do not run this branch's
+recovery against it or install a new package mid-campaign.
 
 ```bash
 # Only after the previous campaign worker has exited; same acceptance and benchmark:
@@ -171,3 +178,42 @@ Acknowledged jobs are reattached; an unacknowledged upload is replayed only with
 that previous work has stopped. Do not delete the journal or edit hashes to force recovery.
 Initial acknowledgment and missing/mismatched statuses are bounded to 300 seconds.
 Ten minutes without numerical progress emits a diagnostic and keeps valid work running.
+
+
+### Temporal monitoring
+
+```bash
+python scripts/e0_status.py --campaign runs/<campaign-dir> --xbox --watch 5 --duration 120
+```
+
+A single report labels progress unverified. Watch records atomic `monitor.json` and an
+fsynced `monitor.jsonl` journal, with separate source/device provenance, host PID/start/boot
+identity and lock ownership, worker heartbeat, and completed work. `--observations PATH`
+selects the journal location. The trial writes `xbox/runtime.json` and
+`xbox/runtime-events.jsonl`; campaign signal handling records `runtime-events.jsonl` and
+waits for its child to finish cancellation before releasing `worker.lock`.
+
+### Post-E0 hardware qualification
+
+After E0 closes, preserve its manifest, final-test reservation and complete LocalState
+snapshot. Use the exact candidate CI artifact, record package/file hashes, and restore the
+snapshot afterward with a byte-verification report. Use only new functional job IDs.
+
+Required evidence before runtime acceptance:
+
+1. Healthy worker: unique instance, lock exclusion, advancing heartbeat and completed
+   trunk/cooldown/fence progress; healthy training and checkpoint parity unchanged.
+2. Functional kernel fixtures for each `runtime_fault_probe.kind`: `gpu_wait_timeout`,
+   `gpu_wait_failed`, `gpu_device_removed`. Capture the failed result and worker fault,
+   prove no next job is dispatched and app remains diagnosable until explicit restart.
+3. Kill the app after a functional checkpoint, restart without submitting work, and prove
+   the orphan becomes interrupted only after binding/checkpoint/branch verification.
+   Resume explicitly; compare final artifacts and verify completed branches are reused.
+4. Repeat with missing owner, corrupted checkpoint/branch and pending replacement upload:
+   preserve evidence, refuse unsafe continuation, and quarantine any leftover ready marker.
+5. Verify host SIGINT, SIGTERM and SIGKILL diagnostics; transport loss remains unknown,
+   heartbeat freeze becomes unavailable, completed-work freeze produces one stall event.
+   None of these observations may automatically restart or retrain.
+
+Linux tests and Windows/UWP compilation establish only their own predicates. They do not
+close these Xbox lifecycle gates or identify the cause of the original E0 stall.
