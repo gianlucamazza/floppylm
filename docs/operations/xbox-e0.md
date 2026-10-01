@@ -113,6 +113,18 @@ If a campaign stops, diagnose the recorded error first. Explicit recovery reconn
 completed work, or resumes a verified interrupted checkpoint. Failed native jobs require a fix and a
 new acceptance decision before scientific continuation.
 
+Device Portal `status.json` can lag the native file. A frozen `trunk_step` is not by itself a hang:
+the host may keep serving an old copy while the trainer has moved on. Confirm with `XgpuE0.exe`
+CPU usage and a changing checkpoint sha256. Whole-console engine 5 is the unvalidated idle
+counter; it is not proof of training.
+
+`.cancel` is checked after an optimizer step returns. It cannot unstick
+`WaitForSingleObjectEx(..., INFINITE)`. If CPU stays at 0 and the checkpoint sha256 is unchanged
+past the host `no_progress` window (ten minutes), stop the campaign worker, terminate the UWP app
+(same installed package, no reinstall), relaunch it, and wait until `device.json` is `ready` with
+`hardware_gpu`. `--recover` resumes only when remote state is `interrupted` and the checkpoint
+bytes hash-check. Do not retrain from step 0. Do not install a new package mid-campaign.
+
 ```bash
 # Only after the previous campaign worker has exited; same acceptance and benchmark:
 python experiments/e0_campaign.py --out runs/<campaign-dir> --recover \
