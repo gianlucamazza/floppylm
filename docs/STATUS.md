@@ -24,16 +24,17 @@ python scripts/e0_status.py --campaign runs/e0-campaign-20261001-e01
 
 ## Next (the campaign has stopped)
 
-Done since the stop: Xbox execution moved to `floppylm_xbox` with generic Device Portal settings
+Done since the stop: xbox-gpu-training consumes the whole published contract set (PR #22, #20);
+Xbox execution moved to `floppylm_xbox` with generic Device Portal settings
 and a pinned certificate (`~/.config/floppylm/xbox.env`, see the [runbook](operations/xbox-e0.md));
 English run notes; no `bg` instruction left in the harness; E1 qualification code merged.
 
-1. Have xbox-gpu-training consume the full contract set ([schemas](../schemas/README.md), [inbox
-   protocol](contracts/inbox-protocol.md), constants, device capabilities): re-pin PR #22, constants
-   and capabilities in PR #20.
-2. Install the package from xbox-gpu-training PR #20 (on-console dashboard; `run_job` also
-   publishes schedule and phase), rerun acceptance and the bit-identity comparison, record the
-   evidence, then mark the PR ready.
+1. Install the package built from xbox-gpu-training `main` at `7a335bc` (on-console dashboard;
+   `run_job` publishes schedule and phase; constants checked against floppylm; device
+   capabilities), rerun acceptance and the bit-identity comparison against 0.1.0.28, record the
+   evidence and a dashboard screenshot.
+2. Finish the boundary consolidation in xbox-gpu-training: its docs link floppylm instead of
+   restating decisions, the Win32 diagnostic lane is archived, and evidence lives with its owner.
 3. Decide the [saturation proposal](adr/proposals/e0-saturation-proposal.md) before any new
    campaign.
 4. Rename the local working directory to `floppylm` at a session boundary (it is this session's
