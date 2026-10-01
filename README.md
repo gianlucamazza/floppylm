@@ -60,4 +60,4 @@ Flags and the Xbox procedure: [code map](docs/operations/code-map.md),
 
 ## License
 
-Not yet chosen.
+[MIT](LICENSE).
