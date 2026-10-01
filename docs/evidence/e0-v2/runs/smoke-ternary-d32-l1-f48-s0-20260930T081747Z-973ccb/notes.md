@@ -17,3 +17,6 @@ Status: **completed**. Full configuration and environment in `summary.json`; man
 
 Not measured here: test (only `--final-test` on a frozen selection), paired σ, comparison between
 arms.
+
+Later note (2026-10-01): this generated page was translated by hand; `summary.json` and the
+`notes_md` template in `experiments/e0_v2.py` remain in Italian until the frozen E0 sources are released.

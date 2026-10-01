@@ -14,37 +14,38 @@ lab practices in [ADR 0003](adr/0003-lab-practices.md). If F1 fires, E2–E4 are
 
 | #   | Step                                                                 | Where           | Cost                  |
 | --- | -------------------------------------------------------------------- | --------------- | --------------------- |
-| 1   | E0 v2: code and smoke (done); campaign a–e after hardware acceptance | Xbox GPU        | 55–56 sequential runs |
-| 2   | Paired σ and adversary freeze (step e)                               | Xbox GPU + host | 5 seeds               |
-| 3   | E1 pilot at 1/16, K=1                                                | CPU             | 1–2 days of runs      |
-| 4   | Decision: GPU ADR for 1/4 and 1×, or stop                            | —               | —                     |
-| 5   | E1a recursion, E1 at 1/4, E1b trellis/signs                          | GPU             | ~$5–20                |
-| 6   | E2 → E3 → E4                                                         | GPU + CPU       | —                     |
+| 1   | E0 v2: code and smoke (done); campaign a–e after hardware acceptance | Xbox GPU                   | 55–56 sequential runs; measured costs in campaign reports |
+| 2   | Paired σ and adversary freeze (step e)                               | Xbox GPU + host            | 5 seeds |
+| 3   | E1 functional qualification, then accepted scientific pilot protocol | CPU oracle; Xbox candidate | Controlled measurements before backend/tokenizer selection ([ADR 0013](adr/0013-e1-functional-qualification.md)) |
+| 4   | E1 pilot at 1/16, K=1; preregister the next gate                     | Qualified local backend    | No GPU rental |
+| 5   | E1a recursion, E1 at 1/4, E1b trellis/signs                          | Local Xbox/CPU             | Gated by the pilot and accepted protocols |
+| 6   | E2 → E3 → E4                                                         | Local Xbox/CPU             | Gated; local judge and 30 blind human reviews |
 
-Per-trial duration follows from the measured throughput of the bound package
+Scope and execution order: [completion plan](completion-plan.md). Per-trial duration follows from the measured throughput of the bound package
 ([evidence](evidence/README.md)); it is an estimate, never a duration limit.
 
-## E0 v2 — Numerical protocol
+## E0 v2 — Accepted numerical choices
 
-The protocol is [ADR 0005](adr/0005-e0v2-protocol.md); its numerical choices S1–S10 are owned by
-[ADR 0008](adr/0008-e0-numeric-protocol.md), with S8 narrowed by
-[ADR 0011](adr/0011-e0-row-scale-selection.md). Execution runs on the Series S backend of
+The owner accepted this S1–S10 table on 2026-09-30, recorded in
+[ADR 0008](adr/0008-e0-numeric-protocol.md); S8 is narrowed by
+[ADR 0011](adr/0011-e0-row-scale-selection.md). The protocol is
+[ADR 0005](adr/0005-e0v2-protocol.md). Execution runs on the Series S backend of
 [ADR 0009](adr/0009-xbox-e0-backend.md) behind the numerical gates of
 [ADR 0010](adr/0010-independent-numerical-gates.md); repository boundaries are in
 [ADR 0012](adr/0012-repo-boundaries.md).
 
-| #   | Choice                  | Owner          |
-| --- | ----------------------- | -------------- |
-| S1  | Token base T            | ADR 0008       |
-| S2  | WSD shape               | ADR 0008       |
-| S3  | Out-of-tolerance repair | ADR 0008       |
-| S4  | Tuning budget           | ADR 0008       |
-| S5  | Seeds                   | ADR 0008       |
-| S6  | Estimated FLOPs         | ADR 0008       |
-| S7  | Evaluation              | ADR 0008       |
-| S8  | Scale policy            | ADR 0008, 0011 |
-| S9  | Zero rows               | ADR 0008       |
-| S10 | Data                    | ADR 0008       |
+| #   | Choice                  | Accepted choice |
+| --- | ----------------------- | --------------- |
+| S1  | Token base T            | 20 × stored parameters; cooldowns ending at T, 2T, 4T |
+| S2  | WSD shape               | linear warmup over 2% of T; linear cooldown to zero over 10% of each branch's tokens |
+| S3  | Out-of-tolerance repair | a single new attempt per shape and arm: solver re-run with target / (measured coded/nominal); if still out, the run is excluded |
+| S4  | Tuning budget           | 6 runs per arm: lr ∈ {1e-3, 3e-3, 1e-2} × a second axis (ternary: Δ ∈ {0.5, 0.7} with wd 0.1; 2-bit: wd ∈ {0, 0.1}) |
+| S5  | Seeds                   | at least 3 seeds per comparison; 5 if the mean paired difference is below 2 × gate |
+| S6  | Estimated FLOPs         | forward per token = `2 × stored_parameters + 4 × n_layers × (ctx / 2) × d`; training = `3 × forward × tokens`; evaluations excluded and reported separately as wall clock |
+| S7  | Evaluation              | sliding window, stride ctx/2, each target byte counted once, last window aligned to the end; the 0x03 separator is a normal target; val on the first MiB, test on the first 2 MiB |
+| S8  | Scale policy            | chosen by the step-b A/B between `row16` and `row8log` (ADR 0011) |
+| S9  | Zero rows               | exact zero scale, exactly zero reconstruction in every format; `row8log` reserves code 0 for the zero scale |
+| S10 | Data                    | exact deduplication (sha1 of the text) is the only current capability; near-duplicate filtering and OOD test remain later requirements |
 
 ## E0 v2 — Bench and scalar frontier
 
@@ -103,7 +104,8 @@ unaffected.
   ([R7](research/07-learned-vq-subbit.md)).
 - **F1 signal**: the best vector arm beats the best scalar arm by max(0.02, 2σ).
 - **F1-abl signal**: learned VQ vs VQ-seed, codebook included (prior: seed ≥ learned).
-- The pilot is not a verdict ([ADR 0004](adr/0004-miniature-budgets.md)): it decides whether to pay for GPU.
+- The pilot is not a final verdict ([ADR 0004](adr/0004-miniature-budgets.md)); it gates further
+  local Xbox/CPU work. No rented GPU or paid API is authorized.
 
 ## E1a — Diversity across iterations (closes v0.1, picks the recursion)
 
@@ -150,3 +152,6 @@ _Won't run_ until E1 and E2 pass.
 - bpb from the runtime; coherence with a pinned-version LLM judge, 50 prompts × 4 samples,
   TinyStories-8M in the same session, 30 samples in blind human review
   ([R5](research/05-eval-tiny.md)).
+- The judge runs locally and must be qualified before use. Actual blind human ratings are
+  required; generated placeholders cannot close E4. If a scientific gate fails, publish the
+  measured result and stop subsequent phases without creating an alternative scalar-floppy product.

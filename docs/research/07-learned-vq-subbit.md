@@ -13,11 +13,11 @@ bit/weight, and what is known about learned VQ vs random codebook vs ternary at 
 ([arXiv:2401.06118](https://arxiv.org/abs/2401.06118), ICML 2024) uses additive quantization with
 learned per-block codebooks: at ~2 bits it uses a codebook of 2^15–2^16 entries over groups of 8
 weights and takes Llama-2 7B from 5.12 to 6.59 and the 70B from 3.12 to 3.94 WikiText-2 ppl. The
-calibration cost is ~1 A100-day for the 7B, plus 3–6 h of fine-tuning on 4 A100s. The FP16 codebook
+calibration cost is ~1 day on A100 for the 7B, plus 3–6 h of fine-tuning on 4 A100s. The FP16 codebook
 costs g·2^B·16 bits per matrix, negligible at 7B, not at 1.44 MB. GPTVQ
 ([arXiv:2402.15319](https://arxiv.org/abs/2402.15319)) shows the "blessing of dimensionality": at equal
 bits, higher-dimensional VQ dominates scalar. The codebook is initialized with data-aware EM and
-compressed with int8 and SVD, at a cost of 3–11 H100-hours for the 70B. VPTQ
+compressed with int8 and SVD, at a cost of 3–11 h on H100 for the 70B. VPTQ
 ([arXiv:2409.17066](https://arxiv.org/abs/2409.17066)) is second-order VQ at 2 bits: −0.01/−0.34 ppl on
 Llama-2 versus SOTA, 1.6–1.8× better throughput. LCQ
 ([arXiv:2405.20973](https://arxiv.org/abs/2405.20973)) replaces the rank-one codebook with a low-rank
@@ -56,7 +56,7 @@ one bit. On LLaMA-2 7B (FP16 5.47) it gives 13.06 at 0.8 bits, 18.74 at 0.7 and 
 recurring _binary_ vectors into a learned binary codebook (centroids updated by sign, compact indices),
 between 0.7 and 1.11 bits, and loses 3.1 zero-shot points at 0.8 bits on LLaMA-2 13B. NanoQuant
 ([arXiv:2602.06694](https://arxiv.org/abs/2602.06694)) factorizes into low-rank binary matrices via
-ADMM (70B compressed 25.8× in 13 H100-hours). LittleBit
+ADMM (70B compressed 25.8× in 13 h on H100). LittleBit
 ([arXiv:2506.13771](https://arxiv.org/abs/2506.13771)) does QAT on binarized latent factors down to
 0.1 bits/weight and claims that at 0.1 bpw on Llama-2 7B it beats the best method at 0.7 bpw. The
 common message is that below one bit ppl explodes even at 7–65B with PTQ, and that only what factorizes

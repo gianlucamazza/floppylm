@@ -94,7 +94,8 @@ Every F\* uses the paired gate defined in [ADR 0002](adr/0002-adversary-dense-fr
 ## Declared limits
 
 - TinyStories domain: no factual knowledge is expected.
-- Full-scale training on rented GPUs only with a dedicated ADR ([ADR 0004](adr/0004-miniature-budgets.md));
+- No GPU rental in the approved scope ([completion plan](completion-plan.md)); changing that requires a
+  dedicated ADR ([ADR 0004](adr/0004-miniature-budgets.md));
   E0 at 1/16 runs on the Series S backend ([ADR 0009](adr/0009-xbox-e0-backend.md)).
 - Evaluation fixed before the numbers: no n-gram cache or TTT at evaluation ([R2](research/02-procedural-weights.md)).
 - Pure straight-through VQ-QAT is fragile (Quant-Noise: worse than post-training); the recipe is

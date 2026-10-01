@@ -4,7 +4,8 @@ Installed package `GianlucaMazza.XgpuE0_0.1.0.28_x64__g0p5dcfz4t9z4` (E0.1, GPU-
 tensors), exact source `25f8bc3966ffae940658be94161d31edd83492c9`, push CI run
 [36839565773](https://github.com/gianlucamazza/xbox-gpu-training/actions/runs/36839565773)
 (xbox-gpu-training PR #18). Adapter `SraKmd_arden`, hardware GPU. All files here are
-copies of the local proofs under `runs/*-20261001-ci36839565773/`.
+copies of the local proofs under `runs/*-20261001-ci36839565773/`
+(`throughput.json` is the benchmark's `summary.json`).
 
 - `acceptance.json`: 52 independent GPU operation cases, 36 held-out model fixtures,
   identical-input AdamW and exact checkpoint resume passed.

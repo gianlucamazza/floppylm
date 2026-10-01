@@ -25,7 +25,7 @@ Each `0N-*.md` file answers **one** question. It is not a bibliography.
 ## Index
 
 Thesis = the [concept](../concept.md) version the survey was framed for. Surveys framed for v0.1
-(procedural seed weights, 0.5/1.0/1.44 MB budgets, CPU-only E0) carry a banner at the top.
+(one or more of: procedural seed weights, 0.5/1.0/1.44 MB budgets, CPU-only E0) carry a banner at the top.
 
 | Survey                                                     | Thesis | Question                                                                                                             |
 | ---------------------------------------------------------- | ------ | -------------------------------------------------------------------------------------------------------------------- |

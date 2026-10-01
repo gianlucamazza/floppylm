@@ -5,8 +5,9 @@ Owner of languages, toolchain and machine constraints. It does not own the thesi
 ## Languages and tools
 
 - Training and experiments: Python ≥ 3.12, PyTorch ≥ 2.4 (CPU path), `numpy`
-  ([`pyproject.toml`](../pyproject.toml)). Dev: `pytest`, `ruff` (line length 100). Installed
-  into the system interpreter; no virtualenv while the bench is running.
+  ([`pyproject.toml`](../pyproject.toml)). Dev: `pytest`, `ruff` (line length 100). Dependencies
+  come from the system interpreter; the package itself is not installed (scripts and pytest add
+  `src/` to the path); no virtualenv while the bench is running.
 - Xbox backend: a separate DX12/UWP trainer in the
   [xbox-gpu-training](https://github.com/gianlucamazza/xbox-gpu-training) repository, driven from
   here through Device Portal (`src/floppylm/xbox*.py`). This repository owns all FloppyLM semantics;
@@ -27,7 +28,8 @@ Owner of languages, toolchain and machine constraints. It does not own the thesi
   ([ADR 0003](adr/0003-lab-practices.md), amendment).
 - **Xbox Series S** (retail, Dev Mode): E0 training at 1/16 on the hardware GPU
   ([ADR 0009](adr/0009-xbox-e0-backend.md)); operations in the [runbook](operations/xbox-e0.md).
-- Rented GPUs only with a dedicated ADR (E1 at 1/4 and beyond, E3).
+- No GPU rental or paid service in the approved scope ([completion plan](completion-plan.md));
+  changing that requires a dedicated ADR.
 
 ## What is versioned
 

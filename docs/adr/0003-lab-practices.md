@@ -44,10 +44,12 @@ only limit.
 
 The decisions above are unchanged except where they no longer match the repository:
 
-- **§4 evidence path.** The `docs/evidence/e<N>-<tag>/` pattern is superseded by the actual
+- **§4 evidence path.** The `docs/evidence/e<N>-<tag>/` pattern is replaced by the actual
   layout documented in [docs/evidence/README.md](../evidence/README.md):
-  `e0-v2/runs/<run-id>/`, `e0-v2/campaigns/<campaign-id>/`, `e0-v2/selections/` and
-  `xbox-e0-YYYYMMDD[-tag]/`.
+  `e0-v2/runs/<run-id>/`, `e0-v2/campaigns/<campaign-id>/`, `e0-v2/selections/`,
+  `e0-lite/pre-v2/`, `e1-qualification-YYYYMMDD/` and `xbox-e0-YYYYMMDD[-tag]/`. Hand-written
+  package acceptance records carry `notes.md` plus JSON proofs instead of `summary.json`; a run
+  directory with `summary.json` but no `notes.md` is stopped, partial or interrupted, not measured.
 - **§6 `--smoke` / `--full`.** `experiments/e0_v2.py` has `--smoke` only; a run without
   `--smoke` is the full run.
 - **§8 `clang-format`.** Applies only once a C runtime exists; none exists yet.

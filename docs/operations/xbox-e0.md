@@ -16,6 +16,10 @@ Python owns corpus preparation, ordered samples, initial weights, canonical FLP2
 evaluation. The app owns GPU training and verified checkpoints. Acceptance and benchmark proofs
 must bind the exact installed package and source commit.
 
+Device Portal credentials come from the environment variables `XBOX_IP`, `XBOX_USER` and `XBOX_PASS`,
+or, when unset, from `~/.config/xllama/xbox-env` (an ADR 0012 follow-up moves this out of xllama).
+Never print them.
+
 When Device Portal retains several package versions, set the explicit package full name from
 the acceptance proof; ambiguous discovery fails instead of choosing an unvalidated version:
 
@@ -63,7 +67,9 @@ only when no campaign is training.
 ## Launch a campaign
 
 A campaign freezes source hashes, recipes, two neutral seeds, the tuning budget, solver grids and
-five paired seeds before any scientific result. Its lock permits one worker. While it runs, keep the
+five paired seeds before any scientific result. Its lock permits one worker, and stable exclusive
+run identities prevent silent retraining when the campaign is reopened. A failed comparison gate
+stops the campaign. While it runs, keep the
 frozen `src/floppylm/*.py`, `experiments/*.py` and the installed trainer unchanged; scripts, tests
 and docs may change.
 

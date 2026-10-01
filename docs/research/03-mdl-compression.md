@@ -99,7 +99,7 @@ and sparsity makes it entropy-codable.
 **Orders of magnitude for the floppy.** 1 474 560 bytes are 11.80 Mbit. Minus ~50–100 KB of runtime and
 tokenizer, about 2.7–2.9M parameters at 4 bits remain, ~7.0–7.3M ternary packed at 1.6 bits, or ~8–9M
 ternary entropy-coded at ~1.3 bits if sparsity is as high as in BITCOS. At TinyStories scale
-([arXiv:2305.07759](https://arxiv.org/abs/2305.07759)) 1–3M models already generate fluent but barely
+([arXiv:2305.07759](https://arxiv.org/abs/2305.07759)) 1–3M models already generate fluent but not very
 coherent text, while narrative coherence emerges around 10–30M. The jump the FloppyLM thesis must buy
 with the procedural description is therefore about one order of magnitude of effective parameters. As
 Survey 1 documents, those counts exclude the embedding table (vocab 50 257, ~3.2M parameters in the 1M

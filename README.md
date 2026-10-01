@@ -4,8 +4,8 @@ A lab for the best language model that fits **entirely** on a real 3.5" floppy: 
 tokenizer and runtime inside one 1 474 560-byte disk ([what counts](docs/adr/0001-floppy-budget.md)).
 The repository name `floppy_4mb` is symbolic.
 
-**Status:** the E0 scalar baseline is running on an Xbox Series S GPU backend; no quality result
-yet. Live state: [docs/STATUS.md](docs/STATUS.md).
+**Status:** the E0 scalar baseline runs on an Xbox Series S GPU backend; live state, including
+whether any quality result exists, is in [docs/STATUS.md](docs/STATUS.md).
 
 ## The idea in thirty seconds
 
@@ -29,15 +29,17 @@ the vector core, coding, full scale and the real disk image ([roadmap](docs/road
 ## Quickstart
 
 ```bash
-pip install -e '.[dev]'          # Python ≥ 3.12, PyTorch ≥ 2.4
 pytest                            # full host test suite
-python experiments/e0_v2.py --run --smoke   # functional CPU smoke run, not a result
+python experiments/e0_v2.py --run --smoke   # functional CPU smoke; needs data/, writes a tracked evidence dir
 python scripts/e0_status.py --campaign runs/<campaign-dir>   # read-only campaign state
 ```
 
+Requirements: Python ≥ 3.12 with `numpy` and `torch` ≥ 2.4, plus `pytest` and `ruff` for development
+([pyproject.toml](pyproject.toml)); no install step is needed, since scripts and pytest put `src/` on the path.
 Training reads the prepared TinyStoriesV2-GPT4 corpus in `data/tinystories/`: download the raw
-files listed in `floppylm.data.SOURCES` into `data/raw/` and prepare them with
-`floppylm.data.prepare`; `python experiments/e0_v2.py --verify-data` checks reproducibility.
+files listed in `floppylm.data.SOURCES` into `data/raw/` and call the Python function
+`floppylm.data.prepare`. `python experiments/e0_v2.py --verify-data` re-prepares the corpus in
+`runs/tmp` (~2.2 GB) and rewrites `data/tinystories/reproducibility.json`.
 Flags and the Xbox procedure: [code map](docs/operations/code-map.md),
 [runbook](docs/operations/xbox-e0.md).
 

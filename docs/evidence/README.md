@@ -14,6 +14,7 @@ evidence/e0-v2/selections/<name>.json        # frozen selection with artifact ha
 evidence/e0-v2/selections/<name>.test.json   # final test, once per selection
 evidence/xbox-e0-YYYYMMDD[-tag]/             # hand-written package acceptance: notes.md + JSON proofs
 evidence/e0-lite/pre-v2/                     # stopped pre-v2 grid, diagnostic only
+evidence/e1-qualification-YYYYMMDD/          # E1 functional qualification (ADR 0013), not scientific E1
 ```
 
 The full manifest, state and artifacts of each run live in `runs/<run_id>/` (outside Git; only
@@ -33,7 +34,7 @@ until host retrieval and evaluation complete.
 | `e0-v2/selections/smoke-functional*.json`                                                                                                   | functional proof of `--freeze` / `--final-test` on smoke             | —           |
 | [`e0-v2/campaigns/e0-20261001T074326Z-503df0`](e0-v2/campaigns/e0-20261001T074326Z-503df0/notes.md)                                         | first scientific campaign, package 0.1.0.24                          | stopped     |
 | `e0-v2/runs/e0-20261001T074326Z-503df0-000`                                                                                                 | its only trial, checkpointed at trunk step 455                       | stopped     |
-| `e0-v2/runs/e0-20261001T090514Z-4236fd-000`                                                                                                 | first trial of the current campaign ([STATUS](../STATUS.md))         | partial     |
+| `e0-v2/runs/e0-20261001T090514Z-4236fd-000`                                                                                                 | first trial of campaign `4236fd` (package 0.1.0.28)         | partial     |
 | [`e0-lite/pre-v2`](e0-lite/pre-v2/notes.md)                                                                                                 | stopped E0-lite grid; diagnostic, excluded from verdicts, FLP1 blobs | —           |
 
 ### Xbox package acceptance
@@ -44,6 +45,13 @@ until host retrieval and evaluation complete.
 | [xbox-e0-20260930-kernels](xbox-e0-20260930-kernels/notes.md) | 0.1.0.19 | 52 per-operation cases after kernel fixes                                                 |
 | [xbox-e0-20261001](xbox-e0-20261001/notes.md)                 | 0.1.0.24 | full acceptance, worker, recovery, real suspension, data reproducibility, campaign launch |
 | [xbox-e0-20261001-e01](xbox-e0-20261001-e01/notes.md)         | 0.1.0.28 | E0.1 acceptance, worker, recovery, lifecycle, throughput                                  |
+
+### E1 functional qualification
+
+[e1-qualification-20261001](e1-qualification-20261001/notes.md): CPU scalar profiling, BPE512
+round trips, vector storage/reconstruction probes and deterministic partial-quantization canaries
+under [ADR 0013](../adr/0013-e1-functional-qualification.md). It is neither scientific E1 nor Xbox
+vector acceptance; the producing code is on branch `research/e1-qualification`.
 
 A dated narrative of these packages is in the [archive](../archive/xbox-e0-history.md).
 Scientific E0 results are pending; the [roadmap](../roadmap.md) defines completion gates.

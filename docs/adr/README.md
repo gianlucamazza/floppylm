@@ -25,9 +25,9 @@ It is not a brainstorm, a survey or a TODO.
 | ADR                                         | Decision                                                                                                       | Status             |
 | ------------------------------------------- | -------------------------------------------------------------------------------------------------------------- | ------------------ |
 | [0001](0001-floppy-budget.md)               | The budget is the floppy, not the parameters: ≤ 1 457 664 B of FAT12 data area; what counts and what does not  | accepted           |
-| [0002](0002-adversary-dense-frontier.md)    | Adversaries fixed before the thesis: dense frontier, ternary recursion; distillation and double parity for all | amended            |
+| [0002](0002-adversary-dense-frontier.md) | Adversaries fixed before the thesis: dense low-bit frontier and pure recursion (+ ternary recursion from 1/4); double token/FLOP parity; paired gate | amended            |
 | [0003](0003-lab-practices.md)               | Lab invariants: bit accounting, seeds, evidence, stop on F\*                                                   | superseded-in-part |
-| [0004](0004-miniature-budgets.md)           | Budgets 1/16, 1/4, 1×: model bytes only, embedding ~15%; GPU only with an ADR                                  | superseded-in-part |
+| [0004](0004-miniature-budgets.md) | Budgets 1/16, 1/4, 1×: model bytes only in miniature (whole image at 1×), embedding ~15%; GPU only with an ADR | superseded-in-part |
 | [0005](0005-e0v2-protocol.md)               | E0 v2 protocol: serialized-byte parity, WSD, saturation, compute, protected selection, traceability            | superseded-in-part |
 | [0006](0006-flp2-only.md)                   | FLP2 is the only format; FLP1 is rejected, readable only at revision `f9e0732`                                 | accepted           |
 | [0007](0007-e0v2-review-gates.md)           | Review gates: scientific/functional freeze, exact grid arguments, inference-only artifacts, tracked evidence   | accepted           |
@@ -36,6 +36,7 @@ It is not a brainstorm, a survey or a TODO.
 | [0010](0010-independent-numerical-gates.md) | Identical-input optimizer and accepted mixed floating-point gate                                               | accepted           |
 | [0011](0011-e0-row-scale-selection.md)      | Scientific E0 uses row16/row8log only, preserving S9 and FLP2                                                  | accepted           |
 | [0012](0012-repo-boundaries.md)             | floppylm owns FloppyLM semantics; xbox-gpu-training is the only native backend; no FloppyLM in xllama          | accepted           |
+| [0013](0013-e1-functional-qualification.md) | Isolated E1 functional qualification (vector/BPE oracles); scientific E1 remains gated | accepted |
 
 ## Proposals
 
@@ -43,3 +44,4 @@ It is not a brainstorm, a survey or a TODO.
 | ------------------------------------------------------------------------- | ------------------- |
 | [E0 numerical validation refinement](proposals/e0-validation-proposal.md) | accepted → ADR 0010 |
 | [E0 zero-row gate correction](proposals/e0-zero-row-proposal.md)          | accepted → ADR 0011 |
+| [Isolated E1 functional qualification](proposals/e1-qualification-proposal.md) | accepted → ADR 0013 |

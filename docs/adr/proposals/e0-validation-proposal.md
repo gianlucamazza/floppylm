@@ -1,7 +1,7 @@
 # E0 numerical validation refinement (proposal)
 
-Status: accepted by the owner on 2026-09-30. Recorded in ADR 0010, which
-supersedes the numerical acceptance paragraph of ADR 0009.
+Status: accepted — 2026-09-30; recorded in ADR 0010, which supersedes the numerical
+acceptance paragraph of ADR 0009.
 
 ## Context
 
