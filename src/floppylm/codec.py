@@ -25,6 +25,8 @@ FP16_MIN = 6.103515625e-05  # smallest normal fp16
 FP16_MAX = 65504.0
 SCALE_POLICIES = ("row16", "row8log", "tensor16")
 LOG_STEPS_PER_OCTAVE = 16
+# Even-level step multipliers of the absmean scale (Lloyd-Max for a Gaussian).
+MULT_2BIT, MULT_4BIT = 1.135, 0.42
 
 
 class CodecError(ValueError):
@@ -188,7 +190,7 @@ def scalar(name: str, policy: str = "row16", delta: float = 0.5) -> ScalarCodec:
     if name == "ternary":
         return ScalarCodec("ternary", 3, delta=delta, policy=policy)
     if name == "2bit":
-        return ScalarCodec("2bit", 4, mult=1.135, policy=policy)  # Lloyd-Max step, Gaussian
+        return ScalarCodec("2bit", 4, mult=MULT_2BIT, policy=policy)
     if name == "4bit":
-        return ScalarCodec("4bit", 16, mult=0.42, policy=policy)
+        return ScalarCodec("4bit", 16, mult=MULT_4BIT, policy=policy)
     raise CodecError(f"unknown format {name!r}")

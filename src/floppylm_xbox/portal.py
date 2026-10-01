@@ -64,6 +64,23 @@ def check_acceptance(proof: dict, device: dict, package: str) -> None:
         raise RuntimeError("acceptance was measured on a different package")
 
 
+def check_capabilities(config: dict, device: dict) -> None:
+    """Refuse a config the device reports it cannot train (floppylm.device.v1 capabilities)."""
+    caps = device.get("capabilities")
+    if caps is None:
+        return  # packages built before the capability report
+    unsupported = [
+        f"{key}={config[key]!r}"
+        for key in ("vocab", "emb_fmt", "core_fmt", "mlp", "scale_policy")
+        if config[key] not in caps[key]
+    ]
+    delta = caps["delta"]
+    if not delta["minimum"] <= config["delta"] < delta["exclusive_maximum"]:
+        unsupported.append(f"delta={config['delta']!r}")
+    if unsupported:
+        raise RuntimeError("backend does not support " + ", ".join(unsupported))
+
+
 def certificate_fingerprint(value: str) -> str:
     """Normalize a SHA-256 certificate fingerprint (hex, colons and case ignored)."""
     digest = value.replace(":", "").strip().lower()
@@ -257,6 +274,7 @@ class Portal:
                 raise RuntimeError("scientific Xbox runs require acceptance evidence")
             check_acceptance(json.loads(acceptance.read_text()), device, self.package)
         job = json.loads((root / "job.json").read_text())
+        check_capabilities(job["config"], device)
         if purpose == "scientific":
             from .jobs import zero_row_gate
 

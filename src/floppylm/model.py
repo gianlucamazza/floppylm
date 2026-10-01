@@ -12,6 +12,9 @@ import torch.nn.functional as F
 from .codec import SCALE_POLICIES, ScalarCodec, scalar
 
 MLPS = ("gelu", "relu2", "swiglu")
+ROPE_THETA = 10000.0
+RMSNORM_EPS = float(torch.finfo(torch.float32).eps)  # torch default, stated explicitly
+GELU_APPROXIMATE = "none"  # exact erf form
 FORMATS = ("ternary", "2bit", "4bit")
 
 
@@ -105,13 +108,13 @@ class RMSNorm(nn.Module):
         self.weight = nn.Parameter(torch.ones(d))
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        return F.rms_norm(x, (x.size(-1),)) * _fp16(self.weight)
+        return F.rms_norm(x, (x.size(-1),), eps=RMSNORM_EPS) * _fp16(self.weight)
 
 
 class Rope(nn.Module):
     def __init__(self, head_dim: int, ctx: int) -> None:
         super().__init__()
-        inv = 1.0 / (10000 ** (torch.arange(0, head_dim, 2, dtype=torch.float32) / head_dim))
+        inv = 1.0 / (ROPE_THETA ** (torch.arange(0, head_dim, 2, dtype=torch.float32) / head_dim))
         ang = torch.arange(ctx, dtype=torch.float32)[:, None] * inv[None]
         self.register_buffer("cos", ang.cos(), persistent=False)
         self.register_buffer("sin", ang.sin(), persistent=False)
@@ -144,7 +147,7 @@ class Block(nn.Module):
         elif self.cfg.mlp == "relu2":
             h = F.relu(h).square()
         else:
-            h = F.gelu(h)
+            h = F.gelu(h, approximate=GELU_APPROXIMATE)
         return self.fc2(h)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:

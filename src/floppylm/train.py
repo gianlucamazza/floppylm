@@ -19,6 +19,11 @@ import torch.nn.functional as F
 
 from .model import QLinear, TinyGPT
 
+# Optimization constants of the E0 protocol (ADR 0005, ADR 0008; S2 for the WSD fractions).
+WARMUP_FRAC, COOLDOWN_FRAC = 0.02, 0.1
+ADAMW_BETAS, ADAMW_EPS = (0.9, 0.95), 1e-8
+GRAD_CLIP = 1.0
+
 
 @dataclass(frozen=True)
 class TrainSpec:
@@ -27,8 +32,8 @@ class TrainSpec:
     batch: int = 32
     lr: float = 3e-3
     wd: float = 0.1
-    warmup_frac: float = 0.02  # of T (roadmap S2)
-    cooldown_frac: float = 0.1  # of each branch's total steps (roadmap S2)
+    warmup_frac: float = WARMUP_FRAC  # of T (roadmap S2)
+    cooldown_frac: float = COOLDOWN_FRAC  # of each branch's total steps (roadmap S2)
     seed: int = 0
 
 
@@ -140,7 +145,8 @@ def _optimizer(model: TinyGPT, spec: TrainSpec) -> torch.optim.Optimizer:
     return torch.optim.AdamW(
         [{"params": q, "weight_decay": spec.wd}, {"params": other, "weight_decay": 0.0}],
         lr=spec.lr,
-        betas=(0.9, 0.95),
+        betas=ADAMW_BETAS,
+        eps=ADAMW_EPS,
     )
 
 
@@ -185,7 +191,7 @@ def _step(model: TinyGPT, opt: torch.optim.Optimizer, stream: DataStream, lr: fl
         raise FloatingPointError("non-finite training loss")
     opt.zero_grad(set_to_none=True)
     loss.backward()
-    torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
+    torch.nn.utils.clip_grad_norm_(model.parameters(), GRAD_CLIP)
     opt.step()
     return loss.item()
 

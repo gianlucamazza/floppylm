@@ -75,7 +75,6 @@ def main():
         )
         seed_all(19)
         initial, expected = fixture(TinyGPT(cfg))
-        initial["schema"] = "floppylm.e0.fixture.v1"
         directory = a.out / f"fixture-{index:02d}"
         directory.mkdir()
         runlog.write_json(directory / "fixture.json", initial)

@@ -7,6 +7,7 @@ from unittest.mock import Mock
 
 import pytest
 
+from floppylm.model import GPTConfig
 from floppylm_xbox.portal import (
     CREDENTIAL_KEYS,
     Portal,
@@ -308,3 +309,21 @@ def test_committed_acceptance_proofs_keep_their_schema_and_bind_scientific_runs(
                 check_acceptance(proof, device, proof["package"])
         with pytest.raises(RuntimeError, match="different package"):
             check_acceptance({**proof, "kernels": {"ok": True}}, device, "other")
+
+
+def test_capabilities_refuse_an_unsupported_config_before_upload():
+    from floppylm_xbox.portal import check_capabilities
+
+    config = GPTConfig(d=32, n_layers=1, n_heads=2, d_ff=48, ctx=8).to_dict()
+    caps = {
+        "vocab": [256],
+        "emb_fmt": ["4bit"],
+        "core_fmt": ["ternary", "2bit"],
+        "mlp": ["gelu", "relu2", "swiglu"],
+        "scale_policy": ["row16", "row8log", "tensor16"],
+        "delta": {"minimum": 0, "exclusive_maximum": 4},
+    }
+    check_capabilities(config, {"capabilities": caps})
+    check_capabilities({**config, "core_fmt": "4bit"}, {})  # no report: older package
+    with pytest.raises(RuntimeError, match="core_fmt='4bit', delta=4.0"):
+        check_capabilities({**config, "core_fmt": "4bit", "delta": 4.0}, {"capabilities": caps})

@@ -20,7 +20,7 @@ from floppylm import runlog
 from floppylm.codec import scalar
 from floppylm.model import GPTConfig, QLinear, TinyGPT
 from floppylm.seed import seed_all
-from floppylm.train import DataStream, TrainSpec, _optimizer, schedule
+from floppylm.train import GRAD_CLIP, DataStream, TrainSpec, _optimizer, schedule
 
 ABS_GATE, REL_GATE, REL_FLOOR = 1e-5, 1e-4, 1e-2
 
@@ -112,7 +112,11 @@ def compare(actual, expected) -> dict:
 def fixture(model: TinyGPT, batch: int = 2) -> tuple[dict, dict]:
     """Independent PyTorch forward/autograd/AdamW oracle on one deterministic batch."""
     spec = TrainSpec(tokens=1024, batch=batch)
-    initial = {"config": model.cfg.to_dict(), "tensors": tensors(model)}
+    initial = {
+        "schema": "floppylm.e0.fixture.v1",
+        "config": model.cfg.to_dict(),
+        "tensors": tensors(model),
+    }
     stream = DataStream(
         np.frombuffer(b"the cat sat on the mat. " * 20, dtype=np.uint8), batch, model.cfg.ctx, 7
     )
@@ -141,7 +145,7 @@ def fixture(model: TinyGPT, batch: int = 2) -> tuple[dict, dict]:
     loss = F.cross_entropy(logits.flatten(0, 1), y.flatten())
     loss.backward()
     gradients = {name: p.grad.flatten().tolist() for name, p in model.named_parameters()}
-    norm = torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
+    norm = torch.nn.utils.clip_grad_norm_(model.parameters(), GRAD_CLIP)
     opt.step()
     expected = {
         "logits": logits.detach().flatten().tolist(),
@@ -232,15 +236,17 @@ def check_fixture(actual, expected, cfg, directory, *, gpu=True, seed=19):
     return report
 
 
-def verify_optimizer(
-    binary: Path | None, directory: Path, cfg: GPTConfig, *, executor=None
-) -> dict:
-    """AdamW receives identical gradients in both implementations, including tiny ones."""
-    directory.mkdir(parents=True, exist_ok=False)
+def optimizer_fixture(cfg: GPTConfig) -> tuple[dict, list[dict]]:
+    """AdamW steps on given gradients (tiny to large), with the PyTorch reference states."""
     seed_all(19)
     model = TinyGPT(cfg)
     spec = TrainSpec(tokens=1024)
-    initial = {"config": cfg.to_dict(), "tensors": tensors(model), "steps": []}
+    initial = {
+        "schema": "floppylm.e0.optimizer.v1",
+        "config": cfg.to_dict(),
+        "tensors": tensors(model),
+        "steps": [],
+    }
     names = {id(p): name for name, p in model.named_parameters()}
     optimizer = _optimizer(model, spec)
     expected = []
@@ -253,7 +259,7 @@ def verify_optimizer(
             weight.grad = grad
             gradients.append({"name": names[id(weight)], "values": grad.flatten().tolist()})
         initial["steps"].append({"step": step, "lr": lr, "wd": spec.wd, "gradients": gradients})
-        norm = torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
+        norm = torch.nn.utils.clip_grad_norm_(model.parameters(), GRAD_CLIP)
         for group in optimizer.param_groups:
             group["lr"] = lr
         optimizer.step()
@@ -270,10 +276,18 @@ def verify_optimizer(
         expected.append(
             {"tensors": tensors(model), "moments": moments, "gradient_norm": norm.item()}
         )
+    return initial, expected
+
+
+def verify_optimizer(
+    binary: Path | None, directory: Path, cfg: GPTConfig, *, executor=None
+) -> dict:
+    """AdamW receives identical gradients in both implementations, including tiny ones."""
+    directory.mkdir(parents=True, exist_ok=False)
+    initial, expected = optimizer_fixture(cfg)
     runlog.write_json(directory / "fixture.json", initial)
     runlog.write_json(directory / "expected.json", {"steps": expected})
     if executor is not None:
-        initial["schema"] = "floppylm.e0.optimizer.v1"
         runlog.write_json(directory / "actual.json", executor(initial))
     else:
         subprocess.run(
