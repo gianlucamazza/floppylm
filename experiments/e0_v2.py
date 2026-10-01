@@ -350,7 +350,9 @@ def cmd_resume(a: argparse.Namespace) -> int:
         for branch in summary["branches"]:
             verified_branch(branch)
         return 0
-    if not (run_dir / "xbox/submitted.json").exists():
+    if not any(
+        (run_dir / "xbox" / name).exists() for name in ("submitted.json", "publication.json")
+    ):
         raise RuntimeError("trial has no bound submission; diagnose before recovery")
     cfg, spec = GPTConfig(**manifest["config"]), TrainSpec(**manifest["spec"])
     a.backend, a.smoke = "xbox", manifest["smoke"]

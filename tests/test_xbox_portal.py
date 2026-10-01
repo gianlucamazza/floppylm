@@ -327,3 +327,183 @@ def test_capabilities_refuse_an_unsupported_config_before_upload():
     check_capabilities({**config, "core_fmt": "4bit"}, {})  # no report: older package
     with pytest.raises(RuntimeError, match="core_fmt='4bit', delta=4.0"):
         check_capabilities({**config, "core_fmt": "4bit", "delta": 4.0}, {"capabilities": caps})
+
+
+@pytest.mark.parametrize(
+    "phase",
+    [
+        "journal_before",
+        "journal_after",
+        "job",
+        "cancel",
+        "ready_before",
+        "ready_after",
+        "ack",
+        "commit_before",
+        "commit_after",
+    ],
+)
+def test_publication_faults_preserve_recoverable_binding(tmp_path, monkeypatch, phase):
+    client = portal()
+    old_report = recovery_job(tmp_path, client, "interrupted")
+    old_binding = json.loads((tmp_path / "submitted.json").read_text())
+    job = json.loads(json.dumps(old_binding["job"]))
+    job["resume"] = old_report["checkpoint"]
+    candidate_sha = hashlib.sha256(json.dumps(job, sort_keys=True).encode()).hexdigest()
+    remote = dict(old_report)
+    acknowledged = {"state": "completed", "job_sha256": candidate_sha}
+    armed = [True]
+    uploads = []
+    monkeypatch.setattr("floppylm_xbox.portal.time.sleep", lambda _: None)
+
+    def fail(point):
+        if armed[0] and point == phase:
+            armed[0] = False
+            raise OSError("injected " + point)
+
+    def upload(name, payload):
+        uploads.append(name)
+        if name.endswith(".job.json"):
+            fail("job")
+        if name.endswith(".ready"):
+            fail("ready_before")
+            remote.clear()
+            remote.update(acknowledged)
+            fail("ready_after")
+
+    def status(_):
+        # Exercise all five bounded transport retries while the ack is unavailable.
+        if phase == "ack" and armed[0]:
+            raise OSError("injected ack")
+        return dict(remote)
+
+    durable = client._durable_json
+    commit = client._commit_publication
+
+    def write(path, value):
+        if path.name == "publication.json":
+            fail("journal_before")
+            durable(path, value)
+            fail("journal_after")
+        else:
+            durable(path, value)
+
+    def finish(root, journal):
+        fail("commit_before")
+        commit(root, journal)
+        fail("commit_after")
+
+    client.upload = upload
+    client.request = lambda *a: fail("cancel")
+    client.status = status
+    client._durable_json = write
+    client._commit_publication = finish
+    with pytest.raises(OSError, match="injected"):
+        client._publish(tmp_path, job, "resume")
+    if phase != "commit_after":
+        assert json.loads((tmp_path / "submitted.json").read_text()) == old_binding
+    else:
+        assert json.loads((tmp_path / "submitted.json").read_text())["sha256"] == candidate_sha
+    armed[0] = False
+    before_recovery = len(uploads)
+    if phase == "journal_before":
+        assert not (tmp_path / "publication.json").exists()
+        assert not uploads
+        client._publish(tmp_path, job, "resume")
+    else:
+        client.recover(tmp_path, purpose="functional", acceptance=None)
+        if remote == acknowledged and phase in (
+            "ready_after",
+            "ack",
+            "commit_before",
+            "commit_after",
+        ):
+            assert len(uploads) == before_recovery  # Acknowledged work is never queued twice.
+    assert not (tmp_path / "publication.json").exists()
+    assert json.loads((tmp_path / "submitted.json").read_text())["sha256"] == candidate_sha
+
+
+def test_missing_ack_is_bounded_and_keeps_publication_journal(tmp_path, monkeypatch):
+    client = portal()
+    report = recovery_job(tmp_path, client, "interrupted")
+    job = json.loads((tmp_path / "submitted.json").read_text())["job"]
+    job["resume"] = report["checkpoint"]
+    old = (tmp_path / "submitted.json").read_bytes()
+    client.upload = Mock()
+    client.request = Mock()
+    client.status = Mock(side_effect=FileNotFoundError)
+    clock = iter(range(0, 10000, 100))
+    monkeypatch.setattr("floppylm_xbox.portal.time.monotonic", lambda: next(clock))
+    monkeypatch.setattr("floppylm_xbox.portal.time.sleep", lambda _: None)
+    with pytest.raises(TimeoutError, match="acknowledgment timeout"):
+        client._publish(tmp_path, job, "resume")
+    assert (tmp_path / "submitted.json").read_bytes() == old
+    assert (tmp_path / "publication.json").exists()
+
+
+@pytest.mark.parametrize(
+    "state,sha", [("running", "previous"), ("failed", "previous"), ("completed", "unrelated")]
+)
+def test_pending_publication_refuses_unsafe_replay(tmp_path, state, sha):
+    client = portal()
+    recovery_job(tmp_path, client, "interrupted")
+    previous = json.loads((tmp_path / "submitted.json").read_text())
+    job = json.loads(json.dumps(previous["job"]))
+    job["resume"] = {"path": "results/recovery/checkpoint.json"}
+    candidate = {
+        "job": job,
+        "package": client.package,
+        "sha256": hashlib.sha256(json.dumps(job, sort_keys=True).encode()).hexdigest(),
+    }
+    journal = {
+        "schema": "floppylm.xbox.publication.v1",
+        "kind": "resume",
+        "previous": previous,
+        "candidate": candidate,
+    }
+    (tmp_path / "publication.json").write_text(json.dumps(journal))
+    client.status = Mock(
+        return_value={
+            "state": state,
+            "job_sha256": previous["sha256"] if sha == "previous" else sha,
+        }
+    )
+    client.upload = Mock()
+    with pytest.raises(RuntimeError, match="stopped|mismatch"):
+        client.recover(tmp_path, purpose="functional", acceptance=None)
+    client.upload.assert_not_called()
+    assert (tmp_path / "publication.json").exists()
+    assert json.loads((tmp_path / "submitted.json").read_text()) == previous
+
+
+def test_fresh_submission_journals_before_any_remote_upload(tmp_path, monkeypatch):
+    client = portal()
+    recovery_job(tmp_path, client, "completed")
+    (tmp_path / "submitted.json").unlink()
+    client.get = Mock(
+        return_value=json.dumps(
+            {"state": "ready", "hardware_gpu": True, "package": client.package}
+        ).encode()
+    )
+    client.files = Mock(return_value={})
+    remote = []
+
+    def status(_):
+        if not remote:
+            raise FileNotFoundError
+        candidate = json.loads((tmp_path / "publication.json").read_text())["candidate"]
+        return {"state": "running", "job_sha256": candidate["sha256"]}
+
+    def upload(name, payload):
+        assert (tmp_path / "publication.json").exists()
+        assert not (tmp_path / "submitted.json").exists()
+        remote.append(name)
+
+    client.status = status
+    client.upload = upload
+    client.submit = lambda *a, **kw: Portal.submit(client, *a, **kw)
+    assert client.submit(tmp_path, purpose="functional")["job_id"] == "recovery"
+    assert remote[-1] == "recovery.ready"
+    assert any(name.endswith(".chunk") for name in remote)
+    assert (tmp_path / "submitted.json").exists()
+    assert not (tmp_path / "publication.json").exists()
