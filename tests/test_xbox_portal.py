@@ -6,7 +6,7 @@ from unittest.mock import Mock
 
 import pytest
 
-from floppylm.xbox_portal import Portal
+from floppylm.xbox_portal import CREDENTIAL_KEYS, Portal, package_matches, read_env_file
 
 
 def portal():
@@ -74,16 +74,46 @@ def test_remote_artifact_cannot_escape_inbox(tmp_path):
         portal().retrieve({"path": "../private", "bytes": 1, "sha256": "unused"}, tmp_path / "out")
 
 
-def test_existing_connection_config_is_sourced_without_shell_quote_breakage(tmp_path, monkeypatch):
-    config = tmp_path / ".config/xllama/xbox-env"
-    config.parent.mkdir(parents=True)
-    config.write_text("XBOX_IP=127.0.0.1\nXBOX_USER=test\nXBOX_PASS='test $literal'\n")
-    for key in ("XBOX_IP", "XBOX_USER", "XBOX_PASS"):
+def clear_portal_env(monkeypatch):
+    for key in (*CREDENTIAL_KEYS, "XBOX_PORT", "XGPU_E0_PACKAGE", "FLOPPYLM_XBOX_ENV"):
         monkeypatch.delenv(key, raising=False)
+
+
+def test_env_file_is_parsed_without_a_shell(tmp_path, monkeypatch):
+    clear_portal_env(monkeypatch)
+    config = tmp_path / ".config/floppylm/xbox.env"
+    config.parent.mkdir(parents=True)
+    config.write_text(
+        "# Device Portal\nexport XBOX_IP=127.0.0.1\nXBOX_PORT=12000\n"
+        "XBOX_USER=test\nXBOX_PASS='test $literal' # comment\n"
+    )
     monkeypatch.setattr("floppylm.xbox_portal.Path.home", lambda: tmp_path)
     client = Portal.configured(package="known")
-    assert client.host == "127.0.0.1"
-    assert client.package == "known"
+    assert (client.host, client.port, client.package) == ("127.0.0.1", 12000, "known")
+    assert read_env_file(config)["XBOX_PASS"] == "test $literal"
+
+
+def test_environment_overrides_env_file(tmp_path, monkeypatch):
+    clear_portal_env(monkeypatch)
+    config = tmp_path / "xbox.env"
+    config.write_text("XBOX_IP=10.0.0.1\nXBOX_USER=file\nXBOX_PASS=file\n")
+    monkeypatch.setenv("FLOPPYLM_XBOX_ENV", str(config))
+    monkeypatch.setenv("XBOX_IP", "127.0.0.2")
+    client = Portal.configured(package="known")
+    assert (client.host, client.port) == ("127.0.0.2", 11443)
+
+
+def test_missing_settings_name_the_keys(tmp_path, monkeypatch):
+    clear_portal_env(monkeypatch)
+    monkeypatch.setattr("floppylm.xbox_portal.Path.home", lambda: tmp_path)
+    with pytest.raises(RuntimeError, match="XBOX_IP, XBOX_USER, XBOX_PASS"):
+        Portal.configured(package="known")
+
+
+def test_package_discovery_ignores_publisher():
+    assert package_matches("Someone.XgpuE0_0.1.0.28_x64__abc", "XgpuE0")
+    assert package_matches("XgpuE0_0.1.0.28_x64__abc", "XgpuE0")
+    assert not package_matches("Someone.XgpuE0Old_0.1_x64__abc", "XgpuE0")
 
 
 def recovery_job(tmp_path, client, state):

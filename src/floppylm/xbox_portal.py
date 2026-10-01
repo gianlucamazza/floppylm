@@ -11,8 +11,8 @@ import hashlib
 import http.client
 import json
 import os
+import shlex
 import ssl
-import subprocess
 import time
 import uuid
 from http.cookies import SimpleCookie
@@ -22,6 +22,37 @@ from urllib.parse import urlencode, urlsplit
 from . import runlog
 
 CHUNK_BYTES = 2 << 20
+CREDENTIAL_KEYS = ("XBOX_IP", "XBOX_USER", "XBOX_PASS")
+DEFAULT_PORT = 11443
+DEFAULT_PACKAGE_NAME = "XgpuE0"
+
+
+def env_file() -> Path:
+    """Connection settings file: $FLOPPYLM_XBOX_ENV or ~/.config/floppylm/xbox.env."""
+    configured = os.environ.get("FLOPPYLM_XBOX_ENV")
+    return Path(configured) if configured else Path.home() / ".config/floppylm/xbox.env"
+
+
+def read_env_file(path: Path) -> dict[str, str]:
+    """Parse KEY=VALUE lines (optional `export`, comments, shell quoting) without a shell."""
+    if not path.is_file():
+        return {}
+    values = {}
+    for line in path.read_text().splitlines():
+        line = line.strip()
+        if not line or line.startswith("#"):
+            continue
+        key, sep, raw = line.removeprefix("export ").strip().partition("=")
+        if sep and key.isidentifier():
+            parts = shlex.split(raw, comments=True)
+            values[key] = parts[0] if parts else ""
+    return values
+
+
+def package_matches(full_name: str, name: str) -> bool:
+    """True when the package identity name is `name`, with or without a publisher prefix."""
+    identity = full_name.split("_", 1)[0]
+    return identity == name or identity.endswith("." + name)
 
 
 class Portal:
@@ -29,7 +60,7 @@ class Portal:
         target = urlsplit(url)
         if target.scheme != "https" or target.path not in ("", "/"):
             raise ValueError("Device Portal must be an HTTPS origin")
-        self.host, self.port = target.hostname, target.port or 11443
+        self.host, self.port = target.hostname, target.port or DEFAULT_PORT
         self.package = package
         self.context = (
             ssl._create_unverified_context() if insecure else ssl.create_default_context()
@@ -40,43 +71,33 @@ class Portal:
 
     @classmethod
     def configured(cls, package: str = "") -> Portal:
-        # Read only the three established connection variables. Do not print this output.
-        credentials = {k: os.environ.get(k) for k in ("XBOX_IP", "XBOX_USER", "XBOX_PASS")}
-        if not all(credentials.values()):
-            config = Path.home() / ".config/xllama/xbox-env"
-            process = subprocess.run(
-                [
-                    "bash",
-                    "-c",
-                    'source "$1"; export XBOX_IP XBOX_USER XBOX_PASS; '
-                    "python -c 'import os,json; print(json.dumps({k:os.environ[k] for k in "
-                    '"XBOX_IP XBOX_USER XBOX_PASS".split()}))\'',
-                    "bash",
-                    str(config),
-                ],
-                check=True,
-                capture_output=True,
-                text=True,
+        # Environment first, then the env file; never print the result.
+        settings = {**read_env_file(env_file()), **os.environ}
+        missing = [k for k in CREDENTIAL_KEYS if not settings.get(k)]
+        if missing:
+            raise RuntimeError(
+                f"Device Portal settings missing: {', '.join(missing)} "
+                f"(set them in the environment or in {env_file()})"
             )
-            credentials = json.loads(process.stdout)
         portal = cls(
-            f"https://{credentials['XBOX_IP']}:11443",
-            credentials["XBOX_USER"],
-            credentials["XBOX_PASS"],
+            f"https://{settings['XBOX_IP']}:{settings.get('XBOX_PORT') or DEFAULT_PORT}",
+            settings["XBOX_USER"],
+            settings["XBOX_PASS"],
             package,
-            insecure=True,
+            insecure=True,  # Device Portal serves a self-signed certificate
         )
         if not package:
-            portal.package = os.environ.get("XGPU_E0_PACKAGE", "")
+            portal.package = settings.get("XGPU_E0_PACKAGE", "")
         if not portal.package:
+            name = settings.get("XGPU_E0_PACKAGE_NAME") or DEFAULT_PACKAGE_NAME
             installed = portal.request("GET", "/api/app/packagemanager/packages", json_result=True)
             matches = [
                 p["PackageFullName"]
                 for p in installed["InstalledPackages"]
-                if p.get("PackageFullName", "").startswith("GianlucaMazza.XgpuE0_")
+                if package_matches(p.get("PackageFullName", ""), name)
             ]
             if len(matches) != 1:
-                raise RuntimeError("expected exactly one installed E0 package")
+                raise RuntimeError(f"expected exactly one installed {name} package")
             portal.package = matches[0]
         return portal
 

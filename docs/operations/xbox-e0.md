@@ -16,12 +16,22 @@ Python owns corpus preparation, ordered samples, initial weights, canonical FLP2
 evaluation. The app owns GPU training and verified checkpoints. Acceptance and benchmark proofs
 must bind the exact installed package and source commit.
 
-Device Portal credentials come from the environment variables `XBOX_IP`, `XBOX_USER` and `XBOX_PASS`,
-or, when unset, from `~/.config/xllama/xbox-env` (an ADR 0012 follow-up moves this out of xllama).
-Never print them.
+Device Portal settings come from the environment, or from an env file read without a shell
+(`$FLOPPYLM_XBOX_ENV`, default `~/.config/floppylm/xbox.env`); the environment wins:
 
-When Device Portal retains several package versions, set the explicit package full name from
-the acceptance proof; ambiguous discovery fails instead of choosing an unvalidated version:
+```bash
+XBOX_IP=192.0.2.10        # console address shown in Dev Home
+XBOX_PORT=11443           # optional, Device Portal default
+XBOX_USER=...
+XBOX_PASS=...
+XGPU_E0_PACKAGE_NAME=XgpuE0   # optional, package identity name used for discovery
+```
+
+Never print or commit these values.
+
+Without `XGPU_E0_PACKAGE`, discovery picks the single installed package whose identity name is
+`XGPU_E0_PACKAGE_NAME`, whatever its publisher. When several versions are installed, set the explicit
+full name from the acceptance proof; ambiguous discovery fails instead of choosing an unvalidated version:
 
 ```bash
 export XGPU_E0_PACKAGE=<package full name from STATUS>
