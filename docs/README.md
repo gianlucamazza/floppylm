@@ -28,7 +28,7 @@ quale fatto**. Aggiornare il documento owner; non copiare tabelle di stato.
 | [`evidence/`](evidence/README.md)                  | Numeri misurati                   | Design                |
 
 Vocabolario di stato: **specified** (scritto, non eseguito), **stub**, **running**, **measured**
-(un file in `evidence/` possiede il numero), **killed** (un F* è scattato), **won't run**.
+(un file in `evidence/` possiede il numero), **killed** (un F\* è scattato), **won't run**.
 
 ## Codice
 
@@ -44,6 +44,7 @@ src/floppylm/runlog.py    id univoci, directory esclusive, scritture atomiche, s
 src/floppylm/data.py      TinyStoriesV2: dedup esatta, split per hash, manifest, riproducibilità
 experiments/e0_v2.py      --plan / --run / --resume / --grid / --parity / --freeze / --final-test / --verify-data
 experiments/e0_campaign.py sequential frozen Xbox E0 campaign, explicit --recover
+scripts/e0_status.py      read-only local/live campaign state and frozen-source checks
 src/floppylm/xbox_portal.py verified assets, submission binding, transport and recovery
 tests/                    regressioni di tutti i moduli, fixture FLP1 per il test di rifiuto
 ```

@@ -8,6 +8,13 @@ throughput trial completed; ADR 0011 accepts row16/row8log for scientific E0.
 Scientific campaign `e0-20261001T074326Z-503df0` is running; quality results remain pending.
 Commands and provenance: [Xbox E0](docs/xbox-e0.md).
 
+```bash
+python scripts/e0_status.py --campaign runs/e0-campaign-20261001 --xbox
+```
+
+Reads live GPU progress and verifies frozen source/package/job hashes without
+changing the campaign. Omit `--xbox` for local state only.
+
 ## L'idea in trenta secondi
 
 Il floppy limita i bit a riposo, non la RAM a runtime. Un denso ternario in 11 Mbit si ferma a

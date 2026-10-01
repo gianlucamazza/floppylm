@@ -1,0 +1,79 @@
+{
+ "checked_at": "2026-10-01T08:39:04.015988+00:00",
+ "command": [
+  "python",
+  "scripts/e0_status.py",
+  "--campaign",
+  "runs/e0-campaign-20261001",
+  "--xbox"
+ ],
+ "status": {
+  "campaign": "e0-20261001T074326Z-503df0",
+  "state": "running",
+  "phase": "neutral-scale",
+  "package": "GianlucaMazza.XgpuE0_0.1.0.24_x64__g0p5dcfz4t9z4",
+  "commit": "6a124021d7ae450c5e12056bd70503ed9298f9bd",
+  "source_drift": [],
+  "issues": [],
+  "trial_counts": {
+   "reserved": 1
+  },
+  "device": {
+   "adapter": "SraKmd_arden",
+   "commit": "6a124021d7ae450c5e12056bd70503ed9298f9bd",
+   "hardware_gpu": true,
+   "package": "GianlucaMazza.XgpuE0_0.1.0.24_x64__g0p5dcfz4t9z4",
+   "schema": "floppylm.device.v1",
+   "state": "ready"
+  },
+  "trial": {
+   "run_id": "e0-20261001T074326Z-503df0-000",
+   "reservation_state": "reserved",
+   "host": {
+    "pid": 1714232,
+    "state": "running",
+    "updated": "2026-10-01T07:43:31+00:00"
+   },
+   "schedule": {
+    "T": 879,
+    "cooldowns": [
+     87,
+     175,
+     351
+    ],
+    "ends": [
+     879,
+     1758,
+     3516
+    ],
+    "per_step": 8192,
+    "trunk_steps": 3165,
+    "warmup": 17
+   },
+   "job_sha256": "c26de29d8476f637f29bb9f401ad64b84b722eec9450e98e32dd393a77e137b5",
+   "console": {
+    "adapter": "SraKmd_arden",
+    "branches": [],
+    "checkpoint": {
+     "bytes": 23992011,
+     "path": "results/e0-20261001T074326Z-503df0-000/checkpoint.json",
+     "sha256": "b731da180b46e64d2f925284bf6acc48a2fd39a6da60416d67f6b23f47501c93"
+    },
+    "dispatches": 1978368,
+    "gpu_seconds": 277.86667244127074,
+    "hardware_gpu": true,
+    "job_id": "e0-20261001T074326Z-503df0-000",
+    "job_sha256": "c26de29d8476f637f29bb9f401ad64b84b722eec9450e98e32dd393a77e137b5",
+    "last_loss": 1.2734433306932615,
+    "peak_memory_bytes": 88440832,
+    "schema": "floppylm.e0.result.v1",
+    "state": "running",
+    "transfer_bytes": 1852349349888,
+    "trunk_step": 384,
+    "wall_seconds": 3243.719856633
+   }
+  }
+ },
+ "tests": "tests/test_e0_status.py: 5 passed",
+ "scope": "Read-only diagnostics, tests and prose; frozen training sources unchanged."
+}
