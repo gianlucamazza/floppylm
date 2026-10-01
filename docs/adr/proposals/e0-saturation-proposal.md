@@ -23,11 +23,17 @@ The first scientific trial at 1/16 (ternary, row16, GELU, d=96, 3 layers, d_ff=3
 | 4T           | 28 803 072 | 1.3120  | −0.0818       |
 
 Source: [run summary](../../evidence/e0-v2/runs/e0-20261001T090514Z-4236fd-000/summary.json).
+
+Its preregistered S3 byte repair (d_ff 391 → 400, T = 892 steps) reached byte parity
+(fill 0.999–1.001) and confirmed the curve: val bpb 1.5155, 1.3951, 1.3160, Δ(2T→4T) = −0.0791,
+still not saturated, so the trial was excluded
+([repair summary](../../evidence/e0-v2/runs/e0-20261001T090514Z-4236fd-000-repair/summary.json)).
+Because `neutral()` needs both seeds of a candidate, row16 can no longer be selected.
 The gate fails by a factor of eight. If the next three neutral trials behave alike, the campaign
 stops at `neutral-scale` before tuning, grids or paired seeds.
 
 **Projection (an assumption, not a measurement).** The gain per doubling shrank by a ratio of
-0.676. Holding that ratio, Δ falls below 0.01 only between 128T and 256T, i.e. at about
+0.676 (0.657 in the repair). Holding that ratio, Δ falls below 0.01 only between 128T and 256T, i.e. at about
 5 000 tokens per stored parameter, and the asymptote would be near 1.14 bpb. Other shapes and
 formats may decay differently; one trial cannot calibrate this.
 
