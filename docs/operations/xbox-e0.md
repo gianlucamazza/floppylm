@@ -11,6 +11,8 @@ the installed package and running campaign are in [STATUS](../STATUS.md), measur
 - [ADR 0010](../adr/0010-independent-numerical-gates.md) fixes the numerical gates.
 - [ADR 0011](../adr/0011-e0-row-scale-selection.md) selects row16/row8log for scientific E0.
 - [ADR 0012](../adr/0012-repo-boundaries.md) assigns repository ownership.
+- [ADR 0014](../adr/0014-durable-xbox-publication.md) journals publication until console acknowledgment.
+- [ADR 0015](../adr/0015-e0-fixed-data-frontier.md) compares at equal tokens; saturation is recorded.
 
 Python owns corpus preparation, ordered samples, initial weights, canonical FLP2 and sliding
 evaluation. The app owns GPU training and verified checkpoints. Acceptance and benchmark proofs

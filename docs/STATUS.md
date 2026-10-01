@@ -9,20 +9,23 @@ bump or campaign start/stop. Last updated: **2026-10-01**.
 | E0 v2 software       | **measured**: harness, gates and smoke ([evidence](evidence/README.md))                                                                                                                 |
 | S1–S10, scale policy | accepted ([ADR 0008](adr/0008-e0-numeric-protocol.md), [ADR 0011](adr/0011-e0-row-scale-selection.md))                                                                                  |
 | Xbox package         | `GianlucaMazza.XgpuE0_0.1.0.56_x64__g0p5dcfz4t9z4` (E0.1), CI run 36885338811, source `53ab3c25c21dff633b8dba6913ddf3f8020b4f65` — [acceptance](evidence/xbox-e0-20261001-dashboard/notes.md) |
-| E0 campaign          | `e0-20261001T090514Z-4236fd` (0.1.0.28), **stopped** 2026-10-01 13:44 CEST at `neutral-scale`: both row16 seeds not saturated — [record](evidence/e0-v2/campaigns/e0-20261001T090514Z-4236fd/notes.md) |
-| Previous campaign    | `e0-20261001T074326Z-503df0` (0.1.0.24), **stopped**, [record](evidence/e0-v2/campaigns/e0-20261001T074326Z-503df0/notes.md)                                                            |
-| E0 saturation gate   | not met at 1/16 under ADR 0005; [ADR 0015](adr/0015-e0-fixed-data-frontier.md) accepted (option B). No campaign launched under 0015 |
+| E0 campaign          | `e0-20261001T163456Z-fdab67` (0.1.0.56), protocol [ADR 0015](adr/0015-e0-fixed-data-frontier.md), **running** `neutral-scale` from `main` `272b26c` |
+| Previous campaign    | `e0-20261001T090514Z-4236fd` (0.1.0.28), **stopped** 2026-10-01 13:44 CEST at `neutral-scale`: both row16 seeds not saturated — [record](evidence/e0-v2/campaigns/e0-20261001T090514Z-4236fd/notes.md) |
+| E0 saturation gate   | recorded, not an eligibility gate ([ADR 0015](adr/0015-e0-fixed-data-frontier.md)); campaign `fdab67` launched |
 | E0 quality results   | pending                                                                                                                                                                                 |
 | E1 qualification     | CPU functional qualification **measured** ([ADR 0013](adr/0013-e1-functional-qualification.md), [evidence](evidence/e1-qualification-20261001/notes.md)); Xbox vector qualification pending |
 | Scientific E1–E4     | **specified**, gated by E0 and an accepted E1 protocol ([roadmap](roadmap.md), [completion plan](completion-plan.md)) |
 
-The console is idle. Inspect the stopped campaign record (read-only):
+The console is training. Inspect the running campaign (read-only):
 
 ```bash
-python scripts/e0_status.py --campaign runs/e0-campaign-20261001-e01
+python scripts/e0_status.py --campaign runs/e0-campaign-20261001-0015
+python scripts/e0_status.py --campaign runs/e0-campaign-20261001-0015 --xbox
 ```
 
-## Next (the campaign has stopped)
+Do not edit `src/` or `experiments/` while it runs.
+
+## Next (campaign `fdab67` is running)
 
 Done since the stop: xbox-gpu-training consumes the whole published contract set (PR #22, #20);
 Xbox execution moved to `floppylm_xbox` with generic Device Portal settings
@@ -36,9 +39,9 @@ worker/recovery/suspension tests, exact numerical comparison and screenshot reco
 [both-repository release evidence](evidence/xbox-e0-20261001-dashboard/notes.md).
 Backend ADR 0005 and canonical documentation links were merged in PR #27.
 
-1. Obtain independent GPU attribution: the global idle counter stayed high in twelve
+1. Let campaign `fdab67` finish under ADR 0015. Frozen sources stay untouched.
+2. Obtain independent GPU attribution: the global idle counter stayed high in twelve
    controlled modes, including CoreWindow without XAML/D3D12. GPU reduction is **unvalidated**.
-2. Launch a new E0 campaign under ADR 0015 (explicit start; this session does not launch it).
 3. Rename the local working directory to `floppylm` at a session boundary, then
    `git worktree repair` and move the Claude project memory path.
 
