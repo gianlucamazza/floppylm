@@ -25,7 +25,18 @@ XBOX_PORT=11443           # optional, Device Portal default
 XBOX_USER=...
 XBOX_PASS=...
 XGPU_E0_PACKAGE_NAME=XgpuE0   # optional, package identity name used for discovery
+XBOX_CERT_SHA256=...      # SHA-256 of the console's self-signed Device Portal certificate
 ```
+
+Device Portal uses a self-signed certificate, so trust is a pinned fingerprint checked on every
+connection before credentials are sent. Read it once from the console on a trusted network:
+
+```bash
+openssl s_client -connect "$XBOX_IP:11443" </dev/null 2>/dev/null \
+  | openssl x509 -outform DER | sha256sum
+```
+
+A mismatch stops every request; re-pin only after confirming the console regenerated its certificate.
 
 Never print or commit these values.
 

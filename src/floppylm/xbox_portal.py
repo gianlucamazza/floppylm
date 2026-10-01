@@ -22,7 +22,7 @@ from urllib.parse import urlencode, urlsplit
 from . import runlog
 
 CHUNK_BYTES = 2 << 20
-CREDENTIAL_KEYS = ("XBOX_IP", "XBOX_USER", "XBOX_PASS")
+CREDENTIAL_KEYS = ("XBOX_IP", "XBOX_USER", "XBOX_PASS", "XBOX_CERT_SHA256")
 DEFAULT_PORT = 11443
 DEFAULT_PACKAGE_NAME = "XgpuE0"
 
@@ -49,6 +49,14 @@ def read_env_file(path: Path) -> dict[str, str]:
     return values
 
 
+def certificate_fingerprint(value: str) -> str:
+    """Normalize a SHA-256 certificate fingerprint (hex, colons and case ignored)."""
+    digest = value.replace(":", "").strip().lower()
+    if len(digest) != 64 or any(c not in "0123456789abcdef" for c in digest):
+        raise ValueError("XBOX_CERT_SHA256 must be the SHA-256 of the DER certificate")
+    return digest
+
+
 def package_matches(full_name: str, name: str) -> bool:
     """True when the package identity name is `name`, with or without a publisher prefix."""
     identity = full_name.split("_", 1)[0]
@@ -56,15 +64,18 @@ def package_matches(full_name: str, name: str) -> bool:
 
 
 class Portal:
-    def __init__(self, url: str, user: str, password: str, package: str, *, insecure: bool = False):
+    def __init__(self, url: str, user: str, password: str, package: str, *, cert_sha256: str):
         target = urlsplit(url)
         if target.scheme != "https" or target.path not in ("", "/"):
             raise ValueError("Device Portal must be an HTTPS origin")
         self.host, self.port = target.hostname, target.port or DEFAULT_PORT
         self.package = package
-        self.context = (
-            ssl._create_unverified_context() if insecure else ssl.create_default_context()
-        )
+        # Device Portal serves a self-signed certificate: trust is the pinned
+        # fingerprint, checked on every connection, not a CA chain or hostname.
+        self.cert_sha256 = certificate_fingerprint(cert_sha256)
+        self.context = ssl.create_default_context()
+        self.context.check_hostname = False
+        self.context.verify_mode = ssl.CERT_NONE
         self._cookies = SimpleCookie()
         self._csrf = ""
         self._authorization = "Basic " + base64.b64encode(f"{user}:{password}".encode()).decode()
@@ -84,7 +95,7 @@ class Portal:
             settings["XBOX_USER"],
             settings["XBOX_PASS"],
             package,
-            insecure=True,  # Device Portal serves a self-signed certificate
+            cert_sha256=settings["XBOX_CERT_SHA256"],
         )
         if not package:
             portal.package = settings.get("XGPU_E0_PACKAGE", "")
@@ -118,6 +129,12 @@ class Portal:
             self.host, self.port, context=self.context, timeout=120
         )
         try:
+            connection.connect()
+            certificate = connection.sock.getpeercert(binary_form=True) or b""
+            if hashlib.sha256(certificate).hexdigest() != self.cert_sha256:
+                raise ssl.SSLCertVerificationError(
+                    "Device Portal certificate does not match XBOX_CERT_SHA256"
+                )
             connection.request(
                 method,
                 path,

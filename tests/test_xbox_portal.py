@@ -6,11 +6,19 @@ from unittest.mock import Mock
 
 import pytest
 
-from floppylm.xbox_portal import CREDENTIAL_KEYS, Portal, package_matches, read_env_file
+from floppylm.xbox_portal import (
+    CREDENTIAL_KEYS,
+    Portal,
+    certificate_fingerprint,
+    package_matches,
+    read_env_file,
+)
+
+PIN = "ab" * 32
 
 
 def portal():
-    return Portal("https://127.0.0.1:11443", "test", "test", "test-package")
+    return Portal("https://127.0.0.1:11443", "test", "test", "test-package", cert_sha256=PIN)
 
 
 def test_asset_chunks_reused_and_download_hash_verified(tmp_path):
@@ -85,7 +93,7 @@ def test_env_file_is_parsed_without_a_shell(tmp_path, monkeypatch):
     config.parent.mkdir(parents=True)
     config.write_text(
         "# Device Portal\nexport XBOX_IP=127.0.0.1\nXBOX_PORT=12000\n"
-        "XBOX_USER=test\nXBOX_PASS='test $literal' # comment\n"
+        f"XBOX_USER=test\nXBOX_PASS='test $literal' # comment\nXBOX_CERT_SHA256={PIN}\n"
     )
     monkeypatch.setattr("floppylm.xbox_portal.Path.home", lambda: tmp_path)
     client = Portal.configured(package="known")
@@ -96,7 +104,7 @@ def test_env_file_is_parsed_without_a_shell(tmp_path, monkeypatch):
 def test_environment_overrides_env_file(tmp_path, monkeypatch):
     clear_portal_env(monkeypatch)
     config = tmp_path / "xbox.env"
-    config.write_text("XBOX_IP=10.0.0.1\nXBOX_USER=file\nXBOX_PASS=file\n")
+    config.write_text(f"XBOX_IP=10.0.0.1\nXBOX_USER=file\nXBOX_PASS=file\nXBOX_CERT_SHA256={PIN}\n")
     monkeypatch.setenv("FLOPPYLM_XBOX_ENV", str(config))
     monkeypatch.setenv("XBOX_IP", "127.0.0.2")
     client = Portal.configured(package="known")
@@ -106,8 +114,93 @@ def test_environment_overrides_env_file(tmp_path, monkeypatch):
 def test_missing_settings_name_the_keys(tmp_path, monkeypatch):
     clear_portal_env(monkeypatch)
     monkeypatch.setattr("floppylm.xbox_portal.Path.home", lambda: tmp_path)
-    with pytest.raises(RuntimeError, match="XBOX_IP, XBOX_USER, XBOX_PASS"):
+    with pytest.raises(RuntimeError, match="XBOX_IP, XBOX_USER, XBOX_PASS, XBOX_CERT_SHA256"):
         Portal.configured(package="known")
+
+
+def test_certificate_fingerprint_normalization():
+    assert certificate_fingerprint(":".join(["AB"] * 32)) == PIN
+    with pytest.raises(ValueError):
+        certificate_fingerprint("ab" * 31)
+    with pytest.raises(ValueError):
+        certificate_fingerprint("zz" * 32)
+
+
+@pytest.fixture
+def tls_server(tmp_path):
+    """Local HTTPS server with a fresh self-signed certificate, like Device Portal."""
+    import datetime
+    import http.server
+    import ssl
+    import threading
+
+    from cryptography import x509
+    from cryptography.hazmat.primitives import hashes, serialization
+    from cryptography.hazmat.primitives.asymmetric import ec
+    from cryptography.x509.oid import NameOID
+
+    key = ec.generate_private_key(ec.SECP256R1())
+    name = x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, "device-portal")])
+    now = datetime.datetime.now(datetime.UTC)
+    cert = (
+        x509.CertificateBuilder()
+        .subject_name(name)
+        .issuer_name(name)
+        .public_key(key.public_key())
+        .serial_number(x509.random_serial_number())
+        .not_valid_before(now - datetime.timedelta(minutes=1))
+        .not_valid_after(now + datetime.timedelta(hours=1))
+        .sign(key, hashes.SHA256())
+    )
+    (tmp_path / "cert.pem").write_bytes(cert.public_bytes(serialization.Encoding.PEM))
+    (tmp_path / "key.pem").write_bytes(
+        key.private_bytes(
+            serialization.Encoding.PEM,
+            serialization.PrivateFormat.PKCS8,
+            serialization.NoEncryption(),
+        )
+    )
+    seen = []
+
+    class Handler(http.server.BaseHTTPRequestHandler):
+        def do_GET(self):
+            seen.append(self.headers.get("Authorization"))
+            body = b'{"ok": true}'
+            self.send_response(200)
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+
+        def log_message(self, *_):
+            pass
+
+    server = http.server.HTTPServer(("127.0.0.1", 0), Handler)
+    context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+    context.load_cert_chain(tmp_path / "cert.pem", tmp_path / "key.pem")
+    server.socket = context.wrap_socket(server.socket, server_side=True)
+    thread = threading.Thread(target=server.serve_forever, daemon=True)
+    thread.start()
+    fingerprint = hashlib.sha256(cert.public_bytes(serialization.Encoding.DER)).hexdigest()
+    yield f"https://127.0.0.1:{server.server_address[1]}", fingerprint, seen
+    server.shutdown()
+    server.server_close()
+
+
+def test_pinned_certificate_is_accepted(tls_server):
+    url, fingerprint, seen = tls_server
+    client = Portal(url, "user", "secret", "pkg", cert_sha256=fingerprint)
+    assert client.request("GET", "/", json_result=True) == {"ok": True}
+    assert len(seen) == 1
+
+
+def test_unpinned_certificate_is_rejected_before_sending_credentials(tls_server):
+    import ssl
+
+    url, _, seen = tls_server
+    client = Portal(url, "user", "secret", "pkg", cert_sha256="cd" * 32)
+    with pytest.raises(ssl.SSLCertVerificationError, match="XBOX_CERT_SHA256"):
+        client.request("GET", "/")
+    assert seen == []
 
 
 def test_package_discovery_ignores_publisher():
