@@ -4,6 +4,7 @@
 
 Accepted — 2026-09-30, through approval of the implementation plan. Supersedes the
 CPU-only execution requirement of ADR 0004 for E0 at 1/16; other budgets are unchanged.
+Amended 2026-10-01 by ADR 0012: repository ownership boundaries and closure of xllama PR #301.
 
 ## Context
 

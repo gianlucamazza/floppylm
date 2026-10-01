@@ -25,3 +25,4 @@ Non è un brainstorm, non è una survey, non è un TODO. Stesse regole di
 | [0009](0009-xbox-e0-backend.md) | Independent Python oracle and separate Xbox GPU training backend |
 | [0010](0010-independent-numerical-gates.md) | Identical-input optimizer and accepted mixed floating-point gate |
 | [0011](0011-e0-row-scale-selection.md) | Scientific E0 selects row16/row8log while preserving S9 and FLP2 |
+| [0012](0012-repo-boundaries.md) | floppylm owns FloppyLM semantics and contracts; xbox-gpu-training is the only native backend; no FloppyLM in xllama |
