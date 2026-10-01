@@ -28,7 +28,8 @@ the vector core, coding, full scale and the real disk image ([roadmap](docs/road
 ## Quickstart
 
 ```bash
-pytest                            # full host test suite
+pytest                            # full suite; native tests need xbox-gpu-training's xgpu_e0_train
+                                  #   (or XGPU_E0_BINARY), or run pytest -m 'not native'
 python experiments/e0_v2.py --run --smoke   # functional CPU smoke; needs data/, writes a tracked evidence dir
 python scripts/e0_status.py --campaign runs/<campaign-dir>   # read-only campaign state
 ```

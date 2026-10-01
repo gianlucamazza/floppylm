@@ -1,6 +1,5 @@
 """Independent code generation, nearest-code oracle, gradients and actual byte accounting."""
 
-import shutil
 import subprocess
 
 import numpy as np
@@ -11,10 +10,8 @@ from floppylm.codec import CodecError
 from floppylm.vq import BOOK_HEADER, VectorBook, VectorCodec, pack_vectors, pcg32, unpack_vectors
 
 
-def test_pcg_matches_independent_unsigned_c(tmp_path):
-    compiler = shutil.which("cc")
-    if not compiler:
-        pytest.skip("C compiler unavailable; generator interoperability unqualified")
+def test_pcg_matches_independent_unsigned_c(tmp_path, c_compiler):
+    compiler = c_compiler
     source = tmp_path / "pcg.c"
     source.write_text("""#include <stdint.h>
 #include <stdio.h>

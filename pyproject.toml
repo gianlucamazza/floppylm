@@ -21,6 +21,7 @@ where = ["src"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["src"]
+markers = ["native: needs the xbox-gpu-training xgpu_e0_train binary (deselect with -m 'not native')"]
 
 [tool.ruff]
 target-version = "py312"

@@ -3,7 +3,6 @@
 import json
 import os
 import subprocess
-from pathlib import Path
 
 import numpy as np
 import pytest
@@ -19,13 +18,6 @@ from floppylm_xbox.jobs import (
     restore_tensors,
     tensors,
     verify_optimizer,
-)
-
-BINARY = Path(
-    os.environ.get(
-        "XGPU_E0_BINARY",
-        str(Path(__file__).resolve().parents[3] / "tooling/xbox-gpu-training/build/xgpu_e0_train"),
-    )
 )
 
 
@@ -50,15 +42,17 @@ def test_tensor_exchange_preserves_order_and_values():
         restore_tensors(restored, records)
 
 
-@pytest.mark.skipif(not BINARY.exists(), reason="native E0 binary not built")
-def test_optimizer_has_independent_pytorch_oracle(tmp_path):
+@pytest.mark.native
+def test_optimizer_has_independent_pytorch_oracle(tmp_path, native_binary):
     assert verify_optimizer(
-        BINARY, tmp_path / "optimizer", GPTConfig(d=32, n_layers=1, n_heads=2, d_ff=48, ctx=8)
+        native_binary,
+        tmp_path / "optimizer",
+        GPTConfig(d=32, n_layers=1, n_heads=2, d_ff=48, ctx=8),
     )["ok"]
 
 
-@pytest.mark.skipif(not BINARY.exists(), reason="native E0 binary not built")
-def test_native_resume_preserves_all_branch_weights_and_moments(tmp_path):
+@pytest.mark.native
+def test_native_resume_preserves_all_branch_weights_and_moments(tmp_path, native_binary):
     seed_all(19)
     cfg = GPTConfig(d=32, n_layers=1, n_heads=2, d_ff=48, ctx=8)
     model = TinyGPT(cfg)
@@ -69,12 +63,19 @@ def test_native_resume_preserves_all_branch_weights_and_moments(tmp_path):
     prepare_job(full, model, corpus, spec, "full")
     prepare_job(interrupted, model, corpus, spec, "interrupted")
     subprocess.run(
-        [str(BINARY), "--job", str(full / "job.json"), "--reference"],
+        [str(native_binary), "--job", str(full / "job.json"), "--reference"],
         check=True,
         capture_output=True,
     )
     subprocess.run(
-        [str(BINARY), "--job", str(interrupted / "job.json"), "--reference", "--stop-after", "9"],
+        [
+            str(native_binary),
+            "--job",
+            str(interrupted / "job.json"),
+            "--reference",
+            "--stop-after",
+            "9",
+        ],
         check=True,
         capture_output=True,
     )
@@ -84,7 +85,7 @@ def test_native_resume_preserves_all_branch_weights_and_moments(tmp_path):
     job["resume"] = descriptor(result / "checkpoint.json", interrupted)
     (interrupted / "job.json").write_text(json.dumps(job))
     subprocess.run(
-        [str(BINARY), "--job", str(interrupted / "job.json"), "--reference"],
+        [str(native_binary), "--job", str(interrupted / "job.json"), "--reference"],
         check=True,
         capture_output=True,
     )
@@ -98,13 +99,15 @@ def test_native_resume_preserves_all_branch_weights_and_moments(tmp_path):
     assert json.loads((result / "status.json").read_text())["state"] == "completed"
 
 
-@pytest.mark.skipif(not BINARY.exists(), reason="native E0 binary not built")
-def test_native_never_silently_falls_back_to_cpu(tmp_path):
+@pytest.mark.native
+def test_native_never_silently_falls_back_to_cpu(tmp_path, native_binary):
     if os.name == "nt":
         pytest.skip("Linux no-device gate")
     fake = tmp_path / "job.json"
     fake.write_text("{}")
-    result = subprocess.run([str(BINARY), "--job", str(fake)], capture_output=True, text=True)
+    result = subprocess.run(
+        [str(native_binary), "--job", str(fake)], capture_output=True, text=True
+    )
     assert result.returncode != 0
     assert "no D3D12 device" in result.stderr
 
@@ -133,11 +136,13 @@ def test_scientific_zero_row_gate_is_independent_of_backend_parity(fmt):
     assert not zero_row_gate("tensor16", fmt)["ok"]
 
 
-@pytest.mark.skipif(not BINARY.exists(), reason="native E0 binary not built")
-def test_every_kernel_matches_independent_autograd_including_hidden_boundaries(tmp_path):
+@pytest.mark.native
+def test_every_kernel_matches_independent_autograd_including_hidden_boundaries(
+    tmp_path, native_binary
+):
     from floppylm_xbox.kernels import verify
 
-    report = verify(tmp_path / "kernels", binary=BINARY, hardware=False)
+    report = verify(tmp_path / "kernels", binary=native_binary, hardware=False)
     assert report["case_count"] == 52
     assert report["gates"]["causal-weighted:1"]["ok"]
     assert report["gates"]["cross-entropy-shift:0"]["ok"]
