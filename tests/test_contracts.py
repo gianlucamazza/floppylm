@@ -57,23 +57,27 @@ def test_every_contract_has_a_valid_fixture():
     assert contracts == {p.stem.split("--")[0] for p in fixtures("valid")}
 
 
-def test_measured_native_reports_match_the_contract():
-    results, devices = validator("floppylm.e0.result.v1"), validator("floppylm.device.v1")
-    checked = 0
-    for summary in EVIDENCE.glob("e0-v2/runs/*/summary.json"):
-        if "backend" in load(summary):
-            results.validate(load(summary)["backend"])
-            checked += 1
-    for acceptance in EVIDENCE.glob("xbox-e0-*/acceptance.json"):
-        if "device" in load(acceptance):
-            devices.validate(load(acceptance)["device"])
-            checked += 1
-    for lifecycle in EVIDENCE.glob("xbox-e0-*/lifecycle*.json"):
-        for value in load(lifecycle).values():
-            if isinstance(value, dict) and value.get("schema") == "floppylm.e0.result.v1":
-                results.validate(value)
-                checked += 1
-    assert checked >= 3
+def native_reports(value, schema):
+    if isinstance(value, dict):
+        if value.get("schema") == schema:
+            yield value
+        for child in value.values():
+            yield from native_reports(child, schema)
+    elif isinstance(value, list):
+        for child in value:
+            yield from native_reports(child, schema)
+
+
+@pytest.mark.parametrize("schema", ["floppylm.e0.result.v1", "floppylm.device.v1"])
+def test_every_measured_native_report_matches_the_contract(schema):
+    check = validator(schema)
+    found = 0
+    for path in EVIDENCE.rglob("*.json"):
+        for report in native_reports(load(path), schema):
+            # Execution segments are validated as part of their enclosing report.
+            check.validate(report)
+            found += 1
+    assert found > 0
 
 
 def test_live_producers_match_the_contract(tmp_path):

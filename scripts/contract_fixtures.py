@@ -50,22 +50,23 @@ def instances() -> dict[str, dict]:
         "stop_after": 9,
         "resume": {"path": "results/tiny/checkpoint.json", "bytes": 1, "sha256": "1" * 64},
     }
-    completed = read(EVIDENCE / "e0-v2/runs/e0-20261001T090514Z-4236fd-000/summary.json")
-    interrupted = read(EVIDENCE / "xbox-e0-20261001-e01/lifecycle.json")
-    device = read(EVIDENCE / "xbox-e0-20261001-e01/acceptance.json")["device"]
-    resumed = {
-        **completed["backend"],
-        "execution_segments": [interrupted["checkpoint_interruption"]],
-    }
+    e01 = EVIDENCE / "xbox-e0-20261001-e01"
+    recovery = read(e01 / "recovery.json")["reports"]
+    interrupted = read(e01 / "lifecycle.json")["checkpoint_interruption"]
+    failed = read(EVIDENCE / "xbox-e0-20261001/baseline-publish-failure.json")
+    running = read(EVIDENCE / "xbox-e0-20261001/campaign-launch.json")["status"]
+    device = read(e01 / "acceptance.json")["device"]
 
     valid = {
         "floppylm.e0.job.v1/prepared": job,
         "floppylm.e0.job.v1/submitted": submitted,
         "floppylm.e0.initialization.v1/tiny": initial,
         "floppylm.e0.weights.v1/tiny": {"schema": "floppylm.e0.weights.v1", **initial},
-        "floppylm.e0.result.v1/completed": completed["backend"],
-        "floppylm.e0.result.v1/interrupted": interrupted["checkpoint_interruption"],
-        "floppylm.e0.result.v1/resumed": resumed,
+        "floppylm.e0.result.v1/running": running,
+        "floppylm.e0.result.v1/interrupted": interrupted,
+        "floppylm.e0.result.v1/completed": recovery[0],
+        "floppylm.e0.result.v1/resumed": recovery[1],
+        "floppylm.e0.result.v1/failed": failed,
         "floppylm.e0.result.v1/early-failure": {
             "job_id": "tiny",
             "state": "failed",

@@ -3,79 +3,150 @@
  "branches": [
   {
    "artifact": {
-    "bytes": 7442952,
-    "path": "results/e0-20261001T090514Z-4236fd-000/branch-879.json",
-    "sha256": "dcc7e6d5a89bc0c24d0d9019884ea54ff80aef3dedf09119e0ae16a3b27bb325"
+    "bytes": 316829,
+    "path": "results/recovery-20261001T090424Z-5c8006-interrupted/branch-8.json",
+    "sha256": "07d23edd0236512852b787fc9d3decaeae1facbf12df81e65ab96301c41ea3eb"
    },
-   "cooldown_seconds": 63.992498614,
-   "cooldown_start": 792,
-   "cooldown_steps": 87,
-   "end_step": 879,
-   "tokens_seen": 7200768
+   "cooldown_seconds": 0.007054507,
+   "cooldown_start": 7,
+   "cooldown_steps": 1,
+   "end_step": 8,
+   "tokens_seen": 128
   },
   {
    "artifact": {
-    "bytes": 7409318,
-    "path": "results/e0-20261001T090514Z-4236fd-000/branch-1758.json",
-    "sha256": "49a6e9a484371ddfbf1f86fc54f3e0621cda7ead69a451a3fe6b0f1648951aa6"
+    "bytes": 316845,
+    "path": "results/recovery-20261001T090424Z-5c8006-interrupted/branch-16.json",
+    "sha256": "c5b067d790827cde86e90a3406755365af7cf603b78b20ef3e7b73876298b967"
    },
-   "cooldown_seconds": 128.871292337,
-   "cooldown_start": 1583,
-   "cooldown_steps": 175,
-   "end_step": 1758,
-   "tokens_seen": 14401536
+   "cooldown_seconds": 0.007169423,
+   "cooldown_start": 15,
+   "cooldown_steps": 1,
+   "end_step": 16,
+   "tokens_seen": 256
   },
   {
    "artifact": {
-    "bytes": 7365385,
-    "path": "results/e0-20261001T090514Z-4236fd-000/branch-3516.json",
-    "sha256": "4ce25b9eee7caf23949d36fb02505d4a317e6c9874935d7aac041c17771586d8"
+    "bytes": 316435,
+    "path": "results/recovery-20261001T090424Z-5c8006-interrupted/branch-32.json",
+    "sha256": "96ae208439981620138595bbda531cc09cef840bc505b397186312b1f11571d3"
    },
-   "cooldown_seconds": 258.504026422,
-   "cooldown_start": 3165,
-   "cooldown_steps": 351,
-   "end_step": 3516,
-   "tokens_seen": 28803072
+   "cooldown_seconds": 0.011184727,
+   "cooldown_start": 29,
+   "cooldown_steps": 3,
+   "end_step": 32,
+   "tokens_seen": 512
   }
  ],
  "checkpoint": {
-  "bytes": 23683501,
-  "path": "results/e0-20261001T090514Z-4236fd-000/checkpoint.json",
-  "sha256": "846092719c7099c0a258b3157e56238d531a2885cb1aae55e05dc09d31db3ed4"
+  "bytes": 1010578,
+  "path": "results/recovery-20261001T090424Z-5c8006-interrupted/checkpoint.json",
+  "sha256": "f7964d996c839e0742504b5b50566802eb886ae14d9596e2101d591dbca7f905"
  },
- "dispatches": 19464256,
+ "dispatches": 4148,
  "execution_segments": [
   {
    "adapter": "SraKmd_arden",
-   "branches": [],
+   "branches": [
+    {
+     "artifact": {
+      "bytes": 316829,
+      "path": "results/recovery-20261001T090424Z-5c8006-interrupted/branch-8.json",
+      "sha256": "07d23edd0236512852b787fc9d3decaeae1facbf12df81e65ab96301c41ea3eb"
+     },
+     "cooldown_seconds": 0.007054507,
+     "cooldown_start": 7,
+     "cooldown_steps": 1,
+     "end_step": 8,
+     "tokens_seen": 128
+    }
+   ],
    "checkpoint": {
-    "bytes": 1011113,
-    "path": "results/lifecycle-20261001T090439Z-e40eb5-suspended/checkpoint.json",
-    "sha256": "739f653bed500f6f81738bb99bd47ff7e5a84d4cfe3602687ec883d8612084d8"
+    "bytes": 1011784,
+    "path": "results/recovery-20261001T090424Z-5c8006-interrupted/checkpoint.json",
+    "sha256": "51087fb75bf51e0c721b93ab3666105a0cc36a32c6b15a2787bced26fbc95cd3"
    },
-   "dispatches": 57340,
-   "gpu_seconds": 0.38037156892225654,
+   "dispatches": 1220,
+   "gpu_seconds": 0.00800793984962406,
    "hardware_gpu": true,
-   "job_id": "lifecycle-20261001T090439Z-e40eb5-suspended",
-   "job_sha256": "1f1f038bb4b8b922da8cc9f056e67bc6a28e83c0e89588456d2a3587c3f6358b",
-   "last_loss": 0.009544950764393434,
-   "peak_memory_bytes": 87764992,
+   "job_id": "recovery-20261001T090424Z-5c8006-interrupted",
+   "job_sha256": "9fea4919a9b9cc3f15fb9a6e1c67d5ac0f971409560403da89e76d14bde317df",
+   "last_loss": 3.819479674100876,
+   "peak_memory_bytes": 81698816,
    "schema": "floppylm.e0.result.v1",
    "state": "interrupted",
-   "transfer_bytes": 87292160,
-   "trunk_step": 461,
-   "wall_seconds": 1.118974126
+   "transfer_bytes": 1857280,
+   "trunk_step": 9,
+   "wall_seconds": 0.05616035
+  },
+  {
+   "adapter": "SraKmd_arden",
+   "branches": [
+    {
+     "artifact": {
+      "bytes": 316829,
+      "path": "results/recovery-20261001T090424Z-5c8006-interrupted/branch-8.json",
+      "sha256": "07d23edd0236512852b787fc9d3decaeae1facbf12df81e65ab96301c41ea3eb"
+     },
+     "cooldown_seconds": 0.007054507,
+     "cooldown_start": 7,
+     "cooldown_steps": 1,
+     "end_step": 8,
+     "tokens_seen": 128
+    },
+    {
+     "artifact": {
+      "bytes": 316845,
+      "path": "results/recovery-20261001T090424Z-5c8006-interrupted/branch-16.json",
+      "sha256": "c5b067d790827cde86e90a3406755365af7cf603b78b20ef3e7b73876298b967"
+     },
+     "cooldown_seconds": 0.007169423,
+     "cooldown_start": 15,
+     "cooldown_steps": 1,
+     "end_step": 16,
+     "tokens_seen": 256
+    },
+    {
+     "artifact": {
+      "bytes": 316435,
+      "path": "results/recovery-20261001T090424Z-5c8006-interrupted/branch-32.json",
+      "sha256": "96ae208439981620138595bbda531cc09cef840bc505b397186312b1f11571d3"
+     },
+     "cooldown_seconds": 0.011184727,
+     "cooldown_start": 29,
+     "cooldown_steps": 3,
+     "end_step": 32,
+     "tokens_seen": 512
+    }
+   ],
+   "checkpoint": {
+    "bytes": 1010578,
+    "path": "results/recovery-20261001T090424Z-5c8006-interrupted/checkpoint.json",
+    "sha256": "f7964d996c839e0742504b5b50566802eb886ae14d9596e2101d591dbca7f905"
+   },
+   "dispatches": 2928,
+   "gpu_seconds": 0.019217884711779477,
+   "hardware_gpu": true,
+   "job_id": "recovery-20261001T090424Z-5c8006-interrupted",
+   "job_sha256": "119ab45111201fcffe9366fc1f95effb359c79bc17f7ea84c6d7b62c7dabe5f6",
+   "last_loss": 1.5586926266551018,
+   "peak_memory_bytes": 82411520,
+   "schema": "floppylm.e0.result.v1",
+   "state": "completed",
+   "transfer_bytes": 4457472,
+   "trunk_step": 29,
+   "wall_seconds": 0.12834288
   }
  ],
- "gpu_seconds": 2484.036388444236,
+ "gpu_seconds": 0.027225824561403537,
  "hardware_gpu": true,
- "job_id": "e0-20261001T090514Z-4236fd-000",
- "job_sha256": "da165ff9947215b42539bac09ff1f9a778ba7a5bced021a099708295fa2cef60",
- "last_loss": 1.0841151086993683,
- "peak_memory_bytes": 109629440,
+ "job_id": "recovery-20261001T090424Z-5c8006-interrupted",
+ "job_sha256": "119ab45111201fcffe9366fc1f95effb359c79bc17f7ea84c6d7b62c7dabe5f6",
+ "last_loss": 1.5586926266551018,
+ "peak_memory_bytes": 82411520,
  "schema": "floppylm.e0.result.v1",
  "state": "completed",
- "transfer_bytes": 180552372992,
- "trunk_step": 3165,
- "wall_seconds": 2794.610053927
+ "transfer_bytes": 6314752,
+ "trunk_step": 29,
+ "wall_seconds": 0.18450323
 }
