@@ -78,10 +78,7 @@ def prepare_job(root: Path, model: TinyGPT, train_file: Path, spec: TrainSpec, j
     data = np.memmap(root / "train.bin", mode="r", dtype=np.uint8)
     stream = DataStream(data, spec.batch, model.cfg.ctx, spec.seed)
     sch = schedule(spec, model.cfg.ctx)
-    with (root / "indices.bin").open("wb") as file:
-        for _ in range(sch["ends"][-1]):
-            indices = stream.rng.integers(0, len(data) - model.cfg.ctx - 1, size=spec.batch)
-            file.write(indices.astype("<u8").tobytes())
+    (root / "indices.bin").write_bytes(stream.plan(sch["ends"][-1]).astype("<u8").tobytes())
     job = {
         "schema": "floppylm.e0.job.v1",
         "job_id": job_id,

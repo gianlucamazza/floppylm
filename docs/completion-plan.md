@@ -20,12 +20,10 @@ frontiers; it does not trigger an alternative scalar-floppy product.
 
 ## Isolation and rollout
 
-E1 code (`src/floppylm/{bpe,vq}.py`, `scripts/e1_*.py` and their tests) lives on branch
-`research/e1-qualification` (also on `origin`), developed in the worktree
-`/tmp/floppylm-e1-qualification`; `/tmp` is not permanent artifact storage. Its docs and
-evidence are already on `main`. Do not merge new `src/floppylm` or `experiments` files into
-the campaign checkout while its worker is bound to a frozen file set: `runlog.sources()`
-hashes every module there, so a new file is source drift.
+E1 qualification code is on `main`: `src/floppylm/{bpe,vq}.py`, `scripts/e1_*.py` and their tests
+([code map](operations/code-map.md)). While a campaign runs, its frozen file set
+(`runlog.source_files`) covers every module under `src/` and `experiments/`, so new modules are
+merged only between campaigns.
 
 Use the existing CPU job routing ([stack](stack.md)) for CPU-heavy jobs. No parallel GPU job is
 submitted during E0. [STATUS](STATUS.md) and the campaign manifest own live state; record a

@@ -50,11 +50,19 @@ class DataStream:
         self.data, self.batch, self.ctx = data, batch, ctx
         self.rng = np.random.default_rng(seed)
 
+    def offsets(self) -> np.ndarray:
+        """Start offsets of the next batch of windows; advances the stream."""
+        return self.rng.integers(0, len(self.data) - self.ctx - 1, size=self.batch)
+
     def next(self) -> tuple[torch.Tensor, torch.Tensor]:
-        ix = self.rng.integers(0, len(self.data) - self.ctx - 1, size=self.batch)
+        ix = self.offsets()
         c = np.stack([self.data[i : i + self.ctx + 1] for i in ix]).astype(np.int64)
         c = torch.from_numpy(c)
         return c[:, :-1], c[:, 1:]
+
+    def plan(self, steps: int) -> np.ndarray:
+        """Window offsets of the next `steps` batches, in order (the E0 index plan)."""
+        return np.concatenate([self.offsets() for _ in range(steps)])
 
     def fork(self) -> DataStream:
         other = copy.copy(self)

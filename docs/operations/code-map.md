@@ -16,6 +16,8 @@ metrics.py       bits per byte (byte tokenizer: one token is one byte)
 seed.py          single RNG entry point (ADR 0003 §3)
 runlog.py        unique ids, exclusive directories, atomic writes, state, manifests
 data.py          TinyStoriesV2: exact dedup, hash split, manifest, reproducibility
+bpe.py           train-only byte-exact BPE oracle (E1 functional qualification, ADR 0013)
+vq.py            standalone vector-weight oracles (E1 functional qualification, ADR 0013)
 ```
 
 ## Xbox execution — `src/floppylm_xbox/`
@@ -48,6 +50,8 @@ JSON Schemas of every file exchanged with the native backend; see [schemas/READM
 
 - `scripts/e0_status.py --campaign DIR [--xbox]`: read-only local/live campaign state and
   frozen-source checks; exit code 1 on issues.
+- `scripts/e1_qualify.py`, `scripts/e1_cpu_profile.py`: ADR 0013 functional qualification and the
+  scalar CPU profile ([evidence](../evidence/e1-qualification-20261001/notes.md)).
 - `scripts/contract_fixtures.py`: regenerate the golden contract instances in
   `tests/fixtures/contracts/`.
 - `tests/`: regressions for every module, including the FLP1 fixture for the rejection test.
