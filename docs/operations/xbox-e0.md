@@ -81,7 +81,8 @@ nohup python experiments/e0_campaign.py \
   > runs/e0-campaign-<unique>.launch.log 2>&1 &
 ```
 
-Long jobs run outside the throttled `background.slice` ([stack](../stack.md)).
+Never wrap campaign or training jobs in `bg`: it moves them into `background.slice`, capped at one
+core. Long jobs run under `nohup` outside that slice ([stack](../stack.md), ADR 0003 amendment).
 
 ## Recover
 

@@ -9,7 +9,7 @@ bump or campaign start/stop. Last updated: **2026-10-01**.
 | E0 v2 software       | **measured**: harness, gates and smoke ([evidence](evidence/README.md))                                                                                                                 |
 | S1–S10, scale policy | accepted ([ADR 0008](adr/0008-e0-numeric-protocol.md), [ADR 0011](adr/0011-e0-row-scale-selection.md))                                                                                  |
 | Xbox package         | `GianlucaMazza.XgpuE0_0.1.0.28_x64__g0p5dcfz4t9z4` (E0.1), CI run 36839565773, source `25f8bc3966ffae940658be94161d31edd83492c9` — [acceptance](evidence/xbox-e0-20261001-e01/notes.md) |
-| E0 campaign          | `e0-20261001T090514Z-4236fd`, **running**, phase `neutral-scale`; state in `runs/e0-campaign-20261001-e01/`                                                                             |
+| E0 campaign          | `e0-20261001T090514Z-4236fd`, **running**, phase `neutral-scale`; state in `runs/e0-campaign-20261001-e01/`; launched with `bg`, so it still runs inside `background.slice` (1-core cap)                                                                             |
 | Previous campaign    | `e0-20261001T074326Z-503df0` (0.1.0.24), **stopped**, [record](evidence/e0-v2/campaigns/e0-20261001T074326Z-503df0/notes.md)                                                            |
 | E0 quality results   | pending                                                                                                                                                                                 |
 | E1 qualification     | CPU functional qualification **measured** ([ADR 0013](adr/0013-e1-functional-qualification.md), [evidence](evidence/e1-qualification-20261001/notes.md)); Xbox vector qualification pending; code on branch `research/e1-qualification` |
@@ -28,6 +28,8 @@ Bound proofs: `runs/xbox-acceptance-20261001-ci36839565773/acceptance.json` and
 
 - Frozen sources must stay untouched while the campaign runs. Afterwards:
   - translate the generated run-note template in `experiments/e0_v2.py` (`notes_md`) to English;
+  - drop the "host `bg` wrapper" instruction from the `experiments/e0_v2.py` docstring (jobs run
+    under `nohup` outside `background.slice`);
   - apply the [ADR 0012](adr/0012-repo-boundaries.md) follow-ups;
   - merge the code of branch `research/e1-qualification` (its docs are already on `main`; keep `main`'s versions on conflict).
 
