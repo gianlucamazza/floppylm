@@ -2,7 +2,8 @@
 
 ## Status
 
-Accepted — 2026-10-01, by the owner. Extends ADR 0009; does not change its numerical
+`accepted` — accepted 2026-10-01, by the owner.
+Amends [ADR 0009](0009-xbox-e0-backend.md): extends it with repository boundaries; does not change its numerical
 or scientific rules.
 
 ## Context

@@ -1,49 +1,53 @@
-# ADR 0005: Protocollo E0 v2
+# ADR 0005: E0 v2 protocol
 
 ## Status
 
-Accepted — 2026-09-30. §10 superseded in parte da [ADR 0006](0006-flp2-only.md) (niente FLP1).
-Supersede ADR 0003 §2 e §7 (parità, selezione) e la regola "20 token per
-parametro" di ADR 0004 §1. Gli ADR 0003 e 0004 restano validi per tutto il resto.
+`superseded-in-part` — accepted 2026-09-30.
+Supersedes in part [ADR 0003](0003-lab-practices.md) §2 and §7 (parity, selection) and the "20 tokens per
+parameter" rule of [ADR 0004](0004-miniature-budgets.md) §1. ADRs 0003 and 0004 remain valid for everything else.
+Superseded in part by [ADR 0006](0006-flp2-only.md): the "including the legacy `FLP1`" part of §10 (no FLP1).
+Clarified by [ADR 0007](0007-e0v2-review-gates.md): selection and artifact invariants.
+Completed by [ADR 0008](0008-e0-numeric-protocol.md): the numerical choices this ADR left not yet approved (S1–S10) are resolved there.
 
 ## Context
 
-La griglia E0-lite (pre-v2) non poteva decidere F1: forme con riempimento del budget fra 0.88 e 0.99,
-nessuna curva di saturazione, avversario non tarato, test valutato dentro il run di training. Due
-revisioni indipendenti hanno converso sulle correzioni ([roadmap](../experiments-roadmap.md)).
-Questo ADR registra **solo le decisioni approvate** dall'utente il 2026-09-30. Le scelte numeriche
-nuove, non ancora approvate, stanno in
-[roadmap § Scelte da approvare](../experiments-roadmap.md#e0-v2--scelte-da-approvare).
+The E0-lite grid (pre-v2) could not decide F1: shapes filling the budget between 0.88 and 0.99,
+no saturation curve, an uncalibrated adversary, test evaluated inside the training run. Two
+independent reviews converged on the corrections ([roadmap](../roadmap.md)).
+This ADR records **only the decisions approved** by the user on 2026-09-30. The new numerical
+choices, not yet approved at the time, were recorded separately and are resolved by
+[ADR 0008](0008-e0-numeric-protocol.md).
 
 ## Decision
 
-1. **Parità dei byte.** I bit nominali servono solo al solver per proporre forme. L'ammissibilità si
-   decide sui byte realmente serializzati (`len(pack(model))`): ogni candidato entro ±1% del target
-   **e** `max(bytes)/min(bytes) − 1 ≤ 0.01` fra i candidati confrontati. Nessun padding. Un run fuori
-   tolleranza si conserva come diagnostica e si esclude dai verdetti.
-2. **Aggiustamento dopo entropy coding.** Se un braccio esce di tolleranza, la forma si riaggiusta con
-   una regola dichiarata prima della campagna e con lo stesso numero di tentativi per braccio.
-3. **WSD.** Un tronco a LR costante con warmup; cooldown lineari a zero che terminano a T, 2T, 4T,
-   ognuno ramificato da una copia del tronco. Il tronco non è mai modificato dai cooldown. Il
-   checkpoint del tronco contiene modello, optimizer, stato dello scheduler, RNG e posizione nel
-   flusso dati; la ripresa da checkpoint è deterministica.
-4. **Saturazione.** Criterio `|bpb(4T) − bpb(2T)| < 0.01` sul val, registrando anche il delta con
-   segno. Se a 4T fallisce, il run è dichiarato **non saturo**; nessun prolungamento automatico.
-5. **Compute.** Token e FLOP stimati si registrano separati per tronco, per ogni cooldown e in totale
-   (costo della ricerca), insieme alla formula, agli arrotondamenti e alle risorse consumate (wall
-   clock, thread). I confronti dichiarano se sono a token uguali o a compute stimato uguale.
-6. **Budget di tuning.** Numero di run fissato per braccio, uguale per tutti i bracci confrontati.
-7. **σ appaiata.** La σ del gate è la deviazione standard delle differenze fra due condizioni nominate
-   sugli stessi seed. La dispersione di un solo modello non è una σ appaiata.
-8. **Selezione protetta.** Training e tuning leggono solo train e val. Il test si valuta con un
-   comando separato, dopo aver salvato una selezione congelata legata agli hash degli artefatti.
-9. **Tracciabilità.** Ogni run ha id univoco, directory creata in esclusiva, scritture atomiche, stato
-   `running | completed | failed | interrupted`, manifest con hash di dati, sorgenti, configurazione,
-   ambiente e artefatto. Un run incompleto non appare mai completato.
-10. **Formato.** `pack(unpack(blob)) == blob` per ogni formato supportato, incluso il legacy `FLP1`;
-    simboli e scale caricati sono canonici e non si riquantizzano al risalvataggio.
+1. **Byte parity.** Nominal bits serve only the solver to propose shapes. Eligibility is
+   decided on the actually serialized bytes (`len(pack(model))`): every candidate within ±1% of the target
+   **and** `max(bytes)/min(bytes) − 1 ≤ 0.01` across the compared candidates. No padding. An out-of-tolerance
+   run is kept as diagnostics and excluded from verdicts.
+2. **Adjustment after entropy coding.** If an arm falls out of tolerance, its shape is readjusted with
+   a rule declared before the campaign and with the same number of attempts per arm.
+3. **WSD.** One trunk at constant LR with warmup; linear cooldowns to zero ending at T, 2T, 4T,
+   each branched from a copy of the trunk. The trunk is never modified by the cooldowns. The
+   trunk checkpoint contains model, optimizer, scheduler state, RNG and position in the
+   data stream; resuming from a checkpoint is deterministic.
+4. **Saturation.** Criterion `|bpb(4T) − bpb(2T)| < 0.01` on val, also recording the signed
+   delta. If it fails at 4T, the run is declared **not saturated**; no automatic extension.
+5. **Compute.** Tokens and estimated FLOPs are recorded separately for the trunk, for each cooldown and in total
+   (search cost), together with the formula, the roundings and the resources consumed (wall
+   clock, threads). Comparisons declare whether they are at equal tokens or at equal estimated compute.
+6. **Tuning budget.** Fixed number of runs per arm, equal for all compared arms.
+7. **Paired σ.** The gate σ is the standard deviation of the differences between two named conditions
+   on the same seeds. The spread of a single model is not a paired σ.
+8. **Protected selection.** Training and tuning read only train and val. Test is evaluated with a
+   separate command, after saving a frozen selection bound to the artifact hashes.
+9. **Traceability.** Every run has a unique id, an exclusively created directory, atomic writes, a state
+   `running | completed | failed | interrupted`, and a manifest with hashes of data, sources, configuration,
+   environment and artifact. An incomplete run never appears completed.
+10. **Format.** `pack(unpack(blob)) == blob` for every supported format, including the legacy `FLP1`;
+    loaded symbols and scales are canonical and are not requantized on re-save.
 
 ## Consequences
 
-- I risultati pre-v2 restano come diagnostica in [`evidence/e0-lite/pre-v2`](../evidence/e0-lite/pre-v2/notes.md).
-- Nessuna campagna E0 v2 parte prima che le scelte da approvare siano approvate.
+- Pre-v2 results remain as diagnostics in [`evidence/e0-lite/pre-v2`](../evidence/e0-lite/pre-v2/notes.md).
+- No E0 v2 campaign starts before the choices to be approved are approved
+  (done in [ADR 0008](0008-e0-numeric-protocol.md)).

@@ -2,8 +2,8 @@
 
 ## Status
 
-Accepted — 2026-09-30, through approval of the four review corrections.
-Clarifies ADR 0005 selection and artifact invariants; does not change scientific thresholds.
+`accepted` — accepted 2026-09-30, through approval of the four review corrections.
+Clarifies [ADR 0005](0005-e0v2-protocol.md): selection and artifact invariants; does not change scientific thresholds.
 
 ## Context
 

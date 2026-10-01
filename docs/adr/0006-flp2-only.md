@@ -1,31 +1,32 @@
-# ADR 0006: FLP2 è l'unico formato supportato
+# ADR 0006: FLP2 is the only supported format
 
 ## Status
 
-Accepted — 2026-09-30. Supersede la parte "incluso il legacy `FLP1`" di
-[ADR 0005](0005-e0v2-protocol.md) §10. Il resto di ADR 0005 resta valido.
+`accepted` — accepted 2026-09-30.
+Supersedes in part [ADR 0005](0005-e0v2-protocol.md) §10: the "including the legacy `FLP1`" part.
+The rest of ADR 0005 remains valid.
 
 ## Context
 
-ADR 0005 §10 chiedeva di leggere e risalvare anche gli artefatti `FLP1` della griglia E0-lite
-pre-v2. L'utente ha poi chiesto di evitare codice e architettura legacy non necessari. Nessun
-percorso E0 v2 dipende da `FLP1`: gli artefatti pre-v2 sono diagnostica esclusa dai verdetti
-([pre-v2](../evidence/e0-lite/pre-v2/notes.md)), e il loro formato richiedeva un decoder rANS a
-12 bit, regole di scala proprie e una variante dell'architettura.
+ADR 0005 §10 also required reading and re-saving the `FLP1` artifacts of the pre-v2 E0-lite
+grid. The user then asked to avoid unnecessary legacy code and architecture. No
+E0 v2 path depends on `FLP1`: the pre-v2 artifacts are diagnostics excluded from verdicts
+([pre-v2](../evidence/e0-lite/pre-v2/notes.md)), and their format required a 12-bit rANS
+decoder, its own scale rules and an architecture variant.
 
 ## Decision
 
-1. Il codice attivo supporta solo `FLP2`, con round-trip byte-identico (`pack(unpack(b)) == b`).
-2. Un blob `FLP1` è rifiutato con `FormatError` esplicito che indica la revisione di riferimento.
-3. La revisione Git **`f9e0732`** è il riferimento per leggere gli artefatti storici. Lì è
-   verificato che i tre blob `FLP1` si risalvano identici e che `experiments/verify_pre_v2.py`
-   riproduce esattamente il val bpb registrato (d64L6 2.0129680935772494, d80L4
+1. Active code supports only `FLP2`, with byte-identical round-trip (`pack(unpack(b)) == b`).
+2. An `FLP1` blob is rejected with an explicit `FormatError` that names the reference revision.
+3. Git revision **`f9e0732`** is the reference for reading the historical artifacts. There it is
+   verified that the three `FLP1` blobs re-save identically and that `experiments/verify_pre_v2.py`
+   exactly reproduces the recorded val bpb (d64L6 2.0129680935772494, d80L4
    1.8551768137161695).
-4. Gli artefatti pre-v2 restano su disco (fuori da Git) e sono documentati con i loro hash.
+4. The pre-v2 artifacts remain on disk (outside Git) and are documented with their hashes.
 
 ## Consequences
 
-- Rimossi dal codice attivo: decoder rANS a 12 bit, regola di quantizzazione `flp1`, campo
-  `rule` della configurazione, ramo `FLP1` di `pack`/`unpack`, lo script di verifica e il
-  vecchio harness `e0_lite.py`.
-- `tests/fixtures/flp1_smoke.flp` resta nel repo solo per il test di rifiuto.
+- Removed from active code: the 12-bit rANS decoder, the `flp1` quantization rule, the
+  `rule` configuration field, the `FLP1` branch of `pack`/`unpack`, the verification script and the
+  old `e0_lite.py` harness.
+- `tests/fixtures/flp1_smoke.flp` stays in the repo only for the rejection test.

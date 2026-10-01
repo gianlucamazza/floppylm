@@ -2,8 +2,9 @@
 
 ## Status
 
-Accepted — 2026-09-30. The owner accepted roadmap S1–S10 and requested implementation.
-Completes ADR 0005 without changing its scientific thresholds.
+`superseded-in-part` — accepted 2026-09-30. The owner accepted roadmap S1–S10 and requested implementation.
+Completes [ADR 0005](0005-e0v2-protocol.md) without changing its scientific thresholds.
+Superseded in part by [ADR 0011](0011-e0-row-scale-selection.md): the tensor16 option in decision 8.
 
 ## Context
 
@@ -21,8 +22,8 @@ declare its recipe and search budget before observing scientific results.
    with wd 0.1; 2-bit wd {0, 0.1}.
 5. Use at least three paired seeds, five near the gate; the final E0 paired comparison
    uses seeds 0–4 for the selected ternary and 2-bit recipes.
-6. Forward FLOP/token = 2 _ stored parameters + 4 _ layers _ (ctx / 2) _ d.
-   Estimated training FLOP = 3 _ forward _ tokens; evaluation time is separate.
+6. Forward FLOP/token = `2 × stored_parameters + 4 × layers × (ctx / 2) × d`.
+   Estimated training FLOP = `3 × forward × tokens`; evaluation time is separate.
 7. Sliding evaluation uses stride ctx/2, scores every target once and aligns the tail.
    The separator is a normal target. Val reads the first MiB; final test the first 2 MiB.
 8. Select one scale policy from row16, row8log and tensor16 using the neutral A/B.

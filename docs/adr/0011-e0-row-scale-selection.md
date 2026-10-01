@@ -2,8 +2,9 @@
 
 ## Status
 
-Accepted — 2026-10-01. The owner selected exclusion of tensor16 and approved
-the completion plan. Supersedes only the tensor16 option in ADR 0008 decision 8.
+`accepted` — accepted 2026-10-01. The owner selected exclusion of tensor16 and approved
+the completion plan, accepting [the E0 zero-row proposal](proposals/e0-zero-row-proposal.md).
+Supersedes in part [ADR 0008](0008-e0-numeric-protocol.md): only the tensor16 option in decision 8.
 
 ## Context
 

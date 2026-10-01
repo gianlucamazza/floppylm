@@ -2,8 +2,8 @@
 
 ## Status
 
-Accepted — 2026-09-30, explicit owner acceptance of `docs/e0-validation-proposal.md`.
-Supersedes only the numerical acceptance paragraph of ADR 0009.
+`accepted` — accepted 2026-09-30, explicit owner acceptance of [the E0 validation proposal](proposals/e0-validation-proposal.md).
+Supersedes in part [ADR 0009](0009-xbox-e0-backend.md): only its numerical acceptance paragraph.
 
 ## Context
 

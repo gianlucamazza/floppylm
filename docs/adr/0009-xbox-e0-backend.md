@@ -2,9 +2,10 @@
 
 ## Status
 
-Accepted — 2026-09-30, through approval of the implementation plan. Supersedes the
-CPU-only execution requirement of ADR 0004 for E0 at 1/16; other budgets are unchanged.
-Amended 2026-10-01 by ADR 0012: repository ownership boundaries and closure of xllama PR #301.
+`superseded-in-part` — accepted 2026-09-30, through approval of the implementation plan, amended 2026-10-01.
+Supersedes in part [ADR 0004](0004-miniature-budgets.md): the CPU-only execution requirement for E0 at 1/16; other budgets are unchanged.
+Superseded in part by [ADR 0010](0010-independent-numerical-gates.md): the numerical acceptance paragraph.
+Amended by [ADR 0012](0012-repo-boundaries.md): repository ownership boundaries and closure of xllama PR #301.
 
 ## Context
 

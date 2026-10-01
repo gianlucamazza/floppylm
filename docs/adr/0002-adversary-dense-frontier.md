@@ -1,52 +1,52 @@
-# ADR 0002: Avversari fissati prima della tesi
+# ADR 0002: Adversaries fixed before the thesis
 
 ## Status
 
-Accepted — 2026-09-30. Amended — 2026-09-30 (due volte).
+`amended` — accepted 2026-09-30, amended 2026-09-30 (twice).
 
 ## Context
 
-SmallerGPT ha perso due linee contro un CharGRU banale
-([verdetto](../../../smallergpt/docs/verdict.md)). Qui la survey ha già trovato un avversario più
-forte della tesi originale: a ~5 MB la ricorsione pura batte i pesi da seed + LoRA di 0.15 bpb
-([R2](../research/02-procedural-weights.md)). Parameter Golf mostra anche che int6 QAT + GPTQ +
-Brotli è la baseline affidabile e che la forma del modello sposta il verdetto
+SmallerGPT, a sibling lab project, lost two lines to a trivial CharGRU (per its verdict).
+Here the survey has already found an adversary stronger than the original thesis: at ~5 MB
+pure recursion beats seed weights + LoRA by 0.15 bpb
+([R2](../research/02-procedural-weights.md)). Parameter Golf also shows that int6 QAT + GPTQ +
+Brotli is the reliable baseline and that model shape shifts the verdict
 ([R1](../research/01-tiny-lms.md), [R3](../research/03-mdl-compression.md)).
 
 ## Decision
 
-1. Due avversari, non uno: **frontiera densa basso-bit** (miglior punto di E0 a 1.44 MB, dopo
-   ricerca di forma) e **ricorsione pura** (blocchi condivisi, senza seed).
-2. Stesso trattamento per tutti i bracci: token di training, budget di ricerca iperparametri e forma,
+1. Two adversaries, not one: the **dense low-bit frontier** (best E0 point at 1.44 MB, after
+   shape search) and **pure recursion** (shared blocks, no seeds).
+2. Same treatment for all arms: training tokens, hyperparameter and shape search budget,
    pruning, entropy coding, rate loss.
-3. La frontiera densa si congela prima di aprire E1. Non si rilancia dopo aver visto E1.
+3. The dense frontier is frozen before E1 opens. It is not rerun after seeing E1.
 
 ## Consequences
 
-- La tesi vince solo se batte la ricorsione pura: i seed devono pagare i propri bit.
-- Una vittoria contro il solo denso non è un risultato della tesi.
+- The thesis wins only if it beats pure recursion: the seeds must pay for their own bits.
+- A win against the dense frontier alone is not a thesis result.
 
 ## Amendment — 2026-09-30 (stress test v0.1)
 
-Lo stress test della tesi v0.1 ([concept § Stress test](../concept.md)) ha mostrato che su CPU un
-confronto a soli token uguali è compute-limited e premia il braccio più economico per token.
+The stress test of thesis v0.1 ([concept § Stress test](../concept.md)) showed that on CPU a
+comparison at equal tokens only is compute-limited and rewards the arm that is cheapest per token.
 
-1. **Distillazione per tutti**: ogni braccio si addestra con la stessa loss di distillazione da
-   un teacher fissato (TinyStories-33M, logit precalcolati su disco), oltre alla NLL.
-2. **Doppia parità**: ogni confronto riporta sia parità di token sia parità di FLOP di training.
-3. **Avversario riaddestrato** al budget di token/FLOP dell'esperimento che lo usa; il punto 3
-   della Decision vale per forma e iperparametri, non per il numero di token.
-4. **Gate appaiato**: differenza media fra bracci sugli stessi seed > max(0.02 bpb, 2σ), con σ
-   misurata in E0 su 3 seed.
-5. Il terzo avversario è la **ricorsione ternaria** (ricorsione pura con core a 1.58 bit).
+1. **Distillation for all**: every arm trains with the same distillation loss from
+   a fixed teacher (TinyStories-33M, logits precomputed on disk), in addition to the NLL.
+2. **Double parity**: every comparison reports both token parity and training FLOP parity.
+3. **Adversary retrained** at the token/FLOP budget of the experiment that uses it; point 3
+   of the Decision applies to shape and hyperparameters, not to the number of tokens.
+4. **Paired gate**: mean difference between arms on the same seeds > max(0.02 bpb, 2σ), with σ
+   measured in E0 over 3 seeds.
+5. The third adversary is **ternary recursion** (pure recursion with a 1.58-bit core).
 
-## Amendment 2 — 2026-09-30 (valutazione dei prossimi step)
+## Amendment 2 — 2026-09-30 (evaluation of the next steps)
 
-Il punto 1 dell'amendment precedente è **sospeso**. Distillare da TinyStories-33M non è fattibile
-così: tokenizer diversi (GPT-Neo 50k contro 256–1024) rendono i logit non confrontabili senza
-allineamento, e logit completi su ~10⁸ token richiedono terabyte. TinyStories è già testo generato
-da un teacher più forte.
+Point 1 of the previous amendment is **suspended**. Distilling from TinyStories-33M is not feasible
+as stated: different tokenizers (GPT-Neo 50k versus 256–1024) make the logits incomparable without
+alignment, and full logits over ~10⁸ tokens require terabytes. TinyStories is already text generated
+by a stronger teacher.
 
-- La distillazione esce dal percorso critico. Rientra solo come trattamento uniforme per tutti i
-  bracci, con un teacher **nostro** sullo stesso tokenizer e top-16 logit su disco.
-- Il punto 5 (ricorsione ternaria) vale dal budget 1/4; il pilota E1 a 1/16 è senza ricorsione.
+- Distillation leaves the critical path. It returns only as a uniform treatment for all
+  arms, with **our own** teacher on the same tokenizer and top-16 logits on disk.
+- Point 5 (ternary recursion) applies from the 1/4 budget; the E1 pilot at 1/16 has no recursion.
