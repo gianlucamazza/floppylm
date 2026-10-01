@@ -1,123 +1,125 @@
-# Survey 6 — Budget hardware del laptop
+# Survey 6 — Laptop hardware budget
 
-Consolidato da ricerca web del 2026-09-30.
+Consolidated from web research on 2026-09-30.
 
-## Domanda
+> **Framed for thesis v0.1.** Its "Minimum experiment" section predates [concept v0.2](../concept.md); E0–E4 are defined only by the [roadmap](../roadmap.md).
 
-Cosa si allena e cosa si espande in tempo utile su questo laptop (i7-1165G7, 32 GB, no CUDA),
-e quando servirebbe una GPU a noleggio?
+## Question
 
-## Cosa esiste
+What can be trained and what can be expanded in useful time on this laptop (i7-1165G7, 32 GB, no CUDA),
+and when would a rented GPU be needed?
 
-### Macchina (ispezione read-only)
+## What exists
+
+### Machine (read-only inspection)
 
 - `lscpu`: i7-1165G7 Tiger Lake, 4C/8T, 0.4–4.7 GHz, L2 5 MiB, L3 12 MiB. AVX2, **AVX-512F/BW/VL,
-  AVX512-VNNI** (int8 veloce), `avx512_bf16`/AMX **assenti** (bf16 emulato, lento).
-- `free -h`: 31 GiB RAM (24 GiB available al momento), 47 GiB swap.
-- torch 2.11.0 (build cu130, usata su CPU), `torch.get_num_threads()` = 4, oneDNN disponibile.
-- Picco teorico stimato: 4 core × 32 FLOP/ciclo fp32 (una porta FMA-512 su Tiger Lake client) ×
-  ~4 GHz ≈ 0.4–0.5 TFLOPS; TDP 28 W e governor termico abbassano il sostenuto.
+  AVX512-VNNI** (fast int8), `avx512_bf16`/AMX **absent** (bf16 emulated, slow).
+- `free -h`: 31 GiB RAM (24 GiB available at the time), 47 GiB swap.
+- torch 2.11.0 (cu130 build, used on CPU), `torch.get_num_threads()` = 4, oneDNN available.
+- Estimated theoretical peak: 4 cores × 32 FLOP/cycle fp32 (one FMA-512 port on client Tiger Lake) ×
+  ~4 GHz ≈ 0.4–0.5 TFLOPS; the 28 W TDP and the thermal governor lower the sustained rate.
 
-### Micro-benchmark misurati (burst ≤5 s, turbo, script in scratchpad)
+### Measured micro-benchmarks (bursts ≤5 s, turbo, script in scratchpad)
 
-| Misura                                            |                                       Risultato |
-| ------------------------------------------------- | ----------------------------------------------: |
-| GEMM fp32 512² / 1024² / 2048²                    |                       92 / **117** / 116 GFLOPS |
-| GEMM bf16 1024² / 2048²                           | 40 / 29 GFLOPS (niente bf16 nativo: usare fp32) |
-| matvec fp32 4096×1024 (in cache L2/L3)            |                                         28 GB/s |
-| matvec fp32 8192×8192 (256 MB, DRAM)              |                           **23 GB/s** effettivi |
-| `torch.rand`/`randn` 100M fp32                    |                                           1.1 s |
-| `torch.randint` int8 100M                         |                                           0.9 s |
-| xorshift32 ×4 lane, C `-O3`, 1 thread, 100M float |                              0.37 s (1.08 GB/s) |
-| PCG32, C, 1 thread, 100M float                    |                              0.39 s (1.03 GB/s) |
-| LFSR16 Galois, 1 thread                           |                                   245 M passi/s |
+| Measurement                                        |                                    Result |
+| -------------------------------------------------- | ----------------------------------------: |
+| GEMM fp32 512² / 1024² / 2048²                     |                 92 / **117** / 116 GFLOPS |
+| GEMM bf16 1024² / 2048²                            | 40 / 29 GFLOPS (no native bf16: use fp32) |
+| matvec fp32 4096×1024 (in L2/L3 cache)             |                                   28 GB/s |
+| matvec fp32 8192×8192 (256 MB, DRAM)               |                     **23 GB/s** effective |
+| `torch.rand`/`randn` 100M fp32                     |                                     1.1 s |
+| `torch.randint` int8 100M                          |                                     0.9 s |
+| xorshift32 ×4 lanes, C `-O3`, 1 thread, 100M float |                        0.37 s (1.08 GB/s) |
+| PCG32, C, 1 thread, 100M float                     |                        0.39 s (1.03 GB/s) |
+| LFSR16 Galois, 1 thread                            |                             245 M steps/s |
 
-Training di un decoder transformer (torch `TransformerEncoderLayer` causale, pre-norm, vocab
-4096, T=256, B=16, AdamW, fp32, 4 thread):
+Training of a transformer decoder (torch `TransformerEncoderLayer` causal, pre-norm, vocab
+4096, T=256, B=16, AdamW, fp32, 4 threads):
 
-| d / L   | Parametri (non-emb) | tok/s train | FLOPS effettivi (6N) | Token in 8 h |
-| ------- | ------------------: | ----------: | -------------------: | -----------: |
-| 256 / 4 |         5.3M (3.2M) |       3 016 |                ~95 G |     **~87M** |
-| 384 / 6 |       13.8M (10.7M) |         986 |                ~82 G |         ~28M |
-| 512 / 8 |       29.4M (25.2M) |         271 |                ~48 G |          ~8M |
+| d / L   | Parameters (non-emb) | train tok/s | Effective FLOPS (6N) | Tokens in 8 h |
+| ------- | -------------------: | ----------: | -------------------: | ------------: |
+| 256 / 4 |          5.3M (3.2M) |       3 016 |                ~95 G |      **~87M** |
+| 384 / 6 |        13.8M (10.7M) |         986 |                ~82 G |          ~28M |
+| 512 / 8 |        29.4M (25.2M) |         271 |                ~48 G |           ~8M |
 
-Inferenza decode-like (catena di matvec fp32, batch 1, un token):
+Decode-like inference (chain of fp32 matvecs, batch 1, one token):
 
-| Modello                  |   tok/s |
-| ------------------------ | ------: |
-| 30M (d=512, 9 blocchi)   | **113** |
-| 100M (d=768, 14 blocchi) |  **31** |
+| Model                   |   tok/s |
+| ----------------------- | ------: |
+| 30M (d=512, 9 blocks)   | **113** |
+| 100M (d=768, 14 blocks) |  **31** |
 
-- Coerente col limite di banda: 100M × 4 B = 400 MB/token → a 23 GB/s ≈ 57 tok/s teorici.
-  int8 (VNNI) dimezza i byte: stima ~50–60 tok/s a 100M. Il target ≥5 tok/s ha margine 6×.
-- I burst sovrastimano il sostenuto: sotto `bg` + governor attendersi −20/−40% nelle ore.
+- Consistent with the bandwidth limit: 100M × 4 B = 400 MB/token → at 23 GB/s ≈ 57 tok/s theoretical.
+  int8 (VNNI) halves the bytes: estimate ~50–60 tok/s at 100M. The ≥5 tok/s target has a 6× margin.
+- Bursts overestimate the sustained rate: under `bg` + governor expect −20/−40% over hours.
 
-### Riferimenti esterni
+### External references
 
-- TinyStories: ~470M token train con tokenizer GPT-2
-  ([conteggio 471.6M](https://arxiv.org/pdf/2405.17767)); con vocab 4096 (llama2.c `tok4096`)
-  il conteggio sale (pezzi più corti), ordine 0.5–0.6B token.
-- [llama2.c](https://github.com/karpathy/llama2.c): stories15M/42M/110M allenati su GPU (A100),
-  non su CPU; run.c raggiunge centinaia di tok/s su stories15M su CPU desktop.
-- GPU a noleggio settembre 2026: RTX 4090 ~$0.34–0.69/h (RunPod community/secure), ~$0.47/h
+- TinyStories: ~470M train tokens with the GPT-2 tokenizer
+  ([count 471.6M](https://arxiv.org/pdf/2405.17767)); with vocab 4096 (llama2.c `tok4096`)
+  the count rises (shorter pieces), order 0.5–0.6B tokens.
+- [llama2.c](https://github.com/karpathy/llama2.c): stories15M/42M/110M trained on GPU (A100),
+  not on CPU; run.c reaches hundreds of tok/s on stories15M on a desktop CPU.
+- Rented GPUs September 2026: RTX 4090 ~$0.34–0.69/h (RunPod community/secure), ~$0.47/h
   Vast.ai; H100 ~$2–3/h ([Spheron](https://www.spheron.network/blog/gpu-cloud-pricing-comparison-runpod-vs-vastai-2026/),
   [RunPod](https://www.runpod.io/pricing), [gpuperhour](https://gpuperhour.com/)); RTX 5090
-  spot da ~$0.25/h ([TechRadar](https://www.techradar.com/pro/security/you-can-now-rent-a-usd3000-nvidia-rtx-5090-gpu-from-just-usd0-25-hour-when-you-need-it-for-as-long-as-you-need-it)).
+  spot from ~$0.25/h ([TechRadar](https://www.techradar.com/pro/security/you-can-now-rent-a-usd3000-nvidia-rtx-5090-gpu-from-just-usd0-25-hour-when-you-need-it-for-as-long-as-you-need-it)).
 
-## Cosa manca
+## What is missing
 
-- Benchmark di training su **parametrizzazione procedurale**: nessun numero pubblico su CPU. Il
-  costo dominante è la forward/backward **effettiva** (30–100M), più la generazione dei pesi a
-  ogni step (PRNG + combinazione lineare: ~P·N FMA per P basi per blocco, trascurabile se P≤8,
-  oppure rigenerazione cacheata: le basi sono fisse, si allenano solo i coefficienti).
-  Stima: tok/s procedurale ≈ tok/s denso a pari parametri effettivi × 0.6–0.9.
-- Sostenuto notturno reale sotto governor termico: non misurato (serve un run `bg` di 30 min).
-- Qualità attesa per token visti: i modelli TinyStories coerenti (1–33M) sono allenati su
-  centinaia di M–miliardi di token; nessun dato su "30M effettivi con 8M token".
+- Training benchmarks for **procedural parameterization**: no public numbers on CPU. The
+  dominant cost is the **effective** forward/backward (30–100M), plus weight generation at
+  every step (PRNG + linear combination: ~P·N FMA for P bases per block, negligible if P≤8,
+  or cached regeneration: the bases are fixed, only the coefficients are trained).
+  Estimate: procedural tok/s ≈ dense tok/s at equal effective parameters × 0.6–0.9.
+- Real sustained overnight rate under the thermal governor: not measured (needs a 30-min `bg` run).
+- Expected quality per token seen: coherent TinyStories models (1–33M) are trained on
+  hundreds of millions to billions of tokens; no data on "30M effective with 8M tokens".
 
-## Implicazione per FloppyLM
+## Implication for the thesis
 
-**Cosa si allena su CPU in una notte (8 h, sostenuto ~0.7× dei burst):**
+**What trains on CPU in one night (8 h, sustained ~0.7× of bursts):**
 
-- Denso 1–5M: ~60–90M token/notte (~15% di un'epoca TinyStories). Rapporto Chinchilla ~20
-  token/param → 5M param saturano in ~1–2 notti. **E0 fattibile su CPU.** La frontiera densa a
-  ~11 Mbit (survey 04) cade proprio qui: 11 Mbit / 4 bit ≈ 2.8M param, / 2 bit ≈ 5.6M.
-- Denso/procedurale 10–15M effettivi: ~20M token/notte. Utile per smoke e ranking relativo,
-  sotto-allenato in assoluto.
-- Procedurale 30M effettivi: ~5–8M token/notte; 100M effettivi (d=768): stimati ~50–80 tok/s →
-  **~1.5–2M token/notte**. Due ordini di grandezza sotto il necessario.
+- Dense 1–5M: ~60–90M tokens/night (~15% of a TinyStories epoch). Chinchilla ratio ~20
+  tokens/param → 5M params saturate in ~1–2 nights. **E0 feasible on CPU.** The dense frontier at
+  ~11 Mbit (survey 04) falls right here: 11 Mbit / 4 bits ≈ 2.8M params, / 2 bits ≈ 5.6M.
+- Dense/procedural 10–15M effective: ~20M tokens/night. Useful for smoke tests and relative ranking,
+  under-trained in absolute terms.
+- Procedural 30M effective: ~5–8M tokens/night; 100M effective (d=768): estimated ~50–80 tok/s →
+  **~1.5–2M tokens/night**. Two orders of magnitude below what is needed.
 
-**Espansione al boot (F3):**
+**Expansion at boot (F3):**
 
-- PRNG: 100M pesi fp32 in ~0.4 s (1 thread) / ~0.1 s (4 thread). Con Philox/torch ~1 s.
-- Ricombinazione basi×coefficienti (SeedLM-like, P=4–8): <1 GFLOP → <0.1 s.
-- Generatore neurale (hypernetwork MLP, h=256 per peso): ~2·h·N ≈ 51 GFLOP → ~0.5–1 s.
-- RAM: 100M fp32 = 400 MB (+KV cache pochi MB a T=256): dentro 1 GB; 100M int8 = 100 MB.
-- **F3 non scatta** salvo generatori con >~50 kFLOP/peso (60 s × ~100 GFLOPS / 1e8 pesi).
-- Generazione: 31 tok/s (100M fp32) / 113 tok/s (30M) misurati ≫ 5 tok/s.
+- PRNG: 100M fp32 weights in ~0.4 s (1 thread) / ~0.1 s (4 threads). With Philox/torch ~1 s.
+- Basis×coefficient recombination (SeedLM-like, P=4–8): <1 GFLOP → <0.1 s.
+- Neural generator (MLP hypernetwork, h=256 per weight): ~2·h·N ≈ 51 GFLOP → ~0.5–1 s.
+- RAM: 100M fp32 = 400 MB (+ a few MB of KV cache at T=256): within 1 GB; 100M int8 = 100 MB.
+- **F3 does not trigger** except for generators with >~50 kFLOP/weight (60 s × ~100 GFLOPS / 1e8 weights).
+- Generation: 31 tok/s (100M fp32) / 113 tok/s (30M) measured ≫ 5 tok/s.
 
-**Quando servirebbe una GPU (non deciso qui):** training procedurale a 30–100M effettivi per
-≥0.3–1B token. Conto: 6 × 1e8 × 1e9 ≈ 6e17 FLOP; RTX 4090 a ~40 TFLOPS utili bf16 → ~4 h ≈
-**$2–3/run**; ×2–3 per overhead procedurale; una sweep di E3 (3 scale × 3 seed × 2 bracci)
-≈ **$30–150**; su H100 stesso ordine di costo, meno ore. Su CPU la stessa run richiederebbe
-~6e17 / 5e10 ≈ 140 giorni.
+**When a GPU would be needed (not decided here):** procedural training at 30–100M effective for
+≥0.3–1B tokens. Estimate: 6 × 1e8 × 1e9 ≈ 6e17 FLOP; RTX 4090 at ~40 TFLOPS useful bf16 → ~4 h ≈
+**$2–3/run**; ×2–3 for procedural overhead; one E3 sweep (3 scales × 3 seeds × 2 arms)
+≈ **$30–150**; on H100 the same order of cost, fewer hours. On CPU the same run would take
+~6e17 / 5e10 ≈ 140 days.
 
-- **F4** (coerenza TinyStories) non è valutabile onestamente a 100M effettivi su CPU: il
-  modello sarebbe sotto-allenato di 100×, e un fallimento F4 sarebbe confuso con mancanza di
-  compute. Questo va dichiarato prima di E3.
-- **F1** si può falsificare su CPU a piccola scala (E1 a 5–15M effettivi): se il procedurale
-  non batte il denso lì, non c'è ragione di pagare la GPU.
+- **F4** (TinyStories coherence) cannot be evaluated honestly at 100M effective on CPU: the
+  model would be under-trained by 100×, and an F4 failure would be confounded with lack of
+  compute. This must be declared before E3.
+- **F1** can be falsified on CPU at small scale (E1 at 5–15M effective): if the procedural model
+  does not beat the dense one there, there is no reason to pay for the GPU.
 
-## Esperimento minimo
+## Minimum experiment
 
-- **E0** (CPU, fattibile): frontiera densa 0.5–5M param, quantizzata 2/3/4/8 bit, bit-accounting
-  completo; ~1 notte per punto, 6–8 punti → 1–2 settimane di notti `bg`.
-- **E1** (CPU, fattibile a scala ridotta): procedurale a pari `model_bytes`, 5–15M effettivi,
-  stesso budget di token del denso (es. 60M). Decide F1 prima di spendere.
-- **E2** (CPU, economico): rANS + rate loss applicati a entrambi i bracci; costo trascurabile
-  rispetto al training (pochi minuti di encode/decode).
-- **E3** (ibrido): misura del costo di boot 30–100M su CPU (secondi); scaling della qualità a
-  30–100M effettivi → **GPU a noleggio** se E1 passa; su CPU solo curve troncate a ≤15M.
-- **E4** (CPU): immagine FAT12 reale + boot da host pulito, misura end-to-end tempo di
-  espansione e tok/s.
-- Prima di E0: run `bg` di 30 min a d=256 per fissare il fattore sostenuto/burst reale.
+- **E0** (CPU, feasible): dense frontier 0.5–5M params, quantized 2/3/4/8 bits, complete
+  bit-accounting; ~1 night per point, 6–8 points → 1–2 weeks of `bg` nights.
+- **E1** (CPU, feasible at reduced scale): procedural at equal `model_bytes`, 5–15M effective,
+  same token budget as the dense model (e.g. 60M). Decides F1 before spending.
+- **E2** (CPU, cheap): rANS + rate loss applied to both arms; negligible cost compared to
+  training (a few minutes of encode/decode).
+- **E3** (hybrid): boot-cost measurement at 30–100M on CPU (seconds); quality scaling at
+  30–100M effective → **rented GPU** if E1 passes; on CPU only curves truncated at ≤15M.
+- **E4** (CPU): real FAT12 image + boot from a clean host, end-to-end measurement of expansion
+  time and tok/s.
+- Before E0: a 30-min `bg` run at d=256 to pin the real sustained/burst factor.
