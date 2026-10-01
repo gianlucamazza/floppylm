@@ -323,3 +323,47 @@ def test_byte_repair_preserves_shape_recipe_and_rejects_second_attempt(tmp_path,
     previous["retry_count"] = 1
     with pytest.raises(SystemExit, match="at most one retry"):
         e0.repair_shape(previous)
+
+
+@pytest.mark.parametrize("purpose", ["functional", "scientific"])
+def test_final_test_checks_all_artifacts_before_reservation(tmp_path, monkeypatch, purpose):
+    selections = tmp_path / "selections"
+    selections.mkdir()
+    good = tmp_path / "good.flp"
+    good.write_bytes(pack(model()))
+    bad = tmp_path / "bad.flp"
+    bad.write_bytes(b"tampered")
+    items = [
+        {"run_id": "good", "artifact": str(good), "sha256": e0.runlog.sha256_file(good)},
+        {"run_id": "bad", "artifact": str(bad), "sha256": "expected"},
+    ]
+    (selections / "a.json").write_text(json.dumps({"purpose": purpose, "items": items}))
+    monkeypatch.setattr(e0, "EVIDENCE", tmp_path)
+    monkeypatch.setattr(e0, "_summary", lambda _: {"data_sha256": {"test": "frozen"}})
+    monkeypatch.setattr(e0.data_mod, "load", lambda *a: pytest.fail("protected data was read"))
+    monkeypatch.setattr(e0, "sliding_bpb", lambda *a: pytest.fail("earlier model was evaluated"))
+    with pytest.raises(SystemExit, match="artifact hash"):
+        e0.cmd_final_test(argparse.Namespace(final_test="a"))
+    assert not (selections / "a.test.reservation.json").exists()
+
+
+def test_final_test_rejects_changed_scientific_corpus_before_reservation(tmp_path, monkeypatch):
+    selections = tmp_path / "selections"
+    selections.mkdir()
+    artifact = tmp_path / "model.flp"
+    artifact.write_bytes(pack(model()))
+    (tmp_path / "test.bin").write_bytes(b"different corpus")
+    selection = {
+        "purpose": "scientific",
+        "items": [
+            {"run_id": "a", "artifact": str(artifact), "sha256": e0.runlog.sha256_file(artifact)}
+        ],
+    }
+    (selections / "a.json").write_text(json.dumps(selection))
+    monkeypatch.setattr(e0, "EVIDENCE", tmp_path)
+    monkeypatch.setattr(e0, "DATA", tmp_path)
+    monkeypatch.setattr(e0, "_summary", lambda _: {"data_sha256": {"test": "frozen"}})
+    monkeypatch.setattr(e0.data_mod, "load", lambda *a: pytest.fail("protected data was read"))
+    with pytest.raises(SystemExit, match="test corpus differs"):
+        e0.cmd_final_test(argparse.Namespace(final_test="a"))
+    assert not (selections / "a.test.reservation.json").exists()

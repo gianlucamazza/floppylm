@@ -352,6 +352,8 @@ def cmd_resume(a: argparse.Namespace) -> int:
         return 0
     if not (run_dir / "xbox/submitted.json").exists():
         raise RuntimeError("trial has no bound submission; diagnose before recovery")
+    if not manifest["smoke"] and runlog.sources(ROOT)["files"] != manifest["sources"]["files"]:
+        raise RuntimeError("recovery implementation differs from frozen trial sources")
     cfg, spec = GPTConfig(**manifest["config"]), TrainSpec(**manifest["spec"])
     a.backend, a.smoke = "xbox", manifest["smoke"]
     a.budget_frac = manifest["budget_bits"] / FULL_BUDGET_BITS
@@ -508,6 +510,27 @@ def cmd_final_test(a: argparse.Namespace) -> int:
     if out.exists():
         raise SystemExit(f"{out} exists: the final test runs once per selection")
     reservation = out.with_suffix(".reservation.json")
+    if reservation.exists():
+        raise SystemExit("the final test runs once per selection: reservation exists")
+    # Refuse invalid input before reserving or opening the protected test split.
+    blobs = []
+    frozen_test_hashes = set()
+    for item in sel["items"]:
+        blob = (ROOT / item["artifact"]).read_bytes()
+        if runlog.sha256_bytes(blob) != item["sha256"]:
+            raise SystemExit(f"{item['run_id']}: artifact hash mismatch")
+        if "model_bytes" in item and len(blob) != item["model_bytes"]:
+            raise SystemExit(f"{item['run_id']}: artifact size mismatch")
+        if sel["purpose"] == "scientific":
+            summary = _summary(item["run_id"])
+            frozen_test_hashes.add(summary["data_sha256"]["test"])
+        blobs.append(blob)
+    if sel["purpose"] == "scientific":
+        if not blobs or len(frozen_test_hashes) != 1:
+            raise SystemExit("scientific selection needs one frozen test corpus")
+        if runlog.sha256_file(DATA / "test.bin") != next(iter(frozen_test_hashes)):
+            raise SystemExit("test corpus differs from frozen trial data")
+    reservation = out.with_suffix(".reservation.json")
     try:
         with reservation.open("x") as f:
             json.dump({"state": "running", "started": runlog.now(), "pid": os.getpid()}, f)
@@ -516,10 +539,7 @@ def cmd_final_test(a: argparse.Namespace) -> int:
     try:
         test = data_mod.load(DATA, "test")
         results = []
-        for it in sel["items"]:
-            blob = (ROOT / it["artifact"]).read_bytes()
-            if runlog.sha256_bytes(blob) != it["sha256"]:
-                raise SystemExit(f"{it['run_id']}: artifact hash mismatch")
+        for it, blob in zip(sel["items"], blobs, strict=True):
             bpb, n = sliding_bpb(unpack(blob), test, TEST_BYTES)
             results.append({**it, "test_bpb": bpb, "test_scored_bytes": n})
         runlog.write_json(
