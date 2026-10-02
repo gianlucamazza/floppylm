@@ -17,7 +17,7 @@ bump or campaign start/stop. Last updated: **2026-10-02**.
 | E1 qualification     | CPU functional qualification **measured** ([ADR 0013](adr/0013-e1-functional-qualification.md), [evidence](evidence/e1-qualification-20261001/notes.md)); Xbox vector qualification pending |
 | Scientific E1–E4     | **specified**, gated by E0 and an accepted E1 protocol ([roadmap](roadmap.md), [completion plan](completion-plan.md)) |
 
-Campaign host stopped after S3 repair `000` completed and trial `001` hit the same GPU fence hang on 0.1.0.86 (timeout does not fail the job while heartbeat advances). Inspect (read-only). `src/` and `experiments/` are frozen at launch commit `5106719`. Companion `loss_series` (FloppyLM [PR #8](https://github.com/gianlucamazza/floppylm/pull/8), xbox [PR #35](https://github.com/gianlucamazza/xbox-gpu-training/pull/35)) is on main and **not installed**. Do not recover `001` on this package; fence-timeout that actually fires is the next package:
+Campaign host stopped after S3 repair `000` completed and trial `001` hit the same GPU fence hang on 0.1.0.86 (timeout does not fail the job while heartbeat advances). Inspect (read-only). `src/` and `experiments/` are frozen at launch commit `5106719`. Companion fence-poll (xbox [PR #37](https://github.com/gianlucamazza/xbox-gpu-training/pull/37) squash `e67a14f`) and `loss_series` (FloppyLM [PR #8](https://github.com/gianlucamazza/floppylm/pull/8), xbox [PR #35](https://github.com/gianlucamazza/xbox-gpu-training/pull/35)) are on main. Package `0.1.0.93` is signed from UWP CI [37049627510](https://github.com/gianlucamazza/xbox-gpu-training/actions/runs/37049627510) and **not installed**. Do not recover `001` on 0.1.0.86.
 
 ```bash
 python scripts/e0_status.py --campaign runs/e0-campaign-20261002-086
@@ -42,9 +42,10 @@ worker/recovery/suspension tests, exact numerical comparison and screenshot reco
 Backend ADR 0005 and canonical documentation links were merged in PR #27.
 
 1. Campaign `2fe64f` is stopped: `000` repair is the record, `001` stays interrupted
-   on 0.1.0.86. Do not recover `001` on this package (fence hang class; timeout does
-   not fire). Next package: fence-timeout that actually fails the job, then
-   `loss_series`. Do not resume `fdab67` or continue `40a67c`.
+   on 0.1.0.86. Do not recover `001` on this package. Next package `0.1.0.93`
+   (`GianlucaMazza.XgpuE0_0.1.0.93_x64__g0p5dcfz4t9z4`, source `e67a14f`) is signed
+   locally and waiting for explicit OK to in-place install over 0.1.0.86. Do not
+   resume `fdab67` or continue `40a67c`. Do not recover `2fe64f` onto 0.1.0.93.
 2. Obtain independent GPU attribution: the global idle counter stayed high in twelve
    controlled modes, including CoreWindow without XAML/D3D12. GPU reduction is **unvalidated**.
 3. Rename the local working directory to `floppylm` at a session boundary, then
