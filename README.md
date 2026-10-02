@@ -63,6 +63,10 @@ Flags and the Xbox procedure: [code map](docs/operations/code-map.md),
 | [docs/evidence/](docs/evidence/README.md)                            | Measured numbers                                           |
 | [docs/stack.md](docs/stack.md), [docs/glossary.md](docs/glossary.md) | Toolchain and machines; terms                              |
 
+## Contributing
+
+[CONTRIBUTING.md](CONTRIBUTING.md). Pull requests use squash-merge; CI job `python` must be green.
+
 ## License
 
 [MIT](LICENSE).

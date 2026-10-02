@@ -1,0 +1,36 @@
+name: Research proposal
+description: Hypothesis or protocol change for FloppyLM (semantics owned here, ADR 0012).
+title: "[research] "
+labels: ["research"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Native DX12/UWP implementation belongs in xbox-gpu-training.
+        State the measurement and what would falsify it. Do not invent numbers.
+  - type: dropdown
+    id: topic
+    attributes:
+      label: Topic label
+      options:
+        - e0
+        - contracts
+        - adr
+        - research
+        - documentation
+    validations:
+      required: true
+  - type: textarea
+    id: hypothesis
+    attributes:
+      label: Hypothesis
+      placeholder: What will we measure? What would falsify it?
+    validations:
+      required: true
+  - type: textarea
+    id: protocol
+    attributes:
+      label: Protocol / gate
+      placeholder: Existing ADR, or a new proposal under docs/adr/proposals/
+    validations:
+      required: true
