@@ -21,9 +21,11 @@ on ~0.1% of the bits and seeds carry no information ([stress test](docs/concept.
 ## How the work is staged
 
 E0 measures the scalar frontier (ternary and 2-bit cores at miniature budgets) that every vector
-code must beat. It runs on a separate DX12 trainer on an Xbox Series S, checked op by op against the
-Python oracle in this repository ([ADR 0009](docs/adr/0009-xbox-e0-backend.md)). E1–E4 then test
-the vector core, coding, full scale and the real disk image ([roadmap](docs/roadmap.md)).
+code must beat. It runs on a separate DX12 trainer,
+[xbox-gpu-training](https://github.com/gianlucamazza/xbox-gpu-training), on an Xbox Series S,
+checked op by op against the Python oracle in this repository
+([ADR 0009](docs/adr/0009-xbox-e0-backend.md)). E1–E4 then test the vector core, coding, full
+scale and the real disk image ([roadmap](docs/roadmap.md)).
 
 ## Quickstart
 
@@ -42,7 +44,8 @@ files listed in `floppylm.data.SOURCES` into `data/raw/` and call the Python fun
 `floppylm.data.prepare`. `python experiments/e0_v2.py --verify-data` re-prepares the corpus in
 `runs/tmp` (~2.2 GB) and rewrites `data/tinystories/reproducibility.json`.
 Flags and the Xbox procedure: [code map](docs/operations/code-map.md),
-[runbook](docs/operations/xbox-e0.md).
+[runbook](docs/operations/xbox-e0.md). A stopped campaign is recovered with
+`scripts/e0_recover.py`; recovery is explicit, never automatic.
 
 ## Map
 
