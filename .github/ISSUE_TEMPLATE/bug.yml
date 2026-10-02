@@ -1,0 +1,34 @@
+name: Bug
+description: Something is broken (harness, contracts, recovery, docs, CI).
+title: "[bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Evidence-first: paste real logs. Live campaign/package state belongs in docs/STATUS.md.
+        Native Xbox trainer bugs go to xbox-gpu-training.
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - E0 harness (experiments/, scripts/e0_*)
+        - Contracts / schemas
+        - Recovery / Device Portal (src/floppylm_xbox)
+        - Docs / evidence
+        - CI
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual (paste logs)
+    validations:
+      required: true
