@@ -148,7 +148,8 @@ python experiments/e0_campaign.py --out runs/<campaign-dir> --recover \
 python experiments/e0_v2.py --resume RUN_ID --xbox-acceptance <acceptance.json>
 ```
 
-`scripts/e0_recover.py` starts the package once when the process list is empty.
+`scripts/e0_recover.py` starts the package once when the process list is empty,
+then reads `device.json` (LocalState is 404 while the process is gone).
 A present process with a stale heartbeat is refused: terminate, then recover.
 Do not run a looping keep-alive sidecar (ADR 0017). Keep XgpuE0 in the foreground.
 

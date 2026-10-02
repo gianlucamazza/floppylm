@@ -93,6 +93,19 @@ def start_package(portal: Portal, *, run=subprocess.run, which=shutil.which) -> 
     raise TimeoutError("XgpuE0 process did not appear after openappx --start")
 
 
+def wait_device_json(portal: Portal, *, timeout: float = START_WAIT_SECONDS) -> dict:
+    """LocalState is 404 while XgpuE0 is gone; read device.json after the process exists."""
+    deadline = time.monotonic() + timeout
+    last: Exception | None = None
+    while time.monotonic() < deadline:
+        try:
+            return json.loads(portal.get("device.json", ""))
+        except FileNotFoundError as exc:
+            last = exc
+            time.sleep(1)
+    raise TimeoutError("device.json did not appear after start") from last
+
+
 def prepare_idle_worker(portal: Portal, *, commit: str | None = None, restart_if_missing: bool):
     """Live idle-capable worker. Restart only when the process list is empty."""
     if app_processes(portal):
@@ -130,12 +143,14 @@ def prepare_campaign_runtime(out: Path, acceptance: Path, benchmark: Path, *, po
     portal = portal or Portal.configured(state["package"])
     if portal.package != state["package"]:
         raise RuntimeError("Portal package differs from campaign")
-    device = json.loads(portal.get("device.json", ""))
+    missing = not app_processes(portal)
+    if missing:
+        start_package(portal)
+    device = wait_device_json(portal)
     if device.get("package") != state["package"] or device.get("commit") != state["commit"]:
         raise RuntimeError("device package/source differs from campaign")
     if not device.get("hardware_gpu"):
         raise RuntimeError("recovery requires hardware GPU")
-    missing = not app_processes(portal)
     worker = prepare_idle_worker(portal, commit=state["commit"], restart_if_missing=True)
     if worker["state"] not in ("ready", "running"):
         raise RuntimeError("worker is not ready for recovery")

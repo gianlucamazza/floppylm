@@ -131,6 +131,41 @@ def test_prepare_campaign_runtime_binds_package_and_idle_worker(tmp_path, monkey
     assert got["worker"]["state"] == "ready"
 
 
+def test_prepare_campaign_runtime_starts_before_device_json(tmp_path, monkeypatch):
+    out = tmp_path / "campaign"
+    out.mkdir()
+    (out / "campaign.json").write_text(
+        json.dumps({"package": "pkg", "commit": "source", "id": "c"})
+    )
+    proof = tmp_path / "acceptance.json"
+    proof.write_text(json.dumps({"ok": True, "package": "pkg", "commit": "source"}))
+    speed = tmp_path / "benchmark.json"
+    speed.write_text(json.dumps({"package": "pkg", "commit": "source"}))
+    client = portal()
+    client.request = Mock(side_effect=[processes(), processes("XgpuE0.exe")])
+    client.get = Mock(
+        side_effect=[
+            FileNotFoundError("device.json"),
+            json.dumps(
+                {
+                    "package": "pkg",
+                    "commit": "source",
+                    "hardware_gpu": True,
+                    "state": "ready",
+                }
+            ).encode(),
+        ]
+    )
+    client.live_worker = Mock(return_value=idle_worker())
+    started = Mock(return_value="started")
+    monkeypatch.setattr(module, "start_package", started)
+    monkeypatch.setattr(module.time, "sleep", lambda _: None)
+    monkeypatch.setattr(module.time, "monotonic", Mock(side_effect=[0, 1, 2, 3]))
+    got = module.prepare_campaign_runtime(out, proof, speed, portal=client)
+    started.assert_called_once()
+    assert got["process_was_missing"] is True
+
+
 def test_prepare_campaign_runtime_rejects_package_drift(tmp_path):
     out = tmp_path / "campaign"
     out.mkdir()
