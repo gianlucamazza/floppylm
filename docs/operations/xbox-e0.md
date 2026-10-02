@@ -154,6 +154,13 @@ hash-checked and reused; completed recovery leaves the summary unchanged. A byte
 separate, bounded S3 attempt and is recorded as such. There is no implicit migration or fresh
 retraining on recovery.
 
+The on-console loss chart is a view of published `loss_series` on `status.json`. After
+interrupt and relaunch the dashboard replaces its RAM history from that field, so the curve
+continues from persisted samples rather than starting empty at the resume step. Packages that
+do not publish the field stay valid: the viewer plots the single `last_loss` at `trunk_step`.
+The series is optional, display-only, and never invented for steps that were not sampled. A
+package that publishes it is a later operator install; do not install over a running campaign.
+
 ## Data, transport and completion
 
 Prepared corpora are immutable hard links on the same filesystem. Chunk transfers and returned

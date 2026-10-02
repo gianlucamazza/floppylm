@@ -39,6 +39,11 @@ binding and against the device's `capabilities`, when reported, before uploading
 - Training jobs write `results/<job_id>/status.json` at start, every 64 optimizer steps of the
   trunk and of each cooldown, at the end of each branch and at the end; the trunk checkpoint at the
   same trunk cadence and before each cooldown; and one weights file per finished branch.
+  Optional `loss_series` is a bounded trail of `{step, loss}` trunk samples (capacity 512, halved
+  when full). The on-console chart is a view of that field: after resume the dashboard replaces
+  RAM history from it. A status without the field remains valid; the viewer then plots
+  `last_loss` at `trunk_step` only. The series is display-only and is not a numerical identity
+  field.
 - Fixtures write `<job_id>.actual.json`: `floppylm.e0.fixture.report.v1`,
   `floppylm.e0.kernels.result.v1` or `floppylm.e0.optimizer.report.v1`.
 - A job that fails before training starts gets a `status.json` with only `job_id`,

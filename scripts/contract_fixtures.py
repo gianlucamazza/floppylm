@@ -211,6 +211,14 @@ def instances(binary: Path) -> dict[str, dict]:
         "floppylm.e0.weights.v1/tiny": native["weights"],
         "floppylm.e0.result.v1/native-completed": native["tiny/status"],
         "floppylm.e0.result.v1/native-interrupted": native["tiny-stopped/status"],
+        # Optional chart trail: bounded trunk samples, added before any producer emits them.
+        "floppylm.e0.result.v1/loss-series": {
+            **native["tiny-stopped/status"],
+            "loss_series": [
+                {"step": 1, "loss": 6.9},
+                {"step": 2, "loss": native["tiny-stopped/status"]["last_loss"]},
+            ],
+        },
         "floppylm.checkpoint.v1/completed": native["tiny/checkpoint"],
         "floppylm.checkpoint.v1/interrupted": native["tiny-stopped/checkpoint"],
         "floppylm.e0.fixture.v1/tiny": native["fixture"],
@@ -312,6 +320,10 @@ def instances(binary: Path) -> dict[str, dict]:
         ),
         "floppylm.e0.result.v1/unknown-key": broken(
             "floppylm.e0.result.v1/completed", lambda r: r.update(val_bpb=1.0)
+        ),
+        "floppylm.e0.result.v1/loss-series-missing-step": broken(
+            "floppylm.e0.result.v1/loss-series",
+            lambda r: r["loss_series"][0].pop("step"),
         ),
         "floppylm.checkpoint.v1/stream-not-integer": broken(
             "floppylm.checkpoint.v1/interrupted", lambda c: c.update(stream_position=1.5)
