@@ -1,4 +1,5 @@
 # FloppyLM
+![floppylm](docs/cover.jpg)
 
 A lab for the best language model that fits **entirely** on a real 3.5" floppy: weight description,
 tokenizer and runtime inside one 1 474 560-byte disk ([what counts](docs/adr/0001-floppy-budget.md)).
