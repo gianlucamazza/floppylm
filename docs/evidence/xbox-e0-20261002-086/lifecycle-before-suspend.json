@@ -1,0 +1,50 @@
+{
+ "adapter": "SraKmd_arden",
+ "branches": [
+  {
+   "artifact": {
+    "bytes": 311964,
+    "path": "results/lifecycle-20261002T085902Z-6d7857-suspended/branch-512.json",
+    "sha256": "d7a4754f70f3e82611305ad0d4871ca05cdd3aa16370851b0ed9584814e0067e"
+   },
+   "cooldown_seconds": 0.101452835,
+   "cooldown_start": 461,
+   "cooldown_steps": 51,
+   "end_step": 512,
+   "tokens_seen": 8192
+  }
+ ],
+ "checkpoint": {
+  "bytes": 1009173,
+  "path": "results/lifecycle-20261002T085902Z-6d7857-suspended/checkpoint.json",
+  "sha256": "1d982550e70f853ec9edb545ad4e43ad648f3d3b518bf582d5d48575f1cf0c7e"
+ },
+ "dispatches": 84302,
+ "gpu_seconds": 0.5531835989974297,
+ "hardware_gpu": true,
+ "job_id": "lifecycle-20261002T085902Z-6d7857-suspended",
+ "job_sha256": "0bcc979c7637c7f739e6a78689ab80312dba0892914f7cc05415b1e48c337dbf",
+ "last_loss": 0.25496422376454575,
+ "peak_memory_bytes": 99278848,
+ "phase": "trunk",
+ "schedule": {
+  "T": 512,
+  "cooldown_starts": [
+   461,
+   922,
+   1844
+  ],
+  "ends": [
+   512,
+   1024,
+   2048
+  ],
+  "tokens_per_step": 16,
+  "warmup": 10
+ },
+ "schema": "floppylm.e0.result.v1",
+ "state": "running",
+ "transfer_bytes": 128338048,
+ "trunk_step": 640,
+ "wall_seconds": 1.50614096
+}

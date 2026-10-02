@@ -1,0 +1,26 @@
+{
+  "shots": [
+    {
+      "label": "idle-cold",
+      "file": "idle-cold.png",
+      "sha256": "aeefef38856b0c3e9f255b7ae5cf7d70c5178e8450697f08ae2161e9a9af282d",
+      "width": 1920,
+      "height": 1080,
+      "captured_at": "2026-10-02T09:02:00+00:00",
+      "package": "GianlucaMazza.XgpuE0_0.1.0.86_x64__g0p5dcfz4t9z4",
+      "commit": "12251a7ae205a72477bf98bd74a73c15faf44009",
+      "status": {}
+    },
+    {
+      "label": "dashboard",
+      "file": "dashboard.png",
+      "sha256": "2f0c3871eecd8ee30510028c8da27f496360d0a65630e767fd94745ddb0a024b",
+      "width": 1920,
+      "height": 1080,
+      "captured_at": "2026-10-02T09:02:01+00:00",
+      "package": "GianlucaMazza.XgpuE0_0.1.0.86_x64__g0p5dcfz4t9z4",
+      "commit": "12251a7ae205a72477bf98bd74a73c15faf44009",
+      "status": {}
+    }
+  ]
+}

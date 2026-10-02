@@ -1,0 +1,31 @@
+{
+ "identity": {
+  "accepted": false,
+  "error": "Xbox fixture failed: claim_job_id_mismatch"
+ },
+ "oversized": {
+  "accepted": false,
+  "error": "Xbox fixture failed: invalid E0 command dimensions/buffers"
+ },
+ "reuse": {
+  "accepted": true,
+  "result": {
+   "adapter": "SraKmd_arden",
+   "cases": [
+    {
+     "dispatches": 1,
+     "id": "reuse",
+     "values": [
+      3.0
+     ]
+    }
+   ],
+   "dispatches": 1,
+   "gpu_seconds": 4.090225563909774e-06,
+   "hardware_gpu": true,
+   "peak_memory_bytes": 92635136,
+   "schema": "floppylm.e0.kernels.result.v1",
+   "transfer_bytes": 12
+  }
+ }
+}

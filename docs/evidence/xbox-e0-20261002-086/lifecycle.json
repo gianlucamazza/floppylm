@@ -1,0 +1,57 @@
+{
+ "checkpoint_interruption": {
+  "adapter": "SraKmd_arden",
+  "branches": [
+   {
+    "artifact": {
+     "bytes": 311964,
+     "path": "results/lifecycle-20261002T085902Z-6d7857-suspended/branch-512.json",
+     "sha256": "d7a4754f70f3e82611305ad0d4871ca05cdd3aa16370851b0ed9584814e0067e"
+    },
+    "cooldown_seconds": 0.101452835,
+    "cooldown_start": 461,
+    "cooldown_steps": 51,
+    "end_step": 512,
+    "tokens_seen": 8192
+   }
+  ],
+  "checkpoint": {
+   "bytes": 1009336,
+   "path": "results/lifecycle-20261002T085902Z-6d7857-suspended/checkpoint.json",
+   "sha256": "c668dc353830341aeb41263556b4cbda8035121eabab042eaefab36490dda1c4"
+  },
+  "dispatches": 96990,
+  "gpu_seconds": 0.6375196791979655,
+  "hardware_gpu": true,
+  "job_id": "lifecycle-20261002T085902Z-6d7857-suspended",
+  "job_sha256": "0bcc979c7637c7f739e6a78689ab80312dba0892914f7cc05415b1e48c337dbf",
+  "last_loss": 0.18450582156037854,
+  "peak_memory_bytes": 99868672,
+  "phase": "trunk",
+  "schedule": {
+   "T": 512,
+   "cooldown_starts": [
+    461,
+    922,
+    1844
+   ],
+   "ends": [
+    512,
+    1024,
+    2048
+   ],
+   "tokens_per_step": 16,
+   "warmup": 10
+  },
+  "schema": "floppylm.e0.result.v1",
+  "state": "interrupted",
+  "transfer_bytes": 147653760,
+  "trunk_step": 744,
+  "wall_seconds": 1.889237535
+ },
+ "commit": "12251a7ae205a72477bf98bd74a73c15faf44009",
+ "ok": true,
+ "package": "GianlucaMazza.XgpuE0_0.1.0.86_x64__g0p5dcfz4t9z4",
+ "purpose": "functional",
+ "suspend_marker": "suspend"
+}

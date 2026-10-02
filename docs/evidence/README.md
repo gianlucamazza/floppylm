@@ -53,6 +53,7 @@ until host retrieval and evaluation complete.
 | [xbox-e0-20261001-dashboard](xbox-e0-20261001-dashboard/notes.md) | 0.1.0.56 | full hardware gates, pinned deployment, bit identity, screenshot; idle attribution open |
 | [xbox-e0-20261001-068](xbox-e0-20261001-068/notes.md) | 0.1.0.68 | PR 31 dashboard; full hardware gates, bit-identical to 0.1.0.56; fence still INFINITE |
 | [xbox-e0-20261002-080](xbox-e0-20261002-080/notes.md) | 0.1.0.80 | PR 32 liveness + PR 30 fence-timeout; full hardware gates, bit-identical to 0.1.0.56/0.1.0.68 |
+| [xbox-e0-20261002-086](xbox-e0-20261002-086/notes.md) | 0.1.0.86 | PR 34 drop EE + PR 33 DisplayRequest; full hardware gates including lifecycle; bit-identical to 0.1.0.56/0.1.0.68/0.1.0.80 |
 
 ### E1 functional qualification
 
