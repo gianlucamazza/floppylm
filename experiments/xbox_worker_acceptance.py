@@ -67,7 +67,11 @@ def main():
             or "claim_job_id_mismatch" in identity_error
         )
         and not probes["oversized"]["accepted"]
-        and "dispatch dimension" in probes["oversized"]["error"]
+        and (
+            "dispatch dimension" in probes["oversized"]["error"]
+            or "invalid E0 command dimensions/buffers"
+            in probes["oversized"]["error"]
+        )
         and probes["reuse"]["accepted"]
         and probes["reuse"]["result"]["hardware_gpu"]
         and probes["reuse"]["result"]["cases"][0]["values"] == [3.0]
