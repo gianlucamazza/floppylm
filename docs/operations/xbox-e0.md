@@ -97,15 +97,18 @@ frozen `src/floppylm/*.py`, `experiments/*.py` and the installed trainer unchang
 and docs may change.
 
 ```bash
-nohup python experiments/e0_campaign.py \
-  --out runs/e0-campaign-<unique> \
-  --acceptance runs/xbox-acceptance-<date>-ci<run>/acceptance.json \
-  --benchmark runs/xbox-benchmark-<date>-ci<run>/summary.json \
-  > runs/e0-campaign-<unique>.launch.log 2>&1 &
+systemd-run --user --unit=floppylm-e0-campaign-<unique> \
+  --working-directory="$PWD" --property=TimeoutStartSec=infinity \
+  /bin/bash -c 'exec .venv/bin/python -u experiments/e0_campaign.py \
+    --out runs/e0-campaign-<unique> \
+    --acceptance runs/xbox-acceptance-<date>-ci<run>/acceptance.json \
+    --benchmark runs/xbox-benchmark-<date>-ci<run>/summary.json \
+    >> runs/e0-campaign-<unique>.launch.log 2>&1'
 ```
 
-Never wrap campaign or training jobs in `bg`: it moves them into `background.slice`, capped at one
-core. Long jobs run under `nohup` outside that slice ([stack](../stack.md), ADR 0003 amendment).
+Enable linger (`loginctl enable-linger "$USER"`). Never wrap campaign or training jobs in `bg`:
+it moves them into `background.slice`, capped at one core. Long jobs stay in `app.slice`
+([stack](../stack.md), [ADR 0017](../adr/0017-runtime-liveness.md)).
 
 ## Recover
 

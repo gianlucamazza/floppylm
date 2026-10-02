@@ -61,8 +61,9 @@ Indicative accounting at 11 Mbit (d=384, V=1024 tied):
 | Norms, scales               | —                          | —          | 0.1                       |
 
 Against ternary (~6M core params, ~3.5 blocks) the sub-bit core has ~3× the unique weights;
-recursion multiplies them further. The 4-bit embedding is now ~15%: a vocabulary of 512–2048 is
-chosen in E0.
+recursion multiplies them further. The 4-bit embedding is now ~15%. E0 at 1/16 and 1/4 uses the
+byte tokenizer (V=256); vocabularies 512–2048 are the 1× / 1/4 open problem
+([roadmap](roadmap.md)).
 
 ## Principles
 
