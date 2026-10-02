@@ -36,3 +36,15 @@ Thesis = the [concept](../concept.md) version the survey was framed for. Surveys
 | [05-eval-tiny.md](05-eval-tiny.md)                         | v0.1   | How do we compare tiny models at equal bytes without tricks?                                                         |
 | [06-hardware-budget.md](06-hardware-budget.md)             | v0.1   | What can be trained and expanded in useful time on this laptop?                                                      |
 | [07-learned-vq-subbit.md](07-learned-vq-subbit.md)         | v0.2   | Is there a from-scratch LM with learned-codebook VQ below 1 bit/weight? Learned vs seed vs ternary (decides F0 v0.2) |
+
+## Initial review briefs (2026-10-01)
+
+These bounded updates supplement R1–R7; full-text/table verification remains publication work.
+
+| Brief | Question |
+| --- | --- |
+| [8 — Sub-bit frontier](08-subbit-frontier.md) | Does existing work invalidate the candidate comparison at tiny from-scratch budgets? |
+| [9 — Description length](09-description-length.md) | Which bits must a generated-weight model pay for? |
+| [10 — Recursive and generated weights](10-recursive-generated-weights.md) | Can sharing or generating weights improve quality at fixed bytes without hiding compute? |
+| [11 — Extreme-size language models](11-extreme-size-models.md) | Which public benchmarks are informative about a complete 1.44 MB model? |
+| [12 — Evaluation under tiny budgets](12-tiny-budget-evaluation.md) | What can a held-out bpb improvement establish at a tiny artifact budget? |

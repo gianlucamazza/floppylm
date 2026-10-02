@@ -8,22 +8,40 @@ whether any quality result exists, is in [docs/STATUS.md](docs/STATUS.md).
 
 ## The idea in thirty seconds
 
-The floppy limits bits at rest, not RAM at runtime. A dense ternary model in 11 Mbit stops at ~7M
-parameters; beyond that is the **sub-bit regime**, where only one thing matters: where the bits
-are — in the transformer core. The thesis (v0.2): a recursive core whose weights are indices into a
-vector code at 0.5–0.75 bits/weight, trained from scratch, beats the best ternary/2-bit core at
-equal coded bytes. Three codes compete — seed-generated, computed trellis, learned codebook — with
-a declared prior: the computed codes, at zero bytes, are favoured.
+FloppyLM asks **how much language-model quality can fit in 1.44 MB** when the model description,
+tokenizer and inference runtime all share the disk. The task is generating short stories;
+[vision](docs/vision.md) defines success and scope.
 
-v0.1 (seed perturbations of the recursive blocks) was closed before any code was written: it acted
-on ~0.1% of the bits and seeds carry no information ([stress test](docs/concept.md#stress-test-v01)).
+The disk limits the model's stored description. The host can use more RAM to reconstruct and run
+it. Instead of storing every weight directly, a vector code stores an index for a group of weights.
+A decoder reconstructs that group from a fixed generated code or a learned codebook.
 
-## How the work is staged
+The research question is whether a core encoded below one bit per weight beats ternary or 2-bit
+weights **at equal actual serialized bytes**, including codebooks, scales and headers. Having more
+reconstructed weights is useful only if held-out quality improves. The [concept](docs/concept.md)
+states the precise hypothesis and what would falsify it.
 
-E0 measures the scalar frontier (ternary and 2-bit cores at miniature budgets) that every vector
-code must beat. It runs on a separate DX12 trainer on an Xbox Series S, checked op by op against the
-Python oracle in this repository ([ADR 0009](docs/adr/0009-xbox-e0-backend.md)). E1–E4 then test
-the vector core, coding, full scale and the real disk image ([roadmap](docs/roadmap.md)).
+## Architecture and objectives
+
+The [architecture](docs/architecture.md) explains the stored description, reconstruction and
+execution paths, and distinguishes implemented components from planned ones. The final artifact
+is a **data floppy mounted by a Linux host**; the counting rule is [ADR 0001](docs/adr/0001-floppy-budget.md).
+
+| Stage | Question |
+| --- | --- |
+| E0 | How strong are scalar baselines at the same model bytes? |
+| E1 / E1a | Can vector coding improve quality, and does recursion help? |
+| E2 | Does the advantage survive coding and rate-aware training for all arms? |
+| E3 | Can the full model meet reconstruction, RAM and throughput limits? |
+| E4 | Does the complete disk artifact fit and generate useful stories? |
+
+The [roadmap](docs/roadmap.md) owns all gates. Python is the numerical oracle; the separate
+Xbox DX12 trainer is checked against it. Qualification proves implementation properties;
+scientific results require the experiment gates and recorded evidence in [STATUS](docs/STATUS.md).
+A negative scientific result is valuable: it measures where the proposed representation fails.
+
+For the review backlog and source-backed research priorities, see the
+[excellence plan](docs/excellence-plan.md) and [research briefs](docs/research/README.md).
 
 ## Quickstart
 
@@ -56,7 +74,7 @@ Flags and the Xbox procedure: [code map](docs/operations/code-map.md),
 | [docs/roadmap.md](docs/roadmap.md)                                   | E0–E4 and their gates                                      |
 | [docs/positioning.md](docs/positioning.md)                           | Vs Quant-Noise, Sign Lock-In, QTIP, SeedLM, Parameter Golf |
 | [docs/adr/](docs/adr/README.md)                                      | Accepted decisions                                         |
-| [docs/research/](docs/research/README.md)                            | Surveys R1–R7                                              |
+| [docs/research/](docs/research/README.md)                            | Surveys R1–R12                                              |
 | [docs/evidence/](docs/evidence/README.md)                            | Measured numbers                                           |
 | [docs/stack.md](docs/stack.md), [docs/glossary.md](docs/glossary.md) | Toolchain and machines; terms                              |
 
