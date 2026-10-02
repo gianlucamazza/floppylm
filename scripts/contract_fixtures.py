@@ -325,6 +325,10 @@ def instances(binary: Path) -> dict[str, dict]:
             "floppylm.e0.result.v1/loss-series",
             lambda r: r["loss_series"][0].pop("step"),
         ),
+        "floppylm.e0.result.v1/loss-series-empty": broken(
+            "floppylm.e0.result.v1/loss-series",
+            lambda r: r.update(loss_series=[]),
+        ),
         "floppylm.checkpoint.v1/stream-not-integer": broken(
             "floppylm.checkpoint.v1/interrupted", lambda c: c.update(stream_position=1.5)
         ),

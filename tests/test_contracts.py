@@ -53,6 +53,29 @@ def test_invalid_fixture(path):
     assert not validator(path.stem.split("--")[0]).is_valid(load(path))
 
 
+def assert_loss_series_steps(obj, path):
+    """JSON Schema cannot unique-by-property; this is the result-validation boundary."""
+    series = obj.get("loss_series") if isinstance(obj, dict) else None
+    if not series:
+        return
+    steps = [p["step"] for p in series]
+    assert len(steps) == len(set(steps)), f"duplicate loss_series.step in {path}"
+    assert steps == sorted(steps), f"loss_series steps not increasing in {path}"
+
+
+def test_valid_loss_series_steps_are_unique_and_increasing():
+    for path in fixtures("valid"):
+        assert_loss_series_steps(load(path), path)
+
+
+def test_duplicate_loss_series_steps_fail_the_boundary_check():
+    path = next(p for p in fixtures("valid") if p.name.endswith("--loss-series.json"))
+    obj = load(path)
+    obj["loss_series"].append({**obj["loss_series"][0], "loss": 0.0})
+    with pytest.raises(AssertionError, match="duplicate loss_series.step"):
+        assert_loss_series_steps(obj, path)
+
+
 def test_every_contract_has_a_valid_fixture():
     contracts = {p.stem for p in SCHEMA_FILES} - {"floppylm.e0.common.v1"}
     assert contracts == {p.stem.split("--")[0] for p in fixtures("valid")}
@@ -80,6 +103,8 @@ def test_every_evidence_object_naming_a_contract_matches_it(schema):
         for report in native_reports(load(path), schema):
             # Nested reports (execution segments, resume reports) are validated in place too.
             check.validate(report)
+            if schema == "floppylm.e0.result.v1":
+                assert_loss_series_steps(report, path)
 
 
 def test_evidence_covers_the_native_reports():
