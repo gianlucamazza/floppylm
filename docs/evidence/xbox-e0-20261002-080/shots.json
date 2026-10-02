@@ -1,0 +1,15 @@
+{
+  "shots": [
+    {
+      "label": "dashboard",
+      "file": "dashboard.png",
+      "sha256": "26d384381723f1ddac90648fb44684f5fc06f8a835c986620bffe962d485e205",
+      "width": 1920,
+      "height": 1080,
+      "captured_at": "2026-10-02T07:20:05+00:00",
+      "package": "GianlucaMazza.XgpuE0_0.1.0.80_x64__g0p5dcfz4t9z4",
+      "commit": "f2d2a23395e24d9b9f0c7df931c4e51116c43edd",
+      "status": {}
+    }
+  ]
+}

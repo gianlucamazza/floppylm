@@ -8,11 +8,11 @@ bump or campaign start/stop. Last updated: **2026-10-02**.
 | Thesis               | [concept v0.2](concept.md), **specified**                                                                                                                                               |
 | E0 v2 software       | **measured**: harness, gates and smoke ([evidence](evidence/README.md))                                                                                                                 |
 | S1–S10, scale policy | accepted ([ADR 0008](adr/0008-e0-numeric-protocol.md), [ADR 0011](adr/0011-e0-row-scale-selection.md))                                                                                  |
-| Xbox package         | **installed, started, acceptance running** `GianlucaMazza.XgpuE0_0.1.0.80_x64__g0p5dcfz4t9z4` source `f2d2a23` CI [36944493415](https://github.com/gianlucamazza/xbox-gpu-training/actions/runs/36944493415) ([PR #32](https://github.com/gianlucamazza/xbox-gpu-training/pull/32) dashboard liveness on PR #30 fence-timeout). In-place upgrade replaced 0.1.0.76. Shader CSO unchanged. |
+| Xbox package         | **accepted** `GianlucaMazza.XgpuE0_0.1.0.80_x64__g0p5dcfz4t9z4` source `f2d2a23` CI [36944493415](https://github.com/gianlucamazza/xbox-gpu-training/actions/runs/36944493415) ([PR #32](https://github.com/gianlucamazza/xbox-gpu-training/pull/32) dashboard liveness on PR #30 fence-timeout). Evidence [xbox-e0-20261002-080](evidence/xbox-e0-20261002-080/notes.md). Shader CSO unchanged. |
 | E0 campaign          | `e0-20261001T163456Z-fdab67` host **stopped**; 001 native interrupt at trunk 1583 (checkpoint `afcc2c98`, branch 879). Do not resume fdab67 onto 0.1.0.80. |
 | Previous campaign    | `e0-20261001T090514Z-4236fd` (0.1.0.28), **stopped** 2026-10-01 13:44 CEST at `neutral-scale`: both row16 seeds not saturated — [record](evidence/e0-v2/campaigns/e0-20261001T090514Z-4236fd/notes.md) |
 | E0 saturation gate   | recorded, not an eligibility gate ([ADR 0015](adr/0015-e0-fixed-data-frontier.md)) |
-| Host recovery        | [ADR 0017](adr/0017-runtime-liveness.md) merged ([PR #7](https://github.com/gianlucamazza/floppylm/pull/7)); paired with started 0.1.0.80. |
+| Host recovery        | [ADR 0017](adr/0017-runtime-liveness.md) merged ([PR #7](https://github.com/gianlucamazza/floppylm/pull/7)); paired with accepted 0.1.0.80. |
 | E0 quality results   | pending                                                                                                                                                                                 |
 | E1 qualification     | CPU functional qualification **measured** ([ADR 0013](adr/0013-e1-functional-qualification.md), [evidence](evidence/e1-qualification-20261001/notes.md)); Xbox vector qualification pending |
 | Scientific E1–E4     | **specified**, gated by E0 and an accepted E1 protocol ([roadmap](roadmap.md), [completion plan](completion-plan.md)) |
@@ -26,7 +26,7 @@ python scripts/e0_status.py --campaign runs/e0-campaign-20261001-0015 --xbox
 
 Do not resume `fdab67` onto 0.1.0.65, 0.1.0.66, 0.1.0.68, 0.1.0.76, or 0.1.0.80.
 
-## Next (campaign `fdab67` host stopped; 0.1.0.80 started, acceptance running)
+## Next (campaign `fdab67` host stopped; 0.1.0.80 accepted)
 
 Done since the stop: xbox-gpu-training consumes the whole published contract set (PR #22, #20);
 Xbox execution moved to `floppylm_xbox` with generic Device Portal settings
@@ -40,13 +40,11 @@ worker/recovery/suspension tests, exact numerical comparison and screenshot reco
 [both-repository release evidence](evidence/xbox-e0-20261001-dashboard/notes.md).
 Backend ADR 0005 and canonical documentation links were merged in PR #27.
 
-1. Finish canonical acceptance of `0.1.0.80` (no `--steps 700`) and bit-identity
-   versus 0.1.0.68/0.1.0.56. Do not resume `fdab67` onto this package.
-2. Launch a new ADR 0015 campaign under `systemd-run --user` with linger after
-   the package is accepted.
-3. Obtain independent GPU attribution: the global idle counter stayed high in twelve
+1. Launch a new ADR 0015 campaign under `systemd-run --user` with linger on
+   accepted `0.1.0.80`. Do not resume `fdab67` onto this package.
+2. Obtain independent GPU attribution: the global idle counter stayed high in twelve
    controlled modes, including CoreWindow without XAML/D3D12. GPU reduction is **unvalidated**.
-4. Rename the local working directory to `floppylm` at a session boundary, then
+3. Rename the local working directory to `floppylm` at a session boundary, then
    `git worktree repair` and move the Claude project memory path.
 
 Status vocabulary: **specified** (written, not executed), **stub**, **running**, **stopped** (halted

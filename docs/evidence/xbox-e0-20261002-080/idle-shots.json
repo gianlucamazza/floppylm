@@ -1,0 +1,15 @@
+{
+  "shots": [
+    {
+      "label": "idle-cold",
+      "file": "idle-cold.png",
+      "sha256": "14a1f7cece28e9259d30a2bf2e45dc35657b25a1c76e4551776994adf41cf1b0",
+      "width": 1920,
+      "height": 1080,
+      "captured_at": "2026-10-02T06:50:22+00:00",
+      "package": "GianlucaMazza.XgpuE0_0.1.0.80_x64__g0p5dcfz4t9z4",
+      "commit": "f2d2a23395e24d9b9f0c7df931c4e51116c43edd",
+      "status": {}
+    }
+  ]
+}

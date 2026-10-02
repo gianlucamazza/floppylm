@@ -1,0 +1,285 @@
+{
+ "commit": "f2d2a23395e24d9b9f0c7df931c4e51116c43edd",
+ "completed_retrieval_unchanged": true,
+ "interrupted_recovery_exact": true,
+ "ok": true,
+ "package": "GianlucaMazza.XgpuE0_0.1.0.80_x64__g0p5dcfz4t9z4",
+ "purpose": "functional",
+ "reports": [
+  {
+   "adapter": "SraKmd_arden",
+   "branches": [
+    {
+     "artifact": {
+      "bytes": 316829,
+      "path": "results/recovery-20261002T071706Z-f17bc2-full/branch-8.json",
+      "sha256": "07d23edd0236512852b787fc9d3decaeae1facbf12df81e65ab96301c41ea3eb"
+     },
+     "cooldown_seconds": 0.009701924,
+     "cooldown_start": 7,
+     "cooldown_steps": 1,
+     "end_step": 8,
+     "tokens_seen": 128
+    },
+    {
+     "artifact": {
+      "bytes": 316845,
+      "path": "results/recovery-20261002T071706Z-f17bc2-full/branch-16.json",
+      "sha256": "c5b067d790827cde86e90a3406755365af7cf603b78b20ef3e7b73876298b967"
+     },
+     "cooldown_seconds": 0.009778663,
+     "cooldown_start": 15,
+     "cooldown_steps": 1,
+     "end_step": 16,
+     "tokens_seen": 256
+    },
+    {
+     "artifact": {
+      "bytes": 316435,
+      "path": "results/recovery-20261002T071706Z-f17bc2-full/branch-32.json",
+      "sha256": "96ae208439981620138595bbda531cc09cef840bc505b397186312b1f11571d3"
+     },
+     "cooldown_seconds": 0.013241466,
+     "cooldown_start": 29,
+     "cooldown_steps": 3,
+     "end_step": 32,
+     "tokens_seen": 512
+    }
+   ],
+   "checkpoint": {
+    "bytes": 1010571,
+    "path": "results/recovery-20261002T071706Z-f17bc2-full/checkpoint.json",
+    "sha256": "284a0dd56f41a7effa19ac6973925a48552450071238a453d0af5b9fd0884509"
+   },
+   "dispatches": 4148,
+   "gpu_seconds": 0.02711226065162904,
+   "hardware_gpu": true,
+   "job_id": "recovery-20261002T071706Z-f17bc2-full",
+   "job_sha256": "0ea387c83c286553936ec2b408cbe544a2d5fe3133750557e3143598fa80f90e",
+   "last_loss": 1.5586926266551018,
+   "peak_memory_bytes": 31862784,
+   "phase": "trunk",
+   "schedule": {
+    "T": 8,
+    "cooldown_starts": [
+     7,
+     15,
+     29
+    ],
+    "ends": [
+     8,
+     16,
+     32
+    ],
+    "tokens_per_step": 16,
+    "warmup": 1
+   },
+   "schema": "floppylm.e0.result.v1",
+   "state": "completed",
+   "transfer_bytes": 6314752,
+   "trunk_step": 29,
+   "wall_seconds": 0.156423181
+  },
+  {
+   "adapter": "SraKmd_arden",
+   "branches": [
+    {
+     "artifact": {
+      "bytes": 316829,
+      "path": "results/recovery-20261002T071706Z-f17bc2-interrupted/branch-8.json",
+      "sha256": "07d23edd0236512852b787fc9d3decaeae1facbf12df81e65ab96301c41ea3eb"
+     },
+     "cooldown_seconds": 0.00953988,
+     "cooldown_start": 7,
+     "cooldown_steps": 1,
+     "end_step": 8,
+     "tokens_seen": 128
+    },
+    {
+     "artifact": {
+      "bytes": 316845,
+      "path": "results/recovery-20261002T071706Z-f17bc2-interrupted/branch-16.json",
+      "sha256": "c5b067d790827cde86e90a3406755365af7cf603b78b20ef3e7b73876298b967"
+     },
+     "cooldown_seconds": 0.010119109,
+     "cooldown_start": 15,
+     "cooldown_steps": 1,
+     "end_step": 16,
+     "tokens_seen": 256
+    },
+    {
+     "artifact": {
+      "bytes": 316435,
+      "path": "results/recovery-20261002T071706Z-f17bc2-interrupted/branch-32.json",
+      "sha256": "96ae208439981620138595bbda531cc09cef840bc505b397186312b1f11571d3"
+     },
+     "cooldown_seconds": 0.013178129,
+     "cooldown_start": 29,
+     "cooldown_steps": 3,
+     "end_step": 32,
+     "tokens_seen": 512
+    }
+   ],
+   "checkpoint": {
+    "bytes": 1010578,
+    "path": "results/recovery-20261002T071706Z-f17bc2-interrupted/checkpoint.json",
+    "sha256": "9c5dd393f176ea3629c236ba507acbfdcbb1df71941ebebc27e814086c10d9cb"
+   },
+   "dispatches": 4148,
+   "execution_segments": [
+    {
+     "adapter": "SraKmd_arden",
+     "branches": [
+      {
+       "artifact": {
+        "bytes": 316829,
+        "path": "results/recovery-20261002T071706Z-f17bc2-interrupted/branch-8.json",
+        "sha256": "07d23edd0236512852b787fc9d3decaeae1facbf12df81e65ab96301c41ea3eb"
+       },
+       "cooldown_seconds": 0.00953988,
+       "cooldown_start": 7,
+       "cooldown_steps": 1,
+       "end_step": 8,
+       "tokens_seen": 128
+      }
+     ],
+     "checkpoint": {
+      "bytes": 1011784,
+      "path": "results/recovery-20261002T071706Z-f17bc2-interrupted/checkpoint.json",
+      "sha256": "c23d603116c0bb4374d4aae1ee481b7a2a799003df6dab07085dadf7cd7600f7"
+     },
+     "dispatches": 1220,
+     "gpu_seconds": 0.007967438596491221,
+     "hardware_gpu": true,
+     "job_id": "recovery-20261002T071706Z-f17bc2-interrupted",
+     "job_sha256": "14abd36e8e28de90f83ef831b50cd86b0fec452043e4e118f6ad6efd4386f367",
+     "last_loss": 3.819479674100876,
+     "peak_memory_bytes": 31817728,
+     "phase": "trunk",
+     "schedule": {
+      "T": 8,
+      "cooldown_starts": [
+       7,
+       15,
+       29
+      ],
+      "ends": [
+       8,
+       16,
+       32
+      ],
+      "tokens_per_step": 16,
+      "warmup": 1
+     },
+     "schema": "floppylm.e0.result.v1",
+     "state": "interrupted",
+     "transfer_bytes": 1857280,
+     "trunk_step": 9,
+     "wall_seconds": 0.067967597
+    },
+    {
+     "adapter": "SraKmd_arden",
+     "branches": [
+      {
+       "artifact": {
+        "bytes": 316829,
+        "path": "results/recovery-20261002T071706Z-f17bc2-interrupted/branch-8.json",
+        "sha256": "07d23edd0236512852b787fc9d3decaeae1facbf12df81e65ab96301c41ea3eb"
+       },
+       "cooldown_seconds": 0.00953988,
+       "cooldown_start": 7,
+       "cooldown_steps": 1,
+       "end_step": 8,
+       "tokens_seen": 128
+      },
+      {
+       "artifact": {
+        "bytes": 316845,
+        "path": "results/recovery-20261002T071706Z-f17bc2-interrupted/branch-16.json",
+        "sha256": "c5b067d790827cde86e90a3406755365af7cf603b78b20ef3e7b73876298b967"
+       },
+       "cooldown_seconds": 0.010119109,
+       "cooldown_start": 15,
+       "cooldown_steps": 1,
+       "end_step": 16,
+       "tokens_seen": 256
+      },
+      {
+       "artifact": {
+        "bytes": 316435,
+        "path": "results/recovery-20261002T071706Z-f17bc2-interrupted/branch-32.json",
+        "sha256": "96ae208439981620138595bbda531cc09cef840bc505b397186312b1f11571d3"
+       },
+       "cooldown_seconds": 0.013178129,
+       "cooldown_start": 29,
+       "cooldown_steps": 3,
+       "end_step": 32,
+       "tokens_seen": 512
+      }
+     ],
+     "checkpoint": {
+      "bytes": 1010578,
+      "path": "results/recovery-20261002T071706Z-f17bc2-interrupted/checkpoint.json",
+      "sha256": "9c5dd393f176ea3629c236ba507acbfdcbb1df71941ebebc27e814086c10d9cb"
+     },
+     "dispatches": 2928,
+     "gpu_seconds": 0.0191268170426065,
+     "hardware_gpu": true,
+     "job_id": "recovery-20261002T071706Z-f17bc2-interrupted",
+     "job_sha256": "fb88a4daca62b73e4940872cbf3d11ab4b3333f6ef7c62b051ef0bcd9d2b4d24",
+     "last_loss": 1.5586926266551018,
+     "peak_memory_bytes": 31993856,
+     "phase": "trunk",
+     "schedule": {
+      "T": 8,
+      "cooldown_starts": [
+       7,
+       15,
+       29
+      ],
+      "ends": [
+       8,
+       16,
+       32
+      ],
+      "tokens_per_step": 16,
+      "warmup": 1
+     },
+     "schema": "floppylm.e0.result.v1",
+     "state": "completed",
+     "transfer_bytes": 4457472,
+     "trunk_step": 29,
+     "wall_seconds": 0.129116551
+    }
+   ],
+   "gpu_seconds": 0.02709425563909772,
+   "hardware_gpu": true,
+   "job_id": "recovery-20261002T071706Z-f17bc2-interrupted",
+   "job_sha256": "fb88a4daca62b73e4940872cbf3d11ab4b3333f6ef7c62b051ef0bcd9d2b4d24",
+   "last_loss": 1.5586926266551018,
+   "peak_memory_bytes": 31993856,
+   "phase": "trunk",
+   "schedule": {
+    "T": 8,
+    "cooldown_starts": [
+     7,
+     15,
+     29
+    ],
+    "ends": [
+     8,
+     16,
+     32
+    ],
+    "tokens_per_step": 16,
+    "warmup": 1
+   },
+   "schema": "floppylm.e0.result.v1",
+   "state": "completed",
+   "transfer_bytes": 6314752,
+   "trunk_step": 29,
+   "wall_seconds": 0.19708414800000001
+  }
+ ],
+ "runner_resume_completed_idempotent": true
+}
