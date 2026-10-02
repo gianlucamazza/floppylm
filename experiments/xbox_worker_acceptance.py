@@ -59,9 +59,13 @@ def main():
         except RuntimeError as error:
             probes[label] = {"accepted": False, "error": str(error)}
         runlog.write_json(a.out / "probes.json", probes)
+    identity_error = probes["identity"].get("error", "")
     fixed = (
         not probes["identity"]["accepted"]
-        and "job_id must match" in probes["identity"]["error"]
+        and (
+            "job_id must match" in identity_error
+            or "claim_job_id_mismatch" in identity_error
+        )
         and not probes["oversized"]["accepted"]
         and "dispatch dimension" in probes["oversized"]["error"]
         and probes["reuse"]["accepted"]
