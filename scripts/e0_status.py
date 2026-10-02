@@ -80,6 +80,27 @@ def report(
             result["provenance"]["device"] = "mismatch" if mismatch else "matching"
             if mismatch:
                 result["issues"].append("Device differs from accepted campaign package/source")
+            if hasattr(portal, "request"):
+                try:
+                    listing = portal.request(
+                        "GET", "/api/resourcemanager/processes", json_result=True
+                    )
+                except TRANSPORT_ERRORS as error:
+                    result["device_process"] = {"error": str(error)}
+                    result["issues"].append("Device process list transport unknown")
+                else:
+                    running = [
+                        proc
+                        for proc in listing.get("Processes", [])
+                        if str(proc.get("PackageFullName") or "") == state["package"]
+                        or str(proc.get("ImageName") or proc.get("name") or "").lower()
+                        == "xgpue0.exe"
+                    ]
+                    result["device_process"] = {"count": len(running)}
+                    if not running:
+                        result["issues"].append(
+                            "XgpuE0 process missing; explicit recover starts the bound package"
+                        )
     if not pending:
         return result
     record = pending[-1]

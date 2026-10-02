@@ -64,6 +64,23 @@ def test_live_provenance_mismatch_is_reported_without_writes(campaign, tmp_path)
     assert [call[0] for call in portal.mock_calls] == ["get", "status", "worker"]
 
 
+def test_missing_process_is_not_hidden_by_stale_device_ready(campaign, tmp_path):
+    submitted = tmp_path / "runs/trial/xbox"
+    submitted.mkdir(parents=True)
+    (submitted / "submitted.json").write_text(json.dumps({"package": "package", "sha256": "bound"}))
+    portal = Mock(spec=["get", "status", "worker", "request"])
+    portal.get.return_value = json.dumps({"package": "package", "commit": "commit"}).encode()
+    portal.status.return_value = {
+        "state": "interrupted",
+        "job_sha256": "bound",
+        "hardware_gpu": True,
+    }
+    portal.request.return_value = {"Processes": [{"ImageName": "DevHome.exe"}]}
+    result = module.report(campaign, workspace=tmp_path, portal=portal)
+    assert result["device_process"] == {"count": 0}
+    assert "XgpuE0 process missing; explicit recover starts the bound package" in result["issues"]
+
+
 @pytest.mark.parametrize("state", ["failed", "interrupted"])
 def test_interrupted_or_failed_console_is_not_reported_as_healthy(campaign, tmp_path, state):
     submitted = tmp_path / "runs/trial/xbox"

@@ -133,12 +133,21 @@ its frozen source/package and recorded recovery procedure; do not run this branc
 recovery against it or install a new package mid-campaign.
 
 ```bash
-# Only after the previous campaign worker has exited; same acceptance and benchmark:
+# Operator recover: start the bound package if XgpuE0.exe is gone, wait for a
+# live worker, then exec campaign --recover. Same acceptance and benchmark.
+# Device Portal POST /api/taskmanager/app is not used (HTTP 400 running or missing).
+python scripts/e0_recover.py --out runs/<campaign-dir> \
+  --acceptance <acceptance.json> --benchmark <summary.json>
+# Inner campaign command, only when the process is already live and idle:
 python experiments/e0_campaign.py --out runs/<campaign-dir> --recover \
   --acceptance <acceptance.json> --benchmark <summary.json>
 # Standalone bound run, when no campaign worker owns it:
 python experiments/e0_v2.py --resume RUN_ID --xbox-acceptance <acceptance.json>
 ```
+
+`scripts/e0_recover.py` starts the package once when the process list is empty.
+A present process with a stale heartbeat is refused: terminate, then recover.
+Do not run a looping keep-alive sidecar (ADR 0017). Keep XgpuE0 in the foreground.
 
 Recovery verifies package, acceptance, recipe and asset hashes. Existing evaluated branches are
 hash-checked and reused; completed recovery leaves the summary unchanged. A byte repair is a

@@ -29,4 +29,4 @@ One line per term; the owner holds the definition of record.
 | E0.1                             | Backend generation with GPU-resident tensors, bit-identical to its predecessor | [evidence](evidence/xbox-e0-20261001-e01/notes.md)                        |
 | Acceptance                       | Hardware proof (operations, fixtures, optimizer, resume) a campaign binds to   | [ADR 0010](adr/0010-independent-numerical-gates.md)                       |
 | Campaign                         | Frozen sequential E0 execution (sources, recipes, seeds) with one worker       | [runbook](operations/xbox-e0.md)                                          |
-| Recovery                         | Explicit `--recover`: reconnect or resume a verified checkpoint, never retrain | [runbook](operations/xbox-e0.md)                                          |
+| Recovery                         | Explicit operator restart of a missing process, then `--recover`: reconnect or resume a verified checkpoint, never retrain | [runbook](operations/xbox-e0.md)                                          |

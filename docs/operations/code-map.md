@@ -49,7 +49,11 @@ JSON Schemas of every file exchanged with the native backend; see [schemas/READM
 ## Scripts and tests
 
 - `scripts/e0_status.py --campaign DIR [--xbox]`: read-only local/live campaign state and
-  frozen-source checks; exit code 1 on issues.
+  frozen-source checks; with `--xbox` also reports whether `XgpuE0.exe` is in the
+  process list. Exit code 1 on issues.
+- `scripts/e0_recover.py --out DIR --acceptance FILE --benchmark FILE`: explicit operator
+  recover. Starts the bound package with `openappx deploy --start` only when the
+  process is missing, waits for a live worker, then execs `e0_campaign.py --recover`.
 - `scripts/e1_qualify.py`, `scripts/e1_cpu_profile.py`: ADR 0013 functional qualification and the
   scalar CPU profile ([evidence](../evidence/e1-qualification-20261001/notes.md)).
 - `scripts/contract_fixtures.py`: regenerate the golden contract instances in

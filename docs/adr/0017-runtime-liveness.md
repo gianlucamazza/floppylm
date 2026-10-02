@@ -64,3 +64,14 @@ establish Xbox fault recovery. Release requires exact-package hardware evidence.
 Automatic app restart, treating any running snapshot as live, changing the frozen
 campaign, and resubmitting from step zero were rejected. A training-duration cap
 would change the experiment; only individual GPU waits are bounded.
+
+## Amendment (2026-10-02)
+
+Xbox Dev Mode can tombstone `XgpuE0.exe` while Device Portal still serves
+`device.json` `ready` and a stale `worker.json`. POST `/api/taskmanager/app`
+returns HTTP 400 both while the process is running and while it is missing.
+The accepted recovery command is therefore `scripts/e0_recover.py`: it starts
+the bound package with `openappx deploy --start` only when the process list is
+empty, waits for an advancing heartbeat, then execs campaign `--recover`.
+A present process with a stale heartbeat is still refused. A looping
+keep-alive sidecar remains forbidden.
