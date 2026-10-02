@@ -9,7 +9,7 @@ bump or campaign start/stop. Last updated: **2026-10-02**.
 | E0 v2 software       | **measured**: harness, gates and smoke ([evidence](evidence/README.md))                                                                                                                 |
 | S1–S10, scale policy | accepted ([ADR 0008](adr/0008-e0-numeric-protocol.md), [ADR 0011](adr/0011-e0-row-scale-selection.md))                                                                                  |
 | Xbox package         | **accepted** `GianlucaMazza.XgpuE0_0.1.0.86_x64__g0p5dcfz4t9z4` source `12251a7` CI [36985816615](https://github.com/gianlucamazza/xbox-gpu-training/actions/runs/36985816615) ([PR #34](https://github.com/gianlucamazza/xbox-gpu-training/pull/34) drop EE, keep DisplayRequest). Evidence [xbox-e0-20261002-086](evidence/xbox-e0-20261002-086/notes.md). Shader CSO unchanged. Bit-identical to 0.1.0.56/0.1.0.68/0.1.0.80. |
-| E0 campaign          | `e0-20261002T072408Z-40a67c` host **stopped**; trial `000` native **interrupted** at trunk 796 (checkpoint `f1668f86`). Bound to 0.1.0.80; do not continue onto 0.1.0.84 or 0.1.0.86. Explicit `--recover` stays on 0.1.0.80 only. |
+| E0 campaign          | **running** `e0-20261002T090742Z-2fe64f` on 0.1.0.86 (`systemd-run --user` unit `floppylm-e0-campaign-20261002-086`, linger, app.slice). Out `runs/e0-campaign-20261002-086`. Trial `000` `e0-20261002T090742Z-2fe64f-000` reserved, native running (neutral-scale row16 seed 0). Frozen FloppyLM `5106719`. Previous `40a67c` stays on 0.1.0.80. |
 | Previous campaign    | `e0-20261001T163456Z-fdab67` (0.1.0.56) **stopped**, 001 incomplete; do not resume. Before that, `e0-20261001T090514Z-4236fd` (0.1.0.28) stopped unsaturated — [record](evidence/e0-v2/campaigns/e0-20261001T090514Z-4236fd/notes.md) |
 | E0 saturation gate   | recorded, not an eligibility gate ([ADR 0015](adr/0015-e0-fixed-data-frontier.md)) |
 | Host recovery        | [ADR 0017](adr/0017-runtime-liveness.md) merged ([PR #7](https://github.com/gianlucamazza/floppylm/pull/7)); paired with accepted 0.1.0.86. |
@@ -17,17 +17,17 @@ bump or campaign start/stop. Last updated: **2026-10-02**.
 | E1 qualification     | CPU functional qualification **measured** ([ADR 0013](adr/0013-e1-functional-qualification.md), [evidence](evidence/e1-qualification-20261001/notes.md)); Xbox vector qualification pending |
 | Scientific E1–E4     | **specified**, gated by E0 and an accepted E1 protocol ([roadmap](roadmap.md), [completion plan](completion-plan.md)) |
 
-Campaign host is stopped. Inspect (read-only):
+Campaign host is running. Inspect (read-only). `src/` and `experiments/` are frozen at launch commit `5106719`:
 
 ```bash
-python scripts/e0_status.py --campaign runs/e0-campaign-20261002-0015
-python scripts/e0_status.py --campaign runs/e0-campaign-20261002-0015 --xbox
+python scripts/e0_status.py --campaign runs/e0-campaign-20261002-086
+python scripts/e0_status.py --campaign runs/e0-campaign-20261002-086 --xbox
 ```
 
 Do not resume `fdab67` onto 0.1.0.65, 0.1.0.66, 0.1.0.68, 0.1.0.76, 0.1.0.80, 0.1.0.84, or 0.1.0.86.
-Do not continue `40a67c` onto 0.1.0.84 or 0.1.0.86.
+Do not continue `40a67c` onto 0.1.0.84 or 0.1.0.86. Do not recover `2fe64f` onto a later package.
 
-## Next (campaign `40a67c` host stopped; 000 interrupted; 0.1.0.86 accepted)
+## Next (campaign `2fe64f` running on 0.1.0.86; `src/`/`experiments/` frozen)
 
 Done since the stop: xbox-gpu-training consumes the whole published contract set (PR #22, #20);
 Xbox execution moved to `floppylm_xbox` with generic Device Portal settings
@@ -41,8 +41,9 @@ worker/recovery/suspension tests, exact numerical comparison and screenshot reco
 [both-repository release evidence](evidence/xbox-e0-20261001-dashboard/notes.md).
 Backend ADR 0005 and canonical documentation links were merged in PR #27.
 
-1. Launch a new ADR 0015 campaign bound to accepted 0.1.0.86. Do not resume
-   `fdab67`. Explicit `--recover` of `40a67c` stays on 0.1.0.80 only.
+1. Let campaign `2fe64f` run. Do not install a new Xbox package, edit `src/` or
+   `experiments/`, resume `fdab67`, or continue `40a67c`. Explicit `--recover`
+   of `2fe64f` stays on 0.1.0.86 only. Keep XgpuE0 in the foreground.
 2. Obtain independent GPU attribution: the global idle counter stayed high in twelve
    controlled modes, including CoreWindow without XAML/D3D12. GPU reduction is **unvalidated**.
 3. Rename the local working directory to `floppylm` at a session boundary, then
