@@ -8,8 +8,8 @@ bump or campaign start/stop. Last updated: **2026-10-02**.
 | Thesis               | [concept v0.2](concept.md), **specified**                                                                                                                                               |
 | E0 v2 software       | **measured**: harness, gates and smoke ([evidence](evidence/README.md))                                                                                                                 |
 | S1–S10, scale policy | accepted ([ADR 0008](adr/0008-e0-numeric-protocol.md), [ADR 0011](adr/0011-e0-row-scale-selection.md))                                                                                  |
-| Xbox package         | **lifecycle failed** `GianlucaMazza.XgpuE0_0.1.0.84_x64__g0p5dcfz4t9z4` source `b638f0c` CI [36983478736](https://github.com/gianlucamazza/xbox-gpu-training/actions/runs/36983478736). Acceptance, benchmark (~10056 tok/s), worker and recovery passed. Dev Home steal-focus did not suspend: trunk 832 running → 1844 completed, no `.cancel`. `extended_execution=allowed`. [PR #34](https://github.com/gianlucamazza/xbox-gpu-training/pull/34) drops EE; DisplayRequest stays. |
-| E0 campaign          | `e0-20261002T072408Z-40a67c` host **stopped**; trial `000` native **interrupted** at trunk 796 (checkpoint `f1668f86`). Bound to 0.1.0.80; do not continue onto 0.1.0.84. Explicit `--recover` stays on 0.1.0.80 only. |
+| Xbox package         | **started, acceptance running** `GianlucaMazza.XgpuE0_0.1.0.86_x64__g0p5dcfz4t9z4` source `12251a7` CI [36985816615](https://github.com/gianlucamazza/xbox-gpu-training/actions/runs/36985816615) ([PR #34](https://github.com/gianlucamazza/xbox-gpu-training/pull/34) drop EE, keep DisplayRequest). Replaced 0.1.0.84. Shader CSO unchanged. `extended_execution` absent. |
+| E0 campaign          | `e0-20261002T072408Z-40a67c` host **stopped**; trial `000` native **interrupted** at trunk 796 (checkpoint `f1668f86`). Bound to 0.1.0.80; do not continue onto 0.1.0.84 or 0.1.0.86. Explicit `--recover` stays on 0.1.0.80 only. |
 | Previous campaign    | `e0-20261001T163456Z-fdab67` (0.1.0.56) **stopped**, 001 incomplete; do not resume. Before that, `e0-20261001T090514Z-4236fd` (0.1.0.28) stopped unsaturated — [record](evidence/e0-v2/campaigns/e0-20261001T090514Z-4236fd/notes.md) |
 | E0 saturation gate   | recorded, not an eligibility gate ([ADR 0015](adr/0015-e0-fixed-data-frontier.md)) |
 | Host recovery        | [ADR 0017](adr/0017-runtime-liveness.md) merged ([PR #7](https://github.com/gianlucamazza/floppylm/pull/7)); paired with accepted 0.1.0.80. |
@@ -24,8 +24,8 @@ python scripts/e0_status.py --campaign runs/e0-campaign-20261002-0015
 python scripts/e0_status.py --campaign runs/e0-campaign-20261002-0015 --xbox
 ```
 
-Do not resume `fdab67` onto 0.1.0.65, 0.1.0.66, 0.1.0.68, 0.1.0.76, 0.1.0.80, or 0.1.0.84.
-Do not continue `40a67c` onto 0.1.0.84.
+Do not resume `fdab67` onto 0.1.0.65, 0.1.0.66, 0.1.0.68, 0.1.0.76, 0.1.0.80, 0.1.0.84, or 0.1.0.86.
+Do not continue `40a67c` onto 0.1.0.84 or 0.1.0.86.
 
 ## Next (campaign `40a67c` host stopped; 000 interrupted; 0.1.0.84 started)
 
@@ -41,10 +41,9 @@ worker/recovery/suspension tests, exact numerical comparison and screenshot reco
 [both-repository release evidence](evidence/xbox-e0-20261001-dashboard/notes.md).
 Backend ADR 0005 and canonical documentation links were merged in PR #27.
 
-1. Merge xbox PR #34 (drop Extended Execution, keep DisplayRequest), install
-   the new package over 0.1.0.84, and re-run canonical acceptance including
-   lifecycle. A campaign binds only after that gate. Do not resume `fdab67`.
-   Explicit `--recover` of `40a67c` stays on 0.1.0.80 only.
+1. Finish canonical acceptance of 0.1.0.86 including lifecycle. A campaign
+   binds only after that gate. Do not resume `fdab67`. Explicit `--recover`
+   of `40a67c` stays on 0.1.0.80 only.
 2. Obtain independent GPU attribution: the global idle counter stayed high in twelve
    controlled modes, including CoreWindow without XAML/D3D12. GPU reduction is **unvalidated**.
 3. Rename the local working directory to `floppylm` at a session boundary, then
