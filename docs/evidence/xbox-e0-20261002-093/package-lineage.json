@@ -1,0 +1,26 @@
+{
+  "ci_run": "37049627510",
+  "source_commit": "e67a14fed58ee60faa5a0806ff55130f8a9bb161",
+  "package": "GianlucaMazza.XgpuE0_0.1.0.93_x64__g0p5dcfz4t9z4",
+  "identity_name": "GianlucaMazza.XgpuE0",
+  "identity_version": "0.1.0.93",
+  "ci_package": "XgpuE0_0.1.0.93_x64.msix",
+  "ci_package_sha256": "03d7bb144f1656654b93ba317c573f2f76d222d23c9c8f35618676b96a23f81b",
+  "signed_package_sha256": "19f985dfa114ed0ec2fc5f270ed0acec62b72c09a18854b1fcb72101c866cf03",
+  "payloads_preserved": true,
+  "payloads": {
+    "AppxManifest.xml": "6aef05566dff4b24e4273fce8c6d630f3ebe801e74881f78298b9e69bcbaa32f",
+    "Assets/SplashScreen.png": "edfe7e4d70af5fbe5f5ffcb65070890652158f9b7211eeb78ec9ca9e9568f899",
+    "Assets/Square150x150Logo.png": "32a61fbd3fd32ecb510622dbe6874c672a2230947de4f42d377e2cedb124ba5b",
+    "Assets/Square44x44Logo.png": "e327904750554d042d6bd92b4caae66a680b9b7c465e9c295fdadc4d160ff1f6",
+    "Assets/StoreLogo.png": "43c67680f58ce418a71a46fdf70a8892adc68d18847031674bb70c8914952073",
+    "Assets/e0_tensor.cso": "a6e6c2f641b6a1362e69c06d92f4faf2ae86b41baea9a681a86655ac994ca50f",
+    "Xgpu.winmd": "cc5c91d7be5cfdc3b9050741e53963430c0b57f57663807892216ec4123778a6",
+    "XgpuE0.exe": "6a9307bfffe72612d08af023ad6331f5ea75dcaed9c463e4bbb23093cf1627bf",
+    "resources.pri": "d3ec79b2d2f42c1c825f5d80181052447bec92c7eb3d11574bad7c27c2a1ba94"
+  },
+  "tls_trust": "existing SHA-256 certificate pin",
+  "signing_certificate": "existing uwp-crossbuild development certificate",
+  "tls_certificate_sha256": "d7e09b511243e0cb08e967cb51fe9ac1fb9a24e21d60ec34f2da40a7df57d587",
+  "openappx_version": "0.7.0"
+}

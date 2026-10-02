@@ -1,0 +1,23 @@
+{
+  "package": "GianlucaMazza.XgpuE0_0.1.0.93_x64__g0p5dcfz4t9z4",
+  "commit": "e67a14fed58ee60faa5a0806ff55130f8a9bb161",
+  "device_state": "ready",
+  "hardware_gpu": true,
+  "worker_state": "ready",
+  "heartbeat_seq": 101,
+  "active_job": null,
+  "shots": [
+    {
+      "label": "dashboard",
+      "file": "dashboard.png",
+      "sha256": "fc0ffeac5683e73d45a805fc205a9c9d2666df499fa004810bd88adc22098769",
+      "bytes": 115828
+    },
+    {
+      "label": "idle-cold",
+      "file": "idle-cold.png",
+      "sha256": "fc0ffeac5683e73d45a805fc205a9c9d2666df499fa004810bd88adc22098769",
+      "bytes": 115828
+    }
+  ]
+}

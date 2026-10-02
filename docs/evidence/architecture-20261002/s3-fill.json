@@ -1,0 +1,264 @@
+{
+  "target_bytes": 85937.5,
+  "budget_bits": 687500.0,
+  "original": {
+    "T": {
+      "path": "runs/e0-20261002T090742Z-2fe64f-000/branch-879.flp",
+      "bytes": 84793,
+      "fill": 0.9866821818181818,
+      "nominal_bits": 687203.08744217,
+      "coded_over_nominal": 0.9871084871356671,
+      "config": {
+        "vocab": 256,
+        "d": 96,
+        "n_layers": 3,
+        "n_heads": 6,
+        "d_ff": 391,
+        "mlp": "gelu",
+        "core_fmt": "ternary",
+        "emb_fmt": "4bit",
+        "scale_policy": "row16",
+        "delta": 0.5,
+        "qk_norm": false,
+        "ctx": 256
+      },
+      "parts": {
+        "header": 178,
+        "shared": 0,
+        "emb": 10799,
+        "core": 66734,
+        "scales": 5738,
+        "norms": 1344
+      },
+      "stored_params": 360384,
+      "core_params": 335808,
+      "emb_share_nominal": 0.14304941551688322
+    },
+    "2T": {
+      "path": "runs/e0-20261002T090742Z-2fe64f-000/branch-1758.flp",
+      "bytes": 84916,
+      "fill": 0.9881134545454545,
+      "nominal_bits": 687203.08744217,
+      "coded_over_nominal": 0.9885403782577844,
+      "config": {
+        "vocab": 256,
+        "d": 96,
+        "n_layers": 3,
+        "n_heads": 6,
+        "d_ff": 391,
+        "mlp": "gelu",
+        "core_fmt": "ternary",
+        "emb_fmt": "4bit",
+        "scale_policy": "row16",
+        "delta": 0.5,
+        "qk_norm": false,
+        "ctx": 256
+      },
+      "parts": {
+        "header": 178,
+        "shared": 0,
+        "emb": 10930,
+        "core": 66726,
+        "scales": 5738,
+        "norms": 1344
+      },
+      "stored_params": 360384,
+      "core_params": 335808,
+      "emb_share_nominal": 0.14304941551688322
+    },
+    "4T": {
+      "path": "runs/e0-20261002T090742Z-2fe64f-000/branch-3516.flp",
+      "bytes": 84800,
+      "fill": 0.9867636363636364,
+      "nominal_bits": 687203.08744217,
+      "coded_over_nominal": 0.9871899768743242,
+      "config": {
+        "vocab": 256,
+        "d": 96,
+        "n_layers": 3,
+        "n_heads": 6,
+        "d_ff": 391,
+        "mlp": "gelu",
+        "core_fmt": "ternary",
+        "emb_fmt": "4bit",
+        "scale_policy": "row16",
+        "delta": 0.5,
+        "qk_norm": false,
+        "ctx": 256
+      },
+      "parts": {
+        "header": 178,
+        "shared": 0,
+        "emb": 10851,
+        "core": 66689,
+        "scales": 5738,
+        "norms": 1344
+      },
+      "stored_params": 360384,
+      "core_params": 335808,
+      "emb_share_nominal": 0.14304941551688322
+    }
+  },
+  "repair": {
+    "T": {
+      "path": "runs/e0-20261002T090742Z-2fe64f-000-repair/branch-892.flp",
+      "bytes": 85850,
+      "fill": 0.9989818181818182,
+      "nominal_bits": 695851.5330459084,
+      "coded_over_nominal": 0.986992149020226,
+      "config": {
+        "vocab": 256,
+        "d": 96,
+        "n_layers": 3,
+        "n_heads": 6,
+        "d_ff": 400,
+        "mlp": "gelu",
+        "core_fmt": "ternary",
+        "emb_fmt": "4bit",
+        "scale_policy": "row16",
+        "delta": 0.5,
+        "qk_norm": false,
+        "ctx": 256
+      },
+      "parts": {
+        "header": 178,
+        "shared": 0,
+        "emb": 10777,
+        "core": 67759,
+        "scales": 5792,
+        "norms": 1344
+      },
+      "stored_params": 365568,
+      "core_params": 340992,
+      "emb_share_nominal": 0.14127151458544598
+    },
+    "2T": {
+      "path": "runs/e0-20261002T090742Z-2fe64f-000-repair/branch-1784.flp",
+      "bytes": 85922,
+      "fill": 0.9998196363636364,
+      "nominal_bits": 695851.5330459084,
+      "coded_over_nominal": 0.9878199118010002,
+      "config": {
+        "vocab": 256,
+        "d": 96,
+        "n_layers": 3,
+        "n_heads": 6,
+        "d_ff": 400,
+        "mlp": "gelu",
+        "core_fmt": "ternary",
+        "emb_fmt": "4bit",
+        "scale_policy": "row16",
+        "delta": 0.5,
+        "qk_norm": false,
+        "ctx": 256
+      },
+      "parts": {
+        "header": 178,
+        "shared": 0,
+        "emb": 10850,
+        "core": 67758,
+        "scales": 5792,
+        "norms": 1344
+      },
+      "stored_params": 365568,
+      "core_params": 340992,
+      "emb_share_nominal": 0.14127151458544598
+    },
+    "4T": {
+      "path": "runs/e0-20261002T090742Z-2fe64f-000-repair/branch-3568.flp",
+      "bytes": 86038,
+      "fill": 1.0011694545454546,
+      "nominal_bits": 695851.5330459084,
+      "coded_over_nominal": 0.9891535296144696,
+      "config": {
+        "vocab": 256,
+        "d": 96,
+        "n_layers": 3,
+        "n_heads": 6,
+        "d_ff": 400,
+        "mlp": "gelu",
+        "core_fmt": "ternary",
+        "emb_fmt": "4bit",
+        "scale_policy": "row16",
+        "delta": 0.5,
+        "qk_norm": false,
+        "ctx": 256
+      },
+      "parts": {
+        "header": 178,
+        "shared": 0,
+        "emb": 10993,
+        "core": 67731,
+        "scales": 5792,
+        "norms": 1344
+      },
+      "stored_params": 365568,
+      "core_params": 340992,
+      "emb_share_nominal": 0.14127151458544598
+    }
+  },
+  "init_original": {
+    "bytes": 85054,
+    "fill": 0.9897192727272728,
+    "nominal_bits": 687203.08744217,
+    "coded_over_nominal": 0.9901468902484525,
+    "parts": {
+      "header": 178,
+      "shared": 0,
+      "emb": 11106,
+      "core": 66688,
+      "scales": 5738,
+      "norms": 1344
+    },
+    "config": {
+      "vocab": 256,
+      "d": 96,
+      "n_layers": 3,
+      "n_heads": 6,
+      "d_ff": 391,
+      "mlp": "gelu",
+      "core_fmt": "ternary",
+      "emb_fmt": "4bit",
+      "scale_policy": "row16",
+      "delta": 0.5,
+      "qk_norm": false,
+      "ctx": 256
+    }
+  },
+  "init_repair": {
+    "bytes": 86136,
+    "fill": 1.0023098181818182,
+    "nominal_bits": 695851.5330459084,
+    "coded_over_nominal": 0.9902802067327454,
+    "parts": {
+      "header": 178,
+      "shared": 0,
+      "emb": 11106,
+      "core": 67716,
+      "scales": 5792,
+      "norms": 1344
+    },
+    "config": {
+      "vocab": 256,
+      "d": 96,
+      "n_layers": 3,
+      "n_heads": 6,
+      "d_ff": 400,
+      "mlp": "gelu",
+      "core_fmt": "ternary",
+      "emb_fmt": "4bit",
+      "scale_policy": "row16",
+      "delta": 0.5,
+      "qk_norm": false,
+      "ctx": 256
+    }
+  },
+  "solver": {
+    "first_attempt_ratio": 1.0,
+    "measured_4T_ratio": 0.9871899768743242,
+    "s3_uses": "ratio = model_bytes * 8 / nominal_bits, then fill_d_ff(..., ratio)",
+    "d_ff_original": 391,
+    "d_ff_repair": 400,
+    "init_fill_predicts_4T": true
+  }
+}
