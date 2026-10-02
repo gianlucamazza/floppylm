@@ -55,8 +55,9 @@ E0-lite grid is diagnostic only ([pre-v2](evidence/e0-lite/pre-v2/notes.md)).
 - **Data**: TinyStoriesV2-GPT4, exact deduplication, hash split; preparation reproduced from raw
   on 2026-09-30 (`data/tinystories/reproducibility.json`). Near-duplicate filtering and OOD later (S10).
 - **Tokenizer**: bytes (V=256) at 1/16 and 1/4. BPE only at 1×.
-- **Model**: ternary or 2-bit core with a single scale policy, tied 4-bit embedding, fp16 norms,
-  GELU / ReLU² / SwiGLU MLP, optional QK-norm.
+- **Model**: decoder-only GPT, pre-norm RMSNorm, RoPE, causal attention; ternary or 2-bit core
+  with a single scale policy, tied 4-bit embedding, fp16 norms, GELU / ReLU² / SwiGLU MLP,
+  optional QK-norm ([ADR 0009](adr/0009-xbox-e0-backend.md)).
 - **Shape**: the solver (`floppylm.shapes`) proposes shapes at 99.5–100% of nominal bits; eligibility
   is checked on serialized bytes (`--parity`).
 - **Training**: WSD with trunk and cooldowns at T/2T/4T, trunk checkpoints; saturation is
