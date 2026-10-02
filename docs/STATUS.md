@@ -8,7 +8,7 @@ bump or campaign start/stop. Last updated: **2026-10-02**.
 | Thesis               | [concept v0.2](concept.md), **specified**                                                                                                                                               |
 | E0 v2 software       | **measured**: harness, gates and smoke ([evidence](evidence/README.md))                                                                                                                 |
 | S1–S10, scale policy | accepted ([ADR 0008](adr/0008-e0-numeric-protocol.md), [ADR 0011](adr/0011-e0-row-scale-selection.md))                                                                                  |
-| Xbox package         | **accepted** `GianlucaMazza.XgpuE0_0.1.0.86_x64__g0p5dcfz4t9z4` source `12251a7` CI [36985816615](https://github.com/gianlucamazza/xbox-gpu-training/actions/runs/36985816615) ([PR #34](https://github.com/gianlucamazza/xbox-gpu-training/pull/34) drop EE, keep DisplayRequest). Evidence [xbox-e0-20261002-086](evidence/xbox-e0-20261002-086/notes.md). Shader CSO unchanged. Bit-identical to 0.1.0.56/0.1.0.68/0.1.0.80. |
+| Xbox package         | **installed**, acceptance running `GianlucaMazza.XgpuE0_0.1.0.93_x64__g0p5dcfz4t9z4` source `e67a14f` CI [37049627510](https://github.com/gianlucamazza/xbox-gpu-training/actions/runs/37049627510) ([PR #37](https://github.com/gianlucamazza/xbox-gpu-training/pull/37) fence poll wait). In-place over 0.1.0.86. Shader CSO unchanged. |
 | E0 campaign          | **stopped** `e0-20261002T090742Z-2fe64f` on 0.1.0.86. Trial `000` S3 repair (`d_ff` 400) **completed eligible** (val bpb 1.516 / 1.395 / 1.316, fill ~1.00). Trial `001` hung at trunk 256/320 (fence frozen, CPU 0, heartbeat advancing); host stopped, no recover loop. Frozen FloppyLM `5106719`. |
 | Previous campaign    | `e0-20261001T163456Z-fdab67` (0.1.0.56) **stopped**, 001 incomplete; do not resume. Before that, `e0-20261001T090514Z-4236fd` (0.1.0.28) stopped unsaturated — [record](evidence/e0-v2/campaigns/e0-20261001T090514Z-4236fd/notes.md) |
 | E0 saturation gate   | recorded, not an eligibility gate ([ADR 0015](adr/0015-e0-fixed-data-frontier.md)) |
@@ -17,7 +17,7 @@ bump or campaign start/stop. Last updated: **2026-10-02**.
 | E1 qualification     | CPU functional qualification **measured** ([ADR 0013](adr/0013-e1-functional-qualification.md), [evidence](evidence/e1-qualification-20261001/notes.md)); Xbox vector qualification pending |
 | Scientific E1–E4     | **specified**, gated by E0 and an accepted E1 protocol ([roadmap](roadmap.md), [completion plan](completion-plan.md)) |
 
-Campaign host stopped after S3 repair `000` completed and trial `001` hit the same GPU fence hang on 0.1.0.86 (timeout does not fail the job while heartbeat advances). Inspect (read-only). `src/` and `experiments/` are frozen at launch commit `5106719`. Companion fence-poll (xbox [PR #37](https://github.com/gianlucamazza/xbox-gpu-training/pull/37) squash `e67a14f`) and `loss_series` (FloppyLM [PR #8](https://github.com/gianlucamazza/floppylm/pull/8), xbox [PR #35](https://github.com/gianlucamazza/xbox-gpu-training/pull/35)) are on main. Package `0.1.0.93` is signed from UWP CI [37049627510](https://github.com/gianlucamazza/xbox-gpu-training/actions/runs/37049627510) and **not installed**. Do not recover `001` on 0.1.0.86.
+Console now has 0.1.0.93 (fence poll + `loss_series`). Canonical acceptance is running (`floppylm-e0-accept-093`). Campaign `2fe64f` stays **stopped** on the 0.1.0.86 record; do not recover `001` onto 0.1.0.93. Frozen FloppyLM for that campaign remains `5106719`.
 
 ```bash
 python scripts/e0_status.py --campaign runs/e0-campaign-20261002-086
@@ -27,7 +27,7 @@ python scripts/e0_status.py --campaign runs/e0-campaign-20261002-086 --xbox
 Do not resume `fdab67` onto 0.1.0.65, 0.1.0.66, 0.1.0.68, 0.1.0.76, 0.1.0.80, 0.1.0.84, or 0.1.0.86.
 Do not continue `40a67c` onto 0.1.0.84 or 0.1.0.86. Do not recover `2fe64f` onto a later package.
 
-## Next (campaign `2fe64f` stopped on 0.1.0.86; `src/`/`experiments/` frozen)
+## Next (0.1.0.93 installed; `2fe64f` remains the 0.1.0.86 record)
 
 Done since the stop: xbox-gpu-training consumes the whole published contract set (PR #22, #20);
 Xbox execution moved to `floppylm_xbox` with generic Device Portal settings
@@ -41,11 +41,8 @@ worker/recovery/suspension tests, exact numerical comparison and screenshot reco
 [both-repository release evidence](evidence/xbox-e0-20261001-dashboard/notes.md).
 Backend ADR 0005 and canonical documentation links were merged in PR #27.
 
-1. Campaign `2fe64f` is stopped: `000` repair is the record, `001` stays interrupted
-   on 0.1.0.86. Do not recover `001` on this package. Next package `0.1.0.93`
-   (`GianlucaMazza.XgpuE0_0.1.0.93_x64__g0p5dcfz4t9z4`, source `e67a14f`) is signed
-   locally and waiting for explicit OK to in-place install over 0.1.0.86. Do not
-   resume `fdab67` or continue `40a67c`. Do not recover `2fe64f` onto 0.1.0.93.
+1. Finish canonical gates on 0.1.0.93, then start a **new** campaign on this
+   package. Do not resume `fdab67`, continue `40a67c`, or recover `2fe64f`.
 2. Obtain independent GPU attribution: the global idle counter stayed high in twelve
    controlled modes, including CoreWindow without XAML/D3D12. GPU reduction is **unvalidated**.
 3. Rename the local working directory to `floppylm` at a session boundary, then
