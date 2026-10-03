@@ -159,6 +159,8 @@ def report(workspace, acceptance, benchmark, data_manifest, *, data_dir=None, po
     def provenance():
         nonlocal proof, speed
         proof, speed = read(acceptance), read(benchmark)
+        if not isinstance(proof.get("kernels"), dict):
+            raise ValueError("acceptance requires a kernel proof object")
         check_acceptance(proof, {"commit": speed["commit"]}, speed["package"])
         rate = speed["tokens_per_second"]
         if (
@@ -252,6 +254,8 @@ def report(workspace, acceptance, benchmark, data_manifest, *, data_dir=None, po
         if not result["checks"]["provenance"]["ok"]:
             raise RuntimeError("console check requires valid local provenance")
         device = json.loads(portal.get("device.json", ""))
+        if not isinstance(device, dict):
+            raise ValueError("device.json must contain a JSON object")
         check_acceptance(proof, device, portal.package)
         if (
             device.get("package") != portal.package
@@ -260,12 +264,17 @@ def report(workspace, acceptance, benchmark, data_manifest, *, data_dir=None, po
         ):
             raise RuntimeError("device is not the accepted ready hardware package")
         processes = portal.request("GET", "/api/resourcemanager/processes", json_result=True)
+        if not isinstance(processes, dict):
+            raise ValueError("process response must be a JSON object")
+        process_list = processes.get("Processes")
+        if not isinstance(process_list, list) or any(not isinstance(p, dict) for p in process_list):
+            raise ValueError("process response must contain a list of objects")
         worker = portal.live_worker(commit=proof["commit"])
         if worker["state"] != "ready" or worker["active_job"] is not None:
             raise RuntimeError("console worker is busy")
         if not any(
             p.get("PackageFullName") == portal.package and p.get("ProcessId") == worker["pid"]
-            for p in processes.get("Processes", [])
+            for p in process_list
         ):
             raise RuntimeError("live worker PID is absent from the exact package process list")
         pending = [n for n in portal.files() if n.endswith(".ready")]

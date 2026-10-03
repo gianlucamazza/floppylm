@@ -197,6 +197,37 @@ def test_preflight_refuses_unsafe_or_unknown_state(inputs, preflight, failure):
     assert any(not check["ok"] for check in result["checks"].values())
 
 
+@pytest.mark.parametrize("response", [[], {"Processes": None}, {"Processes": [1]}, "device"])
+def test_malformed_portal_responses_produce_failure_json(
+    inputs, preflight, monkeypatch, capsys, response
+):
+    root, proof, speed, manifest = inputs
+    portal = Console()
+    if response == "device":
+        portal.device = []
+    else:
+        monkeypatch.setattr(portal, "request", lambda *a, **kw: response)
+    monkeypatch.setattr(preflight, "ROOT", root)
+    monkeypatch.setattr(preflight.Portal, "configured", lambda: portal)
+    monkeypatch.setattr(
+        preflight.sys,
+        "argv",
+        [
+            "preflight",
+            "--xbox",
+            "--acceptance",
+            str(proof),
+            "--benchmark",
+            str(speed),
+            "--data-manifest",
+            str(manifest),
+        ],
+    )
+    assert preflight.main() == 1
+    result = json.loads(capsys.readouterr().out)
+    assert not result["ready"] and not result["checks"]["xbox"]["ok"]
+
+
 def test_legacy_campaign_requires_an_existing_unowned_lock(inputs, preflight):
     root, *args = inputs
     folder = root / "runs/legacy"
