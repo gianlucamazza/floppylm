@@ -65,7 +65,11 @@ def check_runtime_probe(job: dict, purpose: str) -> None:
         not isinstance(probe, dict)
         or set(probe) != {"kind", "after_checkpoint_step"}
         or probe["kind"] != "published_fence_stall"
-        or type(probe["after_checkpoint_step"]) is not int
+        or type(probe["after_checkpoint_step"]) not in (int, float)
+        or (
+            isinstance(probe["after_checkpoint_step"], float)
+            and not probe["after_checkpoint_step"].is_integer()
+        )
     ):
         raise ValueError("invalid runtime fault probe")
     per_step = job["spec"]["batch"] * job["config"]["ctx"]

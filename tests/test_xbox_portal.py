@@ -20,6 +20,17 @@ from floppylm_xbox.portal import (
 PIN = "ab" * 32
 
 
+def test_probe_accepts_schema_integer_valued_float():
+    check_runtime_probe(
+        {
+            "config": {"ctx": 8},
+            "spec": {"batch": 2, "tokens": 128},
+            "runtime_fault_probe": {"kind": "published_fence_stall", "after_checkpoint_step": 1.0},
+        },
+        "functional",
+    )
+
+
 @pytest.mark.parametrize("fault", ["scientific", "resume", "stop_after", "zero", "far", "bool"])
 def test_runtime_probe_refuses_invalid_training(fault):
     job = {
