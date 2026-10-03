@@ -89,6 +89,14 @@ only when no campaign is training.
 
 ## Launch a campaign
 
+First run the read-only preparation described in the
+[E0 launch packet](e0-launch-packet.md). `scripts/e0_preflight.py` shares the accepted
+protocol with the launcher. It emits JSON and does not create a campaign, publish
+jobs, restart the app, reserve a final test or open `test.bin`. `--data-manifest`
+names an existing run manifest used only for train/validation hashes. Local checks
+can pass while `ready` remains false: only a successful `--xbox` observation proves
+console readiness at its timestamp. Rerun immediately before an authorized launch.
+
 A campaign freezes source hashes, recipes, two neutral seeds, the tuning budget, solver grids and
 five paired seeds before any scientific result. Its lock permits one worker, and stable exclusive
 run identities prevent silent retraining when the campaign is reopened. A failed comparison gate
@@ -130,10 +138,10 @@ transport errors are unknown. No completed work for ten minutes records a durabl
 Neither alarm cancels, restarts or resubmits work. Device Portal CPU counters alone do not
 establish the cause of a stall.
 
-The runtime upgrade and its hardware fault probes are gated until the currently frozen
-E0 campaign closes. That historical package does not have the new worker contract. Keep
-its frozen source/package and recorded recovery procedure; do not run this branch's
-recovery against it or install a new package mid-campaign.
+Historical campaigns retain their frozen package/source and recorded recovery procedure.
+They are not resumed on the newly accepted package. The runtime upgrade and fault
+qualification have completed; see [STATUS](../STATUS.md) for the accepted evidence.
+Never install a replacement package during a scientific campaign.
 
 ```bash
 # Operator recover: start the bound package if XgpuE0.exe is gone, wait for a

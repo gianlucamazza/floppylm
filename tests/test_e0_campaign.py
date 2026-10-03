@@ -205,7 +205,7 @@ def test_real_campaign_stops_before_advancing_an_unstable_phase(
     proof, speed = inputs(tmp_path)
     campaign = campaign_module.Campaign(tmp_path / "campaign", proof, speed)
     monkeypatch.setattr(campaign, "neutral", lambda _, candidates: candidates[0])
-    monkeypatch.setattr(campaign_module.shapes, "grid", lambda cfg, budget: [cfg, cfg])
+    monkeypatch.setattr(campaign_module.shapes, "grid", lambda cfg, budget, **kw: [cfg, cfg])
     monkeypatch.setattr(campaign_module, "selection_branch", lambda s: s["branches"][2])
     calls = []
 

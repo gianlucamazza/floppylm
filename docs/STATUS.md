@@ -57,8 +57,8 @@ deliberately, kept as a record), **measured**
 
 ## ADR 0018 qualification work
 
-Selection/reporting corrections and bounded host observation are implemented on
-review branches (PRs #13 and #14). Backend PR #39 supplies the functional probe
+Selection/reporting corrections and bounded host observation are integrated
+(PRs #13 and #14). Merged backend PR #39 supplies the functional probe
 and verified resume normalization. Package `0.1.0.98` passed the complete
 [hardware qualification](evidence/xbox-e0-20261003-098/notes.md) through Odroid.
 The [incomplete 0.1.0.96 attempt](evidence/xbox-e0-20261003-096-incomplete/notes.md)
@@ -66,3 +66,9 @@ is retained: it exposed the native resume-binding defect, repaired before final
 qualification. No historical campaign may be resumed onto this package. No new
 scientific campaign is authorized by this work. The original stall's initiating
 cause remains unproven.
+
+## New E0 preparation
+
+The read-only preflight and [launch packet](operations/e0-launch-packet.md) prepare a new
+source freeze under the existing scientific protocol. Readiness is timestamped and
+must be rechecked at launch; preparation does not authorize or start a campaign.
