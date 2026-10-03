@@ -1,15 +1,15 @@
 # Status
 
 The only page that states live project state. Update it — and nothing else — on every package
-bump or campaign start/stop. Last updated: **2026-10-02**.
+bump or campaign start/stop. Last updated: **2026-10-03**.
 
 | Item                 | State                                                                                                                                                                                   |
 | -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Thesis               | [concept v0.2](concept.md), **specified**                                                                                                                                               |
 | E0 v2 software       | **measured**: harness, gates and smoke ([evidence](evidence/README.md))                                                                                                                 |
 | S1–S10, scale policy | accepted ([ADR 0008](adr/0008-e0-numeric-protocol.md), [ADR 0011](adr/0011-e0-row-scale-selection.md))                                                                                  |
-| Xbox package         | **accepted** `GianlucaMazza.XgpuE0_0.1.0.93_x64__g0p5dcfz4t9z4` source `e67a14f` CI [37049627510](https://github.com/gianlucamazza/xbox-gpu-training/actions/runs/37049627510) ([PR #37](https://github.com/gianlucamazza/xbox-gpu-training/pull/37) fence poll wait). Evidence [xbox-e0-20261002-093](evidence/xbox-e0-20261002-093/notes.md). Shader CSO unchanged. Bit-identical 38/38 to 0.1.0.56/0.1.0.68/0.1.0.80/0.1.0.86. |
-| E0 campaign          | **running** `e0-20261002T191632Z-ca781f` on 0.1.0.93 (`systemd-run --user` unit `floppylm-e0-campaign-20261002-093`, linger, app.slice). Out `runs/e0-campaign-20261002-093`. Trial `000` **eligible** after S3 repair `d_ff` 400 (fill 0.9990/0.9998/1.0012, val bpb 1.5155/1.3951/1.3160). Trial `001` recovered from hang at trunk 1472 (checkpoint `7a9c8139`), native running. Frozen FloppyLM `3c3c79d`. Previous `2fe64f` stays on 0.1.0.86. |
+| Xbox package         | **installed, acceptance running** `GianlucaMazza.XgpuE0_0.1.0.95_x64__g0p5dcfz4t9z4` source `7cb3fcf` CI [37077527029](https://github.com/gianlucamazza/xbox-gpu-training/actions/runs/37077527029) ([PR #38](https://github.com/gianlucamazza/xbox-gpu-training/pull/38) published-fence watchdog). Unit `floppylm-e0-accept-20261003-095`. Previous **accepted** package remains `0.1.0.93` / `e67a14f`, evidence [xbox-e0-20261002-093](evidence/xbox-e0-20261002-093/notes.md). |
+| E0 campaign          | **stopped** `e0-20261002T191632Z-ca781f` on 0.1.0.93 (2026-10-03T00:04:51Z). Trial `000` **eligible** (fill 0.9990/0.9998/1.0012, val bpb 1.5155/1.3951/1.3160). Trial `001` **eligible** after S3 `d_ff` 400 (fill 0.9996/1.0007/1.0009, val bpb 1.5100/1.3916/1.3082, bytes 85904/86000/86015). Trial `002` row8log **interrupted** at stop, not a result. Do not resume `ca781f` onto 0.1.0.95. Frozen FloppyLM `3c3c79d`. |
 | Previous campaign    | `e0-20261001T163456Z-fdab67` (0.1.0.56) **stopped**, 001 incomplete; do not resume. Before that, `e0-20261001T090514Z-4236fd` (0.1.0.28) stopped unsaturated — [record](evidence/e0-v2/campaigns/e0-20261001T090514Z-4236fd/notes.md) |
 | E0 saturation gate   | recorded, not an eligibility gate ([ADR 0015](adr/0015-e0-fixed-data-frontier.md)) |
 | Host recovery        | [ADR 0017](adr/0017-runtime-liveness.md) merged ([PR #7](https://github.com/gianlucamazza/floppylm/pull/7)); paired with accepted 0.1.0.93. |
@@ -17,7 +17,7 @@ bump or campaign start/stop. Last updated: **2026-10-02**.
 | E1 qualification     | CPU functional qualification **measured** ([ADR 0013](adr/0013-e1-functional-qualification.md), [evidence](evidence/e1-qualification-20261001/notes.md)); Xbox vector qualification pending |
 | Scientific E1–E4     | **specified**, gated by E0 and an accepted E1 protocol ([roadmap](roadmap.md), [completion plan](completion-plan.md)) |
 
-Campaign host is running. Inspect (read-only). `src/` and `experiments/` are frozen at launch commit `3c3c79d`. Architecture notes stay proposals: [S3 fill](adr/proposals/e0-fill-aware-solver.md), [E1 book budget](adr/proposals/e1-1-16-book-budget.md).
+Campaign `ca781f` is stopped. Package `0.1.0.95` acceptance is running. `src/` and `experiments/` stay at `3c3c79d` until that campaign record is closed. Architecture notes stay proposals: [S3 fill](adr/proposals/e0-fill-aware-solver.md), [E1 book budget](adr/proposals/e1-1-16-book-budget.md).
 
 ```bash
 python scripts/e0_status.py --campaign runs/e0-campaign-20261002-093
@@ -41,8 +41,8 @@ worker/recovery/suspension tests, exact numerical comparison and screenshot reco
 [both-repository release evidence](evidence/xbox-e0-20261001-dashboard/notes.md).
 Backend ADR 0005 and canonical documentation links were merged in PR #27.
 
-1. Let campaign `ca781f` run. Do not install a new Xbox package, edit `src/` or
-   `experiments/`, resume `fdab67`, continue `40a67c`, or recover `2fe64f`.
+1. Let `0.1.0.95` acceptance finish. Do not start a campaign, resume `ca781f`,
+   resume `fdab67`, continue `40a67c`, or recover `2fe64f` onto this package.
    Fill-aware solver and E1 book-budget notes stay proposals. Keep XgpuE0 in
    the foreground.
 2. Obtain independent GPU attribution: the global idle counter stayed high in twelve
