@@ -1,0 +1,29 @@
+{
+  "pull_requests": {
+    "13": {
+      "mergeCommit": {
+        "oid": "6e1b28d1e69d4e72b58cbef219e13ff9b70672b8"
+      },
+      "state": "MERGED",
+      "url": "https://github.com/gianlucamazza/floppylm/pull/13"
+    },
+    "14": {
+      "mergeCommit": {
+        "oid": "27aafda7c16db0c87d6274904494ae4f5fa1e6e9"
+      },
+      "state": "MERGED",
+      "url": "https://github.com/gianlucamazza/floppylm/pull/14"
+    },
+    "39": {
+      "mergeCommit": {
+        "oid": "cf3d27148bf5665385da66d1580b6a612ffec4c8"
+      },
+      "state": "MERGED",
+      "url": "https://github.com/gianlucamazza/xbox-gpu-training/pull/39"
+    }
+  },
+  "accepted_backend_source": "cc134fe4458ffa51c73331ee6dd6af4a6ae8b0d7",
+  "integrated_backend_source": "cf3d27148bf5665385da66d1580b6a612ffec4c8",
+  "runtime_uwp_contract_trees_identical": true,
+  "package_reinstalled": false
+}

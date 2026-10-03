@@ -63,3 +63,5 @@ JSON Schemas of every file exchanged with the native backend; see [schemas/READM
   `tests/fixtures/contracts/`.
 - `tests/`: regressions for every module, including the FLP1 fixture for the rejection test.
   Run with `pytest`.
+
+Read-only preparation: `scripts/e0_preflight.py --acceptance PATH --benchmark PATH --data-manifest PATH [--data-dir PATH] [--xbox]`; JSON stdout, no campaign or final-test writes. Protocol values are shared with the launcher through `floppylm.campaign_protocol`. See [launch packet](e0-launch-packet.md).

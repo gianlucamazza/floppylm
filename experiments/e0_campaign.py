@@ -28,9 +28,8 @@ from e0_v2 import (
     selection_branch,
     verified_branch,
 )
-
-PROTOCOL_ADR = "0015"
 from floppylm import parity, runlog, shapes
+from floppylm.campaign_protocol import PROTOCOL_ADR, grid_configs, protocol_spec
 from floppylm.campaign_report import attempt_record, baseline_complete
 from floppylm.model import GPTConfig
 
@@ -70,34 +69,7 @@ class Campaign:
                 "benchmark_sha256": runlog.sha256_file(benchmark),
                 "package": proof["package"],
                 "commit": proof["commit"],
-                "protocol": {
-                    "budget_frac": 1 / 16,
-                    "neutral_width": 96,
-                    "neutral_layers": 3,
-                    "neutral_seeds": [0, 1],
-                    "tuning_seed": 0,
-                    "grid_seed": 0,
-                    "paired_seeds": list(range(5)),
-                    "batch": 32,
-                    "ctx": 256,
-                    "scale_order": ["row16", "row8log"],
-                    "mlp_order": ["gelu", "swiglu", "relu2"],
-                    "lr": [0.001, 0.003, 0.01],
-                    "ternary_delta": [0.5, 0.7],
-                    "ternary_wd": 0.1,
-                    "2bit_wd": [0, 0.1],
-                    "grid_widths": list(range(64, 257, 16)),
-                    "grid_layers": list(range(1, 17)),
-                    "grid_ff_range": [2.0, 6.0],
-                    "grid_embedding_share": [0.08, 0.20],
-                    "grid_min_nominal_fill": 0.995,
-                    "selection": "minimum mean 4T val bpb; declared enumeration order breaks ties",
-                    "eligibility": (
-                        "actual individual and reciprocal byte parity; saturation recorded"
-                    ),
-                    "rank_stability": "4T winner is a minimizer of mean val bpb at T and 2T",
-                    "byte_repair": "at most one fresh attempt per trial, preserving recipe",
-                },
+                "protocol": protocol_spec(),
                 "trials": {},
                 "decisions": {},
             }
@@ -225,7 +197,7 @@ class Campaign:
             "--seed",
             str(seed),
             "--batch",
-            "32",
+            str(self.state["protocol"]["batch"]),
             "--lr",
             str(lr),
             "--wd",
@@ -344,7 +316,12 @@ class Campaign:
         self.save()
         groups = []
         for index, cfg in enumerate(candidates):
-            groups.append([self.trial(f"{phase}-{index}-{seed}", cfg, seed) for seed in (0, 1)])
+            groups.append(
+                [
+                    self.trial(f"{phase}-{index}-{seed}", cfg, seed)
+                    for seed in self.state["protocol"]["neutral_seeds"]
+                ]
+            )
         valid = [(index, group) for index, group in enumerate(groups) if self.comparable(group)]
         best = self.select_winner(phase, valid)
         self.state["decisions"][phase] = candidates[best].to_dict()
@@ -457,8 +434,14 @@ class Campaign:
         runlog.write_atomic(destination / "notes.md", "\n".join(lines) + "\n")
 
     def run(self):
-        budget = FULL_BUDGET_BITS / 16
-        base = GPTConfig(d=96, n_layers=3, n_heads=6, ctx=256)
+        protocol = self.state["protocol"]
+        budget = FULL_BUDGET_BITS * protocol["budget_frac"]
+        base = GPTConfig(
+            d=protocol["neutral_width"],
+            n_layers=protocol["neutral_layers"],
+            n_heads=protocol["neutral_width"] // shapes.HEAD_DIM,
+            ctx=protocol["ctx"],
+        )
         scale = self.neutral(
             "neutral-scale",
             [
@@ -479,13 +462,14 @@ class Campaign:
             self.save()
             candidates = []
             for lr, axis in itertools.product(
-                (0.001, 0.003, 0.01), (0.5, 0.7) if fmt == "ternary" else (0, 0.1)
+                protocol["lr"],
+                protocol["ternary_delta"] if fmt == "ternary" else protocol["2bit_wd"],
             ):
                 cfg = shapes.fill_d_ff(
                     replace(chosen, core_fmt=fmt, delta=axis if fmt == "ternary" else 0.5), budget
                 )
-                wd = 0.1 if fmt == "ternary" else axis
-                s = self.trial(f"tune-{fmt}-{lr}-{axis}", cfg, 0, lr, wd)
+                wd = protocol["ternary_wd"] if fmt == "ternary" else axis
+                s = self.trial(f"tune-{fmt}-{lr}-{axis}", cfg, protocol["tuning_seed"], lr, wd)
                 if s is not None:
                     candidates.append((s, lr, wd, cfg))
             winner = self.select_winner(
@@ -495,8 +479,8 @@ class Campaign:
             self.state["phase"] = "grid-" + fmt
             self.save()
             grid = [
-                (self.trial(f"grid-{fmt}-{i}", c, 0, lr, wd), c)
-                for i, c in enumerate(shapes.grid(cfg, budget))
+                (self.trial(f"grid-{fmt}-{i}", c, protocol["grid_seed"], lr, wd), c)
+                for i, c in enumerate(grid_configs(cfg, budget, protocol))
             ]
             valid = [(s, c) for s, c in grid if s is not None]
             winner = self.select_winner("grid-" + fmt, [(i, [s]) for i, (s, _) in enumerate(valid)])
@@ -507,7 +491,10 @@ class Campaign:
         self.state["phase"] = "paired-seeds"
         self.save()
         paired = {
-            fmt: [self.trial(f"paired-{fmt}-{seed}", cfg, seed, lr, wd) for seed in range(5)]
+            fmt: [
+                self.trial(f"paired-{fmt}-{seed}", cfg, seed, lr, wd)
+                for seed in protocol["paired_seeds"]
+            ]
             for fmt, (cfg, lr, wd) in recipes.items()
         }
         all_runs = [s for group in paired.values() for s in group]
