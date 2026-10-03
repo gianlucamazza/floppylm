@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import json
 import math
+import os
 import subprocess
 import sys
 from dataclasses import replace
@@ -26,6 +27,24 @@ def read(path):
     if not isinstance(value, dict):
         raise ValueError("expected JSON object: " + str(path))
     return value
+
+
+def legacy_lock_liveness(path):
+    """Pre-PID campaigns still held a lifetime flock. Observe without acquiring it."""
+    stat = path.stat()  # Missing lock is unknown, never evidence of an idle host.
+    identity = (os.major(stat.st_dev), os.minor(stat.st_dev), stat.st_ino)
+    for line in Path("/proc/locks").read_text().splitlines():
+        for field in line.split():
+            parts = field.split(":")
+            if len(parts) != 3:
+                continue
+            try:
+                actual = (int(parts[0], 16), int(parts[1], 16), int(parts[2]))
+            except ValueError:
+                continue
+            if actual == identity:
+                return "owned_or_waiting"
+    return "unowned_legacy_lock"
 
 
 def cost_projection(protocol, speed):
@@ -208,10 +227,16 @@ def report(workspace, acceptance, benchmark, data_manifest, *, data_dir=None, po
                 {**value, "state": "running" if state == "stopping" else state},
                 path.parent / "worker.lock",
             )
+            if state in ("running", "stopping") and value.get("pid") is None:
+                live = legacy_lock_liveness(path.parent / "worker.lock")
             records.append(
                 {"path": str(path.relative_to(workspace)), "state": state, "liveness": live}
             )
-            if state in ("running", "stopping") and live not in ("dead", "identity_mismatch"):
+            if state in ("running", "stopping") and live not in (
+                "dead",
+                "identity_mismatch",
+                "unowned_legacy_lock",
+            ):
                 raise RuntimeError("active or unverified campaign host: " + str(path.parent))
         return records
 

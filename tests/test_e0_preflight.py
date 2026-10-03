@@ -1,6 +1,7 @@
 """Readiness must fail closed and never consume campaign or final-test authority."""
 
 import builtins
+import fcntl
 import importlib.util
 import json
 import subprocess
@@ -194,6 +195,23 @@ def test_preflight_refuses_unsafe_or_unknown_state(inputs, preflight, failure):
     result = preflight.report(root, proof, speed, manifest, portal=portal)
     assert not result["ready"]
     assert any(not check["ok"] for check in result["checks"].values())
+
+
+def test_legacy_campaign_requires_an_existing_unowned_lock(inputs, preflight):
+    root, *args = inputs
+    folder = root / "runs/legacy"
+    folder.mkdir(parents=True)
+    manifest = folder / "campaign.json"
+    manifest.write_text('{"status":"running"}')
+    before = manifest.read_bytes()
+    with (folder / "worker.lock").open("w") as lock:
+        fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        assert not preflight.report(root, *args, portal=Console())["ready"]
+    result = preflight.report(root, *args, portal=Console())
+    assert result["ready"], result
+    evidence = result["checks"]["campaign_hosts"]["evidence"]
+    assert evidence[0]["liveness"] == "unowned_legacy_lock"
+    assert manifest.read_bytes() == before
 
 
 def test_protocol_copy_and_grid_match_accepted_defaults(preflight):

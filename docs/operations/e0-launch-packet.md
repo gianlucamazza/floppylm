@@ -38,7 +38,9 @@ repair/final-test reservation metadata and campaign-host liveness, without readi
 the test split or changing any records. Missing references, dirty source, wrong
 package, busy worker, stale heartbeat or pending inbox work fail readiness. An old
 `running` manifest whose original process is dead is reported as historical metadata;
-it is not rewritten or treated as live work. Unverified host liveness fails closed.
+it is not rewritten or treated as live work. For pre-PID manifests, the existing
+lifetime worker lock must be unowned in `/proc/locks`; held/waiting or missing
+locks fail readiness. Other unverified host liveness fails closed.
 
 The JSON includes the observed host commit and frozen-source hashes, hardware
 package/source, acceptance/benchmark hashes, corpus reference hash, protocol,
