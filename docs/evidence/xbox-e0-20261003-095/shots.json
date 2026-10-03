@@ -1,0 +1,17 @@
+{
+  "package": "GianlucaMazza.XgpuE0_0.1.0.95_x64__g0p5dcfz4t9z4",
+  "commit": "7cb3fcfcc8490477b0ac900356af53cd487d4d7c",
+  "device_state": "ready",
+  "hardware_gpu": true,
+  "worker_state": "ready",
+  "heartbeat_seq": 4421,
+  "active_job": null,
+  "shots": [
+    {
+      "label": "dashboard",
+      "file": "dashboard.png",
+      "sha256": "289f8d1516f983aecbd36181c390f1f2a1caa85fb07ef6e4a46abe85b5610641",
+      "bytes": 115370
+    }
+  ]
+}

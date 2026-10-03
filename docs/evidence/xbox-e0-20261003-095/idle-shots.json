@@ -1,0 +1,5 @@
+{
+  "note": "no separate cold capture; dashboard.png is the post-gate idle screen, still showing the completed lifecycle job",
+  "worker_state": "ready",
+  "active_job": null
+}
