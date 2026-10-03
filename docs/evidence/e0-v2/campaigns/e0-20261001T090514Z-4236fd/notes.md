@@ -14,3 +14,7 @@ row8log on the same shape. Analysis and options:
 [saturation proposal](../../../../adr/proposals/e0-saturation-proposal.md).
 Accepted as [ADR 0015](../../../../adr/0015-e0-fixed-data-frontier.md) (option B); this campaign
 is not migrated.
+
+Later note (2026-10-03): attempt eligibility and effective recipes are corrected in
+[the additive report](../../../e0-report-corrections-20261003/e0-20261001T090514Z-4236fd.json).
+This stopped campaign does not establish a completed scalar E0 baseline.

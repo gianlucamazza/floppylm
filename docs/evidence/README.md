@@ -24,6 +24,9 @@ and remain unchanged. New selections declare `purpose: scientific | functional`;
 `--freeze ... --functional` and cannot certify a scientific baseline. Run summaries stay partial
 until host retrieval and evaluation complete.
 
+[Historical report corrections](e0-report-corrections-20261003/notes.md) distinguish
+attempt recipes/eligibility from trial outcomes without overwriting frozen records.
+
 ## Inventory
 
 ### E0 v2 runs and campaigns

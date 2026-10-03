@@ -1,0 +1,208 @@
+{
+ "baseline_complete": false,
+ "campaign": "e0-20261002T090742Z-2fe64f",
+ "comparisons": {},
+ "comparisons_scope": "only recorded group gates; absent gates remain unknown",
+ "input_sha256": {
+  "campaigns/e0-20261002T090742Z-2fe64f/campaign.json": "6abec5a8585172dd3395ec2f8776659a38b4fbe3fa48db6976aaf785a6de0af2",
+  "campaigns/e0-20261002T090742Z-2fe64f/summary.json": "942e58db0e9b2c28796a5744c86cd114c2296b2b49ef45fa2cc200338ac2eff4",
+  "runs/e0-20261002T090742Z-2fe64f-000-repair/summary.json": "111c67b8700e555bce30c90f5e5afdced533a56dcde97a6621fb5f9dc46f7224",
+  "runs/e0-20261002T090742Z-2fe64f-000/summary.json": "c1f8f0e51084f4f5aa1d587370f7f0de35f309941fd510a01f3653e8ebcf0a18",
+  "runs/e0-20261002T090742Z-2fe64f-001/summary.json": "2bde1dc6201bc89a76df2ca239542b337d3d83b836cf4fb457626969e02be56a"
+ },
+ "original_status": "stopped",
+ "purpose": "historical reporting correction, not new scientific evidence",
+ "trials": [
+  {
+   "attempt": "original",
+   "compute": {
+    "cooldown_flops": 13079870963712.0,
+    "cooldown_tokens": 5021696,
+    "eval_seconds": 158.43422555923462,
+    "flops_per_token_forward": 868224.0,
+    "formula": "3 * (2 * stored_params + 4 * n_layers * (ctx / 2) * d) * tokens",
+    "native_execution_seconds": 4205.200059385,
+    "total_flops": 80612973084672.0,
+    "total_tokens": 30949376,
+    "trunk_flops": 67533102120960.0,
+    "trunk_seconds": 3747.1551485849996,
+    "trunk_tokens": 25927680,
+    "wall_scope": "current host attempt",
+    "wall_seconds": 473.20205879211426
+   },
+   "eligibility": "excluded",
+   "eligibility_scope": "individual 4T serialized-byte parity; group gates are separate",
+   "exclusion_reasons": [
+    "e0-20261002T090742Z-2fe64f-000: 84800 B is -1.32% from target"
+   ],
+   "key": "neutral-scale-0-0",
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 391,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "gelu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row16",
+     "vocab": 256
+    },
+    "lr": 0.003,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "requested_recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 391,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "gelu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row16",
+     "vocab": 256
+    },
+    "lr": 0.003,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "run_id": "e0-20261002T090742Z-2fe64f-000",
+   "saturation": {
+    "criterion": "|bpb(4T) - bpb(2T)| < 0.01",
+    "delta_signed": -0.08184694643023382,
+    "verdict": "non saturo"
+   },
+   "selected": false,
+   "status": "completed",
+   "trial_outcome": "eligible"
+  },
+  {
+   "attempt": "repair",
+   "compute": {
+    "cooldown_flops": 13451988566016.0,
+    "cooldown_tokens": 5103616,
+    "eval_seconds": 127.26381874084473,
+    "flops_per_token_forward": 878592.0,
+    "formula": "3 * (2 * stored_params + 4 * n_layers * (ctx / 2) * d) * tokens",
+    "native_execution_seconds": 8692.698593435,
+    "total_flops": 82806382264320.0,
+    "total_tokens": 31416320,
+    "trunk_flops": 69354393698304.0,
+    "trunk_seconds": 8229.546964166,
+    "trunk_tokens": 26312704,
+    "wall_scope": "current host attempt",
+    "wall_seconds": 955.9664554595947
+   },
+   "eligibility": "eligible",
+   "eligibility_scope": "individual 4T serialized-byte parity; group gates are separate",
+   "exclusion_reasons": [],
+   "key": "neutral-scale-0-0",
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 400,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "gelu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row16",
+     "vocab": 256
+    },
+    "lr": 0.003,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "requested_recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 391,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "gelu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row16",
+     "vocab": 256
+    },
+    "lr": 0.003,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "run_id": "e0-20261002T090742Z-2fe64f-000-repair",
+   "saturation": {
+    "criterion": "|bpb(4T) - bpb(2T)| < 0.01",
+    "delta_signed": -0.07907501984609122,
+    "verdict": "non saturo"
+   },
+   "selected": true,
+   "status": "completed",
+   "trial_outcome": "eligible"
+  },
+  {
+   "attempt": "original",
+   "compute": null,
+   "eligibility": "unknown",
+   "eligibility_scope": "individual 4T serialized-byte parity; group gates are separate",
+   "exclusion_reasons": [],
+   "key": "neutral-scale-0-1",
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 391,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "gelu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row16",
+     "vocab": 256
+    },
+    "lr": 0.003,
+    "seed": 1,
+    "wd": 0.1
+   },
+   "requested_recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 391,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "gelu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row16",
+     "vocab": 256
+    },
+    "lr": 0.003,
+    "seed": 1,
+    "wd": 0.1
+   },
+   "run_id": "e0-20261002T090742Z-2fe64f-001",
+   "saturation": null,
+   "selected": false,
+   "status": "interrupted",
+   "trial_outcome": "reserved"
+  }
+ ]
+}

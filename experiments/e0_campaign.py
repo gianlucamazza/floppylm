@@ -31,6 +31,7 @@ from e0_v2 import (
 
 PROTOCOL_ADR = "0015"
 from floppylm import parity, runlog, shapes
+from floppylm.campaign_report import attempt_record, baseline_complete
 from floppylm.model import GPTConfig
 
 
@@ -345,12 +346,35 @@ class Campaign:
         for index, cfg in enumerate(candidates):
             groups.append([self.trial(f"{phase}-{index}-{seed}", cfg, seed) for seed in (0, 1)])
         valid = [(index, group) for index, group in enumerate(groups) if self.comparable(group)]
-        if not valid or not self.comparable([s for _, group in valid for s in group]):
-            raise RuntimeError(phase + ": neutral candidates do not meet byte parity")
-        best = self.rank_stable(phase, valid)
+        best = self.select_winner(phase, valid)
         self.state["decisions"][phase] = candidates[best].to_dict()
         self.save()
         return candidates[best]
+
+    def select_winner(self, phase, candidates):
+        """Every selecting phase uses the same byte and rank policy (ADR 0015)."""
+        comparable = bool(candidates) and self.comparable(
+            [s for _, group in candidates for s in group]
+        )
+        scores = [
+            {
+                "candidate": key,
+                "run_ids": [s["run_id"] for s in group],
+                "mean_val_bpb": [self._mean_bpb(group, i) for i in range(3)],
+            }
+            for key, group in candidates
+        ]
+        diagnostic = {"phase": phase, "byte_comparable": comparable, "scores": scores}
+        self.state.setdefault("comparisons", {})[phase] = diagnostic
+        self.save()
+        if not comparable:
+            raise RuntimeError(phase + ": candidates fail byte parity")
+        try:
+            return self.rank_stable(phase, candidates)
+        except RuntimeError as error:
+            self.state["instability"] = {**diagnostic, "error": str(error)}
+            self.save()
+            raise
 
     def report(self):
         trials = []
@@ -360,17 +384,7 @@ class Campaign:
                     continue
                 path = EVIDENCE / "runs" / run_id / "summary.json"
                 summary = json.loads(path.read_text()) if path.exists() else {}
-                trials.append(
-                    {
-                        "key": key,
-                        "run_id": run_id,
-                        "status": summary.get("status", "reserved"),
-                        "eligibility": record["status"],
-                        "compute": summary.get("compute"),
-                        "saturation": summary.get("saturation"),
-                        "recipe": record["recipe"],
-                    }
-                )
+                trials.append(attempt_record(key, record, run_id, summary))
         costs = [r["compute"] for r in trials if r["compute"] is not None]
         report = {
             "campaign": self.state["id"],
@@ -394,9 +408,15 @@ class Campaign:
             "cost_unavailable_trials": [r["run_id"] for r in trials if r["compute"] is None],
             "validation_paired": self.state.get("paired"),
             "decisions": self.state["decisions"],
+            "comparisons": self.state.get("comparisons", {}),
+            "instability": self.state.get("instability"),
         }
+        frozen = final = None
         selection = self.state.get("selection")
         if selection:
+            frozen_path = EVIDENCE / "selections" / (selection + ".json")
+            if frozen_path.exists():
+                frozen = json.loads(frozen_path.read_text())
             path = EVIDENCE / "selections" / (selection + ".test.json")
             if path.exists():
                 final = json.loads(path.read_text())
@@ -410,6 +430,7 @@ class Campaign:
                     EVIDENCE / "selections" / (selection + ".json")
                 )
                 report["test_report_sha256"] = runlog.sha256_file(path)
+        report["baseline_complete"] = baseline_complete(self.state, frozen, final)
         runlog.write_json(self.root / "summary.json", report)
         destination = EVIDENCE / "campaigns" / self.state["id"]
         destination.mkdir(parents=True, exist_ok=True)
@@ -422,7 +443,9 @@ class Campaign:
             "",
             f"Trials: {report['original_trials']}; byte repairs: {report['repair_trials']}.",
             "Costs, exclusions, recipes and hashes are in summary.json.",
-            "This campaign establishes a scalar E0 baseline. Vector cores are outside E0.",
+            "This campaign establishes a scalar E0 baseline. Vector cores are outside E0."
+            if report["baseline_complete"]
+            else "Partial campaign evidence; no completed scalar E0 baseline.",
         ]
         if "test_paired" in report:
             lines += [
@@ -465,9 +488,10 @@ class Campaign:
                 s = self.trial(f"tune-{fmt}-{lr}-{axis}", cfg, 0, lr, wd)
                 if s is not None:
                     candidates.append((s, lr, wd, cfg))
-            if not candidates or not self.comparable([c[0] for c in candidates]):
-                raise RuntimeError("tuning candidates fail comparison gates")
-            _, lr, wd, cfg = min(candidates, key=lambda c: selection_branch(c[0])["val_bpb"])
+            winner = self.select_winner(
+                "tuning-" + fmt, [(i, [c[0]]) for i, c in enumerate(candidates)]
+            )
+            _, lr, wd, cfg = candidates[winner]
             self.state["phase"] = "grid-" + fmt
             self.save()
             grid = [
@@ -475,9 +499,8 @@ class Campaign:
                 for i, c in enumerate(shapes.grid(cfg, budget))
             ]
             valid = [(s, c) for s, c in grid if s is not None]
-            if not valid or not self.comparable([s for s, _ in valid]):
-                raise RuntimeError("grid candidates fail comparison gates")
-            _, cfg = min(valid, key=lambda item: selection_branch(item[0])["val_bpb"])
+            winner = self.select_winner("grid-" + fmt, [(i, [s]) for i, (s, _) in enumerate(valid)])
+            _, cfg = valid[winner]
             recipes[fmt] = (cfg, lr, wd)
             self.state["decisions"][fmt] = {"config": cfg.to_dict(), "lr": lr, "wd": wd}
             self.save()
