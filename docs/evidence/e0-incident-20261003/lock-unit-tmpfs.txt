@@ -1,0 +1,4 @@
+.                                                                        [100%]
+1 passed in 2.40s
+
+exit_status=0

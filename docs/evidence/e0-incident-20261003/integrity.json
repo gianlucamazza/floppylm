@@ -1,0 +1,25 @@
+{
+  "at": "2026-10-03T14:06:56.014710+00:00",
+  "checks": {
+    "owner_payload_hash_matches_submission": true,
+    "owner_payload_equals_submitted_job": true,
+    "package_and_source_match": true,
+    "no_fault_probe": true,
+    "acceptance_hash_matches": true,
+    "initialization_asset_matches": true,
+    "data_asset_matches": true,
+    "indices_asset_matches": true,
+    "checkpoint_recipe_matches": true,
+    "checkpoint_initialization_matches": true,
+    "branch_position_consistent": true,
+    "source_files_unchanged": true,
+    "qualified_backend_runtime_tree_matches": true
+  },
+  "checkpoint_step": 2944,
+  "worker_last_completed_step": 3008,
+  "stream_position": 94208,
+  "checkpoint_restore_ok": true,
+  "live_recovery_ready": false,
+  "live_recovery_blocker": "same failed worker still listed; no advancing ready replacement worker",
+  "final_test_reservations_for_campaign": []
+}

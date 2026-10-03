@@ -1,0 +1,12 @@
+{
+  "branch_models_valid": 2,
+  "checkpoint_step": 2944,
+  "exact_restore_roundtrip": true,
+  "ok": true,
+  "rejects_negative_second_moment": true,
+  "rejects_recipe_mutation": true,
+  "rejects_stream_mutation": true,
+  "stream_position": 94208,
+  "tensor_count": 20,
+  "training_executed": false
+}

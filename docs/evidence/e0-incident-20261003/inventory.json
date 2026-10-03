@@ -1,0 +1,175 @@
+{
+  "at": "2026-10-03T13:59:28.949906+00:00",
+  "files": [
+    {
+      "path": "runs/e0-campaign-20261003-098/worker.lock",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "runs/e0-campaign-20261003-098/runtime-events.jsonl",
+      "bytes": 862,
+      "sha256": "77d744e0328e878dece355c0c53838d5b9f6d7b0006eed7254c5739e8e927ae9"
+    },
+    {
+      "path": "runs/e0-campaign-20261003-098/e0-20261003T104407Z-a8d8b9-000.log",
+      "bytes": 9870,
+      "sha256": "e779d2fccd70a8b3f5bcbbf6a148fbca037f94f68d86bf230a4ae66d7c5686f1"
+    },
+    {
+      "path": "runs/e0-campaign-20261003-098/monitor.jsonl",
+      "bytes": 1971291,
+      "sha256": "e1fb50b3fae37afd220db2c594898f0208c6e4f0f25c8915f5449081d6cb76cb"
+    },
+    {
+      "path": "runs/e0-campaign-20261003-098/monitor.json",
+      "bytes": 28195,
+      "sha256": "0d66bce31f987b5e8b8530ebf670d945a1f3531c7040591235df194a1159530e"
+    },
+    {
+      "path": "runs/e0-campaign-20261003-098/campaign.json",
+      "bytes": 5992,
+      "sha256": "4dd27574ca9d2d6dcc7a1f461b2d34a0658439fab37f3b63cbaf6890c734ae84"
+    },
+    {
+      "path": "runs/e0-campaign-20261003-098/summary.json",
+      "bytes": 1711,
+      "sha256": "e0a92e524275701f75c5d77275964099546917294ca7692508a4d7dad4d73a03"
+    },
+    {
+      "path": "runs/e0-20261003T104407Z-a8d8b9-000/worker.lock",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "runs/e0-20261003T104407Z-a8d8b9-000/manifest.json",
+      "bytes": 6481,
+      "sha256": "d0fab7a0f1c8b38018b2b2d2ca3eb83cbd4d51581ba620cf6f19400f325e3ad9"
+    },
+    {
+      "path": "runs/e0-20261003T104407Z-a8d8b9-000/status.json",
+      "bytes": 774,
+      "sha256": "d4d1f35ddc8c4c2df9cad0496bf7ef77dc836d80b59f45407ece7e432000de93"
+    },
+    {
+      "path": "runs/e0-20261003T104407Z-a8d8b9-000/xbox/train.bin",
+      "bytes": 2166391771,
+      "sha256": "8745f0d0f0c2ede79305e35393f90b35ff15c91fa1d85abed2acafdf4046e092"
+    },
+    {
+      "path": "runs/e0-20261003T104407Z-a8d8b9-000/xbox/initial.json",
+      "bytes": 9338165,
+      "sha256": "8f90e9117af6eccf2bdfb8f515031ce172942f33020162f6c596224f47c3643f"
+    },
+    {
+      "path": "runs/e0-20261003T104407Z-a8d8b9-000/xbox/indices.bin",
+      "bytes": 900096,
+      "sha256": "16b1d8d3061e3fe6cd8783ab45a4cf14a6411f64ed3738e320171d62d99ad5b5"
+    },
+    {
+      "path": "runs/e0-20261003T104407Z-a8d8b9-000/xbox/job.json",
+      "bytes": 898,
+      "sha256": "60ef6689e040fbabb75edfc6d9e128a5061f282d45ff71523d77f65021256161"
+    },
+    {
+      "path": "runs/e0-20261003T104407Z-a8d8b9-000/xbox/zero-row-gate.json",
+      "bytes": 436,
+      "sha256": "396dac80c8d15d38b95cc1d2ddcf1f47ef7b2f762f8188f7785f0998cc0d408b"
+    },
+    {
+      "path": "runs/e0-20261003T104407Z-a8d8b9-000/xbox/submitted.json",
+      "bytes": 1385,
+      "sha256": "cc77f2034def0fd079eeb9b84688f6efc76b76b97ee6d2a2c9312285a81f3179"
+    },
+    {
+      "path": "runs/e0-20261003T104407Z-a8d8b9-000/xbox/runtime-events.jsonl",
+      "bytes": 8921,
+      "sha256": "6638d3891d06c3ddad0386722b45788a0bdf4cb5c0025c242a17ed29aa3531c0"
+    },
+    {
+      "path": "runs/e0-20261003T104407Z-a8d8b9-000/xbox/runtime.json",
+      "bytes": 411,
+      "sha256": "af2a277e63ebaf9becbc8538b40131196f3d69e467798d19fb2b5790a129ca32"
+    },
+    {
+      "path": "runs/e0-20261003T104407Z-a8d8b9-000/xbox/result.json",
+      "bytes": 23141,
+      "sha256": "acef764602f7c6c90d75fc5c37aa6247c3a55280bd81a38893b5d1d4d99c92fb"
+    },
+    {
+      "path": "runs/e0-launch-20261003T104300Z/tunnel.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "runs/e0-launch-20261003T104300Z/preflight.json",
+      "bytes": 11350,
+      "sha256": "4dba9a3e252728f625a0f276bb04a66574b383dc622d2919b49084f929cedccd"
+    },
+    {
+      "path": "runs/e0-launch-20261003T104300Z/launch.json",
+      "bytes": 1899,
+      "sha256": "bf49068dcc09f97838bf245fbdc678f03a4ecc2e7bb82fe046982f74608ba72a"
+    },
+    {
+      "path": "runs/e0-launch-20261003T104300Z/campaign.log",
+      "bytes": 2150,
+      "sha256": "e3fd183f4991d9de9065297e0d75b6202c0aea93b7663541e653f1af0f1d340c"
+    },
+    {
+      "path": "runs/e0-launch-20261003T104300Z/monitor-errors.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "runs/e0-launch-20261003T104300Z/worker-observations.jsonl",
+      "bytes": 1227,
+      "sha256": "fbbdac96861631f57c85997778ae7710e98ddff55949e6e9e48946609c35207f"
+    },
+    {
+      "path": "runs/e0-launch-20261003T104300Z/floppylm-e0-campaign-20261003T104300Z.service",
+      "bytes": 1679,
+      "sha256": "6acadfac1b9187c7a278a4d9c3fba621d8119d0771829953ee584e4c2d75afdb"
+    },
+    {
+      "path": "runs/e0-launch-20261003T104300Z/floppylm-e0-tunnel-20261003T104300Z.service",
+      "bytes": 752,
+      "sha256": "b816a0d2751c2f35fc9fd41cb3970a1d3a945ded47de08db482a56f1d4186827"
+    },
+    {
+      "path": "runs/e0-launch-20261003T104300Z/floppylm-e0-monitor-20261003T104300Z.service",
+      "bytes": 1092,
+      "sha256": "28533ad134a24f6a20b611cc4322c2cbb9be44cb88a619535b7351a792acc2b1"
+    },
+    {
+      "path": "runs/e0-launch-20261003T104300Z/unit-verification.txt",
+      "bytes": 14,
+      "sha256": "ed163d69a09ddc0ffcbdf126a42d5745a93449fa7a39354788e948b7ac795c04"
+    },
+    {
+      "path": "runs/e0-launch-20261003T104300Z/post-integration-status.json",
+      "bytes": 39280,
+      "sha256": "dbfe2d5a9d9ce547c5b82e3d96a2e8a98d2823343873374a7addc053beee9103"
+    },
+    {
+      "path": "docs/evidence/e0-v2/campaigns/e0-20261003T104407Z-a8d8b9/summary.json",
+      "bytes": 1711,
+      "sha256": "e0a92e524275701f75c5d77275964099546917294ca7692508a4d7dad4d73a03"
+    },
+    {
+      "path": "docs/evidence/e0-v2/campaigns/e0-20261003T104407Z-a8d8b9/campaign.json",
+      "bytes": 5992,
+      "sha256": "4dd27574ca9d2d6dcc7a1f461b2d34a0658439fab37f3b63cbaf6890c734ae84"
+    },
+    {
+      "path": "docs/evidence/e0-v2/campaigns/e0-20261003T104407Z-a8d8b9/notes.md",
+      "bytes": 199,
+      "sha256": "b79550eacfded406585be60a7dd38b2ab9f1828c5c60fc4783a2b9ac100b8cc9"
+    },
+    {
+      "path": "docs/evidence/e0-v2/runs/e0-20261003T104407Z-a8d8b9-000/summary.json",
+      "bytes": 4242,
+      "sha256": "cb9e275c283ccd947d9512f32cb50c2219edb441bb0eb8dec3beafe664f9c1a4"
+    }
+  ]
+}

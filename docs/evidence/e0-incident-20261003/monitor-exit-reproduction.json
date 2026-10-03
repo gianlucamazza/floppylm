@@ -1,0 +1,8 @@
+{
+  "actual_state": "stopped",
+  "last_snapshot": "running",
+  "observations": 1,
+  "terminal_observation_present": false,
+  "child_returncode": -15,
+  "scope": "actual watch plus SIGTERM; live unit linkage proven by journal"
+}

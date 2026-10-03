@@ -1,0 +1,40 @@
+[
+  {
+    "filesystem": "tmpfs",
+    "stat_device": [
+      0,
+      55
+    ],
+    "inode": 27403,
+    "kernel_fdinfo": [
+      "pos:\t0\nflags:\t02100001\nmnt_id:\t163\nino:\t27403\nlock:\t1: FLOCK  ADVISORY  WRITE 530610 00:37:27403 0 EOF\n"
+    ],
+    "independent_contention_proves_held": true,
+    "held_current": "live",
+    "held_legacy": "owned_or_waiting",
+    "wrong_owner": "lock_owner_mismatch",
+    "identity_mismatch": "identity_mismatch",
+    "dead_owner": "dead",
+    "released_current": "lock_abandoned",
+    "released_legacy": "unowned_legacy_lock"
+  },
+  {
+    "filesystem": "btrfs",
+    "stat_device": [
+      0,
+      51
+    ],
+    "inode": 71473576,
+    "kernel_fdinfo": [
+      "pos:\t0\nflags:\t02100001\nmnt_id:\t54\nino:\t71473576\nlock:\t1: FLOCK  ADVISORY  WRITE 530612 00:24:71473576 0 EOF\n"
+    ],
+    "independent_contention_proves_held": true,
+    "held_current": "lock_unverified",
+    "held_legacy": "unowned_legacy_lock",
+    "wrong_owner": "lock_unverified",
+    "identity_mismatch": "identity_mismatch",
+    "dead_owner": "dead",
+    "released_current": "lock_abandoned",
+    "released_legacy": "unowned_legacy_lock"
+  }
+]
