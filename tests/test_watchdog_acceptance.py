@@ -107,3 +107,22 @@ def test_observation_refuses_an_unrelated_owner(tmp_path, acceptance):
             sleep=lambda _: None,
             processes=lambda _: [{}],
         )
+
+
+def test_protection_hashes_bound_science_without_downloading_archived_fixtures(acceptance):
+    class Portal:
+        def files(self):
+            return {"science.job.json": 20, "old-fixture.job.json": 10000000, "data.chunk": 99}
+
+        def get(self, name):
+            assert name == "science.job.json"
+            return b'{"job_id":"science","purpose":"scientific"}'
+
+        def status(self, job_id):
+            assert job_id == "science"
+            return {"state": "interrupted", "checkpoint": {"sha256": "a" * 64}}
+
+    result = acceptance.protected_snapshot(Portal(), job_ids={"science"})
+    assert "sha256" in result["science.job.json"]
+    assert result["science.job.json"]["scientific_status"]["state"] == "interrupted"
+    assert result["old-fixture.job.json"] == {"bytes": 10000000}

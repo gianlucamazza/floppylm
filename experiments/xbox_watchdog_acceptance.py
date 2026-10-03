@@ -26,9 +26,27 @@ from floppylm_xbox.jobs import prepare_job
 from floppylm_xbox.portal import Portal, check_acceptance
 
 
-def protected_snapshot(portal, names=None):
+def protected_job_ids():
+    """Use committed scientific provenance, not filename guesses, to select bindings."""
+    evidence = ROOT / "docs/evidence/e0-v2"
+    ids = set()
+    for path in (evidence / "campaigns").glob("*/campaign.json"):
+        state = json.loads(path.read_text())
+        for record in state["trials"].values():
+            ids.add(record["run_id"])
+            if record.get("repair_id"):
+                ids.add(record["repair_id"])
+    for path in (evidence / "runs").glob("*/summary.json"):
+        summary = json.loads(path.read_text())
+        if summary.get("backend_name") == "xbox" and not summary.get("smoke", True):
+            ids.add(summary["run_id"])
+    return ids
+
+
+def protected_snapshot(portal, names=None, *, job_ids=None):
     """Bind pre-existing inputs and scientific result descriptors; do not rewrite them."""
     inventory = portal.files()
+    job_ids = protected_job_ids() if job_ids is None else job_ids
     if names is None:
         if any(name.endswith(".ready") for name in inventory):
             raise RuntimeError("pending inbox work; watchdog qualification refused")
@@ -38,7 +56,7 @@ def protected_snapshot(portal, names=None):
         if name not in inventory:
             raise RuntimeError("protected inbox file disappeared: " + name)
         item = {"bytes": inventory[name]}
-        if name.endswith(".json"):
+        if name.endswith(".job.json") and name.removesuffix(".job.json") in job_ids:
             payload = portal.get(name)
             item["sha256"] = runlog.sha256_bytes(payload)
             if name.endswith(".job.json"):
@@ -205,8 +223,8 @@ def qualify(portal, out, accepted):
         "observation": observation,
         "exact_recovery": exact,
         "protected_unchanged": baseline == after,
-        "protection_scope": "pre-existing inbox inventory, JSON bytes and scientific status; "
-        "large content-addressed inputs checked by inventory, not rehashed",
+        "protection_scope": "pre-existing inbox inventory; committed scientific job JSON "
+        "bytes and result descriptors; archived payloads checked by inventory, not rehashed",
         "probe_jobs": [prefix + "-control", prefix + "-probe"],
         "ok": exact and baseline == after,
     }

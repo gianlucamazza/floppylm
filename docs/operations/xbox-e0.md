@@ -247,8 +247,9 @@ python experiments/xbox_watchdog_acceptance.py --out runs/watchdog-new --accepta
 ```
 
 The runner refuses pending inbox work and scientific running records. It records
-pre-existing inbox sizes, JSON hashes and scientific result descriptors before and
-after; large content-addressed inputs are not rehashed. It retains uniquely named
+the complete pre-existing inbox inventory, hashes of job JSON bound by committed
+scientific evidence, and their result descriptors before and after. Archived
+fixture payloads and large content-addressed inputs are not rehashed. It retains uniquely named
 functional jobs as evidence and does not restore stale worker identity files.
 It observes the real 600-second watchdog, requires process exit, explicitly starts
 that same package once, then compares recovered numerical artifacts and checkpoint
