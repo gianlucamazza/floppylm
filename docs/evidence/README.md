@@ -88,3 +88,6 @@ A dated narrative of these packages is in the [archive](../archive/xbox-e0-histo
 grid, paired σ and the held-out test remain open; the [roadmap](../roadmap.md) defines those gates.
 
 Real-deadline watchdog: [xbox-e0-20261003-098](xbox-e0-20261003-098/notes.md), complete functional qualification with exact recovery and preservation evidence. The [0.1.0.96 incomplete attempt](xbox-e0-20261003-096-incomplete/notes.md) records the defect discovered before the final qualification.
+
+[E0 readiness, 2026-10-03](e0-readiness-20261003/notes.md): integrated fixes, read-only
+Odroid observation, corpus/protocol binding and cost envelope; no campaign launched.

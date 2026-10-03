@@ -72,3 +72,7 @@ cause remains unproven.
 The read-only preflight and [launch packet](operations/e0-launch-packet.md) prepare a new
 source freeze under the existing scientific protocol. Readiness is timestamped and
 must be rechecked at launch; preparation does not authorize or start a campaign.
+
+The [2026-10-03 readiness observation](evidence/e0-readiness-20261003/notes.md) passed
+through Odroid on the unchanged accepted package. It is preparation evidence, not
+a campaign start or final-test reservation.
