@@ -195,3 +195,85 @@ def test_paired_rank_stable_requires_matching_sign(campaign_module):
     }
     with pytest.raises(RuntimeError, match="rank unstable at T"):
         campaign_module.Campaign.paired_rank_stable(flipped)
+
+
+@pytest.mark.parametrize("phase", ["tuning", "grid"])
+@pytest.mark.parametrize("branch", [0, 1])
+def test_real_campaign_stops_before_advancing_an_unstable_phase(
+    tmp_path, monkeypatch, campaign_module, phase, branch
+):
+    proof, speed = inputs(tmp_path)
+    campaign = campaign_module.Campaign(tmp_path / "campaign", proof, speed)
+    monkeypatch.setattr(campaign, "neutral", lambda _, candidates: candidates[0])
+    monkeypatch.setattr(campaign_module.shapes, "grid", lambda cfg, budget: [cfg, cfg])
+    monkeypatch.setattr(campaign_module, "selection_branch", lambda s: s["branches"][2])
+    calls = []
+
+    def trial(key, *args):
+        calls.append(key)
+        prefix = ("tune" if phase == "tuning" else phase) + "-ternary"
+        peers = [k for k in calls if k.startswith(prefix)]
+        losses = [1.0, 1.0, 1.0]
+        if key.startswith(prefix):
+            losses = [2.0, 2.0, 1.0] if len(peers) == 1 else [3.0, 3.0, 2.0]
+            if len(peers) > 1:
+                losses[branch] = 1.0
+        return _summary_run(key, *losses)
+
+    monkeypatch.setattr(campaign, "trial", trial)
+    monkeypatch.setattr(campaign, "run_command", Mock(side_effect=AssertionError("late phase")))
+    with pytest.raises(RuntimeError, match="rank unstable"):
+        campaign.run()
+    assert not any(k.startswith("paired-") for k in calls)
+    assert "ternary" not in campaign.state["decisions"]
+    diagnostic = campaign.state["instability"]
+    assert diagnostic["phase"] == phase + "-ternary"
+    assert diagnostic["scores"]
+    campaign.lock.close()
+
+
+def test_report_keeps_attempt_recipe_and_eligibility_separate(
+    tmp_path, monkeypatch, campaign_module
+):
+    proof, speed = inputs(tmp_path)
+    campaign = campaign_module.Campaign(tmp_path / "campaign", proof, speed)
+    evidence = tmp_path / "evidence"
+    monkeypatch.setattr(campaign_module, "EVIDENCE", evidence)
+    recipe = {"config": {"d_ff": 391}, "seed": 0, "lr": 0.003, "wd": 0.1}
+    campaign.state.update(
+        status="stopped",
+        trials={
+            "trial": {
+                "run_id": "original",
+                "repair_id": "repair",
+                "result": "repair",
+                "recipe": recipe,
+                "status": "eligible",
+            }
+        },
+    )
+    for name, width, size in [("original", 391, 84800), ("repair", 400, 86038)]:
+        directory = evidence / "runs" / name
+        directory.mkdir(parents=True)
+        summary = _summary_run(name, 1.5, 1.4, 1.3)
+        summary.update(
+            status="completed",
+            target_bytes=85937.5,
+            config={"d_ff": width},
+            spec={"seed": 0, "lr": 0.003, "wd": 0.1},
+        )
+        summary["branches"][-1]["model_bytes"] = size
+        (directory / "summary.json").write_text(json.dumps(summary))
+    campaign.report()
+    report = json.loads((campaign.root / "summary.json").read_text())
+    original, repair = report["trials"]
+    assert original["eligibility"] == "excluded"
+    assert repair["eligibility"] == "eligible"
+    assert original["recipe"]["config"]["d_ff"] == 391
+    assert repair["recipe"]["config"]["d_ff"] == 400
+    assert repair["requested_recipe"] == recipe
+    assert repair["selected"] and not original["selected"]
+    assert report["baseline_complete"] is False
+    notes = (evidence / "campaigns" / campaign.state["id"] / "notes.md").read_text()
+    assert "establishes a scalar E0 baseline" not in notes
+    campaign.lock.close()

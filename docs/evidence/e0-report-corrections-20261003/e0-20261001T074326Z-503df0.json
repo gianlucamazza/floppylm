@@ -1,0 +1,66 @@
+{
+ "baseline_complete": false,
+ "campaign": "e0-20261001T074326Z-503df0",
+ "comparisons": {},
+ "comparisons_scope": "only recorded group gates; absent gates remain unknown",
+ "input_sha256": {
+  "campaigns/e0-20261001T074326Z-503df0/campaign.json": "4b0d2902b42ee95f6f024804937dacc66db8ff0112fbe204344776b223bda258",
+  "campaigns/e0-20261001T074326Z-503df0/summary.json": "9ef5a5c12862a574686e506bf2badf5df10ce9e8ea16eaf982f3209b9a61fad8",
+  "runs/e0-20261001T074326Z-503df0-000/summary.json": "327cbddf7c94cdd5459d29a00ae1b2502af4627317c2dbf56b3a551e49b812af"
+ },
+ "original_status": "stopped",
+ "purpose": "historical reporting correction, not new scientific evidence",
+ "trials": [
+  {
+   "attempt": "original",
+   "compute": null,
+   "eligibility": "unknown",
+   "eligibility_scope": "individual 4T serialized-byte parity; group gates are separate",
+   "exclusion_reasons": [],
+   "key": "neutral-scale-0-0",
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 391,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "gelu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row16",
+     "vocab": 256
+    },
+    "lr": 0.003,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "requested_recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 391,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "gelu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row16",
+     "vocab": 256
+    },
+    "lr": 0.003,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "run_id": "e0-20261001T074326Z-503df0-000",
+   "saturation": null,
+   "selected": false,
+   "status": "interrupted",
+   "trial_outcome": "reserved"
+  }
+ ]
+}

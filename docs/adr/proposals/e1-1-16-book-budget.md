@@ -12,7 +12,7 @@ Base: scalar 4T artifact `e0-20261002T090742Z-2fe64f-000-repair` (86,038 B, d=96
 
 Target 85,937.5 bytes.
 
-| learned | G | rate | shared book | book entry B | hybrid B | fill | fits ±1% |
+| learned | G | rate | shared book | book entry B | hybrid B | fill | within budget ceiling |
 | --- | ---: | ---: | --- | ---: | ---: | ---: | --- |
 | no (seed) | 8 | 0.50 | yes | 0 | 37,776 | 0.440 | yes |
 | no | 8 | 0.75 | yes | 0 | 49,520 | 0.576 | yes |
@@ -26,6 +26,8 @@ Target 85,937.5 bytes.
 | yes | 16 | 0.50 | no | 98,304 | 137,687 | 1.602 | **no** |
 | yes | 16 | 0.75 | yes | 131,072 | 180,935 | 2.105 | **no** |
 | yes | 16 | 0.75 | no | 1,572,864 | 1,622,903 | 18.89 | **no** |
+
+This column checks the upper budget bound only, not scientific ±1% byte parity.
 
 Seed/fixed books all fit with headroom (the core is smaller than ternary at 0.5–0.75 bits/weight; an equal-byte arm would grow width/depth). Learned books fit at G=8, and at G=16 r=0.5 **only if the book is shared**. The 4096-entry G=16 r=0.75 book from the ADR 0013 stress case cannot exist at 1/16 even shared.
 

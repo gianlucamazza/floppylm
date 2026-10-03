@@ -42,6 +42,8 @@ It is not a brainstorm, a survey or a TODO.
 
 | [0017](0017-runtime-liveness.md) | Bounded GPU waits, worker ownership and explicit runtime recovery; hardware after E0 | accepted |
 
+| [0018](0018-e0-correctness-and-runtime-qualification.md) | Uniform selection gates, attempt evidence and functional watchdog qualification | accepted |
+
 ## Proposals
 
 | Proposal                                                                  | Outcome             |
