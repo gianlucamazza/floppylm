@@ -1,0 +1,55 @@
+{
+  "observations": [
+    {
+      "observed_at": "2026-10-03T10:46:02+00:00",
+      "worker": {
+        "active_job": {
+          "job_id": "e0-20261003T104407Z-a8d8b9-000",
+          "job_sha256": "25b53e33d60b1f972d6e2beac848b5a4778c9228605497baf9b3ff962d1ae9f9"
+        },
+        "commit": "cc134fe4458ffa51c73331ee6dd6af4a6ae8b0d7",
+        "fault": null,
+        "heartbeat_seq": 905,
+        "package": "GianlucaMazza.XgpuE0_0.1.0.98_x64__g0p5dcfz4t9z4",
+        "pid": 952,
+        "progress": {
+          "completed_fence": 11597,
+          "cooldown_step": 0,
+          "operation": "tensor op 0",
+          "phase": "trunk",
+          "sequence": 15999,
+          "trunk_step": 75
+        },
+        "schema": "floppylm.worker.v1",
+        "state": "running",
+        "worker_id": "b99f4f41-fd33-4bc2-a3e9-9e23f8995bc2"
+      }
+    },
+    {
+      "observed_at": "2026-10-03T10:47:35+00:00",
+      "worker": {
+        "active_job": {
+          "job_id": "e0-20261003T104407Z-a8d8b9-000",
+          "job_sha256": "25b53e33d60b1f972d6e2beac848b5a4778c9228605497baf9b3ff962d1ae9f9"
+        },
+        "commit": "cc134fe4458ffa51c73331ee6dd6af4a6ae8b0d7",
+        "fault": null,
+        "heartbeat_seq": 924,
+        "package": "GianlucaMazza.XgpuE0_0.1.0.98_x64__g0p5dcfz4t9z4",
+        "pid": 952,
+        "progress": {
+          "completed_fence": 15505,
+          "cooldown_step": 0,
+          "operation": "tensor op 0",
+          "phase": "trunk",
+          "sequence": 20029,
+          "trunk_step": 197
+        },
+        "schema": "floppylm.worker.v1",
+        "state": "running",
+        "worker_id": "b99f4f41-fd33-4bc2-a3e9-9e23f8995bc2"
+      }
+    }
+  ],
+  "progress_verified": true
+}

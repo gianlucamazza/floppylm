@@ -106,17 +106,21 @@ and docs may change.
 
 ```bash
 systemd-run --user --unit=floppylm-e0-campaign-<unique> \
-  --working-directory="$PWD" --property=TimeoutStartSec=infinity \
-  /bin/bash -c 'exec .venv/bin/python -u experiments/e0_campaign.py \
+  --slice=background.slice --working-directory="$PWD" \
+  --property=Restart=no --property=KillMode=mixed --property=TimeoutStopSec=infinity \
+  /bin/bash -c 'exec /home/gianluca/.local/bin/bg .venv/bin/python -u experiments/e0_campaign.py \
     --out runs/e0-campaign-<unique> \
     --acceptance runs/xbox-acceptance-<date>-ci<run>/acceptance.json \
     --benchmark runs/xbox-benchmark-<date>-ci<run>/summary.json \
     >> runs/e0-campaign-<unique>.launch.log 2>&1'
 ```
 
-Enable linger (`loginctl enable-linger "$USER"`). Never wrap campaign or training jobs in `bg`:
-it moves them into `background.slice`, capped at one core. Long jobs stay in `app.slice`
-([stack](../stack.md), [ADR 0017](../adr/0017-runtime-liveness.md)).
+Verify linger (`loginctl show-user "$USER" -p Linger`). The current owner instruction
+requires `bg` for CPU-heavy jobs; the supervised service also sets `background.slice`
+explicitly. The wrapper then preserves that cgroup. This overrides the historical
+`app.slice` exception for new launches; accepted ADR text remains historical. The
+observed slice quota is one CPU, so old host-duration estimates do not apply. See
+the [launch evidence](../evidence/e0-launch-20261003/notes.md).
 
 ## Recover
 

@@ -1,0 +1,35 @@
+{
+  "observed_at": "2026-10-03T10:47:06.178734+00:00",
+  "locks": [
+    {
+      "path": "runs/e0-campaign-20261003-098/worker.lock",
+      "pid": 291643,
+      "stat_device": [
+        0,
+        51
+      ],
+      "inode": 71456707,
+      "owned_descriptors": [
+        {
+          "fd": "4",
+          "fdinfo": "pos:\t0\nflags:\t02102001\nmnt_id:\t54\nino:\t71456707\nlock:\t1: FLOCK  ADVISORY  WRITE 291643 00:24:71456707 0 EOF\n"
+        }
+      ]
+    },
+    {
+      "path": "runs/e0-20261003T104407Z-a8d8b9-000/worker.lock",
+      "pid": 291696,
+      "stat_device": [
+        0,
+        51
+      ],
+      "inode": 71456718,
+      "owned_descriptors": [
+        {
+          "fd": "4",
+          "fdinfo": "pos:\t0\nflags:\t02102001\nmnt_id:\t54\nino:\t71456718\nlock:\t1: FLOCK  ADVISORY  WRITE 291696 00:24:71456718 0 EOF\n"
+        }
+      ]
+    }
+  ]
+}

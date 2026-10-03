@@ -24,8 +24,9 @@ Owner of languages, toolchain and machine constraints. It does not own the thesi
 - **Host**: Lenovo i7-1165G7, 4C/8T, 32 GB, Iris Xe without CUDA. Measured: 92–117 GFLOPS fp32 in
   bursts, ~23 GB/s, slow bf16 (not native), AVX512-VNNI for int8 ([R6](research/06-hardware-budget.md)).
   It prepares data, runs the Python oracle and evaluation, and drives the Xbox. Long jobs run
-  under `systemd-run --user` with linger, in `app.slice`, **outside** `background.slice`
-  (1-core quota). Logs live in `runs/` ([runbook](operations/xbox-e0.md),
+  under `systemd-run --user` with linger, through `bg` in `background.slice`, following
+  the current owner instruction (observed quota: one CPU). This overrides the historical
+  `app.slice` exception for new launches. Logs live in `runs/` ([runbook](operations/xbox-e0.md),
   [ADR 0003](adr/0003-lab-practices.md), [ADR 0017](adr/0017-runtime-liveness.md)).
 - **Xbox Series S** (retail, Dev Mode): E0 training at 1/16 on the hardware GPU
   ([ADR 0009](adr/0009-xbox-e0-backend.md)); operations in the [runbook](operations/xbox-e0.md).
