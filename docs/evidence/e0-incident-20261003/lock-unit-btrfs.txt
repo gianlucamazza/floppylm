@@ -1,0 +1,25 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_________________ test_process_identity_and_live_lock_required _________________
+
+tmp_path = PosixPath('/home/gianluca/Workspace/experiments/floppy_4mb/runs/e0-incident-20261003T113647Z/pytest-btrfs/test_process_identity_and_live0')
+
+    def test_process_identity_and_live_lock_required(tmp_path):
+        runlog.set_status(tmp_path, "running")
+        status = json.loads((tmp_path / "status.json").read_text())
+        assert status["process_identity"]["pid"] == os.getpid()
+        lock_path = tmp_path / "worker.lock"
+        with lock_path.open("w") as lock:
+            fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+>           assert runlog.host_liveness(status, lock_path) == "live"
+E           AssertionError: assert 'lock_unverified' == 'live'
+E
+E             - live
+E             + lock_unverified
+
+tests/test_campaign_liveness.py:33: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_campaign_liveness.py::test_process_identity_and_live_lock_required
+1 failed in 2.56s
+
+exit_status=1

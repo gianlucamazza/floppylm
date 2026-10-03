@@ -1,0 +1,16 @@
+{
+  "results": {
+    "branch-1758.json": 7409318,
+    "branch-879.json": 7442952,
+    "checkpoint.json": 23688680,
+    "checkpoint.json.tmp": 0,
+    "status.json": 16730
+  },
+  "job_controls": {
+    "e0-20261003T104407Z-a8d8b9-000.claimed": 5,
+    "e0-20261003T104407Z-a8d8b9-000.job.json": 1101,
+    "e0-20261003T104407Z-a8d8b9-000.owned.job.json": 1101,
+    "e0-20261003T104407Z-a8d8b9-000.owner.25b53e33d60b1f972d6e2beac848b5a4778c9228605497baf9b3ff962d1ae9f9.json": 1538,
+    "e0-20261003T104407Z-a8d8b9-000.owner.json": 1538
+  }
+}

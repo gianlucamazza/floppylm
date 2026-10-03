@@ -1,0 +1,142 @@
+{
+  "original_files": 34,
+  "all_unchanged": true,
+  "checks": [
+    {
+      "path": "runs/e0-campaign-20261003-098/worker.lock",
+      "unchanged": true
+    },
+    {
+      "path": "runs/e0-campaign-20261003-098/runtime-events.jsonl",
+      "unchanged": true
+    },
+    {
+      "path": "runs/e0-campaign-20261003-098/e0-20261003T104407Z-a8d8b9-000.log",
+      "unchanged": true
+    },
+    {
+      "path": "runs/e0-campaign-20261003-098/monitor.jsonl",
+      "unchanged": true
+    },
+    {
+      "path": "runs/e0-campaign-20261003-098/monitor.json",
+      "unchanged": true
+    },
+    {
+      "path": "runs/e0-campaign-20261003-098/campaign.json",
+      "unchanged": true
+    },
+    {
+      "path": "runs/e0-campaign-20261003-098/summary.json",
+      "unchanged": true
+    },
+    {
+      "path": "runs/e0-20261003T104407Z-a8d8b9-000/worker.lock",
+      "unchanged": true
+    },
+    {
+      "path": "runs/e0-20261003T104407Z-a8d8b9-000/manifest.json",
+      "unchanged": true
+    },
+    {
+      "path": "runs/e0-20261003T104407Z-a8d8b9-000/status.json",
+      "unchanged": true
+    },
+    {
+      "path": "runs/e0-20261003T104407Z-a8d8b9-000/xbox/train.bin",
+      "unchanged": true
+    },
+    {
+      "path": "runs/e0-20261003T104407Z-a8d8b9-000/xbox/initial.json",
+      "unchanged": true
+    },
+    {
+      "path": "runs/e0-20261003T104407Z-a8d8b9-000/xbox/indices.bin",
+      "unchanged": true
+    },
+    {
+      "path": "runs/e0-20261003T104407Z-a8d8b9-000/xbox/job.json",
+      "unchanged": true
+    },
+    {
+      "path": "runs/e0-20261003T104407Z-a8d8b9-000/xbox/zero-row-gate.json",
+      "unchanged": true
+    },
+    {
+      "path": "runs/e0-20261003T104407Z-a8d8b9-000/xbox/submitted.json",
+      "unchanged": true
+    },
+    {
+      "path": "runs/e0-20261003T104407Z-a8d8b9-000/xbox/runtime-events.jsonl",
+      "unchanged": true
+    },
+    {
+      "path": "runs/e0-20261003T104407Z-a8d8b9-000/xbox/runtime.json",
+      "unchanged": true
+    },
+    {
+      "path": "runs/e0-20261003T104407Z-a8d8b9-000/xbox/result.json",
+      "unchanged": true
+    },
+    {
+      "path": "runs/e0-launch-20261003T104300Z/tunnel.log",
+      "unchanged": true
+    },
+    {
+      "path": "runs/e0-launch-20261003T104300Z/preflight.json",
+      "unchanged": true
+    },
+    {
+      "path": "runs/e0-launch-20261003T104300Z/launch.json",
+      "unchanged": true
+    },
+    {
+      "path": "runs/e0-launch-20261003T104300Z/campaign.log",
+      "unchanged": true
+    },
+    {
+      "path": "runs/e0-launch-20261003T104300Z/monitor-errors.log",
+      "unchanged": true
+    },
+    {
+      "path": "runs/e0-launch-20261003T104300Z/worker-observations.jsonl",
+      "unchanged": true
+    },
+    {
+      "path": "runs/e0-launch-20261003T104300Z/floppylm-e0-campaign-20261003T104300Z.service",
+      "unchanged": true
+    },
+    {
+      "path": "runs/e0-launch-20261003T104300Z/floppylm-e0-tunnel-20261003T104300Z.service",
+      "unchanged": true
+    },
+    {
+      "path": "runs/e0-launch-20261003T104300Z/floppylm-e0-monitor-20261003T104300Z.service",
+      "unchanged": true
+    },
+    {
+      "path": "runs/e0-launch-20261003T104300Z/unit-verification.txt",
+      "unchanged": true
+    },
+    {
+      "path": "runs/e0-launch-20261003T104300Z/post-integration-status.json",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/e0-v2/campaigns/e0-20261003T104407Z-a8d8b9/summary.json",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/e0-v2/campaigns/e0-20261003T104407Z-a8d8b9/campaign.json",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/e0-v2/campaigns/e0-20261003T104407Z-a8d8b9/notes.md",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/e0-v2/runs/e0-20261003T104407Z-a8d8b9-000/summary.json",
+      "unchanged": true
+    }
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "at": "2026-10-03T14:02:02.615133+00:00",
+  "worker": {
+    "active_job": {
+      "job_id": "e0-20261003T104407Z-a8d8b9-000",
+      "job_sha256": "25b53e33d60b1f972d6e2beac848b5a4778c9228605497baf9b3ff962d1ae9f9"
+    },
+    "commit": "cc134fe4458ffa51c73331ee6dd6af4a6ae8b0d7",
+    "fault": {
+      "completed_fence": 113834,
+      "elapsed_ms": 600806,
+      "error": "published GPU fence frozen",
+      "kind": "gpu_wait_timeout",
+      "requested_fence": 0
+    },
+    "heartbeat_seq": 1514,
+    "package": "GianlucaMazza.XgpuE0_0.1.0.98_x64__g0p5dcfz4t9z4",
+    "pid": 952,
+    "progress": {
+      "completed_fence": 113834,
+      "cooldown_step": 0,
+      "operation": "tensor op 0",
+      "phase": "trunk",
+      "sequence": 121431,
+      "trunk_step": 3008
+    },
+    "schema": "floppylm.worker.v1",
+    "state": "failed",
+    "worker_id": "b99f4f41-fd33-4bc2-a3e9-9e23f8995bc2"
+  },
+  "processes": [
+    {
+      "AppName": "FloppyLM E0 GPU trainer",
+      "CPUUsage": 0.0,
+      "ImageName": "XgpuE0.exe",
+      "IsRunning": true,
+      "PackageFullName": "GianlucaMazza.XgpuE0_0.1.0.98_x64__g0p5dcfz4t9z4",
+      "PageFileUsage": 144625664,
+      "PrivateWorkingSet": 115101696,
+      "ProcessId": 952,
+      "Publisher": "CN=uwp-crossbuild-dev",
+      "SessionId": 0,
+      "TotalCommit": 153882624,
+      "UserName": "XBOX\\UserMgr0",
+      "VirtualSize": 4753612800,
+      "WorkingSetSize": 176832512,
+      "Version": {
+        "Build": 0,
+        "Major": 0,
+        "Minor": 1,
+        "Revision": 98
+      }
+    }
+  ]
+}

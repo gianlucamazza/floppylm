@@ -9,7 +9,7 @@ bump or campaign start/stop. Last updated: **2026-10-03**.
 | E0 v2 software       | **measured**: harness, gates and smoke ([evidence](evidence/README.md))                                                                                                                 |
 | S1–S10, scale policy | accepted ([ADR 0008](adr/0008-e0-numeric-protocol.md), [ADR 0011](adr/0011-e0-row-scale-selection.md))                                                                                  |
 | Xbox package | **accepted** `GianlucaMazza.XgpuE0_0.1.0.98_x64__g0p5dcfz4t9z4`, source `cc134fe4`, CI [37112204165](https://github.com/gianlucamazza/xbox-gpu-training/actions/runs/37112204165). [Evidence](evidence/xbox-e0-20261003-098/notes.md): full numerical gates, actual 600-second watchdog exit and exact explicit recovery, lifecycle, bit identity 38/38 versus 0.1.0.95; shader unchanged. Functional throughput 9747.980 tok/s. |
-| E0 campaign | **running** `e0-20261003T104407Z-a8d8b9`, started 2026-10-03T10:44:07Z on accepted `0.1.0.98`; phase `neutral-scale`. Frozen host source `8867ec6`. [Launch evidence](evidence/e0-launch-20261003/notes.md). |
+| E0 campaign | **stopped** `e0-20261003T104407Z-a8d8b9` at 2026-10-03T11:36:47Z; first trial interrupted by the published-fence watchdog. Checkpoint 2944 and two branches verified; worker reached 3008 before checkpoint publication stalled. Frozen host source `8867ec6`, package `0.1.0.98`. [Incident analysis](evidence/e0-incident-20261003/notes.md). |
 | Previous E0 campaign | **stopped** `e0-20261002T191632Z-ca781f` on 0.1.0.93 (2026-10-03T00:04:51Z). Trial `000` **eligible** (fill 0.9990/0.9998/1.0012, val bpb 1.5155/1.3951/1.3160). Trial `001` **eligible** after S3 `d_ff` 400 (fill 0.9996/1.0007/1.0009, val bpb 1.5100/1.3916/1.3082, bytes 85904/86000/86015). Trial `002` row8log **interrupted** at stop, not a result. Do not resume `ca781f` onto 0.1.0.95. Frozen FloppyLM `3c3c79d`. |
 | Previous campaign    | `e0-20261001T163456Z-fdab67` (0.1.0.56) **stopped**, 001 incomplete; do not resume. Before that, `e0-20261001T090514Z-4236fd` (0.1.0.28) stopped unsaturated — [record](evidence/e0-v2/campaigns/e0-20261001T090514Z-4236fd/notes.md) |
 | E0 saturation gate   | recorded, not an eligibility gate ([ADR 0015](adr/0015-e0-fixed-data-frontier.md)) |
@@ -18,7 +18,7 @@ bump or campaign start/stop. Last updated: **2026-10-03**.
 | E1 qualification     | CPU functional qualification **measured** ([ADR 0013](adr/0013-e1-functional-qualification.md), [evidence](evidence/e1-qualification-20261001/notes.md)); Xbox vector qualification pending |
 | Scientific E1–E4     | **specified**, gated by E0 and an accepted E1 protocol ([roadmap](roadmap.md), [completion plan](completion-plan.md)) |
 
-Campaign `a8d8b9` is running on accepted package `0.1.0.98`. Campaign `ca781f` remains stopped and published. The stopped campaign retains its `3c3c79d` source binding. Correctness changes under ADR 0018 require a new source freeze for the next campaign; they do not migrate historical runs. Architecture notes stay proposals: [S3 fill](adr/proposals/e0-fill-aware-solver.md), [E1 book budget](adr/proposals/e1-1-16-book-budget.md).
+Campaign `a8d8b9` is stopped on package `0.1.0.98`; its observed worker is failed and not recovery-ready. Functional acceptance remains historical; the incident exposes a coverage limit in the watchdog exit qualification. Campaign `ca781f` remains stopped and published. The stopped campaign retains its `3c3c79d` source binding. Correctness changes under ADR 0018 require a new source freeze for the next campaign; they do not migrate historical runs. Architecture notes stay proposals: [S3 fill](adr/proposals/e0-fill-aware-solver.md), [E1 book budget](adr/proposals/e1-1-16-book-budget.md).
 
 ```bash
 python scripts/e0_status.py --campaign runs/e0-campaign-20261003-098
@@ -28,7 +28,7 @@ python scripts/e0_status.py --campaign runs/e0-campaign-20261003-098 --xbox
 Do not resume `fdab67` onto 0.1.0.65, 0.1.0.66, 0.1.0.68, 0.1.0.76, 0.1.0.80, 0.1.0.84, 0.1.0.86, 0.1.0.93, or 0.1.0.95.
 Do not continue `40a67c` onto a later package. Do not recover `2fe64f` or `ca781f` onto 0.1.0.95.
 
-## Next (0.1.0.98 accepted; E0 running)
+## Next (E0 stopped; diagnosis complete, recovery not executed)
 
 Done since the stop: xbox-gpu-training consumes the whole published contract set (PR #22, #20);
 Xbox execution moved to `floppylm_xbox` with generic Device Portal settings
@@ -42,10 +42,11 @@ worker/recovery/suspension tests, exact numerical comparison and screenshot reco
 [both-repository release evidence](evidence/xbox-e0-20261001-dashboard/notes.md).
 Backend ADR 0005 and canonical documentation links were merged in PR #27.
 
-1. Observe authorized campaign `a8d8b9` through its scientific gates, including the
-   reserved final test only after selection passes. Preserve frozen host sources
-   and package `0.1.0.98`. Historical campaigns remain retired. Fill-aware solver
-   and E1 book-budget notes stay proposals. Keep XgpuE0 in the foreground.
+1. Review the [incident findings and correction gates](evidence/e0-incident-20261003/notes.md).
+   Preserve `a8d8b9` sources, package and artifacts. Recovery requires an explicitly
+   restored live idle worker on the same package; no automatic resume or new trial.
+   The [observability proposal](adr/proposals/e0-incident-observability.md) is not accepted.
+   Historical campaigns remain retired; E1 and solver proposals remain separate.
 2. Obtain independent GPU attribution: the global idle counter stayed high in twelve
    controlled modes, including CoreWindow without XAML/D3D12. GPU reduction is **unvalidated**.
 3. Rename the local working directory to `floppylm` at a session boundary, then
@@ -84,3 +85,13 @@ reserved final test conditional on passing gates. The [launch record](evidence/e
 binds preflight, source freeze, exact package, supervised services and observed
 GPU progress. This authorization supersedes the preparation-only scope above;
 it does not authorize an E1 protocol or continuation after a failed scientific gate.
+
+## Incident observation (2026-10-03)
+
+The campaign stopped at 11:36:47Z. The monitor was stopped by its systemd dependency
+9 seconds after its last `running` observation; `monitor.json` is historical, not
+live status. Read-only observations at 13:59:27Z and 14:02:02Z found the same failed
+worker, unchanged heartbeat and still-listed PID 952. Checkpoint/branch integrity
+and native offline restore passed. No restart, resume, deployment or final-test
+evaluation was performed during diagnosis. The initiating function is not proven;
+the checkpoint serialization/write path is the leading localized hypothesis.
