@@ -42,6 +42,9 @@ portal.py        Device Portal: settings, pinned TLS, verified assets, submissio
 | `xbox_recovery_acceptance.py`  | Interrupted and completed recovery                     | `--out` `--acceptance`                                                                                                                                                                                           |
 | `xbox_lifecycle_acceptance.py` | Real suspension and checkpoint lifecycle               | `--out` `--acceptance`                                                                                                                                                                                           |
 
+`experiments/xbox_watchdog_acceptance.py`: real-deadline functional watchdog,
+process exit and exact-recovery acceptance; no scientific campaign.
+
 ## Contracts — `schemas/`
 
 JSON Schemas of every file exchanged with the native backend; see [schemas/README.md](../../schemas/README.md).

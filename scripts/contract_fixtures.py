@@ -265,6 +265,12 @@ def instances(binary: Path) -> dict[str, dict]:
         },
     }
 
+    valid["floppylm.e0.job.v1/watchdog-probe"] = {
+        **native["tiny"],
+        "purpose": "functional",
+        "runtime_fault_probe": {"kind": "published_fence_stall", "after_checkpoint_step": 1},
+    }
+
     def broken(name: str, edit) -> dict:
         """A reduced copy of a valid golden that breaks exactly one rule."""
         base = shrink(valid[name])
@@ -374,6 +380,17 @@ def instances(binary: Path) -> dict[str, dict]:
             "floppylm.device.v1/failed", lambda d: d.update(hardware_gpu=True)
         ),
     }
+    for case, edit in {
+        "scientific": lambda j: j.update(purpose="scientific"),
+        "missing-purpose": lambda j: j.pop("purpose"),
+        "resume": lambda j: j.update(resume=j["initialization"]),
+        "stop-after": lambda j: j.update(stop_after=1),
+        "zero": lambda j: j["runtime_fault_probe"].update(after_checkpoint_step=0),
+        "unknown-kind": lambda j: j["runtime_fault_probe"].update(kind="other"),
+    }.items():
+        invalid["floppylm.e0.job.v1/watchdog-" + case] = broken(
+            "floppylm.e0.job.v1/watchdog-probe", edit
+        )
     return {
         **{"valid/" + k: v for k, v in valid.items()},
         **{"invalid/" + k: v for k, v in invalid.items()},

@@ -54,6 +54,31 @@ def read_env_file(path: Path) -> dict[str, str]:
 ACCEPTANCE_SCHEMA = "floppylm.xbox.acceptance.v1"
 
 
+def check_runtime_probe(job: dict, purpose: str) -> None:
+    """Reject functional fault injection before remote publication or GPU dispatch."""
+    if "runtime_fault_probe" not in job:
+        return
+    if purpose != "functional" or "resume" in job or "stop_after" in job:
+        raise ValueError("runtime fault probes require fresh functional jobs")
+    probe = job["runtime_fault_probe"]
+    if (
+        not isinstance(probe, dict)
+        or set(probe) != {"kind", "after_checkpoint_step"}
+        or probe["kind"] != "published_fence_stall"
+        or type(probe["after_checkpoint_step"]) not in (int, float)
+        or (
+            isinstance(probe["after_checkpoint_step"], float)
+            and not probe["after_checkpoint_step"].is_integer()
+        )
+    ):
+        raise ValueError("invalid runtime fault probe")
+    per_step = job["spec"]["batch"] * job["config"]["ctx"]
+    end = 4 * max(1, job["spec"]["tokens"] // per_step)
+    last_trunk = end - max(1, int(0.1 * end))
+    if not 1 <= probe["after_checkpoint_step"] <= last_trunk:
+        raise ValueError("runtime fault probe checkpoint is unreachable")
+
+
 def check_acceptance(proof: dict, device: dict, package: str) -> None:
     """Scientific runs bind a passing acceptance measured on this exact package and commit."""
     if proof.get("schema") != ACCEPTANCE_SCHEMA or not proof.get("ok"):
@@ -278,6 +303,7 @@ class Portal:
                 raise RuntimeError("scientific Xbox runs require acceptance evidence")
             check_acceptance(json.loads(acceptance.read_text()), device, self.package)
         job = json.loads((root / "job.json").read_text())
+        check_runtime_probe(job, purpose)
         try:
             self.status(job["job_id"])
         except FileNotFoundError:
@@ -429,6 +455,7 @@ class Portal:
         if root is not None and payload.get("event") in (
             "transport_failure",
             "worker_transport_unknown",
+            "transport_exhausted",
         ):
             runlog.write_json(
                 root / "runtime.json",
@@ -437,6 +464,7 @@ class Portal:
                     "liveness": "unknown",
                     "progress": "unverified",
                     "event": payload["event"],
+                    **{k: payload[k] for k in ("resource", "attempt") if k in payload},
                 },
             )
         text = json.dumps(payload)
@@ -455,7 +483,44 @@ class Portal:
         observation_dir: Path | None = None,
     ) -> dict:
         previous = None
-        transport_failures = 0
+        transport_failures = {"status": 0, "worker": 0}
+
+        def transport_failed(resource, error):
+            transport_failures[resource] += 1
+            attempt = transport_failures[resource]
+            event = {
+                "event": "transport_exhausted" if attempt >= 5 else "transport_failure",
+                "resource": resource,
+                "attempt": attempt,
+                "liveness": "unknown",
+                "progress": "unverified",
+                "error": type(error).__name__,
+                "job_id": job_id,
+            }
+            if attempt in (1, 5):
+                self._runtime_event(observation_dir, event, log)
+            elif observation_dir is not None:
+                self._durable_json(
+                    observation_dir / "runtime.json", {"observed_at": runlog.now(), **event}
+                )
+            if attempt >= 5:
+                raise error
+            time.sleep(2**attempt)
+
+        def transport_succeeded(resource):
+            if transport_failures[resource]:
+                self._runtime_event(
+                    observation_dir,
+                    {
+                        "event": "transport_recovered",
+                        "resource": resource,
+                        "attempt": transport_failures[resource],
+                        "job_id": job_id,
+                    },
+                    log,
+                )
+            transport_failures[resource] = 0
+
         deadline = time.monotonic() + 300
         acknowledged = False
         monitor = None
@@ -477,22 +542,9 @@ class Portal:
                 time.sleep(2)
                 continue
             except (OSError, http.client.HTTPException) as error:
-                transport_failures += 1
-                self._runtime_event(
-                    observation_dir,
-                    {
-                        "event": "transport_failure",
-                        "liveness": "unknown",
-                        "attempt": transport_failures,
-                        "error": type(error).__name__,
-                    },
-                    log,
-                )
-                if transport_failures >= 5:
-                    raise
-                time.sleep(2**transport_failures)
+                transport_failed("status", error)
                 continue
-            transport_failures = 0
+            transport_succeeded("status")
             if expected_sha and report.get("job_sha256") != expected_sha:
                 if observed_sha != report.get("job_sha256"):
                     observed_sha = report.get("job_sha256")
@@ -522,17 +574,9 @@ class Portal:
                 try:
                     worker = self.worker()
                 except (OSError, http.client.HTTPException) as error:
-                    self._runtime_event(
-                        observation_dir,
-                        {
-                            "event": "worker_transport_unknown",
-                            "error": type(error).__name__,
-                            "job_id": job_id,
-                        },
-                        log,
-                    )
-                    time.sleep(2)
+                    transport_failed("worker", error)
                     continue
+                transport_succeeded("worker")
                 monitor = monitor or RuntimeMonitor(job_id, expected_sha or report["job_sha256"])
                 observation = monitor.observe(report, worker, time.monotonic())
                 for event in observation["events"]:
@@ -791,6 +835,7 @@ class Portal:
         if previous.get("state") != "interrupted" or previous.get("checkpoint") != checkpoint:
             raise RuntimeError("resume requires the bound interrupted checkpoint")
         job.pop("stop_after", None)
+        job.pop("runtime_fault_probe", None)
         job["resume"] = checkpoint
         self._publish(root, job, "resume")
         return hashlib.sha256(json.dumps(job, sort_keys=True).encode()).hexdigest()
