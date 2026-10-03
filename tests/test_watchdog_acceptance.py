@@ -89,3 +89,21 @@ def test_pending_inbox_work_refuses_qualification(acceptance):
 
     with pytest.raises(RuntimeError, match="pending"):
         acceptance.protected_snapshot(Portal())
+
+
+def test_observation_refuses_an_unrelated_owner(tmp_path, acceptance):
+    class Portal:
+        def worker(self, **kwargs):
+            return worker("another-job", "a" * 64)
+
+    with pytest.raises(RuntimeError, match="exact job owner"):
+        acceptance.observe_exit(
+            Portal(),
+            "probe",
+            "a" * 64,
+            "source",
+            tmp_path,
+            clock=lambda: 0,
+            sleep=lambda _: None,
+            processes=lambda _: [{}],
+        )
