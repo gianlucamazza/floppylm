@@ -1,0 +1,50 @@
+{
+ "campaign": "e0-20261002T072408Z-40a67c",
+ "commit": "f2d2a23395e24d9b9f0c7df931c4e51116c43edd",
+ "cost": {
+  "eval_seconds": 0,
+  "native_execution_seconds": 0,
+  "total_flops": 0,
+  "total_tokens": 0,
+  "wall_seconds": 0
+ },
+ "cost_scope": "completed trial compute; host wall per recorded host attempt",
+ "cost_unavailable_trials": [
+  "e0-20261002T072408Z-40a67c-000"
+ ],
+ "decisions": {},
+ "original_trials": 1,
+ "package": "GianlucaMazza.XgpuE0_0.1.0.80_x64__g0p5dcfz4t9z4",
+ "repair_trials": 0,
+ "status": "stopped",
+ "trials": [
+  {
+   "compute": null,
+   "eligibility": "reserved",
+   "key": "neutral-scale-0-0",
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 391,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "gelu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row16",
+     "vocab": 256
+    },
+    "lr": 0.003,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "run_id": "e0-20261002T072408Z-40a67c-000",
+   "saturation": null,
+   "status": "failed"
+  }
+ ],
+ "validation_paired": null
+}

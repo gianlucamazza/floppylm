@@ -40,6 +40,21 @@ until host retrieval and evaluation complete.
 | [`e0-v2/runs/e0-20261001T090514Z-4236fd-000-repair`](e0-v2/runs/e0-20261001T090514Z-4236fd-000-repair/notes.md) | its S3 byte repair: byte parity met, Δ(2T→4T) = −0.079, not saturated | excluded |
 | [`e0-v2/runs/e0-20261001T090514Z-4236fd-001`](e0-v2/runs/e0-20261001T090514Z-4236fd-001/notes.md) | trial 001 (row16, seed 1): bytes −1.3%, Δ(2T→4T) = −0.085, not saturated | completed |
 | `e0-v2/runs/e0-20261001T090514Z-4236fd-001-repair` | its byte repair, stopped with the campaign at trunk step 162 | interrupted |
+| [`e0-v2/runs/e0-20261001T163456Z-fdab67-000`](e0-v2/runs/e0-20261001T163456Z-fdab67-000/notes.md) | `fdab67` on 0.1.0.56, row16 seed 0: bytes short, not saturated. No campaign report was written | excluded |
+| [`e0-v2/runs/e0-20261001T163456Z-fdab67-000-repair`](e0-v2/runs/e0-20261001T163456Z-fdab67-000-repair/notes.md) | its S3 repair: parity met, val bpb 1.5155/1.3951/1.3160, Δ(2T→4T) = −0.079 | eligible |
+| `e0-v2/runs/e0-20261001T163456Z-fdab67-001` | seed 1 interrupted before a cooldown | interrupted |
+| [`e0-v2/campaigns/e0-20261002T072408Z-40a67c`](e0-v2/campaigns/e0-20261002T072408Z-40a67c/notes.md) | campaign on 0.1.0.80; trial 000 interrupted before a cooldown | stopped |
+| `e0-v2/runs/e0-20261002T072408Z-40a67c-000` | that trial: Xbox job interrupted, not a result | failed |
+| [`e0-v2/campaigns/e0-20261002T090742Z-2fe64f`](e0-v2/campaigns/e0-20261002T090742Z-2fe64f/notes.md) | campaign on 0.1.0.86; seed 0 repair eligible, seed 1 interrupted | stopped |
+| [`e0-v2/runs/e0-20261002T090742Z-2fe64f-000`](e0-v2/runs/e0-20261002T090742Z-2fe64f-000/notes.md) | row16 seed 0: bytes short, not saturated | excluded |
+| [`e0-v2/runs/e0-20261002T090742Z-2fe64f-000-repair`](e0-v2/runs/e0-20261002T090742Z-2fe64f-000-repair/notes.md) | S3 repair, same artifacts as `fdab67-000-repair`, Δ(2T→4T) = −0.079 | eligible |
+| `e0-v2/runs/e0-20261002T090742Z-2fe64f-001` | seed 1 interrupted before a cooldown; do not recover | interrupted |
+| [`e0-v2/campaigns/e0-20261002T191632Z-ca781f`](e0-v2/campaigns/e0-20261002T191632Z-ca781f/notes.md) | campaign on 0.1.0.93; both row16 seeds eligible; trial 002 interrupted | stopped |
+| [`e0-v2/runs/e0-20261002T191632Z-ca781f-000`](e0-v2/runs/e0-20261002T191632Z-ca781f-000/notes.md) | row16 seed 0: bytes short, val bpb 1.5148/1.3938/1.3120 | excluded |
+| [`e0-v2/runs/e0-20261002T191632Z-ca781f-000-repair`](e0-v2/runs/e0-20261002T191632Z-ca781f-000-repair/notes.md) | S3 repair, same artifacts as `fdab67-000-repair`, eligible | eligible |
+| [`e0-v2/runs/e0-20261002T191632Z-ca781f-001`](e0-v2/runs/e0-20261002T191632Z-ca781f-001/notes.md) | row16 seed 1: bytes short, val bpb 1.5273/1.4052/1.3204 | excluded |
+| [`e0-v2/runs/e0-20261002T191632Z-ca781f-001-repair`](e0-v2/runs/e0-20261002T191632Z-ca781f-001-repair/notes.md) | S3 repair eligible, val bpb 1.5100/1.3916/1.3082, Δ(2T→4T) = −0.083 | eligible |
+| `e0-v2/runs/e0-20261002T191632Z-ca781f-002` | `row8log` `d_ff` 415, interrupted at the start, not a result | interrupted |
 | [`e0-lite/pre-v2`](e0-lite/pre-v2/notes.md)                                                                                                 | stopped E0-lite grid; diagnostic, excluded from verdicts, FLP1 blobs | —           |
 
 ### Xbox package acceptance
@@ -65,4 +80,5 @@ under [ADR 0013](../adr/0013-e1-functional-qualification.md). It is neither scie
 vector acceptance; the producing code is `scripts/e1_qualify.py` on `main`.
 
 A dated narrative of these packages is in the [archive](../archive/xbox-e0-history.md).
-Scientific E0 results are pending; the [roadmap](../roadmap.md) defines completion gates.
+`ca781f` is the first row16 pair with both seeds eligible under ADR 0015. The rest of the E0
+grid, paired σ and the held-out test remain open; the [roadmap](../roadmap.md) defines those gates.

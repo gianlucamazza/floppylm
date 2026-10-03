@@ -1,0 +1,498 @@
+{
+ "backend": {
+  "adapter": "SraKmd_arden",
+  "branches": [
+   {
+    "artifact": {
+     "bytes": 7442952,
+     "path": "results/e0-20261002T090742Z-2fe64f-000/branch-879.json",
+     "sha256": "dcc7e6d5a89bc0c24d0d9019884ea54ff80aef3dedf09119e0ae16a3b27bb325"
+    },
+    "cooldown_seconds": 68.128057651,
+    "cooldown_start": 792,
+    "cooldown_steps": 87,
+    "end_step": 879,
+    "tokens_seen": 7200768
+   },
+   {
+    "artifact": {
+     "bytes": 7409318,
+     "path": "results/e0-20261002T090742Z-2fe64f-000/branch-1758.json",
+     "sha256": "49a6e9a484371ddfbf1f86fc54f3e0621cda7ead69a451a3fe6b0f1648951aa6"
+    },
+    "cooldown_seconds": 130.356474921,
+    "cooldown_start": 1583,
+    "cooldown_steps": 175,
+    "end_step": 1758,
+    "tokens_seen": 14401536
+   },
+   {
+    "artifact": {
+     "bytes": 7365385,
+     "path": "results/e0-20261002T090742Z-2fe64f-000/branch-3516.json",
+     "sha256": "4ce25b9eee7caf23949d36fb02505d4a317e6c9874935d7aac041c17771586d8"
+    },
+    "cooldown_seconds": 259.560378228,
+    "cooldown_start": 3165,
+    "cooldown_steps": 351,
+    "end_step": 3516,
+    "tokens_seen": 28803072
+   }
+  ],
+  "checkpoint": {
+   "bytes": 23683501,
+   "path": "results/e0-20261002T090742Z-2fe64f-000/checkpoint.json",
+   "sha256": "6ef6d3c6b84c229dc107d2134459d818de2055f5c3a81b487e6315fa6c3592e7"
+  },
+  "dispatches": 19464256,
+  "execution_segments": [
+   {
+    "adapter": "SraKmd_arden",
+    "branches": [
+     {
+      "artifact": {
+       "bytes": 7442952,
+       "path": "results/e0-20261002T090742Z-2fe64f-000/branch-879.json",
+       "sha256": "dcc7e6d5a89bc0c24d0d9019884ea54ff80aef3dedf09119e0ae16a3b27bb325"
+      },
+      "cooldown_seconds": 68.128057651,
+      "cooldown_start": 792,
+      "cooldown_steps": 87,
+      "end_step": 879,
+      "tokens_seen": 7200768
+     }
+    ],
+    "checkpoint": {
+     "bytes": 23768928,
+     "path": "results/e0-20261002T090742Z-2fe64f-000/checkpoint.json",
+     "sha256": "92ce73a852e6afb6f810a75a027e0a3b3ff9bc82ce9c8cdbabc2fbeb67736ba7"
+    },
+    "dispatches": 6192704,
+    "gpu_seconds": 790.8668041310318,
+    "hardware_gpu": true,
+    "job_id": "e0-20261002T090742Z-2fe64f-000",
+    "job_sha256": "acabe5e67db9b4ff22a0fea03b0a0460c86dbe61fd33ce2550f69fbb8e2c7666",
+    "last_loss": 1.0835257106862137,
+    "peak_memory_bytes": 114348032,
+    "phase": "trunk",
+    "schedule": {
+     "T": 879,
+     "cooldown_starts": [
+      792,
+      1583,
+      3165
+     ],
+     "ends": [
+      879,
+      1758,
+      3516
+     ],
+     "tokens_per_step": 8192,
+     "warmup": 17
+    },
+    "schema": "floppylm.e0.result.v1",
+    "state": "interrupted",
+    "transfer_bytes": 57444137728,
+    "trunk_step": 1115,
+    "wall_seconds": 940.319491523
+   },
+   {
+    "adapter": "SraKmd_arden",
+    "branches": [
+     {
+      "artifact": {
+       "bytes": 7442952,
+       "path": "results/e0-20261002T090742Z-2fe64f-000/branch-879.json",
+       "sha256": "dcc7e6d5a89bc0c24d0d9019884ea54ff80aef3dedf09119e0ae16a3b27bb325"
+      },
+      "cooldown_seconds": 68.128057651,
+      "cooldown_start": 792,
+      "cooldown_steps": 87,
+      "end_step": 879,
+      "tokens_seen": 7200768
+     }
+    ],
+    "checkpoint": {
+     "bytes": 23751887,
+     "path": "results/e0-20261002T090742Z-2fe64f-000/checkpoint.json",
+     "sha256": "00e90b71d99bfae0389a012dc8dcbbeae0491da47c9ba762b5e88081c0bce7af"
+    },
+    "dispatches": 1488928,
+    "gpu_seconds": 189.99653541861537,
+    "hardware_gpu": true,
+    "job_id": "e0-20261002T090742Z-2fe64f-000",
+    "job_sha256": "7c4e2a759a1b979fa194d50797732ff9175a62ffd139e6f889c3d81ad1c00559",
+    "last_loss": 1.121497165572956,
+    "peak_memory_bytes": 110895104,
+    "phase": "trunk",
+    "schedule": {
+     "T": 879,
+     "cooldown_starts": [
+      792,
+      1583,
+      3165
+     ],
+     "ends": [
+      879,
+      1758,
+      3516
+     ],
+     "tokens_per_step": 8192,
+     "warmup": 17
+    },
+    "schema": "floppylm.e0.result.v1",
+    "state": "interrupted",
+    "transfer_bytes": 13811444096,
+    "trunk_step": 1404,
+    "wall_seconds": 216.375939037
+   },
+   {
+    "adapter": "SraKmd_arden",
+    "branches": [
+     {
+      "artifact": {
+       "bytes": 7442952,
+       "path": "results/e0-20261002T090742Z-2fe64f-000/branch-879.json",
+       "sha256": "dcc7e6d5a89bc0c24d0d9019884ea54ff80aef3dedf09119e0ae16a3b27bb325"
+      },
+      "cooldown_seconds": 68.128057651,
+      "cooldown_start": 792,
+      "cooldown_steps": 87,
+      "end_step": 879,
+      "tokens_seen": 7200768
+     },
+     {
+      "artifact": {
+       "bytes": 7409318,
+       "path": "results/e0-20261002T090742Z-2fe64f-000/branch-1758.json",
+       "sha256": "49a6e9a484371ddfbf1f86fc54f3e0621cda7ead69a451a3fe6b0f1648951aa6"
+      },
+      "cooldown_seconds": 130.356474921,
+      "cooldown_start": 1583,
+      "cooldown_steps": 175,
+      "end_step": 1758,
+      "tokens_seen": 14401536
+     }
+    ],
+    "checkpoint": {
+     "bytes": 23684369,
+     "path": "results/e0-20261002T090742Z-2fe64f-000/checkpoint.json",
+     "sha256": "20774a34b768cffc721fa63e3e1439173b60c9ad159b9ca0395c8a71da34b162"
+    },
+    "dispatches": 9824864,
+    "gpu_seconds": 1254.0382318197408,
+    "hardware_gpu": true,
+    "job_id": "e0-20261002T090742Z-2fe64f-000",
+    "job_sha256": "b76b5d49767774fe652da8baa1f7a74cb2434a6e0e4beeacd9c0ae013b1e831a",
+    "last_loss": 1.0387081055118363,
+    "peak_memory_bytes": 115187712,
+    "phase": "trunk",
+    "schedule": {
+     "T": 879,
+     "cooldown_starts": [
+      792,
+      1583,
+      3165
+     ],
+     "ends": [
+      879,
+      1758,
+      3516
+     ],
+     "tokens_per_step": 8192,
+     "warmup": 17
+    },
+    "schema": "floppylm.e0.result.v1",
+    "state": "interrupted",
+    "transfer_bytes": 91136414848,
+    "trunk_step": 3136,
+    "wall_seconds": 2766.396769362
+   },
+   {
+    "adapter": "SraKmd_arden",
+    "branches": [
+     {
+      "artifact": {
+       "bytes": 7442952,
+       "path": "results/e0-20261002T090742Z-2fe64f-000/branch-879.json",
+       "sha256": "dcc7e6d5a89bc0c24d0d9019884ea54ff80aef3dedf09119e0ae16a3b27bb325"
+      },
+      "cooldown_seconds": 68.128057651,
+      "cooldown_start": 792,
+      "cooldown_steps": 87,
+      "end_step": 879,
+      "tokens_seen": 7200768
+     },
+     {
+      "artifact": {
+       "bytes": 7409318,
+       "path": "results/e0-20261002T090742Z-2fe64f-000/branch-1758.json",
+       "sha256": "49a6e9a484371ddfbf1f86fc54f3e0621cda7ead69a451a3fe6b0f1648951aa6"
+      },
+      "cooldown_seconds": 130.356474921,
+      "cooldown_start": 1583,
+      "cooldown_steps": 175,
+      "end_step": 1758,
+      "tokens_seen": 14401536
+     },
+     {
+      "artifact": {
+       "bytes": 7365385,
+       "path": "results/e0-20261002T090742Z-2fe64f-000/branch-3516.json",
+       "sha256": "4ce25b9eee7caf23949d36fb02505d4a317e6c9874935d7aac041c17771586d8"
+      },
+      "cooldown_seconds": 259.560378228,
+      "cooldown_start": 3165,
+      "cooldown_steps": 351,
+      "end_step": 3516,
+      "tokens_seen": 28803072
+     }
+    ],
+    "checkpoint": {
+     "bytes": 23683501,
+     "path": "results/e0-20261002T090742Z-2fe64f-000/checkpoint.json",
+     "sha256": "6ef6d3c6b84c229dc107d2134459d818de2055f5c3a81b487e6315fa6c3592e7"
+    },
+    "dispatches": 1957760,
+    "gpu_seconds": 249.92085818561873,
+    "hardware_gpu": true,
+    "job_id": "e0-20261002T090742Z-2fe64f-000",
+    "job_sha256": "0a26dd4705c2f215303007e3076fd40b2f5fd5ba8b40182af4dff49a6fce9cce",
+    "last_loss": 1.0841151086993683,
+    "peak_memory_bytes": 112394240,
+    "phase": "trunk",
+    "schedule": {
+     "T": 879,
+     "cooldown_starts": [
+      792,
+      1583,
+      3165
+     ],
+     "ends": [
+      879,
+      1758,
+      3516
+     ],
+     "tokens_per_step": 8192,
+     "warmup": 17
+    },
+    "schema": "floppylm.e0.result.v1",
+    "state": "completed",
+    "transfer_bytes": 18160376320,
+    "trunk_step": 3165,
+    "wall_seconds": 282.107859463
+   }
+  ],
+  "gpu_seconds": 2484.8224295550067,
+  "hardware_gpu": true,
+  "job_id": "e0-20261002T090742Z-2fe64f-000",
+  "job_sha256": "0a26dd4705c2f215303007e3076fd40b2f5fd5ba8b40182af4dff49a6fce9cce",
+  "last_loss": 1.0841151086993683,
+  "peak_memory_bytes": 115187712,
+  "phase": "trunk",
+  "schedule": {
+   "T": 879,
+   "cooldown_starts": [
+    792,
+    1583,
+    3165
+   ],
+   "ends": [
+    879,
+    1758,
+    3516
+   ],
+   "tokens_per_step": 8192,
+   "warmup": 17
+  },
+  "schema": "floppylm.e0.result.v1",
+  "state": "completed",
+  "transfer_bytes": 180552372992,
+  "trunk_step": 3165,
+  "wall_seconds": 4205.200059385
+ },
+ "backend_name": "xbox",
+ "branches": [
+  {
+   "artifact": "runs/e0-20261002T090742Z-2fe64f-000/branch-879.flp",
+   "cooldown_flops": 1856360153088.0,
+   "cooldown_seconds": 68.128057651,
+   "cooldown_start": 792,
+   "cooldown_steps": 87,
+   "end_step": 879,
+   "eval_seconds": 48.20671844482422,
+   "fill": 0.9866821818181818,
+   "model_bytes": 84793,
+   "sections": {
+    "core": 66734,
+    "emb": 10799,
+    "header": 178,
+    "norms": 1344,
+    "scales": 5738,
+    "shared": 0
+   },
+   "sha256": "b7e7bf4798f2072e2492abcdd0e64721a16282b738a0e7722fd35ce8e64eb743",
+   "tokens_seen": 7200768,
+   "val_bpb": 1.5147692840015254,
+   "val_scored_bytes": 1048575
+  },
+  {
+   "artifact": "runs/e0-20261002T090742Z-2fe64f-000/branch-1758.flp",
+   "cooldown_flops": 3734057779200.0,
+   "cooldown_seconds": 130.356474921,
+   "cooldown_start": 1583,
+   "cooldown_steps": 175,
+   "end_step": 1758,
+   "eval_seconds": 54.91153049468994,
+   "fill": 0.9881134545454545,
+   "model_bytes": 84916,
+   "sections": {
+    "core": 66726,
+    "emb": 10930,
+    "header": 178,
+    "norms": 1344,
+    "scales": 5738,
+    "shared": 0
+   },
+   "sha256": "e4c829593bc20c90844648a83d49add5421ea8869f2855b9b94685d5c1e1950b",
+   "tokens_seen": 14401536,
+   "val_bpb": 1.3938391316114989,
+   "val_scored_bytes": 1048575
+  },
+  {
+   "artifact": "runs/e0-20261002T090742Z-2fe64f-000/branch-3516.flp",
+   "cooldown_flops": 7489453031424.0,
+   "cooldown_seconds": 259.560378228,
+   "cooldown_start": 3165,
+   "cooldown_steps": 351,
+   "end_step": 3516,
+   "eval_seconds": 55.31597661972046,
+   "fill": 0.9867636363636364,
+   "model_bytes": 84800,
+   "sections": {
+    "core": 66689,
+    "emb": 10851,
+    "header": 178,
+    "norms": 1344,
+    "scales": 5738,
+    "shared": 0
+   },
+   "sha256": "cb6460c937c80735340a4496a90cc9aba99ca08648088434495a01675ad83816",
+   "tokens_seen": 28803072,
+   "val_bpb": 1.311992185181265,
+   "val_scored_bytes": 1048575
+  }
+ ],
+ "compute": {
+  "cooldown_flops": 13079870963712.0,
+  "cooldown_tokens": 5021696,
+  "eval_seconds": 158.43422555923462,
+  "flops_per_token_forward": 868224.0,
+  "formula": "3 * (2 * stored_params + 4 * n_layers * (ctx / 2) * d) * tokens",
+  "native_execution_seconds": 4205.200059385,
+  "total_flops": 80612973084672.0,
+  "total_tokens": 30949376,
+  "trunk_flops": 67533102120960.0,
+  "trunk_seconds": 3747.1551485849996,
+  "trunk_tokens": 25927680,
+  "wall_scope": "current host attempt",
+  "wall_seconds": 473.20205879211426
+ },
+ "config": {
+  "core_fmt": "ternary",
+  "ctx": 256,
+  "d": 96,
+  "d_ff": 391,
+  "delta": 0.5,
+  "emb_fmt": "4bit",
+  "mlp": "gelu",
+  "n_heads": 6,
+  "n_layers": 3,
+  "qk_norm": false,
+  "scale_policy": "row16",
+  "vocab": 256
+ },
+ "data_sha256": {
+  "test": "0970122cf1728509e77b2aede4bf25c536ef72ee7cc0aa242858af20ea971df5",
+  "train": "8745f0d0f0c2ede79305e35393f90b35ff15c91fa1d85abed2acafdf4046e092",
+  "val": "511546bff5b4c512b0e1bbc5c4cc5fa6a73b24e2b55ca4e3cbceb5f312fb7a05"
+ },
+ "environment": {
+  "cpu": "11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz",
+  "numpy": "2.5.3",
+  "platform": "Linux-7.2.6-arch2-1-x86_64-with-glibc2.44",
+  "python": "3.13.9",
+  "torch": "2.14.1+cu130",
+  "torch_threads": 2
+ },
+ "finished": "2026-10-02T12:16:15+00:00",
+ "parity_individual_ok": false,
+ "recoveries": [
+  {
+   "started": "2026-10-02T09:39:48+00:00"
+  },
+  {
+   "started": "2026-10-02T10:50:25+00:00"
+  },
+  {
+   "started": "2026-10-02T12:08:22+00:00"
+  }
+ ],
+ "repair_ratio": null,
+ "retry_count": 0,
+ "retry_of": null,
+ "run_id": "e0-20261002T090742Z-2fe64f-000",
+ "saturation": {
+  "criterion": "|bpb(4T) - bpb(2T)| < 0.01",
+  "delta_signed": -0.08184694643023382,
+  "verdict": "non saturo"
+ },
+ "smoke": false,
+ "sources": {
+  "files": {
+   "experiments/e0_campaign.py": "dacdb278fb32536a375a1fa954e07832886cc6664a65ac2012e92a6ce061c7f9",
+   "experiments/e0_v2.py": "fa28f11e1080db6fa5851b920a5a99575efc8b0d5361351d6419ac43488dae70",
+   "experiments/xbox_acceptance.py": "3cda309a3a129df8bf38ec046459bc8c441894a66567b2e48c82b3721313fa3c",
+   "experiments/xbox_benchmark.py": "42b3e92019743106b20dc57806dc9c8208922a3507c389d5da9a2890d2595234",
+   "experiments/xbox_lifecycle_acceptance.py": "a47e7109a4b4cced28ed1d0f4e1bc5fdfc8cb9b9ec2890ff1241e71127993d84",
+   "experiments/xbox_recovery_acceptance.py": "fa91146a37ff05549750832ccbd6034004f61f1fcab6def6c8786ff5871b0c30",
+   "experiments/xbox_worker_acceptance.py": "6854a4519de6ed8dbe28ac1202035a9557e7bf16cdb3c5754de72f3472cfc2ff",
+   "src/floppylm/__init__.py": "7f2f61b038b0618bf2a758162e40609e32dc2a7522cb481aeac175109905f510",
+   "src/floppylm/bpe.py": "fb6b84e5739be40cbd00fdecb8d14d37495ee43aa3db097f3a0c99440fd69e40",
+   "src/floppylm/codec.py": "5b77ee42f51360ee0c386ee23cbf9f7d474f709a082e642089978eaeb93a8359",
+   "src/floppylm/data.py": "ee77ecbc3993a0a2101adaba8d70a905cb95a328d62acc3a2d457b6d85e74611",
+   "src/floppylm/metrics.py": "ca90d1ecd537d102758d422a3af4e2e3403abd6e84a92f63bb09bcc15e4e200f",
+   "src/floppylm/model.py": "85186800e1daf26adcb9da9aec4263026325848b62f84dade4d21b2a4c99803a",
+   "src/floppylm/pack.py": "5d733a3265b800dc0cf635f046b2d55bc4b6bf5a863260a9e0802e4fd8a19898",
+   "src/floppylm/parity.py": "3020c298c38f58f7ba71a5afbc84de4b349fd254860d9c3c0584c269c86df659",
+   "src/floppylm/rans.py": "281c640d1b54eaff6164de6c942d5c1c0a3ca5233a896d3bf067ed20348ee37b",
+   "src/floppylm/runlog.py": "3101e3b89c73747ee5e4d098da85277201cc644bf695a542400332f9d4e94992",
+   "src/floppylm/seed.py": "694dd86fef042e51edd0dac601958cfda4192677a8aeb264ffc63935df7d7713",
+   "src/floppylm/shapes.py": "2da4f4211742a6c5befc7f8c5a24617a9fcbefa31af56e4b64627a0e7ac4b1cb",
+   "src/floppylm/train.py": "c6a029010b3f6768e9e1f82d87dc6207d78c9fecbc1fb213af96528f1cd0e9c2",
+   "src/floppylm/vq.py": "0bcd6da245cc71878f1813a1178240d0fd53968e984952b8962e427d7baa6e56",
+   "src/floppylm_xbox/__init__.py": "b00e5391f251de1a21d9628cea506b7a60e62c41d6fe00df0093e243652626df",
+   "src/floppylm_xbox/jobs.py": "d473678be4c6ae8297603de5d2be46bbd443490423a2e0a545207c7b2a603774",
+   "src/floppylm_xbox/kernels.py": "e9223dfb5832a0a587a68f56b680fdcba4e53c5f2c27345c31f28d508a6f55f0",
+   "src/floppylm_xbox/portal.py": "b3814051f1bd019796f962c397c62704fece725ae1276ac3c2f549c3958c5f34",
+   "src/floppylm_xbox/runtime.py": "e36f9f8cdef6f121c732d43515f13203ae8f4a75ad539c174a2740793caa8364"
+  },
+  "git": {
+   "commit": "51067193681f9d25c4b8e86b32f6491a4ed4677f",
+   "dirty": false
+  }
+ },
+ "spec": {
+  "batch": 32,
+  "branches": 3,
+  "cooldown_frac": 0.1,
+  "lr": 0.003,
+  "seed": 0,
+  "tokens": 7207680,
+  "warmup_frac": 0.02,
+  "wd": 0.1
+ },
+ "status": "completed",
+ "target_bytes": 85937.5,
+ "token_policy": "per_parameter"
+}
