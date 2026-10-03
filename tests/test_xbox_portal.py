@@ -12,11 +12,60 @@ from floppylm_xbox.portal import (
     CREDENTIAL_KEYS,
     Portal,
     certificate_fingerprint,
+    check_runtime_probe,
     package_matches,
     read_env_file,
 )
 
 PIN = "ab" * 32
+
+
+@pytest.mark.parametrize("fault", ["scientific", "resume", "stop_after", "zero", "far", "bool"])
+def test_runtime_probe_refuses_invalid_training(fault):
+    job = {
+        "config": {"ctx": 8},
+        "spec": {"batch": 2, "tokens": 128},
+        "runtime_fault_probe": {"kind": "published_fence_stall", "after_checkpoint_step": 2},
+    }
+    purpose = "functional"
+    if fault == "scientific":
+        purpose = fault
+    elif fault in ("resume", "stop_after"):
+        job[fault] = 1
+    else:
+        job["runtime_fault_probe"]["after_checkpoint_step"] = {
+            "zero": 0,
+            "far": 10000,
+            "bool": True,
+        }[fault]
+    with pytest.raises(ValueError, match="probe"):
+        check_runtime_probe(job, purpose)
+
+
+def test_explicit_resume_removes_probe_inside_journal_publication(tmp_path):
+    client = portal()
+    checkpoint = {"path": "results/job/checkpoint.json"}
+    job = {
+        "job_id": "job",
+        "purpose": "functional",
+        "runtime_fault_probe": {"kind": "published_fence_stall", "after_checkpoint_step": 2},
+    }
+    binding = {"package": "test-package", "sha256": "a" * 64, "job": job}
+    (tmp_path / "submitted.json").write_text(json.dumps(binding))
+    client.status = Mock(
+        return_value={
+            "job_sha256": binding["sha256"],
+            "state": "interrupted",
+            "checkpoint": checkpoint,
+        }
+    )
+    client._publish = Mock()
+    client.resume(tmp_path, checkpoint)
+    args = client._publish.call_args.args
+    assert args[2] == "resume"
+    assert args[1]["resume"] == checkpoint
+    assert "runtime_fault_probe" not in args[1]
+    assert json.loads((tmp_path / "submitted.json").read_text()) == binding
 
 
 def worker(job_id=None, sha=None, heartbeat=1):

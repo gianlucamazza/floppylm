@@ -162,3 +162,57 @@ def test_busy_worker_refuses_fixture_before_upload():
     with pytest.raises(RuntimeError, match="idle"):
         client.fixture({}, "fixture")
     client.upload.assert_not_called()
+
+
+@pytest.mark.parametrize("resource", ["status", "worker"])
+def test_observation_bounds_each_transport_without_controlling_job(tmp_path, monkeypatch, resource):
+    client = portal()
+    client.status = Mock(return_value=report())
+    client.worker = Mock(return_value=sample())
+    getattr(client, resource).side_effect = [OSError("offline")] * 6
+    client.cancel = Mock()
+    client.resume = Mock()
+    now = [0.0]
+    monkeypatch.setattr("floppylm_xbox.portal.time.monotonic", lambda: now[0])
+    monkeypatch.setattr("floppylm_xbox.portal.time.sleep", lambda n: now.__setitem__(0, now[0] + n))
+    with pytest.raises(OSError, match="offline"):
+        client.wait("job", expected_sha=SHA, observation_dir=tmp_path, log=lambda _: None)
+    assert getattr(client, resource).call_count == 5
+    events = [json.loads(s) for s in (tmp_path / "runtime-events.jsonl").read_text().splitlines()]
+    assert len(events) == 2  # outage transition and exhaustion, not one event per retry
+    assert events[-1]["event"] == "transport_exhausted"
+    assert events[-1]["resource"] == resource
+    snapshot = json.loads((tmp_path / "runtime.json").read_text())
+    assert snapshot["liveness"] == "unknown"
+    assert snapshot["attempt"] == 5
+    client.cancel.assert_not_called()
+    client.resume.assert_not_called()
+
+
+def test_status_success_does_not_reset_worker_outage(tmp_path, monkeypatch):
+    client = portal()
+    client.status = Mock(side_effect=[report(), OSError("status offline"), *[report()] * 4])
+    client.worker = Mock(side_effect=[OSError("worker offline")] * 5)
+    now = [0.0]
+    monkeypatch.setattr("floppylm_xbox.portal.time.monotonic", lambda: now[0])
+    monkeypatch.setattr("floppylm_xbox.portal.time.sleep", lambda n: now.__setitem__(0, now[0] + n))
+    with pytest.raises(OSError, match="worker offline"):
+        client.wait("job", expected_sha=SHA, observation_dir=tmp_path, log=lambda _: None)
+    events = [json.loads(s) for s in (tmp_path / "runtime-events.jsonl").read_text().splitlines()]
+    assert events[-1]["resource"] == "worker" and events[-1]["attempt"] == 5
+
+
+def test_worker_transport_can_recover_without_claiming_death(tmp_path, monkeypatch):
+    client = portal()
+    client.status = Mock(side_effect=[report(), report(), report(state="completed")])
+    client.worker = Mock(side_effect=[OSError("offline"), sample()])
+    now = [0.0]
+    monkeypatch.setattr("floppylm_xbox.portal.time.monotonic", lambda: now[0])
+    monkeypatch.setattr("floppylm_xbox.portal.time.sleep", lambda n: now.__setitem__(0, now[0] + n))
+    assert (
+        client.wait("job", expected_sha=SHA, observation_dir=tmp_path, log=lambda _: None)["state"]
+        == "completed"
+    )
+    events = [json.loads(s) for s in (tmp_path / "runtime-events.jsonl").read_text().splitlines()]
+    assert any(e["event"] == "transport_recovered" and e["resource"] == "worker" for e in events)
+    assert not any(e["event"] == "transport_exhausted" for e in events)

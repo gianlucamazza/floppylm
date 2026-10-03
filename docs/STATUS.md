@@ -17,7 +17,7 @@ bump or campaign start/stop. Last updated: **2026-10-03**.
 | E1 qualification     | CPU functional qualification **measured** ([ADR 0013](adr/0013-e1-functional-qualification.md), [evidence](evidence/e1-qualification-20261001/notes.md)); Xbox vector qualification pending |
 | Scientific E1–E4     | **specified**, gated by E0 and an accepted E1 protocol ([roadmap](roadmap.md), [completion plan](completion-plan.md)) |
 
-Campaign `ca781f` is stopped and published. Package `0.1.0.95` is accepted. No campaign is running. `src/` and `experiments/` stay at `3c3c79d` until the next campaign launch. Architecture notes stay proposals: [S3 fill](adr/proposals/e0-fill-aware-solver.md), [E1 book budget](adr/proposals/e1-1-16-book-budget.md).
+Campaign `ca781f` is stopped and published. Package `0.1.0.95` is accepted. No campaign is running. The stopped campaign retains its `3c3c79d` source binding. Correctness changes under ADR 0018 require a new source freeze for the next campaign; they do not migrate historical runs. Architecture notes stay proposals: [S3 fill](adr/proposals/e0-fill-aware-solver.md), [E1 book budget](adr/proposals/e1-1-16-book-budget.md).
 
 ```bash
 python scripts/e0_status.py --campaign runs/e0-campaign-20261002-093
@@ -53,3 +53,10 @@ Backend ADR 0005 and canonical documentation links were merged in PR #27.
 Status vocabulary: **specified** (written, not executed), **stub**, **running**, **stopped** (halted
 deliberately, kept as a record), **measured**
 (an evidence file owns the number), **killed** (an F\* fired), **won't run**.
+
+## ADR 0018 qualification work
+
+Selection/reporting corrections and bounded host observation are implemented on
+review branches. The functional published-fence probe requires the corresponding
+new backend package. Hardware watchdog qualification remains pending; the accepted
+package row above is unchanged. No new scientific campaign is authorized by this work.

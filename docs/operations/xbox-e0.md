@@ -237,3 +237,22 @@ Required evidence before runtime acceptance:
 
 Linux tests and Windows/UWP compilation establish only their own predicates. They do not
 close these Xbox lifecycle gates or identify the cause of the original E0 stall.
+
+## Published-fence watchdog qualification
+
+After accepting an idle candidate package, run the explicitly functional probe:
+
+```bash
+python experiments/xbox_watchdog_acceptance.py --out runs/watchdog-new --acceptance runs/acceptance-new/acceptance.json
+```
+
+The runner refuses pending inbox work and scientific running records. It records
+pre-existing inbox sizes, JSON hashes and scientific result descriptors before and
+after; large content-addressed inputs are not rehashed. It retains uniquely named
+functional jobs as evidence and does not restore stale worker identity files.
+It observes the real 600-second watchdog, requires process exit, explicitly starts
+that same package once, then compares recovered numerical artifacts and checkpoint
+state with an uninterrupted synthetic control. The timeout never cancels GPU work.
+Inspect `failure.json` and the observations after a failed qualification; do not
+blindly rerun or restart an unobserved worker. CI and portable tests do not close
+this hardware gate. See [ADR 0018](../adr/0018-e0-correctness-and-runtime-qualification.md).
