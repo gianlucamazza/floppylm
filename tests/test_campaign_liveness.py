@@ -7,6 +7,7 @@ import os
 import signal
 import subprocess
 import sys
+import tempfile
 import time
 from pathlib import Path
 
@@ -36,6 +37,38 @@ def test_process_identity_and_live_lock_required(tmp_path):
         legacy = {"state": "running", "pid": os.getpid()}
         assert runlog.host_liveness(legacy, lock_path) == "unverified"
     assert runlog.host_liveness(status, lock_path) == "lock_abandoned"
+
+
+def test_flock_fdinfo_owner_is_the_pid_after_the_mode():
+    info = (
+        "pos:\t0\nflags:\t02100001\nmnt_id:\t163\nino:\t48573\n"
+        "lock:\t1: FLOCK  ADVISORY  WRITE 1284565 00:37:48573 0 EOF\n"
+    )
+    assert runlog._flock_owner(info) == 1284565
+    assert runlog._flock_owner("lock:\t2: POSIX  ADVISORY  WRITE 9 00:01:2 0 EOF\n") is None
+
+
+def test_held_lock_is_live_without_proc_locks_device_identity(tmp_path):
+    """Btrfs stat devices do not match /proc/locks. The open descriptor is the proof."""
+    parents = [tmp_path]
+    workspace = ROOT / "runs"
+    if workspace.is_dir():
+        parents.append(workspace)
+    for parent in parents:
+        directory = Path(tempfile.mkdtemp(prefix="lock-identity-", dir=parent))
+        try:
+            runlog.set_status(directory, "running")
+            status = json.loads((directory / "status.json").read_text())
+            lock_path = directory / "worker.lock"
+            with lock_path.open("w") as lock:
+                fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                assert runlog.host_liveness(status, lock_path) == "live"
+                assert runlog.legacy_lock_liveness(lock_path) == "owned_or_waiting"
+            assert runlog.legacy_lock_liveness(lock_path) == "unowned_verified"
+        finally:
+            for child in directory.iterdir():
+                child.unlink()
+            directory.rmdir()
 
 
 def test_reaped_host_is_dead_despite_running_snapshot(tmp_path):

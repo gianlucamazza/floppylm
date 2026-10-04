@@ -57,6 +57,8 @@ def report(
         "lock_owner_mismatch",
     ):
         result["issues"].append("Campaign host is not a live lock owner")
+    if result["host_liveness"] in ("lock_unverified", "unverified"):
+        result["issues"].append("Campaign host lock ownership is unproven")
     for record in state["trials"].values():
         counts = result["trial_counts"]
         counts[record["status"]] = counts.get(record["status"], 0) + 1
@@ -125,6 +127,8 @@ def report(
             "lock_owner_mismatch",
         ):
             result["issues"].append("Host trial is not a live lock owner")
+        if trial["host_liveness"] in ("lock_unverified", "unverified"):
+            result["issues"].append("Host trial lock ownership is unproven")
         if trial["host"]["state"] in ("failed", "interrupted"):
             result["issues"].append("Host trial requires diagnosis or explicit recovery")
     if (run / "manifest.json").exists():
@@ -155,6 +159,7 @@ def report(
                 result["issues"].append("Console report lacks hardware GPU provenance")
             if native["state"] in ("failed", "interrupted"):
                 result["issues"].append("Console trial requires diagnosis or explicit recovery")
+                _attach_terminal_worker(result, trial, portal, state)
             if native["state"] == "running":
                 try:
                     worker = portal.worker(commit=state["commit"])
@@ -165,6 +170,7 @@ def report(
                     trial["runtime"].update(liveness="unknown", transport_error=str(error))
                     result["issues"].append("Worker heartbeat transport unknown")
                 else:
+                    trial["worker_sample"] = worker
                     key = (run_id, binding["sha256"])
                     monitors = {} if monitors is None else monitors
                     monitor = monitors.setdefault(key, RuntimeMonitor(*key))
@@ -189,37 +195,104 @@ def watch(
     sleep=time.sleep,
     emit=print,
 ) -> int:
-    """Observe monotonically timed evidence, durably, without controlling the worker."""
+    """Observe monotonically timed evidence, durably, without controlling the worker.
+
+    SIGTERM and SIGINT write one terminal observation before returning. The
+    observer must not be killed by the campaign service before that write.
+    """
+    import signal
+
     monitors = {}
     started = clock()
     observations = observations or campaign / "monitor.jsonl"
     observations.parent.mkdir(parents=True, exist_ok=True)
-    last_issues = set()
-    while True:
-        result = report(
-            campaign, workspace=workspace, portal=portal, monitors=monitors, observed_at=clock()
-        )
-        current = set(result["issues"])
+    last_issues: set[str] = set()
+    terminal_signal: int | None = None
+
+    def on_signal(signum, _frame):
+        nonlocal terminal_signal
+        terminal_signal = signum
+        raise KeyboardInterrupt(signum)
+
+    previous = {
+        signum: signal.signal(signum, on_signal) for signum in (signal.SIGINT, signal.SIGTERM)
+    }
+
+    def once(kind: str) -> dict:
+        nonlocal last_issues
+        try:
+            result = report(
+                campaign, workspace=workspace, portal=portal, monitors=monitors, observed_at=clock()
+            )
+        except Exception as error:
+            result = {
+                "campaign": campaign.name,
+                "state": "unknown",
+                "issues": ["terminal observation failed"],
+                "error": repr(error),
+            }
+        current = set(result.get("issues", []))
         result.update(
+            observation=kind,
             observed_at=runlog.now(),
             elapsed_seconds=clock() - started,
             events=sorted(current - last_issues),
             cleared=sorted(last_issues - current),
         )
+        if kind == "terminal":
+            result["terminal_signal"] = terminal_signal
         last_issues = current
-        with observations.open("a") as file:
-            file.write(json.dumps(result, sort_keys=True) + "\n")
-            file.flush()
-            os.fsync(file.fileno())
-        snapshot = observations.with_suffix(".json")
-        if snapshot == observations:
-            snapshot = observations.with_suffix(".latest.json")
-        runlog.write_json(snapshot, result)
+        _persist_observation(observations, result)
         emit(json.dumps(result, sort_keys=True))
-        remaining = None if duration is None else duration - (clock() - started)
-        if remaining is not None and remaining <= 0:
-            return int(bool(result["issues"]))
-        sleep(interval if remaining is None else min(interval, remaining))
+        return result
+
+    try:
+        while True:
+            result = once("sample")
+            remaining = None if duration is None else duration - (clock() - started)
+            if remaining is not None and remaining <= 0:
+                return int(bool(result["issues"]))
+            sleep(interval if remaining is None else min(interval, remaining))
+    except KeyboardInterrupt as interrupted:
+        if terminal_signal is None and interrupted.args and type(interrupted.args[0]) is int:
+            terminal_signal = interrupted.args[0]
+        result = once("terminal")
+        return int(bool(result.get("issues")))
+    finally:
+        for signum, handler in previous.items():
+            signal.signal(signum, handler)
+
+
+def _attach_terminal_worker(result: dict, trial: dict, portal, state: dict) -> None:
+    """A terminal native result still has a worker. Read it; do not treat it as live progress."""
+    try:
+        worker = portal.worker(commit=state["commit"])
+    except (FileNotFoundError, RuntimeError) as error:
+        trial["worker_error"] = str(error)
+        result["issues"].append("Worker metadata unavailable for terminal native result")
+        return
+    except TRANSPORT_ERRORS as error:
+        trial["worker_error"] = str(error)
+        result["issues"].append("Worker metadata transport unknown")
+        return
+    if not isinstance(worker, dict):
+        trial["worker_error"] = "worker metadata was not an object"
+        result["issues"].append("Worker metadata unavailable for terminal native result")
+        return
+    trial["worker_sample"] = worker
+    if worker.get("state") == "failed":
+        result["issues"].append("Worker is failed; explicit restart required before recovery")
+
+
+def _persist_observation(observations: Path, result: dict) -> None:
+    with observations.open("a") as file:
+        file.write(json.dumps(result, sort_keys=True) + "\n")
+        file.flush()
+        os.fsync(file.fileno())
+    snapshot = observations.with_suffix(".json")
+    if snapshot == observations:
+        snapshot = observations.with_suffix(".latest.json")
+    runlog.write_json(snapshot, result)
 
 
 def positive_seconds(text):

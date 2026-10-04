@@ -130,8 +130,9 @@ def verify_fault(status, job_sha):
     if (
         status.get("state") != "interrupted"
         or status.get("job_sha256") != job_sha
-        or fault.get("kind") != "gpu_wait_timeout"
-        or fault.get("error") != "published GPU fence frozen"
+        or fault.get("kind") != "progress_stall"
+        or fault.get("error") != "published progress frozen without an in-flight GPU request"
+        or fault.get("requested_fence") != 0
         or fault.get("elapsed_ms", 0) < 600000
         or not status.get("checkpoint")
     ):
