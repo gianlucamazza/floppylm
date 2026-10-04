@@ -40,4 +40,7 @@ ruff check src tests scripts experiments
 python -m pytest -q -m 'not native'
 ```
 
-`python -m pytest -q` includes native tests and needs the Xbox cross-build.
+`python -m pytest -q` also runs the native marker. Those tests need the host
+build of `xgpu_e0_train` (`XGPU_E0_BINARY`). CI builds that binary from the
+pinned xbox-gpu-training commit in [`.github/workflows/tests.yml`](.github/workflows/tests.yml)
+and runs the full suite.
