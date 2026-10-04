@@ -74,6 +74,8 @@ attempt recipes/eligibility from trial outcomes without overwriting frozen recor
 | [xbox-e0-20261002-086](xbox-e0-20261002-086/notes.md) | 0.1.0.86 | PR 34 drop EE + PR 33 DisplayRequest; full hardware gates including lifecycle; bit-identical to 0.1.0.56/0.1.0.68/0.1.0.80 |
 | [xbox-e0-20261002-093](xbox-e0-20261002-093/notes.md) | 0.1.0.93 | PR 37 fence poll wait + PR 35 `loss_series`; full hardware gates; bit-identical 38/38 vs 0.1.0.56/0.1.0.68/0.1.0.80/0.1.0.86 |
 | [xbox-e0-20261003-095](xbox-e0-20261003-095/notes.md) | 0.1.0.95 | PR 38 published-fence watchdog; full hardware gates; bit-identical 38/38 vs 0.1.0.56/0.1.0.68/0.1.0.80/0.1.0.86/0.1.0.93 |
+| [xbox-e0-20261003-098](xbox-e0-20261003-098/notes.md) | 0.1.0.98 | claim validation and resume binding; full hardware gates; bit-identical 38/38 vs 0.1.0.95 |
+| [xbox-e0-20261004-102](xbox-e0-20261004-102/notes.md) | 0.1.0.102 | published-fence `progress_stall` classification; full hardware gates; bit-identical 38/38 vs 0.1.0.98 |
 | [architecture-20261002](architecture-20261002/) | CPU | S3 coded/nominal fill on `2fe64f-000` vs repair; E1 1/16 VQ book-fit table. Proposals, not ADRs. |
 
 ### E1 functional qualification
@@ -87,7 +89,7 @@ A dated narrative of these packages is in the [archive](../archive/xbox-e0-histo
 `ca781f` is the first row16 pair with both seeds eligible under ADR 0015. The rest of the E0
 grid, paired σ and the held-out test remain open; the [roadmap](../roadmap.md) defines those gates.
 
-Real-deadline watchdog: [xbox-e0-20261003-098](xbox-e0-20261003-098/notes.md), complete functional qualification with exact recovery and preservation evidence. The [0.1.0.96 incomplete attempt](xbox-e0-20261003-096-incomplete/notes.md) records the defect discovered before the final qualification.
+Real-deadline watchdog: [xbox-e0-20261003-098](xbox-e0-20261003-098/notes.md), complete functional qualification with exact recovery and preservation evidence. The [0.1.0.96 incomplete attempt](xbox-e0-20261003-096-incomplete/notes.md) records the defect discovered before the final qualification. [xbox-e0-20261004-102](xbox-e0-20261004-102/notes.md) is the accepted successor: the parked probe reports `progress_stall` with requested fence 0, and the numerical payloads remain bit-identical to 0.1.0.98.
 
 [E0 readiness, 2026-10-03](e0-readiness-20261003/notes.md): integrated fixes, read-only
 Odroid observation, corpus/protocol binding and cost envelope; no campaign launched.

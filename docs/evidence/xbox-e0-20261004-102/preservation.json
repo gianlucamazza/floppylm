@@ -1,0 +1,10 @@
+{
+  "purpose": "functional",
+  "package": "GianlucaMazza.XgpuE0_0.1.0.102_x64__g0p5dcfz4t9z4",
+  "commit": "4b8f51c3a5ee985ce8fcb71327f0ffc88e487545",
+  "ok": true,
+  "protected_unchanged": true,
+  "scope": "pre-existing inbox inventory; committed scientific job JSON bytes and result descriptors; archived payloads checked by inventory, not rehashed",
+  "inventory_before_sha256": "961d75e94b039e655db0d0e16037c2c604d84643eb89aff7177cdd3a2f744e7c",
+  "inventory_after_sha256": "961d75e94b039e655db0d0e16037c2c604d84643eb89aff7177cdd3a2f744e7c"
+}

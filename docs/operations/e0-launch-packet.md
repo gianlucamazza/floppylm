@@ -1,16 +1,15 @@
 # E0 launch packet: preparation only
 
-This packet does not launch or reserve a campaign. The current accepted hardware
-is [package 0.1.0.98](../evidence/xbox-e0-20261003-098/notes.md). The source of live
+This packet does not by itself launch or reserve a campaign. The accepted hardware
+is [package 0.1.0.102](../evidence/xbox-e0-20261004-102/notes.md). The source of live
 project state remains [STATUS](../STATUS.md). All historical campaigns stay retired.
 
 ## Provenance and preflight
 
-FloppyLM PRs #13 and #14 and backend PR #39 are integrated. The merged backend's
-runtime, UWP and contract files equal the qualified CI source `cc134fe4`; merge CI
-artifacts with newer package numbers are not substitutes for the installed package.
-The next campaign freezes the integrated host sources including the readiness
-change; it never reuses a historical campaign manifest or run identity.
+The accepted backend source is `4b8f51c3a5ee985ce8fcb71327f0ffc88e487545`
+(CI 37186655285). The host recovery harness that accepts an interrupted runner
+return is `555a865`. A new campaign freezes the host sources at its own launch.
+It never reuses a historical campaign manifest, run identity, or package binding.
 
 From the operational checkout, open a dedicated tunnel in a separate terminal:
 
@@ -25,10 +24,10 @@ that file or re-pin. Run this read-only check, retaining stdout in a new evidenc
 
 ```bash
 XBOX_IP=127.0.0.1 XBOX_PORT=31443 \
-XGPU_E0_PACKAGE=GianlucaMazza.XgpuE0_0.1.0.98_x64__g0p5dcfz4t9z4 \
+XGPU_E0_PACKAGE=GianlucaMazza.XgpuE0_0.1.0.102_x64__g0p5dcfz4t9z4 \
 .venv/bin/python scripts/e0_preflight.py --xbox \
-  --acceptance docs/evidence/xbox-e0-20261003-098/acceptance.json \
-  --benchmark docs/evidence/xbox-e0-20261003-098/throughput.json \
+  --acceptance docs/evidence/xbox-e0-20261004-102/acceptance.json \
+  --benchmark docs/evidence/xbox-e0-20261004-102/throughput.json \
   --data-manifest runs/e0-20261002T191632Z-ca781f-000/manifest.json
 ```
 
@@ -86,8 +85,8 @@ output directory and use the supervised launcher described in the [runbook](xbox
 ```bash
 .venv/bin/python -u experiments/e0_campaign.py \
   --out runs/e0-campaign-<new-unique-id> \
-  --acceptance docs/evidence/xbox-e0-20261003-098/acceptance.json \
-  --benchmark docs/evidence/xbox-e0-20261003-098/throughput.json
+  --acceptance docs/evidence/xbox-e0-20261004-102/acceptance.json \
+  --benchmark docs/evidence/xbox-e0-20261004-102/throughput.json
 ```
 
 Carry the tunnel environment into the supervised process and keep the tunnel alive
