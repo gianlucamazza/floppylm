@@ -86,6 +86,40 @@ def build_config(a: argparse.Namespace) -> GPTConfig:
     return cfg
 
 
+def _host_adjusts(a: argparse.Namespace) -> bool:
+    """Resize the first scientific attempt from its init pack. Not smoke, retry, or resume."""
+    return not a.smoke and not getattr(a, "retry_of", None) and not getattr(a, "resume", None)
+
+
+def host_pack_adjustment(cfg: GPTConfig, target_bytes: float) -> tuple[GPTConfig, dict]:
+    """One init-pack d_ff adjustment before the first training attempt. Not an S3 repair.
+
+    The returned record is the solver shape's pack. ``submitted_d_ff`` changes only when
+    that pack is outside ±1% and ``fill_d_ff`` finds a different in-range shape.
+    """
+    blob, _ = pack_sections(TinyGPT(cfg))
+    nbytes = len(blob)
+    ratio = nbytes * 8 / cfg.nominal_bits()
+    record = {
+        "init_model_bytes": nbytes,
+        "init_fill": nbytes / target_bytes,
+        "host_ratio": ratio,
+        "submitted_d_ff": cfg.d_ff,
+    }
+    if parity.admissible({"init": nbytes}, target_bytes)[0]:
+        return cfg, record
+    repaired = shapes.fill_d_ff(cfg, target_bytes * 8, ratio=ratio)
+    k = 2 / 3 if cfg.mlp == "swiglu" else 1
+    if (
+        repaired is None
+        or repaired == cfg
+        or not 2 * k * cfg.d <= repaired.d_ff <= 6 * k * cfg.d
+    ):
+        return cfg, record
+    record["submitted_d_ff"] = repaired.d_ff
+    return repaired, record
+
+
 def flops(model: TinyGPT, tokens: int) -> float:
     return 3 * model.flops_per_token() * tokens
 
@@ -98,6 +132,12 @@ def notes_md(s: dict) -> str:
         for b in s["branches"]
     )
     sat = s["saturation"]
+    host = ""
+    if "init_model_bytes" in s:
+        host = (
+            f"- Host init pack: {s['init_model_bytes']:,} B, fill {s['init_fill']:.4f}, "
+            f"ratio {s['host_ratio']:.6f}; submitted d_ff {s['submitted_d_ff']}.\n"
+        )
     return f"""# {s["run_id"]}
 
 {kind}Status: **{s["status"]}**. Full configuration and environment in `summary.json`; manifest in
@@ -109,7 +149,7 @@ def notes_md(s: dict) -> str:
 
 - Saturation: {VERDICT_TEXT[sat["verdict"]]} (bpb(4T) − bpb(2T) = {sat["delta_signed"]}).
 - Individual parity ±1% of target: {s["parity_individual_ok"]}.
-- Estimated compute: {s["compute"]["total_flops"]:.3e} FLOP ({FLOP_FORMULA}), wall
+{host}- Estimated compute: {s["compute"]["total_flops"]:.3e} FLOP ({FLOP_FORMULA}), wall
   {s["compute"]["wall_seconds"]:.0f} s at {s["environment"]["torch_threads"]} threads.
 
 Not measured here: test (only `--final-test` on a frozen selection), paired σ, comparison
@@ -134,6 +174,10 @@ def cmd_run(a: argparse.Namespace) -> int:
         a.tokens, a.batch = a.tokens or 8 * 64 * 16, 8
         a.val_bytes = min(a.val_bytes, 1 << 14)
     cfg = build_config(a)
+    host_pack = None
+    if _host_adjusts(a):
+        seed_all(a.seed)
+        cfg, host_pack = host_pack_adjustment(cfg, budget_bits(a.budget_frac) / 8)
     seed_all(a.seed)
     torch.set_num_threads(a.threads)
     model = TinyGPT(cfg)
@@ -169,7 +213,7 @@ def cmd_run(a: argparse.Namespace) -> int:
 
     previous = signal.signal(signal.SIGTERM, on_signal)
     try:
-        return _execute_run(a, cfg, model, spec, run_id, run_dir, ev_dir)
+        return _execute_run(a, cfg, model, spec, run_id, run_dir, ev_dir, host_pack)
     except BaseException as error:
         state = terminal_state(error)
         partial = json.loads((ev_dir / "summary.json").read_text())
@@ -183,7 +227,7 @@ def cmd_run(a: argparse.Namespace) -> int:
         signal.signal(signal.SIGTERM, previous)
 
 
-def _execute_run(a, cfg, model, spec, run_id, run_dir, ev_dir) -> int:
+def _execute_run(a, cfg, model, spec, run_id, run_dir, ev_dir, host_pack=None) -> int:
     target = budget_bits(a.budget_frac) / 8
     manifest = {
         "run_id": run_id,
@@ -205,6 +249,8 @@ def _execute_run(a, cfg, model, spec, run_id, run_dir, ev_dir) -> int:
         "argv": sys.argv,
         "backend": getattr(a, "backend", "cpu"),
     }
+    if host_pack is not None:
+        manifest.update(host_pack)
     if getattr(a, "resume", None):
         manifest = json.loads((run_dir / "manifest.json").read_text())
     else:
@@ -229,6 +275,8 @@ def _execute_run(a, cfg, model, spec, run_id, run_dir, ev_dir) -> int:
         "branches": [],
         "status": "running",
     }
+    if host_pack is not None:
+        summary.update(host_pack)
     if getattr(a, "resume", None):
         summary.update(json.loads((ev_dir / "summary.json").read_text()))
         summary.pop("error", None)

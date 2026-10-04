@@ -6,6 +6,7 @@
 Completes [ADR 0005](0005-e0v2-protocol.md) without changing its scientific thresholds.
 Superseded in part by [ADR 0011](0011-e0-row-scale-selection.md): the tensor16 option in decision 8.
 Superseded in part by [ADR 0015](0015-e0-fixed-data-frontier.md): unsaturated runs may be selected; decision 1 (token base) is unchanged.
+Decision 3 is amended by [ADR 0019](0019-host-init-pack.md): one init-pack adjustment may precede the first training attempt.
 
 ## Context
 

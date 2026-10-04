@@ -43,6 +43,7 @@ It is not a brainstorm, a survey or a TODO.
 | [0017](0017-runtime-liveness.md) | Bounded GPU waits, worker ownership and explicit runtime recovery; hardware after E0 | accepted |
 
 | [0018](0018-e0-correctness-and-runtime-qualification.md) | Uniform selection gates, attempt evidence and functional watchdog qualification | accepted |
+| [0019](0019-host-init-pack.md) | One init-pack `d_ff` adjustment before the first training attempt; S3 stays the trained-artifact fallback | accepted |
 
 ## Proposals
 
@@ -52,5 +53,5 @@ It is not a brainstorm, a survey or a TODO.
 | [E0 zero-row gate correction](proposals/e0-zero-row-proposal.md)          | accepted → ADR 0011 |
 | [Isolated E1 functional qualification](proposals/e1-qualification-proposal.md) | accepted → ADR 0013 |
 | [E0 saturation gate at 1/16](proposals/e0-saturation-proposal.md) | accepted → ADR 0015 (option B) |
-| [Fill-aware first shape (S3 tax)](proposals/e0-fill-aware-solver.md) | proposal |
+| [Fill-aware first shape (S3 tax)](proposals/e0-fill-aware-solver.md) | accepted → ADR 0019 |
 | [E1 1/16 learned-book budget](proposals/e1-1-16-book-budget.md) | proposal |
