@@ -1,8 +1,9 @@
 # FloppyLM
 ![floppylm](docs/cover.jpg)
 
-A lab whose goal is the best language model that fits **entirely** on a real 3.5" floppy: weight description,
-tokenizer and runtime inside one 1 474 560-byte disk ([what counts](docs/adr/0001-floppy-budget.md)).
+A lab whose goal is the best language model that fits **entirely** on a real 3.5" floppy.
+1 474 560 bytes is empty FAT12 geometry (2880×512), not a packed image of weights, tokenizer,
+and runtime — there is no `.img` yet ([what counts](docs/adr/0001-floppy-budget.md)).
 
 **Status:** the E0 scalar baseline runs on an Xbox Series S GPU backend; live state, including
 whether any quality result exists, is in [docs/STATUS.md](docs/STATUS.md).
