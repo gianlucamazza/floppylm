@@ -31,7 +31,7 @@ bootable artifact. The claimable novelty is that comparison and its result, not 
 
 ## Thesis
 
-**Below one bit, a recursive core whose weights are indices into a vector code beats, at equal
+**Below one bit, a recursive core whose weights are indices into a vector code is hypothesized to beat, at equal
 coded bytes, the best scalar core (ternary, 2-bit) with the same recursion.**
 
 The core is written `W = D(indices)`: blocks of `v` weights → one index of `r·v` bits
