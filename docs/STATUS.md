@@ -3,22 +3,41 @@
 The only page that states live project state. Update it — and nothing else — on every package
 bump or campaign start/stop. Last updated: **2026-10-04**.
 
+## Where this stands
+
+E0 is measuring the scalar baseline on the accepted Xbox package 0.1.0.105. Campaign
+`e0-20261004T103838Z-c58a86` is running, in phase `neutral-mlp`.
+
+The scale choice is closed. `row8log` is lower than `row16` at T, 2T and 4T: mean val bpb
+1.5076/1.3856/1.3059 against 1.5127/1.3933/1.3121. The activation choice is open. Both gelu
+seeds are eligible only after the S3 repair (`d_ff` 424) and repeat the `row8log` repairs:
+seed 0 is 1.5039/1.3837/1.3047, seed 1 is 1.5112/1.3876/1.3070. Trial `006` (SwiGLU, seed 0,
+nominal `d_ff` 274) is in progress and is not a result. ReLU² has not started.
+
+E1–E4 stay specified. They wait for this campaign to finish and for an accepted E1 protocol.
+Host init-pack is written on [PR #22](https://github.com/gianlucamazza/floppylm/pull/22) and
+is not part of this campaign.
+
+The table is the operator record: package identity, campaign ids, and stopped jobs. The
+paragraph above is the quality state. Measured cells are in the
+[evidence index](evidence/README.md).
+
 | Item                 | State                                                                                                                                                                                   |
 | -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Thesis               | [concept v0.2](concept.md), **specified**                                                                                                                                               |
 | E0 v2 software       | **measured**: harness, gates and smoke ([evidence](evidence/README.md))                                                                                                                 |
 | S1–S10, scale policy | accepted ([ADR 0008](adr/0008-e0-numeric-protocol.md), [ADR 0011](adr/0011-e0-row-scale-selection.md))                                                                                  |
 | Xbox package | **accepted** `GianlucaMazza.XgpuE0_0.1.0.105_x64__g0p5dcfz4t9z4`, source `128434e81837ec1558f7e3d68a7f8849a91aa054`, CI [37194378620](https://github.com/gianlucamazza/xbox-gpu-training/actions/runs/37194378620). [Evidence](evidence/xbox-e0-20261004-105/notes.md): full gates, bit-identical 38/38 versus [0.1.0.102](evidence/xbox-e0-20261004-102/notes.md). Shader CSO unchanged. The publish path no longer truncates a stable checkpoint temporary. Scientific 4T jobs on this package passed trunk 896 and 2112. |
-| E0 campaign | **running** `e0-20261004T103838Z-c58a86` on `0.1.0.105`, host freeze `f76b4c8`, phase `neutral-mlp`. Neutral scale selected `row8log`: both seeds are eligible only after the S3 repair (`d_ff` 424); mean val bpb 1.5076/1.3856/1.3059, below the row16 repair pair at T, 2T and 4T. The next phase inherits nominal `d_ff` 415. Trial `004` (`gelu`, row8log, nominal `d_ff` 415, seed 0) is eligible only after the S3 repair (`d_ff` 424) and repeats the row8log seed-0 repair: val bpb 1.5039/1.3837/1.3047. Trial `005` (same recipe, seed 1) is in repair and is not a result. [Launch record](evidence/e0-launch-20261004-105/notes.md). |
+| E0 campaign | **running** `e0-20261004T103838Z-c58a86` on `0.1.0.105`, host freeze `f76b4c8`, phase `neutral-mlp`. See [Where this stands](#where-this-stands). [Launch record](evidence/e0-launch-20261004-105/notes.md). |
 | Previous E0 campaign | **stopped** `e0-20261004T082243Z-31972d` at 2026-10-04T09:28:41Z on `0.1.0.102` (freeze `4de17b3`). `progress_stall` at published trunk 2112. Preserved checkpoint sha256 `3fb5d57cb03591afcbf90054c97544f6abcb6e075c1a297139335d6ae0c86483`, 23713680 bytes. Not resumed onto `0.1.0.105`. Before that, `e0-20261002T191632Z-ca781f` on 0.1.0.93 (2026-10-03T00:04:51Z). Trial `000` **eligible** (fill 0.9990/0.9998/1.0012, val bpb 1.5155/1.3951/1.3160). Trial `001` **eligible** after S3 `d_ff` 400 (fill 0.9996/1.0007/1.0009, val bpb 1.5100/1.3916/1.3082, bytes 85904/86000/86015). Trial `002` row8log **interrupted** at stop, not a result. Do not resume `ca781f` onto 0.1.0.95. Frozen FloppyLM `3c3c79d`. |
 | Previous campaign    | `e0-20261001T163456Z-fdab67` (0.1.0.56) **stopped**, 001 incomplete; do not resume. Before that, `e0-20261001T090514Z-4236fd` (0.1.0.28) stopped unsaturated — [record](evidence/e0-v2/campaigns/e0-20261001T090514Z-4236fd/notes.md) |
 | E0 saturation gate   | recorded, not an eligibility gate ([ADR 0015](adr/0015-e0-fixed-data-frontier.md)) |
 | Host recovery        | [ADR 0017](adr/0017-runtime-liveness.md) merged ([PR #7](https://github.com/gianlucamazza/floppylm/pull/7)); paired with accepted 0.1.0.93. |
-| E0 quality results   | neutral scale on 0.1.0.105 selected `row8log`; the row16 pair still matches published `ca781f`; gelu seed 0 repeats that row8log repair; MLP selection is open |
+| E0 quality results   | scale selected `row8log`; both gelu seeds repeat that pair; MLP selection is open (`006` SwiGLU in progress) |
 | E1 qualification     | CPU functional qualification **measured** ([ADR 0013](adr/0013-e1-functional-qualification.md), [evidence](evidence/e1-qualification-20261001/notes.md)); Xbox vector qualification pending |
 | Scientific E1–E4     | **specified**, gated by E0 and an accepted E1 protocol ([roadmap](roadmap.md), [completion plan](completion-plan.md)) |
 
-Package `0.1.0.105` is accepted and installed. Campaign `e0-20261004T103838Z-c58a86` is running in `neutral-mlp`. Neutral scale selected `row8log` over the row16 pair, which still matches the published `ca781f` numbers. Trial `004` is eligible after its S3 repair and repeats the row8log seed-0 artifacts. Trial `005` is in repair and is not a result. The completed 4T jobs on this package passed trunk 896 and 2112 without a `progress_stall`. `31972d` stays stopped on `0.1.0.102`. `a8d8b9` stays stopped on `0.1.0.98`. Campaign `ca781f` remains stopped and published. Host init-pack is implemented on [PR #22](https://github.com/gianlucamazza/floppylm/pull/22) and is not part of this campaign. [E1 book budget](adr/proposals/e1-1-16-book-budget.md) stays a proposal.
+`31972d` stays stopped on `0.1.0.102`. `a8d8b9` stays stopped on `0.1.0.98`. `ca781f` stays stopped on `0.1.0.93`. Completed 4T jobs on `0.1.0.105` passed trunk 896 and 2112 without a `progress_stall`. [E1 book budget](adr/proposals/e1-1-16-book-budget.md) stays a proposal.
 
 ```bash
 python scripts/e0_status.py --campaign runs/e0-campaign-20261004-105

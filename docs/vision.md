@@ -6,7 +6,10 @@ The goal is the best language model that fits on a real 3.5" floppy, measured as
 measured answer to an open question: below one bit, from scratch, does a vector code in the core
 beat ternary — and must the code be learned, or is generating it enough?
 
-## Success v0.1
+## Success
+
+These criteria belong to thesis v0.2. The closed v0.1 stress test is a record in
+[concept](concept.md#stress-test-v01), not a success target.
 
 - Success requires E0–E2 **measured**, with F1 and F2 decided one way or the other. E0 quality is still pending.
 - If the thesis holds: E4 produces an image within the [ADR 0001](adr/0001-floppy-budget.md)
@@ -17,5 +20,5 @@ beat ternary — and must the code be learned, or is generating it enough?
 ## Non-goals
 
 - Factual knowledge, chat, instructions.
-- A bootable floppy: a data floppy executed by a Linux host ([ADR 0001](adr/0001-floppy-budget.md)).
+- A machine that boots an operating system from the floppy. The image is a data disk: a Linux host mounts it and runs the binary that is on it ([ADR 0001](adr/0001-floppy-budget.md), decision 4).
 - Beating models outside the budget; SmolLM2 is only a scale reference.

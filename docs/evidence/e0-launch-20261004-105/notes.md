@@ -66,3 +66,10 @@ Trial `004` finished. The original `d_ff` 415 cell is outside ±1% and matches t
 row8log seed-0 original. The S3 repair (`d_ff` 424) is eligible and matches that
 seed's repair artifacts: val bpb 1.5039/1.3837/1.3047. Trial `005` (seed 1) is in
 repair and is not a result. MLP selection stays open.
+
+## Later (2026-10-04, gelu pair)
+
+Both gelu seeds are eligible after the S3 repair (`d_ff` 424) and match the
+`row8log` repairs: seed 0 repeats `002-repair`, seed 1 repeats `003-repair`.
+MLP selection stays open. Trial `006` (SwiGLU, nominal `d_ff` 274, seed 0) is
+in progress and is not a result.
