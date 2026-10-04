@@ -16,3 +16,9 @@ Status: **completed**. Full configuration and environment in `summary.json`; man
 
 Not measured here: test (only `--final-test` on a frozen selection), paired σ, comparison
 between arms.
+
+## Later (2026-10-04)
+
+The three branch artifact hashes match
+`e0-20261004T103838Z-c58a86-002-repair`. Eligible parity here repeats that
+scale repair (`d_ff` 424). It is not an activation comparison.
