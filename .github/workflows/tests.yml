@@ -17,6 +17,24 @@ jobs:
       MKL_NUM_THREADS: 2
     steps:
       - uses: actions/checkout@v7
+      # Host reference CLI. Pinned to xbox-gpu-training main, the accepted
+      # 0.1.0.105 trainer source (128434e). Native tests run it with --reference.
+      - name: Checkout pinned host trainer
+        uses: actions/checkout@v7
+        with:
+          repository: gianlucamazza/xbox-gpu-training
+          ref: 128434e81837ec1558f7e3d68a7f8849a91aa054
+          path: xbox-gpu-training
+          persist-credentials: false
+      - name: Build xgpu_e0_train
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends build-essential cmake libssl-dev
+          cmake -S xbox-gpu-training -B xbox-gpu-training/build \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DXGPU_BUILD_EXAMPLES=OFF
+          cmake --build xbox-gpu-training/build --target xgpu_e0_train --parallel
+          test -x xbox-gpu-training/build/xgpu_e0_train
       - uses: actions/setup-python@v7
         with:
           python-version: '3.12'
@@ -26,5 +44,7 @@ jobs:
           python -m pip install -e '.[dev]'
       - name: Lint
         run: ruff check src tests scripts experiments
-      - name: Host contracts, recovery and unit tests
-        run: python -m pytest -q -m 'not native'
+      - name: Host contracts, recovery, unit and native reference tests
+        env:
+          XGPU_E0_BINARY: ${{ github.workspace }}/xbox-gpu-training/build/xgpu_e0_train
+        run: python -m pytest -q
