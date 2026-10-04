@@ -59,3 +59,10 @@ parity. Both S3 repairs (`d_ff` 424) are eligible. Neutral scale selected
 2T and 4T. The carried shape is nominal `d_ff` 415. The campaign is in
 `neutral-mlp`. Trial `004` (`gelu`, row8log, `d_ff` 415, seed 0) is in progress
 and is not a result. No `progress_stall` occurred on the completed 4T jobs.
+
+## Later (2026-10-04, first gelu seed)
+
+Trial `004` finished. The original `d_ff` 415 cell is outside ±1% and matches the
+row8log seed-0 original. The S3 repair (`d_ff` 424) is eligible and matches that
+seed's repair artifacts: val bpb 1.5039/1.3837/1.3047. Trial `005` (seed 1) is in
+repair and is not a result. MLP selection stays open.
