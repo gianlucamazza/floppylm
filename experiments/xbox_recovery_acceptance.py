@@ -19,6 +19,17 @@ from floppylm_xbox.jobs import prepare_job, tensors
 from floppylm_xbox.portal import Portal
 
 
+def require_runner_interruption(code: int, summary_status: str) -> None:
+    """A native interrupt is recorded and returned. It is not an uncaught failure.
+
+    ``cmd_run`` writes summary status ``interrupted`` and returns 130. Older hosts
+    propagated ``RuntimeError`` instead. Both proofs are accepted only when the
+    recorded status is interrupted.
+    """
+    if code != 130 or summary_status != "interrupted":
+        raise RuntimeError("runner interruption did not occur")
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--out", type=Path, required=True)
@@ -118,13 +129,17 @@ def main():
         prefix + "-runner",
     ]
     try:
+        code = None
         try:
-            runner.main()
+            code = runner.main()
         except RuntimeError as error:
             if "did not complete: interrupted" not in str(error):
                 raise
-        else:
-            raise RuntimeError("runner interruption did not occur")
+            code = 130
+        summary = json.loads(
+            (runner.EVIDENCE / "runs" / (prefix + "-runner") / "summary.json").read_text()
+        )
+        require_runner_interruption(code, str(summary.get("status", "")))
     finally:
         Portal.submit = original_submit
         sys.argv = original_argv
