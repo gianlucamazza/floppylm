@@ -9,7 +9,7 @@ bump or campaign start/stop. Last updated: **2026-10-04**.
 | E0 v2 software       | **measured**: harness, gates and smoke ([evidence](evidence/README.md))                                                                                                                 |
 | S1–S10, scale policy | accepted ([ADR 0008](adr/0008-e0-numeric-protocol.md), [ADR 0011](adr/0011-e0-row-scale-selection.md))                                                                                  |
 | Xbox package | **accepted** `GianlucaMazza.XgpuE0_0.1.0.102_x64__g0p5dcfz4t9z4`, source `4b8f51c3a5ee985ce8fcb71327f0ffc88e487545`, CI [37186655285](https://github.com/gianlucamazza/xbox-gpu-training/actions/runs/37186655285). [Evidence](evidence/xbox-e0-20261004-102/notes.md): full gates, `progress_stall` at 600819 ms, bit-identical 38/38 versus [0.1.0.98](evidence/xbox-e0-20261003-098/notes.md). Shader CSO unchanged. |
-| E0 campaign | **stopped** `e0-20261003T104407Z-a8d8b9` at 2026-10-03T11:36:47Z; first trial interrupted by the published-fence watchdog. Checkpoint 2944 and two branches verified; worker reached 3008 before checkpoint publication stalled. Frozen host source `8867ec6`, package `0.1.0.98`. [Incident analysis](evidence/e0-incident-20261003/notes.md). |
+| E0 campaign | **running** `e0-20261004T082243Z-31972d` on accepted `0.1.0.102`. Host freeze `4de17b3`. Trial `31972d-000` is a new ternary row16 `d_ff` 391 seed 0 and has left trunk step 0. `a8d8b9` stays stopped on `0.1.0.98`. |
 | Previous E0 campaign | **stopped** `e0-20261002T191632Z-ca781f` on 0.1.0.93 (2026-10-03T00:04:51Z). Trial `000` **eligible** (fill 0.9990/0.9998/1.0012, val bpb 1.5155/1.3951/1.3160). Trial `001` **eligible** after S3 `d_ff` 400 (fill 0.9996/1.0007/1.0009, val bpb 1.5100/1.3916/1.3082, bytes 85904/86000/86015). Trial `002` row8log **interrupted** at stop, not a result. Do not resume `ca781f` onto 0.1.0.95. Frozen FloppyLM `3c3c79d`. |
 | Previous campaign    | `e0-20261001T163456Z-fdab67` (0.1.0.56) **stopped**, 001 incomplete; do not resume. Before that, `e0-20261001T090514Z-4236fd` (0.1.0.28) stopped unsaturated — [record](evidence/e0-v2/campaigns/e0-20261001T090514Z-4236fd/notes.md) |
 | E0 saturation gate   | recorded, not an eligibility gate ([ADR 0015](adr/0015-e0-fixed-data-frontier.md)) |
@@ -18,17 +18,17 @@ bump or campaign start/stop. Last updated: **2026-10-04**.
 | E1 qualification     | CPU functional qualification **measured** ([ADR 0013](adr/0013-e1-functional-qualification.md), [evidence](evidence/e1-qualification-20261001/notes.md)); Xbox vector qualification pending |
 | Scientific E1–E4     | **specified**, gated by E0 and an accepted E1 protocol ([roadmap](roadmap.md), [completion plan](completion-plan.md)) |
 
-Package `0.1.0.102` is accepted. Campaign `a8d8b9` stays stopped on `0.1.0.98` and is not migrated. The next scientific campaign is a new source freeze on this package and has not started. Campaign `ca781f` remains stopped and published. The step-3008 stall cause remains unproven. Architecture notes stay proposals: [S3 fill](adr/proposals/e0-fill-aware-solver.md), [E1 book budget](adr/proposals/e1-1-16-book-budget.md).
+Package `0.1.0.102` is accepted. Campaign `e0-20261004T082243Z-31972d` is a new freeze (`4de17b3`) on that package. Its first trial restarts from scratch; checkpoint 2944 is not carried forward. Campaign `a8d8b9` stays stopped on `0.1.0.98`. Campaign `ca781f` remains stopped and published. The step-3008 stall cause remains unproven. Architecture notes stay proposals: [S3 fill](adr/proposals/e0-fill-aware-solver.md), [E1 book budget](adr/proposals/e1-1-16-book-budget.md).
 
 ```bash
-python scripts/e0_status.py --campaign runs/e0-campaign-20261003-098
-python scripts/e0_status.py --campaign runs/e0-campaign-20261003-098 --xbox
+python scripts/e0_status.py --campaign runs/e0-campaign-20261004-102
+python scripts/e0_status.py --campaign runs/e0-campaign-20261004-102 --xbox
 ```
 
 Do not resume `fdab67` onto 0.1.0.65, 0.1.0.66, 0.1.0.68, 0.1.0.76, 0.1.0.80, 0.1.0.84, 0.1.0.86, 0.1.0.93, or 0.1.0.95.
 Do not continue `40a67c` onto a later package. Do not recover `2fe64f` or `ca781f` onto 0.1.0.95.
 
-## Next (E0 stopped; diagnosis complete, recovery not executed)
+## Recorded stop (a8d8b9; recovery was not executed)
 
 Done since the stop: xbox-gpu-training consumes the whole published contract set (PR #22, #20);
 Xbox execution moved to `floppylm_xbox` with generic Device Portal settings
