@@ -50,3 +50,12 @@ repair. Both repaired seeds are eligible. Seed 0 val bpb is 1.5155/1.3951/1.3160
 and seed 1 is 1.5100/1.3916/1.3082, the same published `ca781f` pair. No
 `progress_stall` occurred. Trial `002` (`row8log`, `d_ff` 415, seed 0) started
 after that pair and is not a result.
+
+## Later (2026-10-04, neutral scale)
+
+Both row8log seeds finished. The original `d_ff` 415 cells are outside ±1% byte
+parity. Both S3 repairs (`d_ff` 424) are eligible. Neutral scale selected
+`row8log`: mean val bpb 1.5076/1.3856/1.3059, below the row16 repair pair at T,
+2T and 4T. The carried shape is nominal `d_ff` 415. The campaign is in
+`neutral-mlp`. Trial `004` (`gelu`, row8log, `d_ff` 415, seed 0) is in progress
+and is not a result. No `progress_stall` occurred on the completed 4T jobs.

@@ -66,6 +66,10 @@ attempt recipes/eligibility from trial outcomes without overwriting frozen recor
 | [`e0-v2/runs/e0-20261004T103838Z-c58a86-000-repair`](e0-v2/runs/e0-20261004T103838Z-c58a86-000-repair/notes.md) | S3 repair eligible, val bpb 1.5155/1.3951/1.3160, Δ(2T→4T) = −0.079 | eligible |
 | [`e0-v2/runs/e0-20261004T103838Z-c58a86-001`](e0-v2/runs/e0-20261004T103838Z-c58a86-001/notes.md) | row16 seed 1: bytes short, val bpb 1.5273/1.4052/1.3204 | excluded |
 | [`e0-v2/runs/e0-20261004T103838Z-c58a86-001-repair`](e0-v2/runs/e0-20261004T103838Z-c58a86-001-repair/notes.md) | S3 repair eligible, val bpb 1.5100/1.3916/1.3082, Δ(2T→4T) = −0.083 | eligible |
+| [`e0-v2/runs/e0-20261004T103838Z-c58a86-002`](e0-v2/runs/e0-20261004T103838Z-c58a86-002/notes.md) | row8log seed 0, `d_ff` 415: bytes short, val bpb 1.5183/1.3921/1.3064 | excluded |
+| [`e0-v2/runs/e0-20261004T103838Z-c58a86-002-repair`](e0-v2/runs/e0-20261004T103838Z-c58a86-002-repair/notes.md) | S3 repair eligible, `d_ff` 424, val bpb 1.5039/1.3837/1.3047, Δ(2T→4T) = −0.079 | eligible |
+| [`e0-v2/runs/e0-20261004T103838Z-c58a86-003`](e0-v2/runs/e0-20261004T103838Z-c58a86-003/notes.md) | row8log seed 1, `d_ff` 415: bytes short, val bpb 1.5143/1.4011/1.3211 | excluded |
+| [`e0-v2/runs/e0-20261004T103838Z-c58a86-003-repair`](e0-v2/runs/e0-20261004T103838Z-c58a86-003-repair/notes.md) | S3 repair eligible, `d_ff` 424, val bpb 1.5112/1.3876/1.3070, Δ(2T→4T) = −0.081 | eligible |
 | [`e0-lite/pre-v2`](e0-lite/pre-v2/notes.md)                                                                                                 | stopped E0-lite grid; diagnostic, excluded from verdicts, FLP1 blobs | —           |
 
 ### Xbox package acceptance
