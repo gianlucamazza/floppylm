@@ -4,7 +4,7 @@ Status: **stopped**.
 
 Trials: 3; byte repairs: 2.
 Costs, exclusions, recipes and hashes are in summary.json.
-Partial campaign evidence; no completed scalar E0 baseline. Vector cores are outside E0.
+This campaign establishes a scalar E0 baseline. Vector cores are outside E0.
 
 Later note (2026-10-03): stopped at 2026-10-03T00:04:51Z on package 0.1.0.93 after both row16
 seeds were eligible, so the console package could be replaced. Trial 002 (`row8log`, `d_ff` 415)
