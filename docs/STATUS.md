@@ -1,14 +1,14 @@
 # Status
 
 The only page that states live project state. Update it — and nothing else — on every package
-bump or campaign start/stop. Last updated: **2026-10-03**.
+bump or campaign start/stop. Last updated: **2026-10-04**.
 
 | Item                 | State                                                                                                                                                                                   |
 | -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Thesis               | [concept v0.2](concept.md), **specified**                                                                                                                                               |
 | E0 v2 software       | **measured**: harness, gates and smoke ([evidence](evidence/README.md))                                                                                                                 |
 | S1–S10, scale policy | accepted ([ADR 0008](adr/0008-e0-numeric-protocol.md), [ADR 0011](adr/0011-e0-row-scale-selection.md))                                                                                  |
-| Xbox package | **accepted** `GianlucaMazza.XgpuE0_0.1.0.98_x64__g0p5dcfz4t9z4`, source `cc134fe4`, CI [37112204165](https://github.com/gianlucamazza/xbox-gpu-training/actions/runs/37112204165). [Evidence](evidence/xbox-e0-20261003-098/notes.md): full numerical gates, actual 600-second watchdog exit and exact explicit recovery, lifecycle, bit identity 38/38 versus 0.1.0.95; shader unchanged. Functional throughput 9747.980 tok/s. |
+| Xbox package | **installed, qualification running** `GianlucaMazza.XgpuE0_0.1.0.102_x64__g0p5dcfz4t9z4`, source `4b8f51c3a5ee985ce8fcb71327f0ffc88e487545`, CI [37186655285](https://github.com/gianlucamazza/xbox-gpu-training/actions/runs/37186655285). Shader CSO unchanged versus 0.1.0.98. The last accepted package remains [0.1.0.98](evidence/xbox-e0-20261003-098/notes.md) until these gates and bit identity close. |
 | E0 campaign | **stopped** `e0-20261003T104407Z-a8d8b9` at 2026-10-03T11:36:47Z; first trial interrupted by the published-fence watchdog. Checkpoint 2944 and two branches verified; worker reached 3008 before checkpoint publication stalled. Frozen host source `8867ec6`, package `0.1.0.98`. [Incident analysis](evidence/e0-incident-20261003/notes.md). |
 | Previous E0 campaign | **stopped** `e0-20261002T191632Z-ca781f` on 0.1.0.93 (2026-10-03T00:04:51Z). Trial `000` **eligible** (fill 0.9990/0.9998/1.0012, val bpb 1.5155/1.3951/1.3160). Trial `001` **eligible** after S3 `d_ff` 400 (fill 0.9996/1.0007/1.0009, val bpb 1.5100/1.3916/1.3082, bytes 85904/86000/86015). Trial `002` row8log **interrupted** at stop, not a result. Do not resume `ca781f` onto 0.1.0.95. Frozen FloppyLM `3c3c79d`. |
 | Previous campaign    | `e0-20261001T163456Z-fdab67` (0.1.0.56) **stopped**, 001 incomplete; do not resume. Before that, `e0-20261001T090514Z-4236fd` (0.1.0.28) stopped unsaturated — [record](evidence/e0-v2/campaigns/e0-20261001T090514Z-4236fd/notes.md) |
@@ -18,7 +18,7 @@ bump or campaign start/stop. Last updated: **2026-10-03**.
 | E1 qualification     | CPU functional qualification **measured** ([ADR 0013](adr/0013-e1-functional-qualification.md), [evidence](evidence/e1-qualification-20261001/notes.md)); Xbox vector qualification pending |
 | Scientific E1–E4     | **specified**, gated by E0 and an accepted E1 protocol ([roadmap](roadmap.md), [completion plan](completion-plan.md)) |
 
-Campaign `a8d8b9` is stopped on package `0.1.0.98`; its observed worker is failed and not recovery-ready. Functional acceptance remains historical; the incident exposes a coverage limit in the watchdog exit qualification. Campaign `ca781f` remains stopped and published. The stopped campaign retains its `3c3c79d` source binding. Correctness changes under ADR 0018 require a new source freeze for the next campaign; they do not migrate historical runs. Architecture notes stay proposals: [S3 fill](adr/proposals/e0-fill-aware-solver.md), [E1 book budget](adr/proposals/e1-1-16-book-budget.md).
+Package `0.1.0.102` is installed. Qualification is running on the console and has not closed. Campaign `a8d8b9` stays stopped on `0.1.0.98` and is not migrated. The next scientific campaign needs this package's closed gates and a new source freeze. Campaign `ca781f` remains stopped and published. Architecture notes stay proposals: [S3 fill](adr/proposals/e0-fill-aware-solver.md), [E1 book budget](adr/proposals/e1-1-16-book-budget.md).
 
 ```bash
 python scripts/e0_status.py --campaign runs/e0-campaign-20261003-098
