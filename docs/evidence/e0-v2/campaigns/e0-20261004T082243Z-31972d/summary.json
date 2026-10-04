@@ -1,0 +1,77 @@
+{
+ "baseline_complete": false,
+ "campaign": "e0-20261004T082243Z-31972d",
+ "commit": "4b8f51c3a5ee985ce8fcb71327f0ffc88e487545",
+ "comparisons": {},
+ "cost": {
+  "eval_seconds": 0,
+  "native_execution_seconds": 0,
+  "total_flops": 0,
+  "total_tokens": 0,
+  "wall_seconds": 0
+ },
+ "cost_scope": "completed trial compute; host wall per recorded host attempt",
+ "cost_unavailable_trials": [
+  "e0-20261004T082243Z-31972d-000"
+ ],
+ "decisions": {},
+ "instability": null,
+ "original_trials": 1,
+ "package": "GianlucaMazza.XgpuE0_0.1.0.102_x64__g0p5dcfz4t9z4",
+ "repair_trials": 0,
+ "status": "stopped",
+ "trials": [
+  {
+   "attempt": "original",
+   "compute": null,
+   "eligibility": "unknown",
+   "eligibility_scope": "individual 4T serialized-byte parity; group gates are separate",
+   "exclusion_reasons": [],
+   "key": "neutral-scale-0-0",
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 391,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "gelu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row16",
+     "vocab": 256
+    },
+    "lr": 0.003,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "requested_recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 391,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "gelu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row16",
+     "vocab": 256
+    },
+    "lr": 0.003,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "run_id": "e0-20261004T082243Z-31972d-000",
+   "saturation": null,
+   "selected": false,
+   "status": "interrupted",
+   "trial_outcome": "reserved"
+  }
+ ],
+ "validation_paired": null
+}

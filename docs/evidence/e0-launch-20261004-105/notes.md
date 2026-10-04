@@ -42,3 +42,11 @@ timeout. No status observer is bound with `BindsTo` or `PartOf`. The failed
 
 `fdab67`, `40a67c`, `2fe64f`, `ca781f`, `a8d8b9`, and `31972d` stay on their
 original packages. No recovery of those campaigns is running.
+
+## Later (2026-10-04, row16 pair)
+
+Trial `c58a86-000` and its S3 repair both completed 4T, as did seed 1 and its
+repair. Both repaired seeds are eligible. Seed 0 val bpb is 1.5155/1.3951/1.3160
+and seed 1 is 1.5100/1.3916/1.3082, the same published `ca781f` pair. No
+`progress_stall` occurred. Trial `002` (`row8log`, `d_ff` 415, seed 0) started
+after that pair and is not a result.

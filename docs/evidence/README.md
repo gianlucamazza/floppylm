@@ -58,6 +58,14 @@ attempt recipes/eligibility from trial outcomes without overwriting frozen recor
 | [`e0-v2/runs/e0-20261002T191632Z-ca781f-001`](e0-v2/runs/e0-20261002T191632Z-ca781f-001/notes.md) | row16 seed 1: bytes short, val bpb 1.5273/1.4052/1.3204 | excluded |
 | [`e0-v2/runs/e0-20261002T191632Z-ca781f-001-repair`](e0-v2/runs/e0-20261002T191632Z-ca781f-001-repair/notes.md) | S3 repair eligible, val bpb 1.5100/1.3916/1.3082, Δ(2T→4T) = −0.083 | eligible |
 | `e0-v2/runs/e0-20261002T191632Z-ca781f-002` | `row8log` `d_ff` 415, interrupted at the start, not a result | interrupted |
+| [`e0-v2/campaigns/e0-20261003T104407Z-a8d8b9`](e0-v2/campaigns/e0-20261003T104407Z-a8d8b9/notes.md) | campaign on 0.1.0.98; stopped, no completed baseline | stopped |
+| `e0-v2/runs/e0-20261003T104407Z-a8d8b9-000` | interrupted before a branch result | interrupted |
+| [`e0-v2/campaigns/e0-20261004T082243Z-31972d`](e0-v2/campaigns/e0-20261004T082243Z-31972d/notes.md) | campaign on 0.1.0.102; stopped at published trunk 2112 | stopped |
+| `e0-v2/runs/e0-20261004T082243Z-31972d-000` | interrupted after the T and 2T artifacts, no 4T result | interrupted |
+| [`e0-v2/runs/e0-20261004T103838Z-c58a86-000`](e0-v2/runs/e0-20261004T103838Z-c58a86-000/notes.md) | row16 seed 0 on 0.1.0.105: bytes short, val bpb 1.5148/1.3938/1.3120 | excluded |
+| [`e0-v2/runs/e0-20261004T103838Z-c58a86-000-repair`](e0-v2/runs/e0-20261004T103838Z-c58a86-000-repair/notes.md) | S3 repair eligible, val bpb 1.5155/1.3951/1.3160, Δ(2T→4T) = −0.079 | eligible |
+| [`e0-v2/runs/e0-20261004T103838Z-c58a86-001`](e0-v2/runs/e0-20261004T103838Z-c58a86-001/notes.md) | row16 seed 1: bytes short, val bpb 1.5273/1.4052/1.3204 | excluded |
+| [`e0-v2/runs/e0-20261004T103838Z-c58a86-001-repair`](e0-v2/runs/e0-20261004T103838Z-c58a86-001-repair/notes.md) | S3 repair eligible, val bpb 1.5100/1.3916/1.3082, Δ(2T→4T) = −0.083 | eligible |
 | [`e0-lite/pre-v2`](e0-lite/pre-v2/notes.md)                                                                                                 | stopped E0-lite grid; diagnostic, excluded from verdicts, FLP1 blobs | —           |
 
 ### Xbox package acceptance
