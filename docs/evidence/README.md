@@ -27,6 +27,14 @@ until host retrieval and evaluation complete.
 [Historical report corrections](e0-report-corrections-20261003/notes.md) distinguish
 attempt recipes/eligibility from trial outcomes without overwriting frozen records.
 
+### Figures
+
+A figure is a view of published run summaries. The numbers stay in those records.
+
+![Neutral scale val bpb for campaign c58a86](e0-v2/neutral-scale-c58a86.svg)
+
+Eligible S3 repairs from `e0-20261004T103838Z-c58a86`. The mean at each cooldown end is the ADR 0015 selection metric; the dots are the two seeds. `row8log` is lower at T, 2T and 4T. The source records are the four `c58a86-*-repair` rows below.
+
 ## Inventory
 
 ### E0 v2 runs and campaigns

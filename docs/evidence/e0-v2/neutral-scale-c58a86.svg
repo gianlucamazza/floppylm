@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="820" height="460" viewBox="0 0 820 460" role="img">
+<title>Neutral scale val bpb, campaign c58a86</title>
+<desc>Eligible S3 repairs only. row16 mean 1.5127/1.3933/1.3121. row8log mean 1.5076/1.3856/1.3059. row8log mean is lower at T, 2T and 4T.</desc>
+<rect width="100%" height="100%" fill="#f6f3ec"/>
+<rect x="64" y="72" width="528" height="330" fill="#fffdf9" stroke="#e3ddd2"/>
+<g font-family="ui-sans-serif, system-ui, sans-serif" fill="#1d1c19">
+<text x="28" y="32" font-size="18" font-weight="650">Neutral scale, validation bpb</text>
+<text x="28" y="52" font-size="12" fill="#5e5a53">e0-20261004T103838Z-c58a86 · eligible S3 repairs · means are the selection metric</text>
+<line x1="64" y1="376.62" x2="592" y2="376.62" stroke="#ece7de"/>
+<text x="54" y="380.62" font-size="12" fill="#5e5a53" text-anchor="end">1.30</text>
+<line x1="64" y1="313.15" x2="592" y2="313.15" stroke="#ece7de"/>
+<text x="54" y="317.15" font-size="12" fill="#5e5a53" text-anchor="end">1.35</text>
+<line x1="64" y1="249.69" x2="592" y2="249.69" stroke="#ece7de"/>
+<text x="54" y="253.69" font-size="12" fill="#5e5a53" text-anchor="end">1.40</text>
+<line x1="64" y1="186.23" x2="592" y2="186.23" stroke="#ece7de"/>
+<text x="54" y="190.23" font-size="12" fill="#5e5a53" text-anchor="end">1.45</text>
+<line x1="64" y1="122.77" x2="592" y2="122.77" stroke="#ece7de"/>
+<text x="54" y="126.77" font-size="12" fill="#5e5a53" text-anchor="end">1.50</text>
+<text x="18" y="237" font-size="12" fill="#5e5a53" transform="rotate(-90 18 237)" text-anchor="middle">val bpb</text>
+<text x="152.00" y="434" font-size="14" text-anchor="middle">T</text>
+<text x="328.00" y="434" font-size="14" text-anchor="middle">2T</text>
+<text x="504.00" y="434" font-size="14" text-anchor="middle">4T</text>
+<text x="328" y="450" font-size="11" fill="#5e5a53" text-anchor="middle">cooldown end</text>
+<polyline points="152.00,103.16 328.00,255.95 504.00,356.31" fill="none" stroke="#24556e" stroke-width="1" stroke-opacity="0.35"/>
+<circle cx="152.00" cy="103.16" r="3.2" fill="#24556e" fill-opacity="0.85"/>
+<circle cx="328.00" cy="255.95" r="3.2" fill="#24556e" fill-opacity="0.85"/>
+<circle cx="504.00" cy="356.31" r="3.2" fill="#24556e" fill-opacity="0.85"/>
+<polyline points="152.00,110.09 328.00,260.34 504.00,366.23" fill="none" stroke="#24556e" stroke-width="1" stroke-opacity="0.35"/>
+<circle cx="152.00" cy="110.09" r="3.2" fill="#24556e" fill-opacity="0.85"/>
+<circle cx="328.00" cy="260.34" r="3.2" fill="#24556e" fill-opacity="0.85"/>
+<circle cx="504.00" cy="366.23" r="3.2" fill="#24556e" fill-opacity="0.85"/>
+<polyline points="152.00,106.62 328.00,258.14 504.00,361.27" fill="none" stroke="#24556e" stroke-width="2.4"/>
+<polyline points="152.00,117.77 328.00,270.40 504.00,370.68" fill="none" stroke="#0d6a43" stroke-width="1" stroke-opacity="0.35"/>
+<circle cx="152.00" cy="117.77" r="3.2" fill="#0d6a43" fill-opacity="0.85"/>
+<circle cx="328.00" cy="270.40" r="3.2" fill="#0d6a43" fill-opacity="0.85"/>
+<circle cx="504.00" cy="370.68" r="3.2" fill="#0d6a43" fill-opacity="0.85"/>
+<polyline points="152.00,108.53 328.00,265.42 504.00,367.70" fill="none" stroke="#0d6a43" stroke-width="1" stroke-opacity="0.35"/>
+<circle cx="152.00" cy="108.53" r="3.2" fill="#0d6a43" fill-opacity="0.85"/>
+<circle cx="328.00" cy="265.42" r="3.2" fill="#0d6a43" fill-opacity="0.85"/>
+<circle cx="504.00" cy="367.70" r="3.2" fill="#0d6a43" fill-opacity="0.85"/>
+<polyline points="152.00,113.15 328.00,267.91 504.00,369.19" fill="none" stroke="#0d6a43" stroke-width="2.4"/>
+<text x="614" y="86" font-size="12" fill="#5e5a53">mean val bpb</text>
+<text x="614" y="106" font-size="11" fill="#8a847a">T</text>
+<text x="668" y="106" font-size="11" fill="#8a847a">2T</text>
+<text x="728" y="106" font-size="11" fill="#8a847a">4T</text>
+<line x1="614" y1="126" x2="636" y2="126" stroke="#24556e" stroke-width="2.4"/>
+<circle cx="648" cy="126" r="3.2" fill="#24556e"/>
+<text x="660" y="130" font-size="13">row16</text>
+<text x="614" y="150" font-size="12" fill="#3f3c37">1.5127</text>
+<text x="668" y="150" font-size="12" fill="#3f3c37">1.3933</text>
+<text x="728" y="150" font-size="12" fill="#3f3c37">1.3121</text>
+<line x1="614" y1="178" x2="636" y2="178" stroke="#0d6a43" stroke-width="2.4"/>
+<circle cx="648" cy="178" r="3.2" fill="#0d6a43"/>
+<text x="660" y="182" font-size="13">row8log</text>
+<text x="614" y="202" font-size="12" fill="#3f3c37">1.5076</text>
+<text x="668" y="202" font-size="12" fill="#3f3c37">1.3856</text>
+<text x="728" y="202" font-size="12" fill="#3f3c37">1.3059</text>
+<text x="614" y="234" font-size="12" fill="#3f3c37">row8log is lower</text>
+<text x="614" y="250" font-size="12" fill="#3f3c37">at T, 2T and 4T.</text>
+<text x="614" y="382" font-size="11" fill="#8a847a">Lines join measured</text>
+<text x="614" y="396" font-size="11" fill="#8a847a">ends only.</text>
+</g></svg>
