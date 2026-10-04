@@ -11,6 +11,7 @@ import torch
 
 from floppylm.model import GPTConfig, TinyGPT
 from floppylm.pack import FormatError, pack, unpack
+from floppylm.train import TrainSpec
 
 ROOT = Path(__file__).resolve().parents[1]
 spec = importlib.util.spec_from_file_location("e0_v2_review", ROOT / "experiments/e0_v2.py")
@@ -394,6 +395,54 @@ def test_scientific_resume_refuses_changed_implementation_before_training(tmp_pa
     monkeypatch.setattr(e0.runlog, "sources", lambda _: {"files": {"engine.py": "changed"}})
     with pytest.raises(RuntimeError, match="frozen trial sources"):
         e0.cmd_resume(argparse.Namespace(resume="frozen"))
+
+
+def test_resume_returns_130_when_the_native_job_is_interrupted(tmp_path, monkeypatch):
+    run = tmp_path / "runs/frozen"
+    (run / "xbox").mkdir(parents=True)
+    (run / "xbox/submitted.json").write_text("{}")
+    cfg = GPTConfig(d=32, n_layers=1, n_heads=2, d_ff=48, ctx=16)
+    spec = TrainSpec(tokens=128, batch=4, lr=0.003, wd=0.1, seed=0)
+    manifest = {
+        "backend": "xbox",
+        "smoke": False,
+        "sources": {"files": {"engine.py": "frozen"}},
+        "config": cfg.to_dict(),
+        "spec": {
+            "tokens": spec.tokens,
+            "branches": spec.branches,
+            "batch": spec.batch,
+            "lr": spec.lr,
+            "wd": spec.wd,
+            "warmup_frac": spec.warmup_frac,
+            "cooldown_frac": spec.cooldown_frac,
+            "seed": spec.seed,
+        },
+        "budget_bits": 11_000_000,
+        "evaluation": {"val_bytes": 256},
+        "environment": {"torch_threads": 1},
+        "token_policy": "fixed",
+        "data": {"verified": {"prepared": "corpus"}},
+    }
+    (run / "manifest.json").write_text(json.dumps(manifest))
+    evidence = tmp_path / "evidence/runs/frozen"
+    evidence.mkdir(parents=True)
+    (evidence / "summary.json").write_text('{"status": "interrupted", "branches": []}')
+    monkeypatch.setattr(e0, "RUNS", tmp_path / "runs")
+    monkeypatch.setattr(e0, "EVIDENCE", tmp_path / "evidence")
+    monkeypatch.setattr(e0.runlog, "sources", lambda _: {"files": {"engine.py": "frozen"}})
+    monkeypatch.setattr(e0.data_mod, "manifest", lambda *_: {"verified": {"prepared": "corpus"}})
+    monkeypatch.setattr(e0, "TinyGPT", lambda *_: object())
+
+    def interrupted(*_args, **_kwargs):
+        raise RuntimeError("Xbox job did not complete: interrupted")
+
+    monkeypatch.setattr(e0, "_execute_run", interrupted)
+    code = e0.cmd_resume(argparse.Namespace(resume="frozen"))
+    recorded = json.loads((evidence / "summary.json").read_text())
+    assert code == 130
+    assert recorded["status"] == "interrupted"
+    assert json.loads((run / "status.json").read_text())["state"] == "interrupted"
 
 
 def test_final_test_rejects_invalid_flp2_before_protected_data(tmp_path, monkeypatch):
