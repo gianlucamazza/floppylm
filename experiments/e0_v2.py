@@ -117,6 +117,17 @@ between arms.
 """
 
 
+def terminal_state(error: BaseException) -> str:
+    """A native interrupted checkpoint is recoverable. It is not a failed recipe."""
+    if isinstance(error, KeyboardInterrupt):
+        return "interrupted"
+    if isinstance(error, RuntimeError) and str(error).startswith(
+        "Xbox job did not complete: interrupted"
+    ):
+        return "interrupted"
+    return "failed"
+
+
 def cmd_run(a: argparse.Namespace) -> int:
     if a.smoke:
         a.d, a.layers, a.d_ff, a.ctx, a.budget_frac = 32, 1, 48, 64, a.budget_frac
@@ -160,7 +171,7 @@ def cmd_run(a: argparse.Namespace) -> int:
     try:
         return _execute_run(a, cfg, model, spec, run_id, run_dir, ev_dir)
     except BaseException as error:
-        state = "interrupted" if isinstance(error, KeyboardInterrupt) else "failed"
+        state = terminal_state(error)
         partial = json.loads((ev_dir / "summary.json").read_text())
         partial.update(status=state, error=repr(error))
         runlog.write_json(ev_dir / "summary.json", partial)
@@ -372,7 +383,7 @@ def cmd_resume(a: argparse.Namespace) -> int:
         return _execute_run(a, cfg, model, spec, run_id, run_dir, ev_dir)
     except BaseException as error:
         partial = json.loads((ev_dir / "summary.json").read_text())
-        state = "interrupted" if isinstance(error, KeyboardInterrupt) else "failed"
+        state = terminal_state(error)
         partial.update(status=state, error=repr(error))
         runlog.write_json(ev_dir / "summary.json", partial)
         runlog.set_status(run_dir, state, error=repr(error))

@@ -53,12 +53,18 @@ def test_observation_rejects_early_exit_or_frozen_heartbeat(
 
 @pytest.mark.parametrize(
     "field,value",
-    [("kind", "gpu_wait_failed"), ("error", "GPU fence deadline exceeded"), ("elapsed_ms", 1)],
+    [
+        ("kind", "gpu_wait_timeout"),
+        ("error", "published GPU fence frozen"),
+        ("elapsed_ms", 1),
+        ("requested_fence", 4),
+    ],
 )
 def test_fault_must_be_the_published_fence_watchdog(acceptance, field, value):
     fault = {
-        "kind": "gpu_wait_timeout",
-        "error": "published GPU fence frozen",
+        "kind": "progress_stall",
+        "error": "published progress frozen without an in-flight GPU request",
+        "requested_fence": 0,
         "elapsed_ms": 600000,
     }
     status = {

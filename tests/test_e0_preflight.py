@@ -241,7 +241,7 @@ def test_legacy_campaign_requires_an_existing_unowned_lock(inputs, preflight):
     result = preflight.report(root, *args, portal=Console())
     assert result["ready"], result
     evidence = result["checks"]["campaign_hosts"]["evidence"]
-    assert evidence[0]["liveness"] == "unowned_legacy_lock"
+    assert evidence[0]["liveness"] == "unowned_verified"
     assert manifest.read_bytes() == before
 
 

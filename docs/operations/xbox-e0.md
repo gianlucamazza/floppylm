@@ -220,10 +220,16 @@ python scripts/e0_status.py --campaign runs/<campaign-dir> --xbox --watch 5 --du
 
 A single report labels progress unverified. Watch records atomic `monitor.json` and an
 fsynced `monitor.jsonl` journal, with separate source/device provenance, host PID/start/boot
-identity and lock ownership, worker heartbeat, and completed work. `--observations PATH`
-selects the journal location. The trial writes `xbox/runtime.json` and
-`xbox/runtime-events.jsonl`; campaign signal handling records `runtime-events.jsonl` and
-waits for its child to finish cancellation before releasing `worker.lock`.
+identity and lock ownership, the raw worker sample, and completed work. Each record is a
+`sample`. SIGINT and SIGTERM write one further `terminal` record, including the signal,
+before the observer exits. Do not bind the observer unit with `BindsTo` or `PartOf` to the
+campaign unit; if a supervisor still delivers SIGTERM, the terminal record is the last
+observation and the previous `sample` is historical. `--observations PATH` selects the
+journal location. The trial writes `xbox/runtime.json` and `xbox/runtime-events.jsonl`;
+campaign signal handling records `runtime-events.jsonl` and waits for its child to finish
+cancellation before releasing `worker.lock`. A native result whose state is `interrupted`
+is an interrupted checkpoint, including a `progress_stall`, and stays available for
+explicit recovery. It is not recorded as a failed recipe.
 
 ### Post-E0 hardware qualification
 
@@ -258,7 +264,9 @@ After accepting an idle candidate package, run the explicitly functional probe:
 python experiments/xbox_watchdog_acceptance.py --out runs/watchdog-new --acceptance runs/acceptance-new/acceptance.json
 ```
 
-The runner refuses pending inbox work and scientific running records. It records
+The runner refuses pending inbox work and scientific running records. On the
+candidate, the parked probe must report `progress_stall` and `requested_fence` 0.
+An in-flight GPU wait is the only `gpu_wait_timeout`. It records
 the complete pre-existing inbox inventory, hashes of job JSON bound by committed
 scientific evidence, and their result descriptors before and after. Archived
 fixture payloads and large content-addressed inputs are not rehashed. It retains uniquely named

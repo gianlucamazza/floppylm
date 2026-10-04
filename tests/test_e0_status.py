@@ -2,6 +2,9 @@
 
 import importlib.util
 import json
+import signal
+import subprocess
+import sys
 from pathlib import Path
 from unittest.mock import Mock
 
@@ -89,8 +92,10 @@ def test_interrupted_or_failed_console_is_not_reported_as_healthy(campaign, tmp_
     portal = Mock(spec=["get", "status", "worker"])
     portal.get.return_value = json.dumps({"package": "package", "commit": "commit"}).encode()
     portal.status.return_value = {"state": state, "job_sha256": "bound", "hardware_gpu": True}
+    portal.worker.return_value = {"state": "ready", "fault": None, "heartbeat_seq": 4}
     result = module.report(campaign, workspace=tmp_path, portal=portal)
     assert result["trial"]["console"]["state"] == state
+    assert result["trial"]["worker_sample"]["heartbeat_seq"] == 4
     assert result["issues"] == ["Console trial requires diagnosis or explicit recovery"]
 
 
@@ -228,6 +233,99 @@ def test_mismatched_host_lock_owner_is_an_issue(campaign, tmp_path, monkeypatch)
     result = module.report(campaign, workspace=tmp_path)
     assert result["host_liveness"] == "lock_owner_mismatch"
     assert "Campaign host is not a live lock owner" in result["issues"]
+
+
+def test_failed_worker_is_visible_on_a_terminal_result(campaign, tmp_path):
+    submitted = tmp_path / "runs/trial/xbox"
+    submitted.mkdir(parents=True)
+    (submitted / "submitted.json").write_text(json.dumps({"package": "package", "sha256": "bound"}))
+    portal = Mock(spec=["get", "status", "worker"])
+    portal.get.return_value = json.dumps({"package": "package", "commit": "commit"}).encode()
+    portal.status.return_value = {
+        "state": "interrupted",
+        "job_sha256": "bound",
+        "hardware_gpu": True,
+    }
+    portal.worker.return_value = {
+        "state": "failed",
+        "heartbeat_seq": 9,
+        "fault": {"kind": "progress_stall"},
+    }
+    result = module.report(campaign, workspace=tmp_path, portal=portal)
+    assert result["trial"]["worker_sample"]["fault"]["kind"] == "progress_stall"
+    assert "Worker is failed; explicit restart required before recovery" in result["issues"]
+
+
+def test_sigterm_persists_a_terminal_observation(campaign, tmp_path):
+    elapsed = [0.0]
+
+    def sleep(_seconds):
+        raise KeyboardInterrupt(15)
+
+    output = tmp_path / "observations/events.jsonl"
+    result = module.watch(
+        campaign,
+        workspace=tmp_path,
+        interval=30,
+        observations=output,
+        clock=lambda: elapsed[0],
+        sleep=sleep,
+        emit=lambda _: None,
+    )
+    records = [json.loads(line) for line in output.read_text().splitlines()]
+    assert [record["observation"] for record in records] == ["sample", "terminal"]
+    assert records[-1]["terminal_signal"] == 15
+    assert json.loads(output.with_suffix(".json").read_text())["observation"] == "terminal"
+    assert result == 0
+
+
+def test_process_sigterm_writes_the_terminal_snapshot(tmp_path):
+    campaign = tmp_path / "campaign"
+    campaign.mkdir()
+    (campaign / "campaign.json").write_text(
+        json.dumps(
+            {
+                "id": "campaign",
+                "status": "running",
+                "phase": "neutral-scale",
+                "package": "package",
+                "commit": "commit",
+                "sources": {"files": {}},
+                "trials": {},
+            }
+        )
+    )
+    script = tmp_path / "watch.py"
+    script.write_text(
+        "import importlib.util, sys\n"
+        "from pathlib import Path\n"
+        "root, campaign = map(Path, sys.argv[1:])\n"
+        "spec = importlib.util.spec_from_file_location(\n"
+        "    'e0_status', root / 'scripts/e0_status.py')\n"
+        "module = importlib.util.module_from_spec(spec)\n"
+        "spec.loader.exec_module(module)\n"
+        "raise SystemExit(module.watch(campaign, workspace=campaign, interval=30,\n"
+        "    emit=lambda line: print(line, flush=True)))\n"
+    )
+    process = subprocess.Popen(
+        [sys.executable, str(script), str(ROOT), str(campaign)],
+        stdout=subprocess.PIPE,
+        text=True,
+    )
+    try:
+        assert process.stdout.readline()
+        process.send_signal(signal.SIGTERM)
+        assert process.wait(timeout=10) == 0
+    finally:
+        if process.poll() is None:
+            process.kill()
+            process.wait(timeout=5)
+        process.stdout.close()
+    snapshot = json.loads((campaign / "monitor.json").read_text())
+    journal = (campaign / "monitor.jsonl").read_text().splitlines()
+    assert snapshot["observation"] == "terminal"
+    assert snapshot["terminal_signal"] == signal.SIGTERM
+    assert json.loads(journal[-1])["observation"] == "terminal"
 
 
 def test_watch_json_filename_preserves_journal(campaign, tmp_path):

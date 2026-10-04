@@ -38,9 +38,13 @@ repair/final-test reservation metadata and campaign-host liveness, without readi
 the test split or changing any records. Missing references, dirty source, wrong
 package, busy worker, stale heartbeat or pending inbox work fail readiness. An old
 `running` manifest whose original process is dead is reported as historical metadata;
-it is not rewritten or treated as live work. For pre-PID manifests, the existing
-lifetime worker lock must be unowned in `/proc/locks`; held/waiting or missing
-locks fail readiness. Other unverified host liveness fails closed.
+it is not rewritten or treated as live work. Lock identity is the open descriptor
+that holds the flock. A `/proc/locks` device id is not compared with `stat`, and
+an inode match alone is not identity. For pre-PID manifests, readiness allows
+only a lock the kernel grants with a non-blocking exclusive flock
+(`unowned_verified`). A held lock, a missing lock, or a contended lock whose
+holder cannot be read is unknown and fails readiness. Other unverified host
+liveness fails closed.
 
 The JSON includes the observed host commit and frozen-source hashes, hardware
 package/source, acceptance/benchmark hashes, corpus reference hash, protocol,

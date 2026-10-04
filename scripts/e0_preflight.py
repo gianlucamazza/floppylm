@@ -5,7 +5,6 @@ from __future__ import annotations
 import argparse
 import json
 import math
-import os
 import subprocess
 import sys
 from dataclasses import replace
@@ -30,21 +29,8 @@ def read(path):
 
 
 def legacy_lock_liveness(path):
-    """Pre-PID campaigns still held a lifetime flock. Observe without acquiring it."""
-    stat = path.stat()  # Missing lock is unknown, never evidence of an idle host.
-    identity = (os.major(stat.st_dev), os.minor(stat.st_dev), stat.st_ino)
-    for line in Path("/proc/locks").read_text().splitlines():
-        for field in line.split():
-            parts = field.split(":")
-            if len(parts) != 3:
-                continue
-            try:
-                actual = (int(parts[0], 16), int(parts[1], 16), int(parts[2]))
-            except ValueError:
-                continue
-            if actual == identity:
-                return "owned_or_waiting"
-    return "unowned_legacy_lock"
+    """Pre-PID campaigns still held a lifetime flock. Unknown never means free."""
+    return runlog.legacy_lock_liveness(path)
 
 
 def cost_projection(protocol, speed):
@@ -237,7 +223,7 @@ def report(workspace, acceptance, benchmark, data_manifest, *, data_dir=None, po
             if state in ("running", "stopping") and live not in (
                 "dead",
                 "identity_mismatch",
-                "unowned_legacy_lock",
+                "unowned_verified",
             ):
                 raise RuntimeError("active or unverified campaign host: " + str(path.parent))
         return records

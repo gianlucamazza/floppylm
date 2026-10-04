@@ -76,6 +76,18 @@ def test_interrupted_trial_is_not_silently_retrained(tmp_path, monkeypatch, camp
     campaign.lock.close()
 
 
+def test_native_interruption_is_not_a_failed_recipe():
+    spec = importlib.util.spec_from_file_location("e0_v2_terminal", ROOT / "experiments/e0_v2.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    assert (
+        module.terminal_state(RuntimeError("Xbox job did not complete: interrupted"))
+        == "interrupted"
+    )
+    assert module.terminal_state(KeyboardInterrupt("signal 15")) == "interrupted"
+    assert module.terminal_state(RuntimeError("Xbox job did not complete: failed")) == "failed"
+
+
 def test_campaign_recovery_uses_resume_instead_of_fresh_training(
     tmp_path, monkeypatch, campaign_module
 ):

@@ -39,6 +39,18 @@ Package acceptance had not exercised the published-fence watchdog on hardware.
   restart, verified checkpoint recovery and exact final-artifact comparison. Preserve
   existing scientific files. Hardware unavailability remains an open qualification.
 
+## Amendment (2026-10-04)
+
+A frozen published fence is not, by itself, an in-flight GPU wait. The watchdog
+records `progress_stall` with `requested_fence` 0 when the job is active and the
+published fence does not move, and no GPU wait has been entered. It records
+`gpu_wait_timeout` only when a GPU wait is in flight and names that requested
+fence. Both still publish the fault, interrupt a running checkpoint, and exit
+the process. The functional probe parks off the GPU and therefore expects
+`progress_stall`. Package 0.1.0.98 remains accepted historical evidence of the
+earlier classification; it does not qualify this amendment. No campaign is
+resumed or started by the amendment.
+
 ## Consequences
 
 Contracts remain owned here and are pinned by the native backend. The additive probe
