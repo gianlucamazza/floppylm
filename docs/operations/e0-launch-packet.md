@@ -1,14 +1,15 @@
 # E0 launch packet: preparation only
 
 This packet does not by itself launch or reserve a campaign. The accepted hardware
-is [package 0.1.0.102](../evidence/xbox-e0-20261004-102/notes.md). The source of live
+is [package 0.1.0.105](../evidence/xbox-e0-20261004-105/notes.md). The source of live
 project state remains [STATUS](../STATUS.md). All historical campaigns stay retired.
 
 ## Provenance and preflight
 
-The accepted backend source is `4b8f51c3a5ee985ce8fcb71327f0ffc88e487545`
-(CI 37186655285). The host recovery harness that accepts an interrupted runner
-return is `555a865`. A new campaign freezes the host sources at its own launch.
+The accepted backend source is `128434e81837ec1558f7e3d68a7f8849a91aa054`
+(CI 37194378620). The host recovery harness that accepts an interrupted runner
+return is `555a865`. `cmd_resume` returns 130 for that same interrupted result
+(`bd56e92`). A new campaign freezes the host sources at its own launch.
 It never reuses a historical campaign manifest, run identity, or package binding.
 
 From the operational checkout, open a dedicated tunnel in a separate terminal:
@@ -24,10 +25,10 @@ that file or re-pin. Run this read-only check, retaining stdout in a new evidenc
 
 ```bash
 XBOX_IP=127.0.0.1 XBOX_PORT=31443 \
-XGPU_E0_PACKAGE=GianlucaMazza.XgpuE0_0.1.0.102_x64__g0p5dcfz4t9z4 \
+XGPU_E0_PACKAGE=GianlucaMazza.XgpuE0_0.1.0.105_x64__g0p5dcfz4t9z4 \
 .venv/bin/python scripts/e0_preflight.py --xbox \
-  --acceptance docs/evidence/xbox-e0-20261004-102/acceptance.json \
-  --benchmark docs/evidence/xbox-e0-20261004-102/throughput.json \
+  --acceptance docs/evidence/xbox-e0-20261004-105/acceptance.json \
+  --benchmark docs/evidence/xbox-e0-20261004-105/throughput.json \
   --data-manifest runs/e0-20261002T191632Z-ca781f-000/manifest.json
 ```
 

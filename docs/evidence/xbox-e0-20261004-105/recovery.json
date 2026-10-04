@@ -1,0 +1,677 @@
+{
+ "commit": "128434e81837ec1558f7e3d68a7f8849a91aa054",
+ "completed_retrieval_unchanged": true,
+ "interrupted_recovery_exact": true,
+ "ok": true,
+ "package": "GianlucaMazza.XgpuE0_0.1.0.105_x64__g0p5dcfz4t9z4",
+ "purpose": "functional",
+ "reports": [
+  {
+   "adapter": "SraKmd_arden",
+   "branches": [
+    {
+     "artifact": {
+      "bytes": 316829,
+      "path": "results/recovery-20261004T102730Z-22b397-full/branch-8.json",
+      "sha256": "07d23edd0236512852b787fc9d3decaeae1facbf12df81e65ab96301c41ea3eb"
+     },
+     "cooldown_seconds": 0.034070204,
+     "cooldown_start": 7,
+     "cooldown_steps": 1,
+     "end_step": 8,
+     "tokens_seen": 128
+    },
+    {
+     "artifact": {
+      "bytes": 316845,
+      "path": "results/recovery-20261004T102730Z-22b397-full/branch-16.json",
+      "sha256": "c5b067d790827cde86e90a3406755365af7cf603b78b20ef3e7b73876298b967"
+     },
+     "cooldown_seconds": 0.033954647,
+     "cooldown_start": 15,
+     "cooldown_steps": 1,
+     "end_step": 16,
+     "tokens_seen": 256
+    },
+    {
+     "artifact": {
+      "bytes": 316435,
+      "path": "results/recovery-20261004T102730Z-22b397-full/branch-32.json",
+      "sha256": "96ae208439981620138595bbda531cc09cef840bc505b397186312b1f11571d3"
+     },
+     "cooldown_seconds": 0.077542418,
+     "cooldown_start": 29,
+     "cooldown_steps": 3,
+     "end_step": 32,
+     "tokens_seen": 512
+    }
+   ],
+   "checkpoint": {
+    "bytes": 1010571,
+    "path": "results/recovery-20261004T102730Z-22b397-full/checkpoint.json",
+    "sha256": "e20fb5dd3bff15d253f7da63f48904d5a11a519b6ad890337aab231216ae9388"
+   },
+   "dispatches": 4148,
+   "gpu_seconds": 0.027148912280701626,
+   "hardware_gpu": true,
+   "job_id": "recovery-20261004T102730Z-22b397-full",
+   "job_sha256": "912c989bef39c143110e5b4c5475e9c7657f7f3bb0985856fabc605ca02cfc19",
+   "last_loss": 1.5586926266551018,
+   "loss_series": [
+    {
+     "loss": 6.280833572149277,
+     "step": 1
+    },
+    {
+     "loss": 5.959905833005905,
+     "step": 2
+    },
+    {
+     "loss": 5.285995632410049,
+     "step": 3
+    },
+    {
+     "loss": 5.011397138237953,
+     "step": 4
+    },
+    {
+     "loss": 4.596928671002388,
+     "step": 5
+    },
+    {
+     "loss": 4.189929738640785,
+     "step": 6
+    },
+    {
+     "loss": 3.9144696295261383,
+     "step": 7
+    },
+    {
+     "loss": 3.908250004053116,
+     "step": 8
+    },
+    {
+     "loss": 3.819479674100876,
+     "step": 9
+    },
+    {
+     "loss": 3.2427133545279503,
+     "step": 10
+    },
+    {
+     "loss": 3.5359496772289276,
+     "step": 11
+    },
+    {
+     "loss": 3.181863494217396,
+     "step": 12
+    },
+    {
+     "loss": 3.0614973828196526,
+     "step": 13
+    },
+    {
+     "loss": 2.937840647995472,
+     "step": 14
+    },
+    {
+     "loss": 3.1294378265738487,
+     "step": 15
+    },
+    {
+     "loss": 2.878801681101322,
+     "step": 16
+    },
+    {
+     "loss": 2.648971289396286,
+     "step": 17
+    },
+    {
+     "loss": 2.837285775691271,
+     "step": 18
+    },
+    {
+     "loss": 2.344567283987999,
+     "step": 19
+    },
+    {
+     "loss": 2.232902158051729,
+     "step": 20
+    },
+    {
+     "loss": 2.6547753401100636,
+     "step": 21
+    },
+    {
+     "loss": 2.3553367480635643,
+     "step": 22
+    },
+    {
+     "loss": 2.210197936743498,
+     "step": 23
+    },
+    {
+     "loss": 2.010320831090212,
+     "step": 24
+    },
+    {
+     "loss": 1.6806205473840237,
+     "step": 25
+    },
+    {
+     "loss": 2.062330113723874,
+     "step": 26
+    },
+    {
+     "loss": 1.937890000641346,
+     "step": 27
+    },
+    {
+     "loss": 1.7441404312849045,
+     "step": 28
+    },
+    {
+     "loss": 1.5586926266551018,
+     "step": 29
+    }
+   ],
+   "peak_memory_bytes": 39653376,
+   "phase": "trunk",
+   "schedule": {
+    "T": 8,
+    "cooldown_starts": [
+     7,
+     15,
+     29
+    ],
+    "ends": [
+     8,
+     16,
+     32
+    ],
+    "tokens_per_step": 16,
+    "warmup": 1
+   },
+   "schema": "floppylm.e0.result.v1",
+   "state": "completed",
+   "transfer_bytes": 6314752,
+   "trunk_step": 29,
+   "wall_seconds": 0.871170724
+  },
+  {
+   "adapter": "SraKmd_arden",
+   "branches": [
+    {
+     "artifact": {
+      "bytes": 316829,
+      "path": "results/recovery-20261004T102730Z-22b397-interrupted/branch-8.json",
+      "sha256": "07d23edd0236512852b787fc9d3decaeae1facbf12df81e65ab96301c41ea3eb"
+     },
+     "cooldown_seconds": 0.032893942,
+     "cooldown_start": 7,
+     "cooldown_steps": 1,
+     "end_step": 8,
+     "tokens_seen": 128
+    },
+    {
+     "artifact": {
+      "bytes": 316845,
+      "path": "results/recovery-20261004T102730Z-22b397-interrupted/branch-16.json",
+      "sha256": "c5b067d790827cde86e90a3406755365af7cf603b78b20ef3e7b73876298b967"
+     },
+     "cooldown_seconds": 0.032985474,
+     "cooldown_start": 15,
+     "cooldown_steps": 1,
+     "end_step": 16,
+     "tokens_seen": 256
+    },
+    {
+     "artifact": {
+      "bytes": 316435,
+      "path": "results/recovery-20261004T102730Z-22b397-interrupted/branch-32.json",
+      "sha256": "96ae208439981620138595bbda531cc09cef840bc505b397186312b1f11571d3"
+     },
+     "cooldown_seconds": 0.078094446,
+     "cooldown_start": 29,
+     "cooldown_steps": 3,
+     "end_step": 32,
+     "tokens_seen": 512
+    }
+   ],
+   "checkpoint": {
+    "bytes": 1010578,
+    "path": "results/recovery-20261004T102730Z-22b397-interrupted/checkpoint.json",
+    "sha256": "b74dde58b4d3fbf029c2226a962d1ddd144de42d1102c3fb9bcbd7e8cad06832"
+   },
+   "dispatches": 4148,
+   "execution_segments": [
+    {
+     "adapter": "SraKmd_arden",
+     "branches": [
+      {
+       "artifact": {
+        "bytes": 316829,
+        "path": "results/recovery-20261004T102730Z-22b397-interrupted/branch-8.json",
+        "sha256": "07d23edd0236512852b787fc9d3decaeae1facbf12df81e65ab96301c41ea3eb"
+       },
+       "cooldown_seconds": 0.032893942,
+       "cooldown_start": 7,
+       "cooldown_steps": 1,
+       "end_step": 8,
+       "tokens_seen": 128
+      }
+     ],
+     "checkpoint": {
+      "bytes": 1011784,
+      "path": "results/recovery-20261004T102730Z-22b397-interrupted/checkpoint.json",
+      "sha256": "b6bf615a01d05172cde6941729ac5e48ced53b13623ce7cd73a0f6a81f5ed517"
+     },
+     "dispatches": 1220,
+     "gpu_seconds": 0.007958736842105263,
+     "hardware_gpu": true,
+     "job_id": "recovery-20261004T102730Z-22b397-interrupted",
+     "job_sha256": "90ff98b3bf05c44daf25210971f9bbed18a30d77a1da8669c21e8f7c279fd3ca",
+     "last_loss": 3.819479674100876,
+     "loss_series": [
+      {
+       "loss": 6.280833572149277,
+       "step": 1
+      },
+      {
+       "loss": 5.959905833005905,
+       "step": 2
+      },
+      {
+       "loss": 5.285995632410049,
+       "step": 3
+      },
+      {
+       "loss": 5.011397138237953,
+       "step": 4
+      },
+      {
+       "loss": 4.596928671002388,
+       "step": 5
+      },
+      {
+       "loss": 4.189929738640785,
+       "step": 6
+      },
+      {
+       "loss": 3.9144696295261383,
+       "step": 7
+      },
+      {
+       "loss": 3.908250004053116,
+       "step": 8
+      },
+      {
+       "loss": 3.819479674100876,
+       "step": 9
+      }
+     ],
+     "peak_memory_bytes": 41873408,
+     "phase": "trunk",
+     "schedule": {
+      "T": 8,
+      "cooldown_starts": [
+       7,
+       15,
+       29
+      ],
+      "ends": [
+       8,
+       16,
+       32
+      ],
+      "tokens_per_step": 16,
+      "warmup": 1
+     },
+     "schema": "floppylm.e0.result.v1",
+     "state": "interrupted",
+     "transfer_bytes": 1857280,
+     "trunk_step": 9,
+     "wall_seconds": 0.283256997
+    },
+    {
+     "adapter": "SraKmd_arden",
+     "branches": [
+      {
+       "artifact": {
+        "bytes": 316829,
+        "path": "results/recovery-20261004T102730Z-22b397-interrupted/branch-8.json",
+        "sha256": "07d23edd0236512852b787fc9d3decaeae1facbf12df81e65ab96301c41ea3eb"
+       },
+       "cooldown_seconds": 0.032893942,
+       "cooldown_start": 7,
+       "cooldown_steps": 1,
+       "end_step": 8,
+       "tokens_seen": 128
+      },
+      {
+       "artifact": {
+        "bytes": 316845,
+        "path": "results/recovery-20261004T102730Z-22b397-interrupted/branch-16.json",
+        "sha256": "c5b067d790827cde86e90a3406755365af7cf603b78b20ef3e7b73876298b967"
+       },
+       "cooldown_seconds": 0.032985474,
+       "cooldown_start": 15,
+       "cooldown_steps": 1,
+       "end_step": 16,
+       "tokens_seen": 256
+      },
+      {
+       "artifact": {
+        "bytes": 316435,
+        "path": "results/recovery-20261004T102730Z-22b397-interrupted/branch-32.json",
+        "sha256": "96ae208439981620138595bbda531cc09cef840bc505b397186312b1f11571d3"
+       },
+       "cooldown_seconds": 0.078094446,
+       "cooldown_start": 29,
+       "cooldown_steps": 3,
+       "end_step": 32,
+       "tokens_seen": 512
+      }
+     ],
+     "checkpoint": {
+      "bytes": 1010578,
+      "path": "results/recovery-20261004T102730Z-22b397-interrupted/checkpoint.json",
+      "sha256": "b74dde58b4d3fbf029c2226a962d1ddd144de42d1102c3fb9bcbd7e8cad06832"
+     },
+     "dispatches": 2928,
+     "gpu_seconds": 0.019163548872180435,
+     "hardware_gpu": true,
+     "job_id": "recovery-20261004T102730Z-22b397-interrupted",
+     "job_sha256": "960303c77d8ed7f8f1adf38688db550b0e2aa52fc20a9e356cbc46bb33ca0637",
+     "last_loss": 1.5586926266551018,
+     "loss_series": [
+      {
+       "loss": 6.280833572149277,
+       "step": 1
+      },
+      {
+       "loss": 5.959905833005905,
+       "step": 2
+      },
+      {
+       "loss": 5.285995632410049,
+       "step": 3
+      },
+      {
+       "loss": 5.011397138237953,
+       "step": 4
+      },
+      {
+       "loss": 4.596928671002388,
+       "step": 5
+      },
+      {
+       "loss": 4.189929738640785,
+       "step": 6
+      },
+      {
+       "loss": 3.9144696295261383,
+       "step": 7
+      },
+      {
+       "loss": 3.908250004053116,
+       "step": 8
+      },
+      {
+       "loss": 3.819479674100876,
+       "step": 9
+      },
+      {
+       "loss": 3.2427133545279503,
+       "step": 10
+      },
+      {
+       "loss": 3.5359496772289276,
+       "step": 11
+      },
+      {
+       "loss": 3.181863494217396,
+       "step": 12
+      },
+      {
+       "loss": 3.0614973828196526,
+       "step": 13
+      },
+      {
+       "loss": 2.937840647995472,
+       "step": 14
+      },
+      {
+       "loss": 3.1294378265738487,
+       "step": 15
+      },
+      {
+       "loss": 2.878801681101322,
+       "step": 16
+      },
+      {
+       "loss": 2.648971289396286,
+       "step": 17
+      },
+      {
+       "loss": 2.837285775691271,
+       "step": 18
+      },
+      {
+       "loss": 2.344567283987999,
+       "step": 19
+      },
+      {
+       "loss": 2.232902158051729,
+       "step": 20
+      },
+      {
+       "loss": 2.6547753401100636,
+       "step": 21
+      },
+      {
+       "loss": 2.3553367480635643,
+       "step": 22
+      },
+      {
+       "loss": 2.210197936743498,
+       "step": 23
+      },
+      {
+       "loss": 2.010320831090212,
+       "step": 24
+      },
+      {
+       "loss": 1.6806205473840237,
+       "step": 25
+      },
+      {
+       "loss": 2.062330113723874,
+       "step": 26
+      },
+      {
+       "loss": 1.937890000641346,
+       "step": 27
+      },
+      {
+       "loss": 1.7441404312849045,
+       "step": 28
+      },
+      {
+       "loss": 1.5586926266551018,
+       "step": 29
+      }
+     ],
+     "peak_memory_bytes": 41676800,
+     "phase": "trunk",
+     "schedule": {
+      "T": 8,
+      "cooldown_starts": [
+       7,
+       15,
+       29
+      ],
+      "ends": [
+       8,
+       16,
+       32
+      ],
+      "tokens_per_step": 16,
+      "warmup": 1
+     },
+     "schema": "floppylm.e0.result.v1",
+     "state": "completed",
+     "transfer_bytes": 4457472,
+     "trunk_step": 29,
+     "wall_seconds": 0.645185566
+    }
+   ],
+   "gpu_seconds": 0.027122285714285696,
+   "hardware_gpu": true,
+   "job_id": "recovery-20261004T102730Z-22b397-interrupted",
+   "job_sha256": "960303c77d8ed7f8f1adf38688db550b0e2aa52fc20a9e356cbc46bb33ca0637",
+   "last_loss": 1.5586926266551018,
+   "loss_series": [
+    {
+     "loss": 6.280833572149277,
+     "step": 1
+    },
+    {
+     "loss": 5.959905833005905,
+     "step": 2
+    },
+    {
+     "loss": 5.285995632410049,
+     "step": 3
+    },
+    {
+     "loss": 5.011397138237953,
+     "step": 4
+    },
+    {
+     "loss": 4.596928671002388,
+     "step": 5
+    },
+    {
+     "loss": 4.189929738640785,
+     "step": 6
+    },
+    {
+     "loss": 3.9144696295261383,
+     "step": 7
+    },
+    {
+     "loss": 3.908250004053116,
+     "step": 8
+    },
+    {
+     "loss": 3.819479674100876,
+     "step": 9
+    },
+    {
+     "loss": 3.2427133545279503,
+     "step": 10
+    },
+    {
+     "loss": 3.5359496772289276,
+     "step": 11
+    },
+    {
+     "loss": 3.181863494217396,
+     "step": 12
+    },
+    {
+     "loss": 3.0614973828196526,
+     "step": 13
+    },
+    {
+     "loss": 2.937840647995472,
+     "step": 14
+    },
+    {
+     "loss": 3.1294378265738487,
+     "step": 15
+    },
+    {
+     "loss": 2.878801681101322,
+     "step": 16
+    },
+    {
+     "loss": 2.648971289396286,
+     "step": 17
+    },
+    {
+     "loss": 2.837285775691271,
+     "step": 18
+    },
+    {
+     "loss": 2.344567283987999,
+     "step": 19
+    },
+    {
+     "loss": 2.232902158051729,
+     "step": 20
+    },
+    {
+     "loss": 2.6547753401100636,
+     "step": 21
+    },
+    {
+     "loss": 2.3553367480635643,
+     "step": 22
+    },
+    {
+     "loss": 2.210197936743498,
+     "step": 23
+    },
+    {
+     "loss": 2.010320831090212,
+     "step": 24
+    },
+    {
+     "loss": 1.6806205473840237,
+     "step": 25
+    },
+    {
+     "loss": 2.062330113723874,
+     "step": 26
+    },
+    {
+     "loss": 1.937890000641346,
+     "step": 27
+    },
+    {
+     "loss": 1.7441404312849045,
+     "step": 28
+    },
+    {
+     "loss": 1.5586926266551018,
+     "step": 29
+    }
+   ],
+   "peak_memory_bytes": 41873408,
+   "phase": "trunk",
+   "schedule": {
+    "T": 8,
+    "cooldown_starts": [
+     7,
+     15,
+     29
+    ],
+    "ends": [
+     8,
+     16,
+     32
+    ],
+    "tokens_per_step": 16,
+    "warmup": 1
+   },
+   "schema": "floppylm.e0.result.v1",
+   "state": "completed",
+   "transfer_bytes": 6314752,
+   "trunk_step": 29,
+   "wall_seconds": 0.9284425629999999
+  }
+ ],
+ "runner_resume_completed_idempotent": true
+}

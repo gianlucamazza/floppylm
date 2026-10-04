@@ -53,3 +53,11 @@ completed fence 46560, 600839 ms. The device checkpoint is sha256
 bytes. The host copy under `xbox/recovery-checkpoint.json` is still the
 trunk-896 checkpoint. The failed worker stayed listed. This second stop has
 no recovery running.
+
+## Later (2026-10-04, package 0.1.0.105)
+
+Package `0.1.0.105` replaced `0.1.0.102` in place after the step-2112 checkpoint
+was copied to the host and hashed. Qualification of `0.1.0.105` passed. This
+campaign was not resumed onto that package. The preserved checkpoint remains
+sha256 `3fb5d57cb03591afcbf90054c97544f6abcb6e075c1a297139335d6ae0c86483`,
+23713680 bytes. No recovery of `31972d` is running.
