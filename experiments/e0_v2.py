@@ -387,6 +387,8 @@ def cmd_resume(a: argparse.Namespace) -> int:
         partial.update(status=state, error=repr(error))
         runlog.write_json(ev_dir / "summary.json", partial)
         runlog.set_status(run_dir, state, error=repr(error))
+        if state == "interrupted":
+            return 130
         raise
     finally:
         signal.signal(signal.SIGTERM, previous)
