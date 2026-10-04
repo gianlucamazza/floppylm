@@ -15,6 +15,8 @@ seed 0 is 1.5039/1.3837/1.3047, seed 1 is 1.5112/1.3876/1.3070. Trial `006` (Swi
 nominal `d_ff` 274) is in progress and is not a result. ReLU² has not started.
 
 E1–E4 stay specified. They wait for this campaign to finish and for an accepted E1 protocol.
+The 1/16 pilot rules that do not name the scalar winner are proposed in
+[the pilot proposal](adr/proposals/e1-1-16-pilot.md) and are not accepted.
 Host init-pack is written on [PR #22](https://github.com/gianlucamazza/floppylm/pull/22) and
 is not part of this campaign.
 

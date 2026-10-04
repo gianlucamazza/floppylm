@@ -55,9 +55,12 @@ Continue in this order:
    scale and MLP selection, tuning, recorded saturation, actual-byte gates, rank stability and
    paired seeds; then publish the reserved final test and costs. `4236fd` is an earlier stopped
    campaign, not the live one. Launch of any new campaign is a separate, explicit step.
-2. Use E0 results and these functional limits to prepare the scientific E1 ADR:
-   full model/container accounting, shape budgets, persistent assignment/checkpoint
-   semantics, dead-code policy, tokenizer/context fairness and final-test reservation.
+2. Review the completed E0 report (roadmap gate 4) before accepting a scientific
+   E1 ADR. The rules that do not depend on that report — books, assignment,
+   dead codes, checkpoints, token parity, F1, and what the container must count —
+   are proposed in [the 1/16 pilot proposal](adr/proposals/e1-1-16-pilot.md) and
+   are not accepted. The ADR still has to copy the scalar recipe and the
+   selection hash from the E0 report, and to fix the byte layout.
 3. After E0 releases the console, qualify any Xbox vector executor against the CPU
    oracle with identical inputs and artifact bytes. Choose backend/tokenizer only
    from the controlled qualification required by the owner. A scalar throughput

@@ -54,3 +54,4 @@ It is not a brainstorm, a survey or a TODO.
 | [E0 saturation gate at 1/16](proposals/e0-saturation-proposal.md) | accepted → ADR 0015 (option B) |
 | [Fill-aware first shape (S3 tax)](proposals/e0-fill-aware-solver.md) | proposal |
 | [E1 1/16 learned-book budget](proposals/e1-1-16-book-budget.md) | proposal |
+| [E1 1/16 pilot protocol](proposals/e1-1-16-pilot.md) | proposal |

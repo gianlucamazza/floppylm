@@ -38,3 +38,9 @@ Raw JSON: [e1-book-fit.json](../../evidence/architecture-20261002/e1-book-fit.js
 ## Recommendation
 
 Cite this table in the scientific E1 ADR. Default learned arm at 1/16: shared book, G=8 rate 0.5 or 0.75, or G=16 rate 0.5. Exclude per-matrix G=16 r=0.75. Do not implement vector cores until E0 releases the console and that ADR is accepted.
+
+## Later (2026-10-04)
+
+The fit table is cited by the [1/16 pilot proposal](e1-1-16-pilot.md). That
+proposal's default learned arm is shared G=8 at both rates 0.5 and 0.75. This
+page remains the measurement record. Neither document is an accepted ADR.
