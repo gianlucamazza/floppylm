@@ -32,3 +32,15 @@ timeout. No status observer is bound with `BindsTo` or `PartOf`. The failed
 
 `fdab67`, `40a67c`, `2fe64f`, `ca781f`, and `a8d8b9` stay on their original
 packages.
+
+## Later (2026-10-04)
+
+The original unit `floppylm-e0-campaign-20261004T082242Z.service` stopped at
+2026-10-04T08:46:30Z. Trial `31972d-000` was interrupted at trunk 896
+(`progress_stall`, requested fence 0, 600837 ms) after the T branch. The
+checkpoint was published. The runner returned 130 and the campaign parent
+recorded a stop.
+
+Explicit recovery unit `floppylm-e0-campaign-20261004T085921Z.service` resumed
+the same run, package, and host freeze. By 2026-10-04T09:04:14Z the resumed job
+was running at trunk 1216. The stall cause remains unproven.
