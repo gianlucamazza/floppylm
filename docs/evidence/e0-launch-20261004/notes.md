@@ -44,3 +44,12 @@ recorded a stop.
 Explicit recovery unit `floppylm-e0-campaign-20261004T085921Z.service` resumed
 the same run, package, and host freeze. By 2026-10-04T09:04:14Z the resumed job
 was running at trunk 1216. The stall cause remains unproven.
+
+That recovery unit stopped at 2026-10-04T09:28:41Z. The published result is
+interrupted at trunk 2112 after the T branch (end step 879) and the 2T branch
+(end step 1758). The watchdog recorded `progress_stall`, requested fence 0,
+completed fence 46560, 600839 ms. The device checkpoint is sha256
+`3fb5d57cb03591afcbf90054c97544f6abcb6e075c1a297139335d6ae0c86483`, 23713680
+bytes. The host copy under `xbox/recovery-checkpoint.json` is still the
+trunk-896 checkpoint. The failed worker stayed listed. This second stop has
+no recovery running.
