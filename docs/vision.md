@@ -2,7 +2,7 @@
 
 ## Mission
 
-The best language model that fits on a real 3.5" floppy, measured as quality per byte, and the
+The goal is the best language model that fits on a real 3.5" floppy, measured as quality per byte, and the
 measured answer to an open question: below one bit, from scratch, does a vector code in the core
 beat ternary — and must the code be learned, or is generating it enough?
 

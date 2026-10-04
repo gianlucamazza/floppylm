@@ -1,7 +1,7 @@
 # FloppyLM
 ![floppylm](docs/cover.jpg)
 
-A lab for the best language model that fits **entirely** on a real 3.5" floppy: weight description,
+A lab whose goal is the best language model that fits **entirely** on a real 3.5" floppy: weight description,
 tokenizer and runtime inside one 1 474 560-byte disk ([what counts](docs/adr/0001-floppy-budget.md)).
 
 **Status:** the E0 scalar baseline runs on an Xbox Series S GPU backend; live state, including
@@ -11,8 +11,8 @@ whether any quality result exists, is in [docs/STATUS.md](docs/STATUS.md).
 
 The floppy limits bits at rest, not RAM at runtime. A dense ternary model in 11 Mbit stops at ~7M
 parameters; beyond that is the **sub-bit regime**, where only one thing matters: where the bits
-are — in the transformer core. The thesis (v0.2): a recursive core whose weights are indices into a
-vector code at 0.5–0.75 bits/weight, trained from scratch, beats the best ternary/2-bit core at
+are — in the transformer core. The thesis (v0.2) is the hypothesis that a recursive core whose weights are indices into a
+vector code at 0.5–0.75 bits/weight, trained from scratch, would beat the best ternary/2-bit core at
 equal coded bytes. Three codes compete — seed-generated, computed trellis, learned codebook — with
 a declared prior: the computed codes, at zero bytes, are favoured.
 
