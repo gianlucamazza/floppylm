@@ -1,61 +1,290 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="820" height="460" viewBox="0 0 820 460" role="img">
-<title>Neutral MLP val bpb, campaign c58a86</title>
-<desc>Eligible S3 repairs. GELU mean of two seeds 1.5076/1.3856/1.3059. SwiGLU seed 0 only, 1.4568/1.3403/1.2615. Not an activation decision.</desc>
-<rect width="100%" height="100%" fill="#f6f3ec"/>
-<rect x="64" y="72" width="528" height="330" fill="#fffdf9" stroke="#e3ddd2"/>
-<g font-family="ui-sans-serif, system-ui, sans-serif" fill="#1d1c19">
-<text x="28" y="32" font-size="18" font-weight="650">Neutral MLP, validation bpb</text>
-<text x="28" y="52" font-size="12" fill="#5e5a53">e0-20261004T103838Z-c58a86 · eligible S3 repairs · SwiGLU is one seed</text>
-<line x1="64" y1="391.53" x2="592" y2="391.53" stroke="#ece7de"/>
-<text x="54" y="395.53" font-size="12" fill="#5e5a53" text-anchor="end">1.25</text>
-<line x1="64" y1="339.20" x2="592" y2="339.20" stroke="#ece7de"/>
-<text x="54" y="343.20" font-size="12" fill="#5e5a53" text-anchor="end">1.30</text>
-<line x1="64" y1="286.87" x2="592" y2="286.87" stroke="#ece7de"/>
-<text x="54" y="290.87" font-size="12" fill="#5e5a53" text-anchor="end">1.35</text>
-<line x1="64" y1="234.53" x2="592" y2="234.53" stroke="#ece7de"/>
-<text x="54" y="238.53" font-size="12" fill="#5e5a53" text-anchor="end">1.40</text>
-<line x1="64" y1="182.20" x2="592" y2="182.20" stroke="#ece7de"/>
-<text x="54" y="186.20" font-size="12" fill="#5e5a53" text-anchor="end">1.45</text>
-<line x1="64" y1="129.87" x2="592" y2="129.87" stroke="#ece7de"/>
-<text x="54" y="133.87" font-size="12" fill="#5e5a53" text-anchor="end">1.50</text>
-<text x="18" y="237" font-size="12" fill="#5e5a53" transform="rotate(-90 18 237)" text-anchor="middle">val bpb</text>
-<text x="152.00" y="434" font-size="14" text-anchor="middle">T</text>
-<text x="328.00" y="434" font-size="14" text-anchor="middle">2T</text>
-<text x="504.00" y="434" font-size="14" text-anchor="middle">4T</text>
-<text x="328" y="450" font-size="11" fill="#5e5a53" text-anchor="middle">cooldown end</text>
-<polyline points="152.00,125.78 328.00,251.59 504.00,334.28" fill="none" stroke="#0d6a43" stroke-width="1" stroke-opacity="0.35"/>
-<circle cx="152.00" cy="125.78" r="3.2" fill="#0d6a43" fill-opacity="0.85"/>
-<circle cx="328.00" cy="251.59" r="3.2" fill="#0d6a43" fill-opacity="0.85"/>
-<circle cx="504.00" cy="334.28" r="3.2" fill="#0d6a43" fill-opacity="0.85"/>
-<polyline points="152.00,118.14 328.00,247.51 504.00,331.87" fill="none" stroke="#0d6a43" stroke-width="1" stroke-opacity="0.35"/>
-<circle cx="152.00" cy="118.14" r="3.2" fill="#0d6a43" fill-opacity="0.85"/>
-<circle cx="328.00" cy="247.51" r="3.2" fill="#0d6a43" fill-opacity="0.85"/>
-<circle cx="504.00" cy="331.87" r="3.2" fill="#0d6a43" fill-opacity="0.85"/>
-<polyline points="152.00,121.91 328.00,249.61 504.00,333.02" fill="none" stroke="#0d6a43" stroke-width="2.4"/>
-<polyline points="152.00,175.08 328.00,297.02 504.00,379.50" fill="none" stroke="#9a3412" stroke-width="2.4"/>
-<circle cx="152.00" cy="175.08" r="3.6" fill="#9a3412"/>
-<circle cx="328.00" cy="297.02" r="3.6" fill="#9a3412"/>
-<circle cx="504.00" cy="379.50" r="3.6" fill="#9a3412"/>
-<text x="614" y="86" font-size="12" fill="#5e5a53">val bpb</text>
-<text x="614" y="106" font-size="11" fill="#8a847a">T</text>
-<text x="668" y="106" font-size="11" fill="#8a847a">2T</text>
-<text x="728" y="106" font-size="11" fill="#8a847a">4T</text>
-<line x1="614" y1="126" x2="636" y2="126" stroke="#0d6a43" stroke-width="2.4"/>
-<circle cx="648" cy="126" r="3.2" fill="#0d6a43"/>
-<text x="660" y="130" font-size="13">gelu mean</text>
-<text x="614" y="150" font-size="12" fill="#3f3c37">1.5076</text>
-<text x="668" y="150" font-size="12" fill="#3f3c37">1.3856</text>
-<text x="728" y="150" font-size="12" fill="#3f3c37">1.3059</text>
-<line x1="614" y1="178" x2="636" y2="178" stroke="#9a3412" stroke-width="2.4"/>
-<circle cx="648" cy="178" r="3.6" fill="#9a3412"/>
-<text x="660" y="182" font-size="13">swiglu seed 0</text>
-<text x="614" y="202" font-size="12" fill="#3f3c37">1.4568</text>
-<text x="668" y="202" font-size="12" fill="#3f3c37">1.3403</text>
-<text x="728" y="202" font-size="12" fill="#3f3c37">1.2615</text>
-<text x="614" y="234" font-size="12" fill="#3f3c37">One seed. Lower at</text>
-<text x="614" y="250" font-size="12" fill="#3f3c37">T, 2T and 4T.</text>
-<text x="614" y="270" font-size="12" fill="#3f3c37">Not a selection.</text>
-<text x="614" y="382" font-size="11" fill="#8a847a">Lines join measured</text>
-<text x="614" y="396" font-size="11" fill="#8a847a">ends only.</text>
-</g></svg>
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg role="img" xmlns:xlink="http://www.w3.org/1999/xlink" width="820" height="460" viewBox="0 0 820 460" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <title>Neutral MLP, validation bpb</title>
+<desc>Eligible S3 repairs. GELU mean of two seeds 1.5076/1.3856/1.3059. SwiGLU seed 0 only, 1.4568/1.3403/1.2615, lower at T, 2T and 4T. Not an activation decision.</desc>
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:title>Neutral MLP, validation bpb</dc:title>
+    <dc:description>Eligible S3 repairs. GELU mean of two seeds 1.5076/1.3856/1.3059. SwiGLU seed 0 only, 1.4568/1.3403/1.2615, lower at T, 2T and 4T. Not an activation decision.</dc:description>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.11.2, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 460 
+L 820 460 
+L 820 0 
+L 0 0 
+z
+" style="fill: #f6f3ec"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 64 402 
+L 592 402 
+L 592 72 
+L 64 72 
+z
+" style="fill: #fffdf9"/>
+   </g>
+   <g id="matplotlib.axis_1">
+    <g id="xtick_1">
+     <g id="line2d_1"/>
+     <g id="text_1">
+      <text style="font-size: 13px; font-family: 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #1d1c19" x="152" y="414.876953" transform="rotate(-0 152 414.876953)">T</text>
+     </g>
+    </g>
+    <g id="xtick_2">
+     <g id="line2d_2"/>
+     <g id="text_2">
+      <text style="font-size: 13px; font-family: 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #1d1c19" x="328" y="414.876953" transform="rotate(-0 328 414.876953)">2T</text>
+     </g>
+    </g>
+    <g id="xtick_3">
+     <g id="line2d_3"/>
+     <g id="text_3">
+      <text style="font-size: 13px; font-family: 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #1d1c19" x="504" y="414.876953" transform="rotate(-0 504 414.876953)">4T</text>
+     </g>
+    </g>
+    <g id="text_4">
+     <text style="font-size: 10px; font-family: 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #5e5a53" x="328" y="431.598437" transform="rotate(-0 328 431.598437)">cooldown end</text>
+    </g>
+   </g>
+   <g id="matplotlib.axis_2">
+    <g id="ytick_1">
+     <g id="line2d_4">
+      <path d="M 64 380 
+L 592 380 
+" clip-path="url(#pb2941056e6)" style="fill: none; stroke: #ece7de; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_5"/>
+     <g id="text_5">
+      <text style="font-size: 11px; font-family: 'DejaVu Sans', sans-serif; text-anchor: end; fill: #5e5a53" x="62" y="384.178711" transform="rotate(-0 62 384.178711)">1.25</text>
+     </g>
+    </g>
+    <g id="ytick_2">
+     <g id="line2d_6">
+      <path d="M 64 325 
+L 592 325 
+" clip-path="url(#pb2941056e6)" style="fill: none; stroke: #ece7de; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_7"/>
+     <g id="text_6">
+      <text style="font-size: 11px; font-family: 'DejaVu Sans', sans-serif; text-anchor: end; fill: #5e5a53" x="62" y="329.178711" transform="rotate(-0 62 329.178711)">1.30</text>
+     </g>
+    </g>
+    <g id="ytick_3">
+     <g id="line2d_8">
+      <path d="M 64 270 
+L 592 270 
+" clip-path="url(#pb2941056e6)" style="fill: none; stroke: #ece7de; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_9"/>
+     <g id="text_7">
+      <text style="font-size: 11px; font-family: 'DejaVu Sans', sans-serif; text-anchor: end; fill: #5e5a53" x="62" y="274.178711" transform="rotate(-0 62 274.178711)">1.35</text>
+     </g>
+    </g>
+    <g id="ytick_4">
+     <g id="line2d_10">
+      <path d="M 64 215 
+L 592 215 
+" clip-path="url(#pb2941056e6)" style="fill: none; stroke: #ece7de; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_11"/>
+     <g id="text_8">
+      <text style="font-size: 11px; font-family: 'DejaVu Sans', sans-serif; text-anchor: end; fill: #5e5a53" x="62" y="219.178711" transform="rotate(-0 62 219.178711)">1.40</text>
+     </g>
+    </g>
+    <g id="ytick_5">
+     <g id="line2d_12">
+      <path d="M 64 160 
+L 592 160 
+" clip-path="url(#pb2941056e6)" style="fill: none; stroke: #ece7de; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_13"/>
+     <g id="text_9">
+      <text style="font-size: 11px; font-family: 'DejaVu Sans', sans-serif; text-anchor: end; fill: #5e5a53" x="62" y="164.178711" transform="rotate(-0 62 164.178711)">1.45</text>
+     </g>
+    </g>
+    <g id="ytick_6">
+     <g id="line2d_14">
+      <path d="M 64 105 
+L 592 105 
+" clip-path="url(#pb2941056e6)" style="fill: none; stroke: #ece7de; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_15"/>
+     <g id="text_10">
+      <text style="font-size: 11px; font-family: 'DejaVu Sans', sans-serif; text-anchor: end; fill: #5e5a53" x="62" y="109.178711" transform="rotate(-0 62 109.178711)">1.50</text>
+     </g>
+    </g>
+   </g>
+   <g id="line2d_16">
+    <path d="M 152 100.66957 
+L 328 232.949011 
+L 504 319.852599 
+" clip-path="url(#pb2941056e6)" style="fill: none; stroke: #0d6a43; stroke-opacity: 0.4; stroke-linecap: square"/>
+    <defs>
+     <path id="mdf421d89a8" d="M 0 2.1 
+C 0.556927 2.1 1.091118 1.878731 1.484924 1.484924 
+C 1.878731 1.091118 2.1 0.556927 2.1 0 
+C 2.1 -0.556927 1.878731 -1.091118 1.484924 -1.484924 
+C 1.091118 -1.878731 0.556927 -2.1 0 -2.1 
+C -0.556927 -2.1 -1.091118 -1.878731 -1.484924 -1.484924 
+C -1.878731 -1.091118 -2.1 -0.556927 -2.1 0 
+C -2.1 0.556927 -1.878731 1.091118 -1.484924 1.484924 
+C -1.091118 1.878731 -0.556927 2.1 0 2.1 
+z
+"/>
+    </defs>
+    <g clip-path="url(#pb2941056e6)">
+     <use xlink:href="#mdf421d89a8" x="152" y="100.66957" style="fill: #0d6a43; fill-opacity: 0.4"/>
+     <use xlink:href="#mdf421d89a8" x="328" y="232.949011" style="fill: #0d6a43; fill-opacity: 0.4"/>
+     <use xlink:href="#mdf421d89a8" x="504" y="319.852599" style="fill: #0d6a43; fill-opacity: 0.4"/>
+    </g>
+   </g>
+   <g id="line2d_17">
+    <path d="M 152 92.658318 
+L 328 228.626825 
+L 504 317.269866 
+" clip-path="url(#pb2941056e6)" style="fill: none; stroke: #0d6a43; stroke-opacity: 0.4; stroke-linecap: square"/>
+    <g clip-path="url(#pb2941056e6)">
+     <use xlink:href="#mdf421d89a8" x="152" y="92.658318" style="fill: #0d6a43; fill-opacity: 0.4"/>
+     <use xlink:href="#mdf421d89a8" x="328" y="228.626825" style="fill: #0d6a43; fill-opacity: 0.4"/>
+     <use xlink:href="#mdf421d89a8" x="504" y="317.269866" style="fill: #0d6a43; fill-opacity: 0.4"/>
+    </g>
+   </g>
+   <g id="patch_3">
+    <path d="M 64 402 
+L 64 72 
+" style="fill: none; stroke: #e3ddd2; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 592 402 
+L 592 72 
+" style="fill: none; stroke: #e3ddd2; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="patch_5">
+    <path d="M 64 402 
+L 592 402 
+" style="fill: none; stroke: #e3ddd2; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="patch_6">
+    <path d="M 64 72 
+L 592 72 
+" style="fill: none; stroke: #e3ddd2; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_18">
+    <path d="M 152 96.663944 
+L 328 230.787918 
+L 504 318.561232 
+" clip-path="url(#pb2941056e6)" style="fill: none; stroke: #0d6a43; stroke-width: 2.3; stroke-linecap: round"/>
+   </g>
+   <g id="line2d_19">
+    <path d="M 152 152.516733 
+L 328 280.659679 
+L 504 367.379818 
+" clip-path="url(#pb2941056e6)" style="fill: none; stroke: #9a3412; stroke-width: 2.3; stroke-linecap: square"/>
+    <defs>
+     <path id="m770313d91a" d="M 0 2.3 
+C 0.609967 2.3 1.195034 2.057657 1.626346 1.626346 
+C 2.057657 1.195034 2.3 0.609967 2.3 0 
+C 2.3 -0.609967 2.057657 -1.195034 1.626346 -1.626346 
+C 1.195034 -2.057657 0.609967 -2.3 0 -2.3 
+C -0.609967 -2.3 -1.195034 -2.057657 -1.626346 -1.626346 
+C -2.057657 -1.195034 -2.3 -0.609967 -2.3 0 
+C -2.3 0.609967 -2.057657 1.195034 -1.626346 1.626346 
+C -1.195034 2.057657 -0.609967 2.3 0 2.3 
+z
+"/>
+    </defs>
+    <g clip-path="url(#pb2941056e6)">
+     <use xlink:href="#m770313d91a" x="152" y="152.516733" style="fill: #9a3412"/>
+     <use xlink:href="#m770313d91a" x="328" y="280.659679" style="fill: #9a3412"/>
+     <use xlink:href="#m770313d91a" x="504" y="367.379818" style="fill: #9a3412"/>
+    </g>
+   </g>
+  </g>
+  <g id="line2d_20">
+   <path d="M 614 136 
+L 642 136 
+" style="fill: none; stroke: #0d6a43; stroke-width: 2.4; stroke-linecap: round"/>
+  </g>
+  <g id="line2d_21">
+   <path d="M 614 188 
+L 642 188 
+" style="fill: none; stroke: #9a3412; stroke-width: 2.4; stroke-linecap: round"/>
+  </g>
+  <g id="text_11">
+   <text style="font-size: 16px; font-family: 'DejaVu Sans', sans-serif; text-anchor: start; fill: #1d1c19" x="28" y="32.156875" transform="rotate(-0 28 32.156875)">Neutral MLP, validation bpb</text>
+  </g>
+  <g id="text_12">
+   <text style="font-size: 10px; font-family: 'DejaVu Sans', sans-serif; text-anchor: start; fill: #5e5a53" x="28" y="52.598047" transform="rotate(-0 28 52.598047)">e0-20261004T103838Z-c58a86 · eligible S3 repairs · SwiGLU is one seed</text>
+  </g>
+  <g id="text_13">
+   <text style="font-size: 11px; font-family: 'DejaVu Sans', sans-serif; fill: #5e5a53" transform="translate(18.857852 250.376641) rotate(-90)">val bpb</text>
+  </g>
+  <g id="text_14">
+   <text style="font-size: 11px; font-family: 'DejaVu Sans', sans-serif; text-anchor: start; fill: #5e5a53" x="614" y="88.857852" transform="rotate(-0 614 88.857852)">val bpb</text>
+  </g>
+  <g id="text_15">
+   <text style="font-size: 10px; font-family: 'DejaVu Sans', sans-serif; text-anchor: start; fill: #8a847a" x="614" y="110.597656" transform="rotate(-0 614 110.597656)">T</text>
+  </g>
+  <g id="text_16">
+   <text style="font-size: 10px; font-family: 'DejaVu Sans', sans-serif; text-anchor: start; fill: #8a847a" x="674" y="110.597656" transform="rotate(-0 674 110.597656)">2T</text>
+  </g>
+  <g id="text_17">
+   <text style="font-size: 10px; font-family: 'DejaVu Sans', sans-serif; text-anchor: start; fill: #8a847a" x="734" y="110.597656" transform="rotate(-0 734 110.597656)">4T</text>
+  </g>
+  <g id="text_18">
+   <text style="font-size: 12px; font-family: 'DejaVu Sans', sans-serif; text-anchor: start; fill: #1d1c19" x="650" y="139.117656" transform="rotate(-0 650 139.117656)">gelu mean</text>
+  </g>
+  <g id="text_19">
+   <text style="font-size: 11px; font-family: 'DejaVu Sans', sans-serif; text-anchor: start; fill: #3f3c37" x="614" y="160.857422" transform="rotate(-0 614 160.857422)">1.5076</text>
+  </g>
+  <g id="text_20">
+   <text style="font-size: 11px; font-family: 'DejaVu Sans', sans-serif; text-anchor: start; fill: #3f3c37" x="674" y="160.857422" transform="rotate(-0 674 160.857422)">1.3856</text>
+  </g>
+  <g id="text_21">
+   <text style="font-size: 11px; font-family: 'DejaVu Sans', sans-serif; text-anchor: start; fill: #3f3c37" x="734" y="160.857422" transform="rotate(-0 734 160.857422)">1.3059</text>
+  </g>
+  <g id="text_22">
+   <text style="font-size: 12px; font-family: 'DejaVu Sans', sans-serif; text-anchor: start; fill: #1d1c19" x="650" y="191.117656" transform="rotate(-0 650 191.117656)">swiglu seed 0</text>
+  </g>
+  <g id="text_23">
+   <text style="font-size: 11px; font-family: 'DejaVu Sans', sans-serif; text-anchor: start; fill: #3f3c37" x="614" y="212.857422" transform="rotate(-0 614 212.857422)">1.4568</text>
+  </g>
+  <g id="text_24">
+   <text style="font-size: 11px; font-family: 'DejaVu Sans', sans-serif; text-anchor: start; fill: #3f3c37" x="674" y="212.857422" transform="rotate(-0 674 212.857422)">1.3403</text>
+  </g>
+  <g id="text_25">
+   <text style="font-size: 11px; font-family: 'DejaVu Sans', sans-serif; text-anchor: start; fill: #3f3c37" x="734" y="212.857422" transform="rotate(-0 734 212.857422)">1.2615</text>
+  </g>
+  <g id="text_26">
+   <text style="font-size: 11px; font-family: 'DejaVu Sans', sans-serif; text-anchor: start; fill: #3f3c37" x="614" y="242.857852" transform="rotate(-0 614 242.857852)">Lower at T, 2T and 4T.</text>
+  </g>
+  <g id="text_27">
+   <text style="font-size: 11px; font-family: 'DejaVu Sans', sans-serif; text-anchor: start; fill: #3f3c37" x="614" y="258.857852" transform="rotate(-0 614 258.857852)">One seed is not a selection.</text>
+  </g>
+  <g id="text_28">
+   <text style="font-size: 10px; font-family: 'DejaVu Sans', sans-serif; text-anchor: start; fill: #8a847a" x="614" y="398.598047" transform="rotate(-0 614 398.598047)">Lines join measured ends only.</text>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="pb2941056e6">
+   <rect x="64" y="72" width="528" height="330"/>
+  </clipPath>
+ </defs>
+</svg>
