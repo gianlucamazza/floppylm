@@ -55,3 +55,8 @@ It is not a brainstorm, a survey or a TODO.
 | [Fill-aware first shape (S3 tax)](proposals/e0-fill-aware-solver.md) | proposal |
 | [E1 1/16 learned-book budget](proposals/e1-1-16-book-budget.md) | proposal |
 | [E1 1/16 pilot protocol](proposals/e1-1-16-pilot.md) | proposal |
+| [E0 stays on one accepted Series S](proposals/e0-single-console.md) | not adopted |
+
+An idea that would change the protocol, the backend, or a running campaign is written
+here on the day it is considered, with status `proposal` or `not adopted` and the reason.
+An action that waits for a gate is a GitHub issue. Chat is not the record.

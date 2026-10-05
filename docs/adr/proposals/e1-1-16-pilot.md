@@ -21,6 +21,12 @@ tuning, the grid and the paired seeds can still change width, MLP, learning
 rate and which core format wins. The scalar recipe is copied from the completed
 E0 selection file. It is not named here.
 
+## Later (2026-10-05)
+
+Scale (`row8log`) and MLP (SwiGLU, nominal `d_ff` 274) are selected. Tuning, the grid
+and the paired seeds can still change learning rate, ternary delta, width, depth and
+which core format wins. They do not reopen the scale or MLP choice.
+
 E0 will not measure book size, assignment cadence, or the F1 threshold. Those
 rules are fixed below so the later ADR has nothing left to invent except the
 scalar recipe and the on-disk layout.
