@@ -2,8 +2,11 @@
 
 import ast
 import importlib.util
+import json
 import sys
 from pathlib import Path
+
+import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 spec = importlib.util.spec_from_file_location("e0_figures", ROOT / "scripts/e0_figures.py")
@@ -62,6 +65,48 @@ def test_committed_svgs_quote_those_labels():
     for text in ("1.5127", "1.3933", "1.3121", "1.5076", "1.3856", "1.3059"):
         assert text in scale
     assert "row8log mean is lower at T, 2T and 4T." in scale
+    assert "Thin lines are the two seeds." in scale
     for text in ("1.4568", "1.3403", "1.2615", "Not an activation decision."):
         assert text in mlp
-    assert "One seed is not a selection." in mlp
+    assert "Below the gelu mean" in mlp
+    assert "Not a selection." in mlp
+
+
+def _summary(*, parity=True):
+    ends = (10, 20, 30)
+    rows = [{"end_step": step, "val_bpb": 1.5 - i * 0.1} for i, step in enumerate(ends)]
+    return {
+        "status": "completed",
+        "parity_individual_ok": parity,
+        "branches": rows,
+        "backend": {"schedule": {"ends": list(ends)}},
+        "config": {"mlp": "gelu", "scale_policy": "row8log"},
+        "spec": {"seed": 0},
+    }
+
+
+def test_load_cell_rejects_an_ineligible_summary(tmp_path: Path):
+    campaign = "e0-test"
+    suffix = "000-repair"
+    path = tmp_path / f"{campaign}-{suffix}"
+    path.mkdir()
+    (path / "summary.json").write_text(json.dumps(_summary(parity=False)), encoding="utf-8")
+    with pytest.raises(ValueError, match="byte parity"):
+        figures.load_cell(tmp_path, campaign, suffix)
+
+
+def test_load_cell_rejects_a_branch_that_is_not_a_horizon(tmp_path: Path):
+    campaign = "e0-test"
+    suffix = "000-repair"
+    path = tmp_path / f"{campaign}-{suffix}"
+    path.mkdir()
+    body = _summary()
+    body["branches"][2]["end_step"] = 31
+    (path / "summary.json").write_text(json.dumps(body), encoding="utf-8")
+    with pytest.raises(ValueError, match="schedule ends"):
+        figures.load_cell(tmp_path, campaign, suffix)
+
+
+def test_load_cell_rejects_an_original_outside_the_repair(tmp_path: Path):
+    with pytest.raises(ValueError, match="S3 repair"):
+        figures.load_cell(tmp_path, "e0-test", "007")

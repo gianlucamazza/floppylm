@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import re
 import statistics
 from dataclasses import dataclass
@@ -25,6 +26,10 @@ GRID = "#ece7de"
 SPINE = "#e3ddd2"
 W = 820.0
 H = 460.0
+AX_LEFT = 64.0
+AX_BOTTOM = 58.0
+AX_WIDTH = 528.0
+AX_HEIGHT = 330.0
 
 
 @dataclass(frozen=True)
@@ -62,21 +67,30 @@ def _require_lower(left: tuple[float, ...], right: tuple[float, ...], message: s
 
 
 def load_cell(runs: Path, campaign: str, suffix: str) -> dict:
+    if not suffix.endswith("-repair"):
+        raise ValueError(f"{suffix} is not an S3 repair")
     path = runs / f"{campaign}-{suffix}" / "summary.json"
     summary = json.loads(path.read_text(encoding="utf-8"))
     if summary.get("status") != "completed":
         raise ValueError(f"{suffix} is not a completed cell")
-    if not summary.get("parity_individual_ok"):
+    if summary.get("parity_individual_ok") is not True:
         raise ValueError(f"{suffix} is outside byte parity and is not eligible")
     branches = sorted(summary["branches"], key=lambda branch: branch["end_step"])
     if len(branches) != 3:
         raise ValueError(f"{suffix} does not have T, 2T and 4T")
+    ends = [int(step) for step in summary["backend"]["schedule"]["ends"]]
+    got = [int(branch["end_step"]) for branch in branches]
+    if got != ends:
+        raise ValueError(f"{suffix} branches {got} are not the schedule ends {ends}")
+    values = tuple(float(branch["val_bpb"]) for branch in branches)
+    if not all(math.isfinite(value) for value in values):
+        raise ValueError(f"{suffix} has a non-finite val bpb")
     return {
         "suffix": suffix,
         "seed": int(summary["spec"]["seed"]),
         "mlp": summary["config"]["mlp"],
         "scale_policy": summary["config"]["scale_policy"],
-        "val_bpb": tuple(float(branch["val_bpb"]) for branch in branches),
+        "val_bpb": values,
     }
 
 
@@ -126,7 +140,7 @@ def mlp_description(groups: list[dict]) -> str:
         "Eligible S3 repairs. "
         f"GELU mean of two seeds {label(gelu['mean'])}. "
         f"SwiGLU seed {swiglu['cells'][0]['seed']} only, {label(values)}, "
-        "lower at T, 2T and 4T. Not an activation decision."
+        "below the gelu mean at T, 2T and 4T. Not an activation decision."
     )
 
 
@@ -173,6 +187,28 @@ def _top(px: float) -> float:
     return (H - px) / H
 
 
+def _plot_group(ax, group: dict) -> None:
+    color = group["color"]
+    xs = (0, 1, 2)
+    if not group["single"]:
+        for cell in group["cells"]:
+            ax.plot(xs, cell["val_bpb"], color=color, lw=1.0, alpha=0.5, zorder=2)
+            ax.scatter(
+                xs,
+                cell["val_bpb"],
+                s=18,
+                color=color,
+                edgecolors=PANEL,
+                linewidths=0.6,
+                zorder=4,
+            )
+        ax.plot(xs, group["mean"], color=color, lw=2.4, solid_capstyle="round", zorder=3)
+        return
+    values = group["cells"][0]["val_bpb"]
+    ax.plot(xs, values, color=color, lw=2.4, solid_capstyle="round", zorder=3)
+    ax.scatter(xs, values, s=22, color=color, edgecolors=PANEL, linewidths=0.7, zorder=4)
+
+
 def _draw(
     path: Path,
     *,
@@ -184,12 +220,15 @@ def _draw(
     groups: list[dict],
     header: str,
     notes: tuple[str, ...],
+    reading: str,
     mean_suffix: bool,
 ) -> None:
     plt, line2d, formatter = _pyplot()
     fig = plt.figure(figsize=(W / 72, H / 72), dpi=72)
     fig.patch.set_facecolor(PAPER)
-    ax = fig.add_axes((64 / W, 58 / H, 528 / W, 330 / H), facecolor=PANEL)
+    ax = fig.add_axes(
+        (AX_LEFT / W, AX_BOTTOM / H, AX_WIDTH / W, AX_HEIGHT / H), facecolor=PANEL
+    )
     for spine in ax.spines.values():
         spine.set_color(SPINE)
         spine.set_linewidth(0.8)
@@ -204,38 +243,18 @@ def _draw(
     ax.set_axisbelow(True)
     ax.yaxis.set_major_formatter(formatter("%.2f"))
     for group in groups:
-        color = group["color"]
-        if group["single"]:
-            ax.plot(
-                (0, 1, 2),
-                group["cells"][0]["val_bpb"],
-                color=color,
-                lw=2.3,
-                marker="o",
-                ms=4.6,
-                markerfacecolor=color,
-                markeredgewidth=0,
-                zorder=3,
-            )
-            continue
-        for cell in group["cells"]:
-            ax.plot(
-                (0, 1, 2),
-                cell["val_bpb"],
-                color=color,
-                lw=1.0,
-                alpha=0.4,
-                marker="o",
-                ms=4.2,
-                markerfacecolor=color,
-                markeredgewidth=0,
-                zorder=2,
-            )
-        ax.plot((0, 1, 2), group["mean"], color=color, lw=2.3, solid_capstyle="round", zorder=3)
+        _plot_group(ax, group)
     fig.text(28 / W, _top(28), title, color=INK, fontsize=16, va="center")
     fig.text(28 / W, _top(50), subtitle, color=MUTED, fontsize=10, va="center")
     fig.text(
-        16 / W, 0.50, "val bpb", rotation=90, color=MUTED, fontsize=11, ha="center", va="center"
+        16 / W,
+        (AX_BOTTOM + AX_HEIGHT / 2) / H,
+        "val bpb",
+        rotation=90,
+        color=MUTED,
+        fontsize=11,
+        ha="center",
+        va="center",
     )
     fig.text(614 / W, _top(86), header, color=MUTED, fontsize=11, va="center")
     columns = (614, 674, 734)
@@ -269,9 +288,10 @@ def _draw(
     for note in notes:
         fig.text(614 / W, _top(cursor), note, color="#3f3c37", fontsize=11, va="center")
         cursor += 16
+    fig.text(614 / W, _top(376), reading, color="#8a847a", fontsize=10, va="center")
     fig.text(
         614 / W,
-        _top(396),
+        _top(394),
         "Lines join measured ends only.",
         color="#8a847a",
         fontsize=10,
@@ -324,6 +344,7 @@ def write_figures(root: Path) -> tuple[Path, Path]:
         groups=scale,
         header="mean val bpb",
         notes=("row8log is lower", "at T, 2T and 4T."),
+        reading="Thin lines are the two seeds.",
         mean_suffix=False,
     )
     _draw(
@@ -335,7 +356,8 @@ def write_figures(root: Path) -> tuple[Path, Path]:
         yticks=(1.25, 1.30, 1.35, 1.40, 1.45, 1.50),
         groups=mlp,
         header="val bpb",
-        notes=("Lower at T, 2T and 4T.", "One seed is not a selection."),
+        notes=("Below the gelu mean", "at T, 2T and 4T.", "Not a selection."),
+        reading="Thin lines are the two seeds.",
         mean_suffix=True,
     )
     return scale_path, mlp_path
