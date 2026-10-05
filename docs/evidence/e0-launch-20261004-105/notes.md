@@ -73,3 +73,9 @@ Both gelu seeds are eligible after the S3 repair (`d_ff` 424) and match the
 `row8log` repairs: seed 0 repeats `002-repair`, seed 1 repeats `003-repair`.
 MLP selection stays open. Trial `006` (SwiGLU, nominal `d_ff` 274, seed 0) is
 in progress and is not a result.
+
+## Later (2026-10-05, first SwiGLU seed)
+
+Trial `006` finished outside ±1%. Its S3 repair (`d_ff` 280) is eligible: val bpb
+1.4568/1.3403/1.2615, lower than the gelu pair at T, 2T and 4T. One seed is not a
+selection. Trial `007` (SwiGLU, seed 1) is in progress and is not a result.

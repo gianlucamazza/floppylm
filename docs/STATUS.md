@@ -1,7 +1,7 @@
 # Status
 
 The only page that states live project state. Update it — and nothing else — on every package
-bump or campaign start/stop. Last updated: **2026-10-04**.
+bump or campaign start/stop. Last updated: **2026-10-05**.
 
 ## Where this stands
 
@@ -11,8 +11,10 @@ E0 is measuring the scalar baseline on the accepted Xbox package 0.1.0.105. Camp
 The scale choice is closed. `row8log` is lower than `row16` at T, 2T and 4T: mean val bpb
 1.5076/1.3856/1.3059 against 1.5127/1.3933/1.3121. The activation choice is open. Both gelu
 seeds are eligible only after the S3 repair (`d_ff` 424) and repeat the `row8log` repairs:
-seed 0 is 1.5039/1.3837/1.3047, seed 1 is 1.5112/1.3876/1.3070. Trial `006` (SwiGLU, seed 0,
-nominal `d_ff` 274) is in progress and is not a result. ReLU² has not started.
+seed 0 is 1.5039/1.3837/1.3047, seed 1 is 1.5112/1.3876/1.3070. SwiGLU seed 0 is eligible
+only after the S3 repair (`d_ff` 280): val bpb 1.4568/1.3403/1.2615, lower than the gelu pair
+at T, 2T and 4T. It is one seed and is not a selection. Trial `007` (SwiGLU, seed 1) is in
+progress and is not a result. ReLU² has not started.
 
 E1–E4 stay specified. They wait for this campaign to finish and for an accepted E1 protocol.
 The 1/16 pilot rules that do not name the scalar winner are proposed in
@@ -35,7 +37,7 @@ paragraph above is the quality state. Measured cells are in the
 | Previous campaign    | `e0-20261001T163456Z-fdab67` (0.1.0.56) **stopped**, 001 incomplete; do not resume. Before that, `e0-20261001T090514Z-4236fd` (0.1.0.28) stopped unsaturated — [record](evidence/e0-v2/campaigns/e0-20261001T090514Z-4236fd/notes.md) |
 | E0 saturation gate   | recorded, not an eligibility gate ([ADR 0015](adr/0015-e0-fixed-data-frontier.md)) |
 | Host recovery        | [ADR 0017](adr/0017-runtime-liveness.md) merged ([PR #7](https://github.com/gianlucamazza/floppylm/pull/7)); paired with accepted 0.1.0.93. |
-| E0 quality results   | scale selected `row8log`; both gelu seeds repeat that pair; MLP selection is open (`006` SwiGLU in progress) |
+| E0 quality results   | scale selected `row8log`; gelu pair repeats it; SwiGLU seed 0 is lower and is one seed; MLP selection is open |
 | E1 qualification     | CPU functional qualification **measured** ([ADR 0013](adr/0013-e1-functional-qualification.md), [evidence](evidence/e1-qualification-20261001/notes.md)); Xbox vector qualification pending |
 | Scientific E1–E4     | **specified**, gated by E0 and an accepted E1 protocol ([roadmap](roadmap.md), [completion plan](completion-plan.md)) |
 

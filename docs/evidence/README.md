@@ -33,7 +33,11 @@ A figure is a view of published run summaries. The numbers stay in those records
 
 ![Neutral scale val bpb for campaign c58a86](e0-v2/neutral-scale-c58a86.svg)
 
-Eligible S3 repairs from `e0-20261004T103838Z-c58a86`. The mean at each cooldown end is the ADR 0015 selection metric; the dots are the two seeds. `row8log` is lower at T, 2T and 4T. The source records are the four `c58a86-*-repair` rows below.
+Eligible S3 repairs from `e0-20261004T103838Z-c58a86`. The mean at each cooldown end is the ADR 0015 selection metric; the dots are the two seeds. `row8log` is lower at T, 2T and 4T. The source records are `000-repair`, `001-repair`, `002-repair` and `003-repair`.
+
+![Neutral MLP val bpb for campaign c58a86](e0-v2/neutral-mlp-c58a86.svg)
+
+Same campaign, eligible MLP repairs only. The green mean is the two gelu seeds, which repeat the `row8log` repairs. The rust line is SwiGLU seed 0 (`006-repair`) and is one seed, not a selection. Seed 1 and ReLU² are absent.
 
 ## Inventory
 
@@ -82,6 +86,8 @@ Eligible S3 repairs from `e0-20261004T103838Z-c58a86`. The mean at each cooldown
 | [`e0-v2/runs/e0-20261004T103838Z-c58a86-004-repair`](e0-v2/runs/e0-20261004T103838Z-c58a86-004-repair/notes.md) | S3 repair eligible, `d_ff` 424, same artifacts as `002-repair`, val bpb 1.5039/1.3837/1.3047, Δ(2T→4T) = −0.079 | eligible |
 | [`e0-v2/runs/e0-20261004T103838Z-c58a86-005`](e0-v2/runs/e0-20261004T103838Z-c58a86-005/notes.md) | gelu row8log seed 1, `d_ff` 415: bytes short, same val bpb as `003` (1.5143/1.4011/1.3211) | excluded |
 | [`e0-v2/runs/e0-20261004T103838Z-c58a86-005-repair`](e0-v2/runs/e0-20261004T103838Z-c58a86-005-repair/notes.md) | S3 repair eligible, `d_ff` 424, same artifacts as `003-repair`, val bpb 1.5112/1.3876/1.3070, Δ(2T→4T) = −0.081 | eligible |
+| [`e0-v2/runs/e0-20261004T103838Z-c58a86-006`](e0-v2/runs/e0-20261004T103838Z-c58a86-006/notes.md) | SwiGLU row8log seed 0, `d_ff` 274: bytes short, val bpb 1.4661/1.3433/1.2616 | excluded |
+| [`e0-v2/runs/e0-20261004T103838Z-c58a86-006-repair`](e0-v2/runs/e0-20261004T103838Z-c58a86-006-repair/notes.md) | S3 repair eligible, `d_ff` 280, val bpb 1.4568/1.3403/1.2615, Δ(2T→4T) = −0.079; one seed, not a selection | eligible |
 | [`e0-lite/pre-v2`](e0-lite/pre-v2/notes.md)                                                                                                 | stopped E0-lite grid; diagnostic, excluded from verdicts, FLP1 blobs | —           |
 
 ### Xbox package acceptance

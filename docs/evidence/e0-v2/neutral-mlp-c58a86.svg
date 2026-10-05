@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="820" height="460" viewBox="0 0 820 460" role="img">
+<title>Neutral MLP val bpb, campaign c58a86</title>
+<desc>Eligible S3 repairs. GELU mean of two seeds 1.5076/1.3856/1.3059. SwiGLU seed 0 only, 1.4568/1.3403/1.2615. Not an activation decision.</desc>
+<rect width="100%" height="100%" fill="#f6f3ec"/>
+<rect x="64" y="72" width="528" height="330" fill="#fffdf9" stroke="#e3ddd2"/>
+<g font-family="ui-sans-serif, system-ui, sans-serif" fill="#1d1c19">
+<text x="28" y="32" font-size="18" font-weight="650">Neutral MLP, validation bpb</text>
+<text x="28" y="52" font-size="12" fill="#5e5a53">e0-20261004T103838Z-c58a86 · eligible S3 repairs · SwiGLU is one seed</text>
+<line x1="64" y1="391.53" x2="592" y2="391.53" stroke="#ece7de"/>
+<text x="54" y="395.53" font-size="12" fill="#5e5a53" text-anchor="end">1.25</text>
+<line x1="64" y1="339.20" x2="592" y2="339.20" stroke="#ece7de"/>
+<text x="54" y="343.20" font-size="12" fill="#5e5a53" text-anchor="end">1.30</text>
+<line x1="64" y1="286.87" x2="592" y2="286.87" stroke="#ece7de"/>
+<text x="54" y="290.87" font-size="12" fill="#5e5a53" text-anchor="end">1.35</text>
+<line x1="64" y1="234.53" x2="592" y2="234.53" stroke="#ece7de"/>
+<text x="54" y="238.53" font-size="12" fill="#5e5a53" text-anchor="end">1.40</text>
+<line x1="64" y1="182.20" x2="592" y2="182.20" stroke="#ece7de"/>
+<text x="54" y="186.20" font-size="12" fill="#5e5a53" text-anchor="end">1.45</text>
+<line x1="64" y1="129.87" x2="592" y2="129.87" stroke="#ece7de"/>
+<text x="54" y="133.87" font-size="12" fill="#5e5a53" text-anchor="end">1.50</text>
+<text x="18" y="237" font-size="12" fill="#5e5a53" transform="rotate(-90 18 237)" text-anchor="middle">val bpb</text>
+<text x="152.00" y="434" font-size="14" text-anchor="middle">T</text>
+<text x="328.00" y="434" font-size="14" text-anchor="middle">2T</text>
+<text x="504.00" y="434" font-size="14" text-anchor="middle">4T</text>
+<text x="328" y="450" font-size="11" fill="#5e5a53" text-anchor="middle">cooldown end</text>
+<polyline points="152.00,125.78 328.00,251.59 504.00,334.28" fill="none" stroke="#0d6a43" stroke-width="1" stroke-opacity="0.35"/>
+<circle cx="152.00" cy="125.78" r="3.2" fill="#0d6a43" fill-opacity="0.85"/>
+<circle cx="328.00" cy="251.59" r="3.2" fill="#0d6a43" fill-opacity="0.85"/>
+<circle cx="504.00" cy="334.28" r="3.2" fill="#0d6a43" fill-opacity="0.85"/>
+<polyline points="152.00,118.14 328.00,247.51 504.00,331.87" fill="none" stroke="#0d6a43" stroke-width="1" stroke-opacity="0.35"/>
+<circle cx="152.00" cy="118.14" r="3.2" fill="#0d6a43" fill-opacity="0.85"/>
+<circle cx="328.00" cy="247.51" r="3.2" fill="#0d6a43" fill-opacity="0.85"/>
+<circle cx="504.00" cy="331.87" r="3.2" fill="#0d6a43" fill-opacity="0.85"/>
+<polyline points="152.00,121.91 328.00,249.61 504.00,333.02" fill="none" stroke="#0d6a43" stroke-width="2.4"/>
+<polyline points="152.00,175.08 328.00,297.02 504.00,379.50" fill="none" stroke="#9a3412" stroke-width="2.4"/>
+<circle cx="152.00" cy="175.08" r="3.6" fill="#9a3412"/>
+<circle cx="328.00" cy="297.02" r="3.6" fill="#9a3412"/>
+<circle cx="504.00" cy="379.50" r="3.6" fill="#9a3412"/>
+<text x="614" y="86" font-size="12" fill="#5e5a53">val bpb</text>
+<text x="614" y="106" font-size="11" fill="#8a847a">T</text>
+<text x="668" y="106" font-size="11" fill="#8a847a">2T</text>
+<text x="728" y="106" font-size="11" fill="#8a847a">4T</text>
+<line x1="614" y1="126" x2="636" y2="126" stroke="#0d6a43" stroke-width="2.4"/>
+<circle cx="648" cy="126" r="3.2" fill="#0d6a43"/>
+<text x="660" y="130" font-size="13">gelu mean</text>
+<text x="614" y="150" font-size="12" fill="#3f3c37">1.5076</text>
+<text x="668" y="150" font-size="12" fill="#3f3c37">1.3856</text>
+<text x="728" y="150" font-size="12" fill="#3f3c37">1.3059</text>
+<line x1="614" y1="178" x2="636" y2="178" stroke="#9a3412" stroke-width="2.4"/>
+<circle cx="648" cy="178" r="3.6" fill="#9a3412"/>
+<text x="660" y="182" font-size="13">swiglu seed 0</text>
+<text x="614" y="202" font-size="12" fill="#3f3c37">1.4568</text>
+<text x="668" y="202" font-size="12" fill="#3f3c37">1.3403</text>
+<text x="728" y="202" font-size="12" fill="#3f3c37">1.2615</text>
+<text x="614" y="234" font-size="12" fill="#3f3c37">One seed. Lower at</text>
+<text x="614" y="250" font-size="12" fill="#3f3c37">T, 2T and 4T.</text>
+<text x="614" y="270" font-size="12" fill="#3f3c37">Not a selection.</text>
+<text x="614" y="382" font-size="11" fill="#8a847a">Lines join measured</text>
+<text x="614" y="396" font-size="11" fill="#8a847a">ends only.</text>
+</g></svg>
