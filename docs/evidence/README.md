@@ -39,7 +39,7 @@ Eligible S3 repairs from `e0-20261004T103838Z-c58a86`. The mean at each cooldown
 
 ![Neutral MLP val bpb for campaign c58a86](e0-v2/neutral-mlp-c58a86.svg)
 
-Same campaign, eligible MLP repairs only. The green mean is the two gelu seeds, which repeat the `row8log` repairs. The rust mean is the two SwiGLU seeds, 1.4631/1.3473/1.2704, lower at T, 2T and 4T, and is the recorded choice at nominal `d_ff` 274. The purple mean is the two ReLU² seeds, 1.4770/1.3638/1.2822. Trial `010` is in progress and is not on the figure.
+Same campaign, eligible MLP repairs only. The green mean is the two gelu seeds, which repeat the `row8log` repairs. The rust mean is the two SwiGLU seeds, 1.4631/1.3473/1.2704, lower at T, 2T and 4T, and is the recorded choice at nominal `d_ff` 274. The purple mean is the two ReLU² seeds, 1.4770/1.3638/1.2822. Tuning cells stay in the index and off this figure.
 
 ## Inventory
 
@@ -96,6 +96,12 @@ Same campaign, eligible MLP repairs only. The green mean is the two gelu seeds, 
 | [`e0-v2/runs/e0-20261004T103838Z-c58a86-008-repair`](e0-v2/runs/e0-20261004T103838Z-c58a86-008-repair/notes.md) | S3 repair eligible, `d_ff` 424, val bpb 1.4749/1.3597/1.2807, Δ(2T→4T) = −0.079; ReLU² seed 0 | eligible |
 | [`e0-v2/runs/e0-20261004T103838Z-c58a86-009`](e0-v2/runs/e0-20261004T103838Z-c58a86-009/notes.md) | ReLU² row8log seed 1, `d_ff` 415: bytes short, val bpb 1.4904/1.3728/1.2931 | excluded |
 | [`e0-v2/runs/e0-20261004T103838Z-c58a86-009-repair`](e0-v2/runs/e0-20261004T103838Z-c58a86-009-repair/notes.md) | S3 repair eligible, `d_ff` 423, val bpb 1.4790/1.3679/1.2837, Δ(2T→4T) = −0.084; ReLU² seed 1 | eligible |
+| [`e0-v2/runs/e0-20261004T103838Z-c58a86-010`](e0-v2/runs/e0-20261004T103838Z-c58a86-010/notes.md) | ternary lr 0.001, delta 0.5, seed 0, `d_ff` 274: bytes short, val bpb 1.5810/1.4346/1.3351 | excluded |
+| [`e0-v2/runs/e0-20261004T103838Z-c58a86-010-repair`](e0-v2/runs/e0-20261004T103838Z-c58a86-010-repair/notes.md) | S3 repair eligible, `d_ff` 279, val bpb 1.5987/1.4543/1.3442, Δ(2T→4T) = −0.110; lr 0.001, delta 0.5 | eligible |
+| [`e0-v2/runs/e0-20261004T103838Z-c58a86-011`](e0-v2/runs/e0-20261004T103838Z-c58a86-011/notes.md) | ternary lr 0.001, delta 0.7, seed 0, `d_ff` 274: bytes short, val bpb 1.5830/1.4460/1.3383 | excluded |
+| [`e0-v2/runs/e0-20261004T103838Z-c58a86-011-repair`](e0-v2/runs/e0-20261004T103838Z-c58a86-011-repair/notes.md) | S3 repair eligible, `d_ff` 288, val bpb 1.5771/1.4326/1.3301, Δ(2T→4T) = −0.103; lr 0.001, delta 0.7 | eligible |
+| [`e0-v2/runs/e0-20261004T103838Z-c58a86-012`](e0-v2/runs/e0-20261004T103838Z-c58a86-012/notes.md) | ternary lr 0.003, delta 0.5, seed 0, `d_ff` 274: same recipe as `006`, different artifact, bytes short, val bpb 1.4660/1.3503/1.2730 | excluded |
+| [`e0-v2/runs/e0-20261004T103838Z-c58a86-012-repair`](e0-v2/runs/e0-20261004T103838Z-c58a86-012-repair/notes.md) | S3 repair eligible, `d_ff` 279, val bpb 1.4829/1.3593/1.2772, Δ(2T→4T) = −0.082; lr 0.003, delta 0.5 | eligible |
 | [`e0-lite/pre-v2`](e0-lite/pre-v2/notes.md)                                                                                                 | stopped E0-lite grid; diagnostic, excluded from verdicts, FLP1 blobs | —           |
 
 ### Xbox package acceptance

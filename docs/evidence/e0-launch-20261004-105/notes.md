@@ -95,3 +95,13 @@ Trial `009` finished outside ±1%. Its S3 repair (`d_ff` 423) is eligible: val b
 above SwiGLU at T, 2T and 4T. Neutral MLP selected SwiGLU at nominal `d_ff` 274.
 The campaign is in `tuning-ternary`. Trial `010` (lr 0.001, delta 0.5, seed 0) is in
 progress and is not a result.
+
+## Later (2026-10-05, first ternary tuning cells)
+
+Trials `010`, `011` and `012` are closed. Each original is outside ±1%. The eligible
+repairs, seed 0, are lr 0.001 delta 0.5 at `d_ff` 279 (1.5987/1.4543/1.3442), lr 0.001
+delta 0.7 at `d_ff` 288 (1.5771/1.4326/1.3301), and lr 0.003 delta 0.5 at `d_ff` 279
+(1.4829/1.3593/1.2772). All three are above the neutral SwiGLU seed 0 repair
+(1.4568/1.3403/1.2615) at T, 2T and 4T. Trial `012` repeats the neutral recipe and its
+original artifact differs from trial `006`. Tuning stays open. Trial `013` (lr 0.003,
+delta 0.7, seed 0) is in progress and is not a result.
