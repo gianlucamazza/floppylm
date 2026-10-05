@@ -47,7 +47,8 @@ SCALE = (
 )
 MLP = (
     SeriesSpec("gelu", "#0d6a43", ("004-repair", "005-repair"), "row8log", "gelu"),
-    SeriesSpec("swiglu", "#9a3412", ("006-repair",), "row8log", "swiglu"),
+    SeriesSpec("swiglu", "#9a3412", ("006-repair", "007-repair"), "row8log", "swiglu"),
+    SeriesSpec("relu2", "#4a3f6b", ("008-repair",), "row8log", "relu2"),
 )
 
 
@@ -131,16 +132,23 @@ def scale_description(groups: list[dict]) -> str:
 
 
 def mlp_description(groups: list[dict]) -> str:
-    gelu, swiglu = groups
-    if not swiglu["single"]:
-        raise ValueError("the MLP figure shows one SwiGLU seed")
-    values = swiglu["cells"][0]["val_bpb"]
-    _require_lower(values, gelu["mean"], "SwiGLU seed is not lower at every horizon")
+    gelu, swiglu, relu2 = groups
+    if swiglu["single"]:
+        raise ValueError("the MLP figure shows both SwiGLU seeds")
+    if not relu2["single"]:
+        raise ValueError("the MLP figure shows one ReLU2 seed")
+    _require_lower(swiglu["mean"], gelu["mean"], "SwiGLU mean is not lower at every horizon")
+    relu_values = relu2["cells"][0]["val_bpb"]
+    _require_lower(relu_values, gelu["mean"], "ReLU2 seed is not lower than gelu")
+    for cell in swiglu["cells"]:
+        _require_lower(cell["val_bpb"], relu_values, "a SwiGLU seed is not below ReLU2")
     return (
         "Eligible S3 repairs. "
         f"GELU mean of two seeds {label(gelu['mean'])}. "
-        f"SwiGLU seed {swiglu['cells'][0]['seed']} only, {label(values)}, "
-        "below the gelu mean at T, 2T and 4T. Not an activation decision."
+        f"SwiGLU mean of two seeds {label(swiglu['mean'])}, "
+        "lower at T, 2T and 4T. "
+        f"ReLU2 seed {relu2['cells'][0]['seed']} only, {label(relu_values)}. "
+        "Not an activation decision."
     )
 
 
@@ -350,14 +358,14 @@ def write_figures(root: Path) -> tuple[Path, Path]:
     _draw(
         mlp_path,
         title="Neutral MLP, validation bpb",
-        subtitle=f"{campaign} · eligible S3 repairs · SwiGLU is one seed",
+        subtitle=f"{campaign} · eligible S3 repairs · activation choice is open",
         description=mlp_description(mlp),
         ylim=(1.23, 1.53),
         yticks=(1.25, 1.30, 1.35, 1.40, 1.45, 1.50),
         groups=mlp,
         header="val bpb",
-        notes=("Below the gelu mean", "at T, 2T and 4T.", "Not a selection."),
-        reading="Thin lines are the two seeds.",
+        notes=("SwiGLU mean is lower", "at T, 2T and 4T.", "ReLU² seed 0 is one seed."),
+        reading="Thin lines are seeds.",
         mean_suffix=True,
     )
     return scale_path, mlp_path

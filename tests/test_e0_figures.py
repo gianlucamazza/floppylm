@@ -45,18 +45,25 @@ def test_gelu_repairs_repeat_the_row8log_repairs():
     assert figures.label(mlp[0]["mean"]) == "1.5076/1.3856/1.3059"
 
 
-def test_swiglu_seed_0_is_one_eligible_seed():
-    gelu, swiglu = figures.mlp_groups(RUNS)
-    assert swiglu["single"]
-    assert swiglu["cells"][0]["seed"] == 0
-    assert swiglu["cells"][0]["suffix"] == "006-repair"
+def test_swiglu_mean_and_relu2_seed_0():
+    gelu, swiglu, relu2 = figures.mlp_groups(RUNS)
+    assert [cell["suffix"] for cell in swiglu["cells"]] == ["006-repair", "007-repair"]
     assert figures.label(swiglu["cells"][0]["val_bpb"]) == "1.4568/1.3403/1.2615"
-    assert all(a < b for a, b in zip(swiglu["cells"][0]["val_bpb"], gelu["mean"], strict=True))
+    assert figures.label(swiglu["cells"][1]["val_bpb"]) == "1.4694/1.3544/1.2793"
+    assert figures.label(swiglu["mean"]) == "1.4631/1.3473/1.2704"
+    assert all(a < b for a, b in zip(swiglu["mean"], gelu["mean"], strict=True))
+    assert relu2["single"] and relu2["cells"][0]["seed"] == 0
+    assert relu2["cells"][0]["suffix"] == "008-repair"
+    assert figures.label(relu2["cells"][0]["val_bpb"]) == "1.4749/1.3597/1.2807"
+    assert all(a < b for a, b in zip(relu2["cells"][0]["val_bpb"], gelu["mean"], strict=True))
+    relu_values = relu2["cells"][0]["val_bpb"]
+    for cell in swiglu["cells"]:
+        assert all(a < b for a, b in zip(cell["val_bpb"], relu_values, strict=True))
 
 
-def test_closed_cells_omit_trial_007():
+def test_closed_cells_omit_trial_009():
     used = [cell for series in (*figures.SCALE, *figures.MLP) for cell in series.cells]
-    assert all(not cell.startswith("007") for cell in used)
+    assert all(not cell.startswith("009") for cell in used)
 
 
 def test_committed_svgs_quote_those_labels():
@@ -66,10 +73,11 @@ def test_committed_svgs_quote_those_labels():
         assert text in scale
     assert "row8log mean is lower at T, 2T and 4T." in scale
     assert "Thin lines are the two seeds." in scale
-    for text in ("1.4568", "1.3403", "1.2615", "Not an activation decision."):
+    for text in ("1.4631", "1.3473", "1.2704", "1.4749", "1.3597", "1.2807"):
         assert text in mlp
-    assert "Below the gelu mean" in mlp
-    assert "Not a selection." in mlp
+    assert "Not an activation decision." in mlp
+    assert "SwiGLU mean is lower" in mlp
+    assert "ReLU² seed 0 is one seed." in mlp
 
 
 def _summary(*, parity=True):

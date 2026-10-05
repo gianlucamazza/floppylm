@@ -22,3 +22,8 @@ between arms.
 Eligible at `d_ff` 280. Val bpb 1.4568/1.3403/1.2615 is seed 0 only. It is lower than
 the gelu pair at T, 2T and 4T and is not an activation selection. Seed 1 is a separate
 trial.
+
+## Later (2026-10-05, seed 1)
+
+Seed 1 is the eligible repair `007-repair`: val bpb 1.4694/1.3544/1.2793. The
+two-seed mean is 1.4631/1.3473/1.2704. The activation choice stays open.

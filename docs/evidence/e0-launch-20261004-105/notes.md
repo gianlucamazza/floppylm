@@ -79,3 +79,11 @@ in progress and is not a result.
 Trial `006` finished outside ±1%. Its S3 repair (`d_ff` 280) is eligible: val bpb
 1.4568/1.3403/1.2615, lower than the gelu pair at T, 2T and 4T. One seed is not a
 selection. Trial `007` (SwiGLU, seed 1) is in progress and is not a result.
+
+## Later (2026-10-05, SwiGLU pair and first ReLU² seed)
+
+Trial `007` finished outside ±1%. Its S3 repair (`d_ff` 280) is eligible: val bpb
+1.4694/1.3544/1.2793. The two-seed SwiGLU mean is 1.4631/1.3473/1.2704, lower than
+gelu at T, 2T and 4T. Trial `008` finished outside ±1%. Its S3 repair (`d_ff` 424)
+is eligible: 1.4749/1.3597/1.2807, one ReLU² seed. Trial `009` (ReLU², seed 1) is
+in progress and is not a result. The activation choice stays open.
