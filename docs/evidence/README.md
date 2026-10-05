@@ -30,6 +30,8 @@ attempt recipes/eligibility from trial outcomes without overwriting frozen recor
 ### Figures
 
 A figure is a view of published run summaries. The numbers stay in those records.
+[`scripts/e0_figures.py`](../../scripts/e0_figures.py) draws the files below from those
+summaries. Matplotlib is the optional `plots` extra and is not part of CI.
 
 ![Neutral scale val bpb for campaign c58a86](e0-v2/neutral-scale-c58a86.svg)
 
