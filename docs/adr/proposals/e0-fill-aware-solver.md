@@ -1,6 +1,6 @@
 # Fill-aware first shape (S3 tax) — proposal
 
-Status: **proposal**. Does not change ADR 0008 S3 or a running campaign.
+Status: accepted — 2026-10-04; recorded in ADR 0019. The running campaign does not use this rule.
 
 ## Context
 
