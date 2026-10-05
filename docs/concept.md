@@ -29,6 +29,11 @@ No work found trains an LM from scratch with a **vector-coded core below 1 bit/w
 **learned, seed-generated and computed codes** at exactly equal coded bytes, under 1.5 MB, with a
 bootable artifact. The claimable novelty is that comparison and its result, not the mechanism.
 
+The scalar adversary is a common decoder-only GPT: pre-norm RMSNorm, RoPE, causal attention,
+a tied 4-bit embedding, and a ternary or 2-bit core. E0 exists to make that ordinary family
+strong at the byte budget. A stranger mechanism on a component that carries almost no bits was
+closed as the [v0.1 stress test](#stress-test-v01).
+
 ## Thesis
 
 **Below one bit, a recursive core whose weights are indices into a vector code is hypothesized to beat, at equal

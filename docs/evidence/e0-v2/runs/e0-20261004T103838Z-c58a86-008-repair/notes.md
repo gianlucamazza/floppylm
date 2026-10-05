@@ -22,3 +22,8 @@ between arms.
 Eligible S3 repair, `d_ff` 424. Val bpb 1.4749/1.3597/1.2807 is ReLU² seed 0.
 It is lower than the gelu pair and higher than both SwiGLU seeds at T, 2T and 4T.
 One seed is not a selection.
+
+## Later (2026-10-05, seed 1 and the choice)
+
+Seed 1 is `009-repair`: 1.4790/1.3679/1.2837 at `d_ff` 423. The two-seed mean is
+1.4770/1.3638/1.2822. Neutral MLP selected SwiGLU at nominal `d_ff` 274.

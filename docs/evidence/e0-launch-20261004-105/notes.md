@@ -87,3 +87,11 @@ Trial `007` finished outside ±1%. Its S3 repair (`d_ff` 280) is eligible: val b
 gelu at T, 2T and 4T. Trial `008` finished outside ±1%. Its S3 repair (`d_ff` 424)
 is eligible: 1.4749/1.3597/1.2807, one ReLU² seed. Trial `009` (ReLU², seed 1) is
 in progress and is not a result. The activation choice stays open.
+
+## Later (2026-10-05, MLP choice)
+
+Trial `009` finished outside ±1%. Its S3 repair (`d_ff` 423) is eligible: val bpb
+1.4790/1.3679/1.2837. The two-seed ReLU² mean is 1.4770/1.3638/1.2822, below gelu and
+above SwiGLU at T, 2T and 4T. Neutral MLP selected SwiGLU at nominal `d_ff` 274.
+The campaign is in `tuning-ternary`. Trial `010` (lr 0.001, delta 0.5, seed 0) is in
+progress and is not a result.
