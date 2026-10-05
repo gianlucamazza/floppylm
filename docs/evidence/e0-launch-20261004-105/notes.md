@@ -105,3 +105,9 @@ delta 0.7 at `d_ff` 288 (1.5771/1.4326/1.3301), and lr 0.003 delta 0.5 at `d_ff`
 (1.4568/1.3403/1.2615) at T, 2T and 4T. Trial `012` repeats the neutral recipe and its
 original artifact differs from trial `006`. Tuning stays open. Trial `013` (lr 0.003,
 delta 0.7, seed 0) is in progress and is not a result.
+
+## Later (2026-10-05, fourth ternary cell)
+
+Trial `013` finished outside ±1%. Its S3 repair (`d_ff` 289) is eligible: val bpb
+1.4796/1.3651/1.2789, above the neutral SwiGLU seed 0 repair at T, 2T and 4T. Tuning
+stays open. Trial `014` (lr 0.01, delta 0.5, seed 0) is in progress and is not a result.

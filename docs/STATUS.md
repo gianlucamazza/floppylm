@@ -18,13 +18,13 @@ only after the S3 repair. Seed 0 is 1.4749/1.3597/1.2807 at `d_ff` 424. Seed 1 i
 1.4790/1.3679/1.2837 at `d_ff` 423. The ReLU² mean is 1.4770/1.3638/1.2822, below gelu and
 above SwiGLU at T, 2T and 4T. The recorded choice is SwiGLU at nominal `d_ff` 274.
 
-The first three ternary tuning cells are closed, seed 0, on that nominal shape. At lr 0.001
-the eligible repairs are delta 0.5 at `d_ff` 279 (val bpb 1.5987/1.4543/1.3442) and delta 0.7
-at `d_ff` 288 (1.5771/1.4326/1.3301). Both are above the neutral SwiGLU seed 0 repair
-(1.4568/1.3403/1.2615) at T, 2T and 4T. The lr 0.003, delta 0.5 cell repeats the neutral
-recipe. Its original artifact differs from trial `006` and is outside ±1%. The eligible
-repair is `d_ff` 279, val bpb 1.4829/1.3593/1.2772, above that same seed-0 repair at T, 2T
-and 4T. Tuning stays open. Trial `013` (lr 0.003, delta 0.7, seed 0) is in progress and is
+Four ternary tuning cells are closed, seed 0, on that nominal shape. At lr 0.001 the
+eligible repairs are delta 0.5 at `d_ff` 279 (val bpb 1.5987/1.4543/1.3442) and delta 0.7
+at `d_ff` 288 (1.5771/1.4326/1.3301). At lr 0.003 they are delta 0.5 at `d_ff` 279
+(1.4829/1.3593/1.2772) and delta 0.7 at `d_ff` 289 (1.4796/1.3651/1.2789). All four are
+above the neutral SwiGLU seed 0 repair (1.4568/1.3403/1.2615) at T, 2T and 4T. The lr
+0.003, delta 0.5 original repeats the neutral recipe and its artifact differs from trial
+`006`. Tuning stays open. Trial `014` (lr 0.01, delta 0.5, seed 0) is in progress and is
 not a result.
 
 E1–E4 stay specified. They wait for this campaign to finish and for an accepted E1 protocol.
@@ -48,7 +48,7 @@ paragraph above is the quality state. Measured cells are in the
 | Previous campaign    | `e0-20261001T163456Z-fdab67` (0.1.0.56) **stopped**, 001 incomplete; do not resume. Before that, `e0-20261001T090514Z-4236fd` (0.1.0.28) stopped unsaturated — [record](evidence/e0-v2/campaigns/e0-20261001T090514Z-4236fd/notes.md) |
 | E0 saturation gate   | recorded, not an eligibility gate ([ADR 0015](adr/0015-e0-fixed-data-frontier.md)) |
 | Host recovery        | [ADR 0017](adr/0017-runtime-liveness.md) merged ([PR #7](https://github.com/gianlucamazza/floppylm/pull/7)); paired with accepted 0.1.0.93. |
-| E0 quality results   | scale selected `row8log`; MLP selected SwiGLU, nominal `d_ff` 274; ReLU² two-seed mean is higher; tuning is open, and the lr 0.001 repairs are above the neutral seed-0 repair |
+| E0 quality results   | scale selected `row8log`; MLP selected SwiGLU, nominal `d_ff` 274; ReLU² two-seed mean is higher; tuning is open, and the four closed ternary repairs are above the neutral seed-0 repair |
 | E1 qualification     | CPU functional qualification **measured** ([ADR 0013](adr/0013-e1-functional-qualification.md), [evidence](evidence/e1-qualification-20261001/notes.md)); Xbox vector qualification pending |
 | Scientific E1–E4     | **specified**, gated by E0 and an accepted E1 protocol ([roadmap](roadmap.md), [completion plan](completion-plan.md)) |
 

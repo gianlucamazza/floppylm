@@ -102,6 +102,8 @@ Same campaign, eligible MLP repairs only. The green mean is the two gelu seeds, 
 | [`e0-v2/runs/e0-20261004T103838Z-c58a86-011-repair`](e0-v2/runs/e0-20261004T103838Z-c58a86-011-repair/notes.md) | S3 repair eligible, `d_ff` 288, val bpb 1.5771/1.4326/1.3301, Δ(2T→4T) = −0.103; lr 0.001, delta 0.7 | eligible |
 | [`e0-v2/runs/e0-20261004T103838Z-c58a86-012`](e0-v2/runs/e0-20261004T103838Z-c58a86-012/notes.md) | ternary lr 0.003, delta 0.5, seed 0, `d_ff` 274: same recipe as `006`, different artifact, bytes short, val bpb 1.4660/1.3503/1.2730 | excluded |
 | [`e0-v2/runs/e0-20261004T103838Z-c58a86-012-repair`](e0-v2/runs/e0-20261004T103838Z-c58a86-012-repair/notes.md) | S3 repair eligible, `d_ff` 279, val bpb 1.4829/1.3593/1.2772, Δ(2T→4T) = −0.082; lr 0.003, delta 0.5 | eligible |
+| [`e0-v2/runs/e0-20261004T103838Z-c58a86-013`](e0-v2/runs/e0-20261004T103838Z-c58a86-013/notes.md) | ternary lr 0.003, delta 0.7, seed 0, `d_ff` 274: bytes short, val bpb 1.4731/1.3650/1.2873 | excluded |
+| [`e0-v2/runs/e0-20261004T103838Z-c58a86-013-repair`](e0-v2/runs/e0-20261004T103838Z-c58a86-013-repair/notes.md) | S3 repair eligible, `d_ff` 289, val bpb 1.4796/1.3651/1.2789, Δ(2T→4T) = −0.086; lr 0.003, delta 0.7 | eligible |
 | [`e0-lite/pre-v2`](e0-lite/pre-v2/notes.md)                                                                                                 | stopped E0-lite grid; diagnostic, excluded from verdicts, FLP1 blobs | —           |
 
 ### Xbox package acceptance
