@@ -1,12 +1,12 @@
 # Status
 
 The only page that states live project state. Update it — and nothing else — on every package
-bump or campaign start/stop. Last updated: **2026-10-05**.
+bump or campaign start/stop. Last updated: **2026-10-06**.
 
 ## Where this stands
 
 E0 is measuring the scalar baseline on the accepted Xbox package 0.1.0.105. Campaign
-`e0-20261004T103838Z-c58a86` is running, in phase `tuning-ternary`.
+`e0-20261004T103838Z-c58a86` is running, in phase `grid-ternary`.
 
 The scale choice is closed. `row8log` is lower than `row16` at T, 2T and 4T: mean val bpb
 1.5076/1.3856/1.3059 against 1.5127/1.3933/1.3121. The activation choice is closed. Both gelu
@@ -18,14 +18,14 @@ only after the S3 repair. Seed 0 is 1.4749/1.3597/1.2807 at `d_ff` 424. Seed 1 i
 1.4790/1.3679/1.2837 at `d_ff` 423. The ReLU² mean is 1.4770/1.3638/1.2822, below gelu and
 above SwiGLU at T, 2T and 4T. The recorded choice is SwiGLU at nominal `d_ff` 274.
 
-Four ternary tuning cells are closed, seed 0, on that nominal shape. At lr 0.001 the
-eligible repairs are delta 0.5 at `d_ff` 279 (val bpb 1.5987/1.4543/1.3442) and delta 0.7
-at `d_ff` 288 (1.5771/1.4326/1.3301). At lr 0.003 they are delta 0.5 at `d_ff` 279
-(1.4829/1.3593/1.2772) and delta 0.7 at `d_ff` 289 (1.4796/1.3651/1.2789). All four are
-above the neutral SwiGLU seed 0 repair (1.4568/1.3403/1.2615) at T, 2T and 4T. The lr
-0.003, delta 0.5 original repeats the neutral recipe and its artifact differs from trial
-`006`. Tuning stays open. Trial `014` (lr 0.01, delta 0.5, seed 0) is in progress and is
-not a result.
+Ternary tuning is closed, seed 0, on that nominal shape. The eligible repairs at lr 0.01
+are delta 0.5 at `d_ff` 281 (val bpb 1.4602/1.3481/1.2720) and delta 0.7 at `d_ff` 288
+(1.4619/1.3533/1.2792). The delta 0.5 repair is the lowest of the six tuning cells at T,
+2T and 4T, and the grid uses lr 0.01, delta 0.5, wd 0.1. It stays above the neutral
+SwiGLU seed 0 repair (1.4568/1.3403/1.2615) at all three horizons. The first two grid
+shapes are eligible on the first pack: `d` 64, 6 layers, `d_ff` 226 (1.4770/1.3595/1.2699)
+and `d` 64, 7 layers, `d_ff` 180 (1.4744/1.3591/1.2788). The shape is not selected. Trial
+`018` (`d` 64, 8 layers, `d_ff` 145) is in progress and is not a result.
 
 E1–E4 stay specified. They wait for this campaign to finish and for an accepted E1 protocol.
 The 1/16 pilot rules that do not name the scalar winner are proposed in
@@ -48,7 +48,7 @@ paragraph above is the quality state. Measured cells are in the
 | Previous campaign    | `e0-20261001T163456Z-fdab67` (0.1.0.56) **stopped**, 001 incomplete; do not resume. Before that, `e0-20261001T090514Z-4236fd` (0.1.0.28) stopped unsaturated — [record](evidence/e0-v2/campaigns/e0-20261001T090514Z-4236fd/notes.md) |
 | E0 saturation gate   | recorded, not an eligibility gate ([ADR 0015](adr/0015-e0-fixed-data-frontier.md)) |
 | Host recovery        | [ADR 0017](adr/0017-runtime-liveness.md) merged ([PR #7](https://github.com/gianlucamazza/floppylm/pull/7)); paired with accepted 0.1.0.93. |
-| E0 quality results   | scale selected `row8log`; MLP selected SwiGLU, nominal `d_ff` 274; ReLU² two-seed mean is higher; tuning is open, and the four closed ternary repairs are above the neutral seed-0 repair |
+| E0 quality results   | scale selected `row8log`; MLP selected SwiGLU, nominal `d_ff` 274; ternary tuning uses lr 0.01, delta 0.5; the shape grid is open |
 | E1 qualification     | CPU functional qualification **measured** ([ADR 0013](adr/0013-e1-functional-qualification.md), [evidence](evidence/e1-qualification-20261001/notes.md)); Xbox vector qualification pending |
 | Scientific E1–E4     | **specified**, gated by E0 and an accepted E1 protocol ([roadmap](roadmap.md), [completion plan](completion-plan.md)) |
 

@@ -111,3 +111,13 @@ delta 0.7, seed 0) is in progress and is not a result.
 Trial `013` finished outside ±1%. Its S3 repair (`d_ff` 289) is eligible: val bpb
 1.4796/1.3651/1.2789, above the neutral SwiGLU seed 0 repair at T, 2T and 4T. Tuning
 stays open. Trial `014` (lr 0.01, delta 0.5, seed 0) is in progress and is not a result.
+
+## Later (2026-10-06, ternary tuning closed)
+
+Trials `014` and `015` are closed. Their originals are outside ±1%. The eligible repairs
+are lr 0.01 delta 0.5 at `d_ff` 281 (1.4602/1.3481/1.2720) and lr 0.01 delta 0.7 at
+`d_ff` 288 (1.4619/1.3533/1.2792). The delta 0.5 repair is the lowest of the six tuning
+cells at T, 2T and 4T, so the ternary grid uses lr 0.01, delta 0.5, wd 0.1. It stays
+above the neutral SwiGLU seed 0 repair. Trials `016` and `017` are the first two grid
+shapes and are eligible on the first pack. The shape is not selected. Trial `018` is in
+progress and is not a result.

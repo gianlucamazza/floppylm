@@ -104,6 +104,12 @@ Same campaign, eligible MLP repairs only. The green mean is the two gelu seeds, 
 | [`e0-v2/runs/e0-20261004T103838Z-c58a86-012-repair`](e0-v2/runs/e0-20261004T103838Z-c58a86-012-repair/notes.md) | S3 repair eligible, `d_ff` 279, val bpb 1.4829/1.3593/1.2772, Δ(2T→4T) = −0.082; lr 0.003, delta 0.5 | eligible |
 | [`e0-v2/runs/e0-20261004T103838Z-c58a86-013`](e0-v2/runs/e0-20261004T103838Z-c58a86-013/notes.md) | ternary lr 0.003, delta 0.7, seed 0, `d_ff` 274: bytes short, val bpb 1.4731/1.3650/1.2873 | excluded |
 | [`e0-v2/runs/e0-20261004T103838Z-c58a86-013-repair`](e0-v2/runs/e0-20261004T103838Z-c58a86-013-repair/notes.md) | S3 repair eligible, `d_ff` 289, val bpb 1.4796/1.3651/1.2789, Δ(2T→4T) = −0.086; lr 0.003, delta 0.7 | eligible |
+| [`e0-v2/runs/e0-20261004T103838Z-c58a86-014`](e0-v2/runs/e0-20261004T103838Z-c58a86-014/notes.md) | ternary lr 0.01, delta 0.5, seed 0, `d_ff` 274: bytes short, val bpb 1.4582/1.3376/1.2554 | excluded |
+| [`e0-v2/runs/e0-20261004T103838Z-c58a86-014-repair`](e0-v2/runs/e0-20261004T103838Z-c58a86-014-repair/notes.md) | S3 repair eligible, `d_ff` 281, val bpb 1.4602/1.3481/1.2720, Δ(2T→4T) = −0.076; lowest of the six ternary tuning cells | eligible |
+| [`e0-v2/runs/e0-20261004T103838Z-c58a86-015`](e0-v2/runs/e0-20261004T103838Z-c58a86-015/notes.md) | ternary lr 0.01, delta 0.7, seed 0, `d_ff` 274: bytes short, val bpb 1.4741/1.3585/1.2865 | excluded |
+| [`e0-v2/runs/e0-20261004T103838Z-c58a86-015-repair`](e0-v2/runs/e0-20261004T103838Z-c58a86-015-repair/notes.md) | S3 repair eligible, `d_ff` 288, val bpb 1.4619/1.3533/1.2792, Δ(2T→4T) = −0.074; lr 0.01, delta 0.7 | eligible |
+| [`e0-v2/runs/e0-20261004T103838Z-c58a86-016`](e0-v2/runs/e0-20261004T103838Z-c58a86-016/notes.md) | ternary grid, `d` 64, 6 layers, `d_ff` 226, lr 0.01, delta 0.5, val bpb 1.4770/1.3595/1.2699, Δ(2T→4T) = −0.090 | eligible |
+| [`e0-v2/runs/e0-20261004T103838Z-c58a86-017`](e0-v2/runs/e0-20261004T103838Z-c58a86-017/notes.md) | ternary grid, `d` 64, 7 layers, `d_ff` 180, lr 0.01, delta 0.5, val bpb 1.4744/1.3591/1.2788, Δ(2T→4T) = −0.080 | eligible |
 | [`e0-lite/pre-v2`](e0-lite/pre-v2/notes.md)                                                                                                 | stopped E0-lite grid; diagnostic, excluded from verdicts, FLP1 blobs | —           |
 
 ### Xbox package acceptance
