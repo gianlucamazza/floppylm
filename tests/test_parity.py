@@ -3,9 +3,11 @@ import pytest
 from floppylm.parity import admissible, paired_sigma
 
 
-def test_rejects_pair_inside_target_band_but_apart() -> None:
-    ok, reasons = admissible({"a": 9920, "b": 10080}, 10_000)  # -0.8% and +0.8%
-    assert not ok and any("spread" in r for r in reasons)
+def test_accepts_pair_inside_the_shared_target_window() -> None:
+    # -0.8% and +0.8% of the target. Their mutual spread is 1.61%.
+    assert admissible({"a": 9920, "b": 10080}, 10_000)[0]
+    # Published c58a86 4T endpoints, both inside ±1% of 85937.5.
+    assert admissible({"small": 85098, "large": 85982}, 85937.5)[0]
 
 
 def test_accepts_close_pair_and_rejects_far_from_target() -> None:

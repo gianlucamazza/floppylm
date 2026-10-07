@@ -2,8 +2,8 @@
 
 ## Status
 
-`accepted` — 2026-10-01; owner decision on
-[proposal option B](proposals/e0-saturation-proposal.md).
+`amended` — 2026-10-01; amended 2026-10-07 by [ADR 0020](0020-target-window-parity.md).
+Owner decision on [proposal option B](proposals/e0-saturation-proposal.md).
 Supersedes in part [ADR 0005](0005-e0v2-protocol.md) §4 (saturation as an eligibility
 gate), [ADR 0007](0007-e0v2-review-gates.md) (scientific freeze requiring saturation),
 [ADR 0008](0008-e0-numeric-protocol.md) consequences (unsaturated runs cannot be selected),
@@ -61,3 +61,11 @@ eligibility and protection boundary.
 A (raise T until `|Δ| < 0.01`), C (fit `L∞ + A·t^(−α)`), and no change were
 rejected: A is not affordable on one console under the projection; C makes the
 verdict a fitted model; no change produces no E0 frontier.
+
+## Amendment — 2026-10-07
+
+[ADR 0020](0020-target-window-parity.md) withdraws the reciprocal
+`max/min − 1 ≤ 0.01` check. Candidates that share one target are comparable when
+each is within ±1% of that target. New campaigns freeze `protocol_adr` `0020`.
+A campaign frozen at `0015` is not opened by that code. Campaign
+`e0-20261004T103838Z-c58a86` is not migrated.

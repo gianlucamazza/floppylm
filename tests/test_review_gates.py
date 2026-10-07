@@ -131,10 +131,10 @@ def test_scientific_freeze_accepts_unsaturated_byte_ok_runs(tmp_path, monkeypatc
     assert sel["purpose"] == "scientific"
 
 
-def test_freeze_rejects_pairwise_spread(tmp_path, monkeypatch):
+def test_freeze_accepts_pair_inside_the_shared_target_window(tmp_path, monkeypatch):
+    # -0.8% and +0.8% of the target. Their mutual spread is 1.61%.
     sums = {"a": fixture_run(tmp_path, "a", size=992), "b": fixture_run(tmp_path, "b", size=1008)}
-    with pytest.raises(SystemExit):
-        freeze(tmp_path, monkeypatch, sums)
+    assert freeze(tmp_path, monkeypatch, sums) == 0
 
 
 def test_freeze_rejects_different_targets(tmp_path, monkeypatch):

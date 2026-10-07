@@ -29,13 +29,28 @@ from e0_v2 import (
     verified_branch,
 )
 from floppylm import parity, runlog, shapes
-from floppylm.campaign_protocol import PROTOCOL_ADR, grid_configs, protocol_spec
+from floppylm.campaign_protocol import (
+    PROTOCOL_ADR,
+    SUCCESSOR_OF,
+    grid_configs,
+    inherited_neutral_scale,
+    inherited_ternary_tuning,
+    protocol_spec,
+)
 from floppylm.campaign_report import attempt_record, baseline_complete
 from floppylm.model import GPTConfig
 
 
 class Campaign:
-    def __init__(self, root: Path, acceptance: Path, benchmark: Path, *, recover: bool = False):
+    def __init__(
+        self,
+        root: Path,
+        acceptance: Path,
+        benchmark: Path,
+        *,
+        recover: bool = False,
+        from_grid_ternary: bool = False,
+    ):
         self.root, self.acceptance = root, acceptance.resolve()
         self.recover_trials = recover
         self.child = None
@@ -50,6 +65,8 @@ class Campaign:
         self.path = root / "campaign.json"
         if self.path.exists():
             self.state = json.loads(self.path.read_text())
+            if from_grid_ternary and not self.state.get("inherited_from"):
+                raise RuntimeError("successor start applies only to a new campaign")
             if self.state.get("protocol_adr") != PROTOCOL_ADR:
                 raise RuntimeError("campaign protocol differs; no implicit migration")
             if self.state["benchmark_sha256"] != runlog.sha256_file(benchmark):
@@ -64,7 +81,7 @@ class Campaign:
                 "id": runlog.new_run_id("e0"),
                 "created": runlog.now(),
                 "status": "running",
-                "phase": "neutral-scale",
+                "phase": "grid-ternary" if from_grid_ternary else "neutral-scale",
                 "acceptance_sha256": runlog.sha256_file(acceptance),
                 "benchmark_sha256": runlog.sha256_file(benchmark),
                 "package": proof["package"],
@@ -73,6 +90,14 @@ class Campaign:
                 "trials": {},
                 "decisions": {},
             }
+            if from_grid_ternary:
+                tuning = inherited_ternary_tuning()
+                self.state["inherited_from"] = SUCCESSOR_OF
+                self.state["decisions"] = {
+                    "neutral-scale": inherited_neutral_scale(),
+                    "neutral-mlp": tuning["config"],
+                    "tuning-ternary": tuning,
+                }
             # Exclusive creation freezes choices before any scientific result.
             with self.path.open("x") as file:
                 json.dump(self.state, file, indent=1)
@@ -329,7 +354,7 @@ class Campaign:
         return candidates[best]
 
     def select_winner(self, phase, candidates):
-        """Every selecting phase uses the same byte and rank policy (ADR 0015)."""
+        """Every selecting phase uses the same byte and rank policy (ADR 0015, ADR 0020)."""
         comparable = bool(candidates) and self.comparable(
             [s for _, group in candidates for s in group]
         )
@@ -433,61 +458,56 @@ class Campaign:
             ]
         runlog.write_atomic(destination / "notes.md", "\n".join(lines) + "\n")
 
-    def run(self):
-        protocol = self.state["protocol"]
-        budget = FULL_BUDGET_BITS * protocol["budget_frac"]
-        base = GPTConfig(
-            d=protocol["neutral_width"],
-            n_layers=protocol["neutral_layers"],
-            n_heads=protocol["neutral_width"] // shapes.HEAD_DIM,
-            ctx=protocol["ctx"],
-        )
-        scale = self.neutral(
-            "neutral-scale",
-            [
-                shapes.fill_d_ff(replace(base, scale_policy=p), budget)
-                for p in self.state["protocol"]["scale_order"]
-            ],
-        )
-        chosen = self.neutral(
-            "neutral-mlp",
-            [
-                shapes.fill_d_ff(replace(scale, mlp=m), budget)
-                for m in self.state["protocol"]["mlp_order"]
-            ],
-        )
-        recipes = {}
-        for fmt in ("ternary", "2bit"):
-            self.state["phase"] = "tuning-" + fmt
-            self.save()
-            candidates = []
-            for lr, axis in itertools.product(
-                protocol["lr"],
-                protocol["ternary_delta"] if fmt == "ternary" else protocol["2bit_wd"],
-            ):
-                cfg = shapes.fill_d_ff(
-                    replace(chosen, core_fmt=fmt, delta=axis if fmt == "ternary" else 0.5), budget
-                )
-                wd = protocol["ternary_wd"] if fmt == "ternary" else axis
-                s = self.trial(f"tune-{fmt}-{lr}-{axis}", cfg, protocol["tuning_seed"], lr, wd)
-                if s is not None:
-                    candidates.append((s, lr, wd, cfg))
-            winner = self.select_winner(
-                "tuning-" + fmt, [(i, [c[0]]) for i, c in enumerate(candidates)]
+    def tune_format(self, protocol, budget, chosen, fmt):
+        """Search learning rate and the format axis. Submit the solver fill."""
+        self.state["phase"] = "tuning-" + fmt
+        self.save()
+        candidates = []
+        for lr, axis in itertools.product(
+            protocol["lr"],
+            protocol["ternary_delta"] if fmt == "ternary" else protocol["2bit_wd"],
+        ):
+            cfg = shapes.fill_d_ff(
+                replace(chosen, core_fmt=fmt, delta=axis if fmt == "ternary" else 0.5), budget
             )
-            _, lr, wd, cfg = candidates[winner]
-            self.state["phase"] = "grid-" + fmt
-            self.save()
-            grid = [
-                (self.trial(f"grid-{fmt}-{i}", c, protocol["grid_seed"], lr, wd), c)
-                for i, c in enumerate(grid_configs(cfg, budget, protocol))
-            ]
-            valid = [(s, c) for s, c in grid if s is not None]
-            winner = self.select_winner("grid-" + fmt, [(i, [s]) for i, (s, _) in enumerate(valid)])
-            _, cfg = valid[winner]
-            recipes[fmt] = (cfg, lr, wd)
-            self.state["decisions"][fmt] = {"config": cfg.to_dict(), "lr": lr, "wd": wd}
-            self.save()
+            wd = protocol["ternary_wd"] if fmt == "ternary" else axis
+            summary = self.trial(
+                f"tune-{fmt}-{lr}-{axis}", cfg, protocol["tuning_seed"], lr, wd
+            )
+            if summary is not None:
+                candidates.append((summary, lr, wd, cfg))
+        winner = self.select_winner(
+            "tuning-" + fmt, [(i, [item[0]]) for i, item in enumerate(candidates)]
+        )
+        _, lr, wd, cfg = candidates[winner]
+        return cfg, lr, wd
+
+    def grid_format(self, protocol, budget, fmt, cfg, lr, wd):
+        """Train one solver grid and store its nominal winner."""
+        self.state["phase"] = "grid-" + fmt
+        self.save()
+        grid = [
+            (self.trial(f"grid-{fmt}-{i}", cell, protocol["grid_seed"], lr, wd), cell)
+            for i, cell in enumerate(grid_configs(cfg, budget, protocol))
+        ]
+        valid = [(summary, cell) for summary, cell in grid if summary is not None]
+        winner = self.select_winner(
+            "grid-" + fmt, [(i, [summary]) for i, (summary, _) in enumerate(valid)]
+        )
+        _, cfg = valid[winner]
+        self.state["decisions"][fmt] = {"config": cfg.to_dict(), "lr": lr, "wd": wd}
+        self.save()
+        return cfg, lr, wd
+
+    def inherited_ternary_grid(self, protocol, budget):
+        """Copy the closed ternary recipe. Do not refill it and do not copy 2-bit."""
+        saved = self.state["decisions"]["tuning-ternary"]
+        chosen = GPTConfig(**saved["config"])
+        if chosen.core_fmt != "ternary":
+            raise RuntimeError("only ternary tuning is inherited")
+        return self.grid_format(protocol, budget, "ternary", chosen, saved["lr"], saved["wd"])
+
+    def finish_paired(self, protocol, recipes):
         self.state["phase"] = "paired-seeds"
         self.save()
         paired = {
@@ -497,14 +517,14 @@ class Campaign:
             ]
             for fmt, (cfg, lr, wd) in recipes.items()
         }
-        all_runs = [s for group in paired.values() for s in group]
+        all_runs = [summary for group in paired.values() for summary in group]
         if not self.comparable(all_runs):
             raise RuntimeError("paired comparison fails byte parity")
         self.paired_rank_stable(paired)
         sigma = parity.paired_sigma(
             *[
-                {seed: selection_branch(s)["val_bpb"] for seed, s in enumerate(paired[fmt])}
-                for fmt in ("ternary", "2bit")
+                {seed: selection_branch(summary)["val_bpb"] for seed, summary in enumerate(group)}
+                for group in (paired["ternary"], paired["2bit"])
             ]
         )
         self.state["paired"] = {**sigma, "gate_bpb": max(0.02, 2 * sigma["sd"])}
@@ -516,7 +536,7 @@ class Campaign:
                     sys.executable,
                     str(ROOT / "experiments/e0_v2.py"),
                     "--freeze",
-                    *[s["run_id"] for s in all_runs],
+                    *[summary["run_id"] for summary in all_runs],
                     "--name",
                     name,
                 ],
@@ -532,6 +552,41 @@ class Campaign:
         self.save()
         self.report()
 
+    def run(self):
+        protocol = self.state["protocol"]
+        budget = FULL_BUDGET_BITS * protocol["budget_frac"]
+        if self.state.get("inherited_from"):
+            chosen = GPTConfig(**self.state["decisions"]["tuning-ternary"]["config"])
+            recipes = {"ternary": self.inherited_ternary_grid(protocol, budget)}
+            cfg, lr, wd = self.tune_format(protocol, budget, chosen, "2bit")
+            recipes["2bit"] = self.grid_format(protocol, budget, "2bit", cfg, lr, wd)
+        else:
+            base = GPTConfig(
+                d=protocol["neutral_width"],
+                n_layers=protocol["neutral_layers"],
+                n_heads=protocol["neutral_width"] // shapes.HEAD_DIM,
+                ctx=protocol["ctx"],
+            )
+            scale = self.neutral(
+                "neutral-scale",
+                [
+                    shapes.fill_d_ff(replace(base, scale_policy=policy), budget)
+                    for policy in protocol["scale_order"]
+                ],
+            )
+            chosen = self.neutral(
+                "neutral-mlp",
+                [
+                    shapes.fill_d_ff(replace(scale, mlp=name), budget)
+                    for name in protocol["mlp_order"]
+                ],
+            )
+            recipes = {}
+            for fmt in ("ternary", "2bit"):
+                cfg, lr, wd = self.tune_format(protocol, budget, chosen, fmt)
+                recipes[fmt] = self.grid_format(protocol, budget, fmt, cfg, lr, wd)
+        self.finish_paired(protocol, recipes)
+
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
@@ -539,8 +594,19 @@ def main():
     parser.add_argument("--acceptance", type=Path, required=True)
     parser.add_argument("--benchmark", type=Path, required=True)
     parser.add_argument("--recover", action="store_true", help="recover existing bound trials")
+    parser.add_argument(
+        "--from-grid-ternary",
+        action="store_true",
+        help="open a new campaign at the ternary grid from the closed c58a86 recipe",
+    )
     a = parser.parse_args()
-    campaign = Campaign(a.out, a.acceptance, a.benchmark, recover=a.recover)
+    campaign = Campaign(
+        a.out,
+        a.acceptance,
+        a.benchmark,
+        recover=a.recover,
+        from_grid_ternary=a.from_grid_ternary,
+    )
     campaign.run_managed()
     return 0
 

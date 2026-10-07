@@ -38,12 +38,13 @@ It is not a brainstorm, a survey or a TODO.
 | [0012](0012-repo-boundaries.md)             | floppylm owns FloppyLM semantics; xbox-gpu-training is the only native backend; no FloppyLM in xllama          | accepted           |
 | [0013](0013-e1-functional-qualification.md) | Isolated E1 functional qualification (vector/BPE oracles); scientific E1 remains gated | accepted |
 | [0014](0014-durable-xbox-publication.md) | Journaled Xbox publication, acknowledged bindings and bounded recovery | accepted |
-| [0015](0015-e0-fixed-data-frontier.md) | E0 eligibility is byte parity; saturation is recorded; rank stability at T/2T/4T | accepted |
+| [0015](0015-e0-fixed-data-frontier.md) | E0 eligibility is byte parity; saturation is recorded; rank stability at T/2T/4T | amended |
 
 | [0017](0017-runtime-liveness.md) | Bounded GPU waits, worker ownership and explicit runtime recovery; hardware after E0 | accepted |
 
 | [0018](0018-e0-correctness-and-runtime-qualification.md) | Uniform selection gates, attempt evidence and functional watchdog qualification | accepted |
 | [0019](0019-host-init-pack.md) | One init-pack `d_ff` adjustment before the first training attempt; S3 stays the trained-artifact fallback | accepted |
+| [0020](0020-target-window-parity.md) | A shared target is enough: each candidate within ±1% of that target; `c58a86` is not migrated | accepted |
 
 ## Proposals
 
@@ -57,7 +58,7 @@ It is not a brainstorm, a survey or a TODO.
 | [E1 1/16 learned-book budget](proposals/e1-1-16-book-budget.md) | proposal |
 | [E1 1/16 pilot protocol](proposals/e1-1-16-pilot.md) | proposal |
 | [E0 stays on one accepted Series S](proposals/e0-single-console.md) | not adopted |
-| [Reciprocal parity and the ±1% window](proposals/e0-reciprocal-parity-band.md) | not adopted |
+| [Reciprocal parity and the ±1% window](proposals/e0-reciprocal-parity-band.md) | accepted → ADR 0020 |
 
 An idea that would change the protocol, the backend, or a running campaign is written
 here on the day it is considered, with status `proposal` or `not adopted` and the reason.

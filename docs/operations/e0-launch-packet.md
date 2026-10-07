@@ -96,3 +96,9 @@ for the campaign. Keep the Xbox app foreground and package unchanged. Use
 heartbeat, completed work and checkpoints. Transport failure is unknown progress,
 not a reason to cancel/restart. After a fault, diagnose evidence first and recover
 explicitly on the same package. Never run a keep-alive/requeue loop.
+
+## Later (2026-10-07)
+
+This packet is the preparation record for campaign `e0-20261004T103838Z-c58a86`.
+[ADR 0019](../adr/0019-host-init-pack.md) and [ADR 0020](../adr/0020-target-window-parity.md)
+apply to a successor campaign. They do not reopen `c58a86`.

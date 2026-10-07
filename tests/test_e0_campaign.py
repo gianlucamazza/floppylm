@@ -34,7 +34,9 @@ def test_campaign_freezes_protocol_and_disallows_second_worker(tmp_path, campaig
     first = campaign_module.Campaign(tmp_path / "campaign", proof, speed)
     state = json.loads(first.path.read_text())
     assert state["trials"] == {}
-    assert state["protocol_adr"] == "0015"
+    assert state["protocol_adr"] == "0020"
+    assert state["phase"] == "neutral-scale"
+    assert "inherited_from" not in state
     assert state["protocol"]["scale_order"] == ["row16", "row8log"]
     assert state["protocol"]["paired_seeds"] == [0, 1, 2, 3, 4]
     with pytest.raises(BlockingIOError):
@@ -288,4 +290,73 @@ def test_report_keeps_attempt_recipe_and_eligibility_separate(
     assert report["baseline_complete"] is False
     notes = (evidence / "campaigns" / campaign.state["id"] / "notes.md").read_text()
     assert "establishes a scalar E0 baseline" not in notes
+    campaign.lock.close()
+
+
+def test_successor_copies_the_closed_recipe_and_refuses_an_old_campaign(
+    tmp_path, campaign_module
+):
+    proof, speed = inputs(tmp_path)
+    fresh = campaign_module.Campaign(tmp_path / "successor", proof, speed, from_grid_ternary=True)
+    state = json.loads(fresh.path.read_text())
+    assert state["protocol_adr"] == "0020"
+    assert state["phase"] == "grid-ternary"
+    assert state["inherited_from"] == "e0-20261004T103838Z-c58a86"
+    scale = state["decisions"]["neutral-scale"]
+    assert scale["scale_policy"] == "row8log" and scale["mlp"] == "gelu" and scale["d_ff"] == 415
+    mlp = state["decisions"]["neutral-mlp"]
+    assert mlp["mlp"] == "swiglu" and mlp["d_ff"] == 274
+    tuning = state["decisions"]["tuning-ternary"]
+    assert tuning["lr"] == 0.01 and tuning["wd"] == 0.1
+    assert tuning["config"]["d_ff"] == 274 and tuning["config"]["delta"] == 0.5
+    assert tuning["config"]["mlp"] == "swiglu" and tuning["config"]["core_fmt"] == "ternary"
+    copied = json.loads(json.dumps(state["decisions"]))
+    fresh.lock.close()
+    again = campaign_module.Campaign(tmp_path / "successor", proof, speed, from_grid_ternary=True)
+    assert again.state["decisions"] == copied
+    again.lock.close()
+    plain = campaign_module.Campaign(tmp_path / "plain", proof, speed)
+    plain.lock.close()
+    with pytest.raises(RuntimeError, match="successor start applies only to a new campaign"):
+        campaign_module.Campaign(tmp_path / "plain", proof, speed, from_grid_ternary=True)
+
+
+def test_successor_starts_at_the_ternary_grid(tmp_path, monkeypatch, campaign_module):
+    proof, speed = inputs(tmp_path)
+    campaign = campaign_module.Campaign(
+        tmp_path / "successor", proof, speed, from_grid_ternary=True
+    )
+    monkeypatch.setattr(campaign_module, "EVIDENCE", tmp_path / "evidence")
+    monkeypatch.setattr(campaign_module, "selection_branch", lambda summary: summary["branches"][2])
+    monkeypatch.setattr(campaign_module.shapes, "grid", lambda cfg, budget, **kwargs: [cfg, cfg])
+    calls = []
+
+    def trial(key, *_args):
+        calls.append(key)
+        return _summary_run(key, 1.2, 1.1, 1.0)
+
+    monkeypatch.setattr(campaign, "trial", trial)
+    monkeypatch.setattr(campaign, "run_command", lambda *_args, **_kwargs: None)
+    monkeypatch.setattr(campaign, "neutral", Mock(side_effect=AssertionError("remeasured")))
+    campaign.run()
+    assert calls[0] == "grid-ternary-0"
+    assert not any(key.startswith(("tune-ternary", "neutral-")) for key in calls)
+    assert any(key.startswith("tune-2bit-") for key in calls)
+    assert "grid-2bit-0" in calls
+    assert "paired-ternary-0" in calls and "paired-2bit-4" in calls
+    assert campaign.state["decisions"]["tuning-ternary"]["config"]["d_ff"] == 274
+    assert campaign.state["decisions"]["ternary"]["lr"] == 0.01
+    assert campaign.state["decisions"]["ternary"]["wd"] == 0.1
+    assert campaign.state["decisions"]["ternary"]["config"]["d_ff"] == 274
+    campaign.lock.close()
+
+
+def test_successor_refuses_a_non_ternary_inheritance(tmp_path, campaign_module):
+    proof, speed = inputs(tmp_path)
+    campaign = campaign_module.Campaign(
+        tmp_path / "successor", proof, speed, from_grid_ternary=True
+    )
+    campaign.state["decisions"]["tuning-ternary"]["config"]["core_fmt"] = "2bit"
+    with pytest.raises(RuntimeError, match="only ternary tuning is inherited"):
+        campaign.run()
     campaign.lock.close()
