@@ -5,8 +5,13 @@ bump or campaign start/stop. Last updated: **2026-10-07**.
 
 ## Where this stands
 
-E0 stopped during scalar selection on the accepted Xbox package 0.1.0.105. Campaign
-`e0-20261004T103838Z-c58a86` finished the ternary grid and refused a winner.
+E0 is training a successor scalar grid on the accepted Xbox package 0.1.0.105.
+Campaign `e0-20261007T164712Z-766d4b` opened at `grid-ternary` under
+[ADR 0020](adr/0020-target-window-parity.md), host freeze `11d608a`, unit
+`floppylm-e0-campaign-20261007T164709Z`. It copied the closed row8log scale,
+SwiGLU at nominal `d_ff` 274, and ternary tuning lr 0.01, delta 0.5, wd 0.1.
+Campaign `e0-20261004T103838Z-c58a86` stays stopped. Its ternary set was refused
+and is not a decision.
 
 The scale choice is closed. `row8log` is lower than `row16` at T, 2T and 4T: mean val bpb
 1.5076/1.3856/1.3059 against 1.5127/1.3933/1.3121. The activation choice is closed. Both gelu
@@ -29,8 +34,9 @@ bytes. Selection refused the set under the rule then in force: 4T size runs from
 to 85982 bytes, and `max/min − 1` is 1.0388% ([ADR 0005](adr/0005-e0v2-protocol.md) §1).
 No ternary shape is selected. The diagnostic minimum at T, 2T and 4T is `d` 80, 4 layers,
 `d_ff` 262 (1.4599/1.3375/1.2522) and is not a decision. 2-bit did not start. The
-shared-target window is accepted as [ADR 0020](adr/0020-target-window-parity.md) for a
-successor. `c58a86` stays stopped and is not reopened. No successor is running.
+shared-target window is accepted as [ADR 0020](adr/0020-target-window-parity.md).
+The successor above trains a new ternary grid under that rule and under
+[ADR 0019](adr/0019-host-init-pack.md). It does not resume `c58a86`.
 The generated report records 29 trials and 21 byte repairs, and no completed
 baseline: [campaign report](evidence/e0-v2/campaigns/e0-20261004T103838Z-c58a86/notes.md).
 
@@ -52,20 +58,20 @@ paragraph above is the quality state. Measured cells are in the
 | E0 v2 software       | **measured**: harness, gates and smoke ([evidence](evidence/README.md))                                                                                                                 |
 | S1–S10, scale policy | accepted ([ADR 0008](adr/0008-e0-numeric-protocol.md), [ADR 0011](adr/0011-e0-row-scale-selection.md))                                                                                  |
 | Xbox package | **accepted** `GianlucaMazza.XgpuE0_0.1.0.105_x64__g0p5dcfz4t9z4`, source `128434e81837ec1558f7e3d68a7f8849a91aa054`, CI [37194378620](https://github.com/gianlucamazza/xbox-gpu-training/actions/runs/37194378620). [Evidence](evidence/xbox-e0-20261004-105/notes.md): full gates, bit-identical 38/38 versus [0.1.0.102](evidence/xbox-e0-20261004-102/notes.md). Shader CSO unchanged. The publish path no longer truncates a stable checkpoint temporary. Scientific 4T jobs on this package passed trunk 896 and 2112. |
-| E0 campaign | **stopped** `e0-20261004T103838Z-c58a86` at 2026-10-07T12:26:34Z on `0.1.0.105`, host freeze `f76b4c8`, phase `grid-ternary`. Selection refused the ternary set: 4T bytes 85098–85982, `max/min − 1` = 1.0388%. No ternary winner. 2-bit did not start. Do not resume. See [Where this stands](#where-this-stands). [Launch record](evidence/e0-launch-20261004-105/notes.md). [Campaign report](evidence/e0-v2/campaigns/e0-20261004T103838Z-c58a86/notes.md). |
+| E0 campaign | **running** `e0-20261007T164712Z-766d4b` since 2026-10-07T16:47:12Z on `0.1.0.105`, host freeze `11d608a`, protocol ADR 0020, phase `grid-ternary`. Unit `floppylm-e0-campaign-20261007T164709Z`. Copied closed facts: row8log, SwiGLU nominal `d_ff` 274, ternary tuning lr 0.01, delta 0.5, wd 0.1. `e0-20261004T103838Z-c58a86` stays stopped (host freeze `f76b4c8`; ternary set refused, 4T bytes 85098–85982, `max/min − 1` = 1.0388%). Do not resume `c58a86`. [Launch record](evidence/e0-launch-20261004-105/notes.md). [Stopped report](evidence/e0-v2/campaigns/e0-20261004T103838Z-c58a86/notes.md). |
 | Previous E0 campaign | **stopped** `e0-20261004T082243Z-31972d` at 2026-10-04T09:28:41Z on `0.1.0.102` (freeze `4de17b3`). `progress_stall` at published trunk 2112. Preserved checkpoint sha256 `3fb5d57cb03591afcbf90054c97544f6abcb6e075c1a297139335d6ae0c86483`, 23713680 bytes. Not resumed onto `0.1.0.105`. Before that, `e0-20261002T191632Z-ca781f` on 0.1.0.93 (2026-10-03T00:04:51Z). Trial `000` **eligible** (fill 0.9990/0.9998/1.0012, val bpb 1.5155/1.3951/1.3160). Trial `001` **eligible** after S3 `d_ff` 400 (fill 0.9996/1.0007/1.0009, val bpb 1.5100/1.3916/1.3082, bytes 85904/86000/86015). Trial `002` row8log **interrupted** at stop, not a result. Do not resume `ca781f` onto 0.1.0.95. Frozen FloppyLM `3c3c79d`. |
 | Previous campaign    | `e0-20261001T163456Z-fdab67` (0.1.0.56) **stopped**, 001 incomplete; do not resume. Before that, `e0-20261001T090514Z-4236fd` (0.1.0.28) stopped unsaturated — [record](evidence/e0-v2/campaigns/e0-20261001T090514Z-4236fd/notes.md) |
 | E0 saturation gate   | recorded, not an eligibility gate ([ADR 0015](adr/0015-e0-fixed-data-frontier.md)) |
 | Host recovery        | [ADR 0017](adr/0017-runtime-liveness.md) merged ([PR #7](https://github.com/gianlucamazza/floppylm/pull/7)); paired with accepted 0.1.0.93. |
-| E0 quality results   | scale selected `row8log`; MLP selected SwiGLU, nominal `d_ff` 274; ternary tuning closed at lr 0.01, delta 0.5; ternary grid closed and refused; no shape selected |
+| E0 quality results   | scale selected `row8log`; MLP selected SwiGLU, nominal `d_ff` 274; ternary tuning closed at lr 0.01, delta 0.5; `c58a86` ternary grid refused; successor `766d4b` is training a new ternary grid; no shape selected |
 | E1 qualification     | CPU functional qualification **measured** ([ADR 0013](adr/0013-e1-functional-qualification.md), [evidence](evidence/e1-qualification-20261001/notes.md)); Xbox vector qualification pending |
 | Scientific E1–E4     | **specified**, gated by E0 and an accepted E1 protocol ([roadmap](roadmap.md), [completion plan](completion-plan.md)) |
 
 `31972d` stays stopped on `0.1.0.102`. `a8d8b9` stays stopped on `0.1.0.98`. `ca781f` stays stopped on `0.1.0.93`. Completed 4T jobs on `0.1.0.105` passed trunk 896 and 2112 without a `progress_stall`. [E1 book budget](adr/proposals/e1-1-16-book-budget.md) stays a proposal.
 
 ```bash
-python scripts/e0_status.py --campaign runs/e0-campaign-20261004-105
-python scripts/e0_status.py --campaign runs/e0-campaign-20261004-105 --xbox
+python scripts/e0_status.py --campaign runs/e0-campaign-20261007-105
+python scripts/e0_status.py --campaign runs/e0-campaign-20261007-105 --xbox
 ```
 
 Do not resume `fdab67` onto 0.1.0.65, 0.1.0.66, 0.1.0.68, 0.1.0.76, 0.1.0.80, 0.1.0.84, 0.1.0.86, 0.1.0.93, or 0.1.0.95.
