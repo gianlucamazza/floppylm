@@ -1,6 +1,6 @@
 # Fill-aware first shape (S3 tax) — proposal
 
-Status: **proposal**. Does not change ADR 0008 S3 or a running campaign.
+Status: accepted — 2026-10-04; recorded in ADR 0019. The running campaign does not use this rule.
 
 ## Context
 
@@ -33,3 +33,7 @@ Raw JSON: [s3-fill.json](../../evidence/architecture-20261002/s3-fill.json).
 ## Recommendation
 
 Option 1 as a later harness change, accepted by a short ADR amendment to S3 (“at most one repair” may fire on the host before the GPU job). Do not apply it to a campaign already frozen. Do not silently change `fill_min`.
+
+## Later (2026-10-04)
+
+Accepted as [ADR 0019](../0019-host-init-pack.md). The 2026-10-02 measurement above is unchanged. The init pack of the neutral shapes submits `d_ff` 398 (row16) and 422 (row8log). The trained S3 repairs were 400 and 424. Campaign `c58a86` does not use the new rule.
