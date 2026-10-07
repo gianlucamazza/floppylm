@@ -37,3 +37,8 @@ Option 1 as a later harness change, accepted by a short ADR amendment to S3 (“
 ## Later (2026-10-04)
 
 Accepted as [ADR 0019](../0019-host-init-pack.md). The 2026-10-02 measurement above is unchanged. The init pack of the neutral shapes submits `d_ff` 398 (row16) and 422 (row8log). The trained S3 repairs were 400 and 424. Campaign `c58a86` does not use the new rule.
+
+## Later (2026-10-07)
+
+Campaign `c58a86` stopped on 2026-10-07 during ternary selection. It did not use
+this rule. The rule applies to a future campaign.

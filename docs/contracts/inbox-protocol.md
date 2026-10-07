@@ -90,3 +90,8 @@ field is not allowed in scientific training jobs.
 
 This protocol revision requires a newly accepted package. It must not be deployed over
 the frozen running E0 campaign. Historical result/model contracts remain valid.
+
+## Later (2026-10-07)
+
+Campaign `e0-20261004T103838Z-c58a86` stopped on 2026-10-07. That stop does not
+authorize a package deploy.

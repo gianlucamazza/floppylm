@@ -36,8 +36,10 @@ baseline: [campaign report](evidence/e0-v2/campaigns/e0-20261004T103838Z-c58a86/
 E1–E4 stay specified. They wait for an E0 report from a completed selection and for an accepted E1 protocol.
 The 1/16 pilot rules that do not name the scalar winner are proposed in
 [the pilot proposal](adr/proposals/e1-1-16-pilot.md) and are not accepted.
-Host init-pack is written on [PR #22](https://github.com/gianlucamazza/floppylm/pull/22) and
-is not part of this campaign.
+Host init-pack is on main as [ADR 0019](adr/0019-host-init-pack.md)
+([PR #22](https://github.com/gianlucamazza/floppylm/pull/22), `328c906`). It applies
+to a future campaign. It is not part of `c58a86` and does not apply to the thirteen
+ternary cells.
 
 The table is the operator record: package identity, campaign ids, and stopped jobs. The
 paragraph above is the quality state. Measured cells are in the

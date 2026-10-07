@@ -51,10 +51,12 @@ commit `8b76068` assigned 0012 to repository boundaries; the decision is unchang
 
 Continue in this order:
 
-1. Finish the E0 campaign named in [STATUS](STATUS.md). It uses [ADR 0015](adr/0015-e0-fixed-data-frontier.md):
-   scale and MLP selection, tuning, recorded saturation, actual-byte gates, rank stability and
-   paired seeds; then publish the reserved final test and costs. `4236fd` is an earlier stopped
-   campaign, not the live one. Launch of any new campaign is a separate, explicit step.
+1. The E0 campaign named in [STATUS](STATUS.md) is `e0-20261004T103838Z-c58a86`. It stopped
+   on 2026-10-07 during ternary selection, with no ternary winner. Scale, MLP and ternary
+   tuning are closed. The ternary grid was measured and the set was refused. 2-bit tuning,
+   the 2-bit grid, paired seeds and the reserved final test remain for a new campaign.
+   `4236fd` is an earlier stopped campaign. No campaign is running. Launch of any new
+   campaign is a separate, explicit step.
 2. Review the completed E0 report (roadmap gate 4) before accepting a scientific
    E1 ADR. The rules that do not depend on that report — books, assignment,
    dead codes, checkpoints, token parity, F1, and what the container must count —
@@ -69,5 +71,6 @@ Continue in this order:
    the paired 1/16 pilot; proceed through E1a/E1/E1b and E2–E4 only on passing gates.
    Keep local-judge qualification and actual 30 blind human ratings explicit at E4.
 
-Merge the branch code only after the frozen E0 source gate is released. No full-project
-completion claim is justified yet.
+The `c58a86` source freeze was released by that stop. [PR #22](https://github.com/gianlucamazza/floppylm/pull/22)
+merged the host init-pack ([ADR 0019](adr/0019-host-init-pack.md)) for a future campaign.
+It does not apply to the cells already measured. No full-project completion claim is justified yet.

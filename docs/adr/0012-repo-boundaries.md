@@ -41,3 +41,8 @@ ADR 0009. Native backends were never compared with each other, only with this or
 
 One implementation per role; a bug in E0 semantics is fixed in the oracle or the single
 backend, never in a copy. xbox-gpu-training docs must refer here, not to xllama.
+
+## Later (2026-10-07)
+
+Campaign `e0-20261004T103838Z-c58a86` stopped on 2026-10-07. The two follow-ups above
+remain open. This note does not change the decision.
