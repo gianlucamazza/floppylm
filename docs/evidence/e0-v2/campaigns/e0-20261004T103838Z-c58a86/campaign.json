@@ -1,0 +1,1190 @@
+{
+ "acceptance_sha256": "bb0b32ea5a3c5bc5bb7d20e3c7122ea1c1e573cf34343849671f493773854731",
+ "benchmark_sha256": "af861fd6c82fa00eb2f03c4773da95f819fdf13cdc8aa9286d5a64c020d41adc",
+ "commit": "128434e81837ec1558f7e3d68a7f8849a91aa054",
+ "comparisons": {
+  "grid-ternary": {
+   "byte_comparable": false,
+   "phase": "grid-ternary",
+   "scores": [
+    {
+     "candidate": 0,
+     "mean_val_bpb": [
+      1.4770177618821079,
+      1.3594612253492115,
+      1.269856463942368
+     ],
+     "run_ids": [
+      "e0-20261004T103838Z-c58a86-016"
+     ]
+    },
+    {
+     "candidate": 1,
+     "mean_val_bpb": [
+      1.4744398914626173,
+      1.3590542740628835,
+      1.2788021345620748
+     ],
+     "run_ids": [
+      "e0-20261004T103838Z-c58a86-017"
+     ]
+    },
+    {
+     "candidate": 2,
+     "mean_val_bpb": [
+      1.4789239879374687,
+      1.3665646954526094,
+      1.2763536245217428
+     ],
+     "run_ids": [
+      "e0-20261004T103838Z-c58a86-018"
+     ]
+    },
+    {
+     "candidate": 3,
+     "mean_val_bpb": [
+      1.5024378799817923,
+      1.376127046693324,
+      1.285591374015726
+     ],
+     "run_ids": [
+      "e0-20261004T103838Z-c58a86-019"
+     ]
+    },
+    {
+     "candidate": 4,
+     "mean_val_bpb": [
+      1.5182757459811809,
+      1.3944802182750322,
+      1.3089125477456627
+     ],
+     "run_ids": [
+      "e0-20261004T103838Z-c58a86-020"
+     ]
+    },
+    {
+     "candidate": 5,
+     "mean_val_bpb": [
+      1.4599394277321986,
+      1.337519634854345,
+      1.2522095493186078
+     ],
+     "run_ids": [
+      "e0-20261004T103838Z-c58a86-022-r3"
+     ]
+    },
+    {
+     "candidate": 6,
+     "mean_val_bpb": [
+      1.4656358711414172,
+      1.3467458614393735,
+      1.2614328630837948
+     ],
+     "run_ids": [
+      "e0-20261004T103838Z-c58a86-100"
+     ]
+    },
+    {
+     "candidate": 7,
+     "mean_val_bpb": [
+      1.4906137254027605,
+      1.3698704686082275,
+      1.2763551704513745
+     ],
+     "run_ids": [
+      "e0-20261004T103838Z-c58a86-101"
+     ]
+    },
+    {
+     "candidate": 8,
+     "mean_val_bpb": [
+      1.460200553636171,
+      1.3480944767695358,
+      1.2720078291023684
+     ],
+     "run_ids": [
+      "e0-20261004T103838Z-c58a86-102-repair"
+     ]
+    },
+    {
+     "candidate": 9,
+     "mean_val_bpb": [
+      1.464183568312696,
+      1.3438834704643887,
+      1.2666492206509585
+     ],
+     "run_ids": [
+      "e0-20261004T103838Z-c58a86-103-repair"
+     ]
+    },
+    {
+     "candidate": 10,
+     "mean_val_bpb": [
+      1.473937734383309,
+      1.3701302602440355,
+      1.2972286719667454
+     ],
+     "run_ids": [
+      "e0-20261004T103838Z-c58a86-104-repair"
+     ]
+    },
+    {
+     "candidate": 11,
+     "mean_val_bpb": [
+      1.4836872214065762,
+      1.3653347763599284,
+      1.2903106121729908
+     ],
+     "run_ids": [
+      "e0-20261004T103838Z-c58a86-105-repair"
+     ]
+    },
+    {
+     "candidate": 12,
+     "mean_val_bpb": [
+      1.5379958847473805,
+      1.4258737348774408,
+      1.347029919053639
+     ],
+     "run_ids": [
+      "e0-20261004T103838Z-c58a86-106-repair"
+     ]
+    }
+   ]
+  },
+  "neutral-mlp": {
+   "byte_comparable": true,
+   "phase": "neutral-mlp",
+   "scores": [
+    {
+     "candidate": 0,
+     "mean_val_bpb": [
+      1.5075782325235259,
+      1.385647347442999,
+      1.3058534250065286
+     ],
+     "run_ids": [
+      "e0-20261004T103838Z-c58a86-004-repair",
+      "e0-20261004T103838Z-c58a86-005-repair"
+     ]
+    },
+    {
+     "candidate": 1,
+     "mean_val_bpb": [
+      1.4631233361105016,
+      1.3473339062105325,
+      1.2703767982085834
+     ],
+     "run_ids": [
+      "e0-20261004T103838Z-c58a86-006-repair",
+      "e0-20261004T103838Z-c58a86-007-repair"
+     ]
+    },
+    {
+     "candidate": 2,
+     "mean_val_bpb": [
+      1.4769576961833368,
+      1.363806239853606,
+      1.2822394609905838
+     ],
+     "run_ids": [
+      "e0-20261004T103838Z-c58a86-008-repair",
+      "e0-20261004T103838Z-c58a86-009-repair"
+     ]
+    }
+   ]
+  },
+  "neutral-scale": {
+   "byte_comparable": true,
+   "phase": "neutral-scale",
+   "scores": [
+    {
+     "candidate": 0,
+     "mean_val_bpb": [
+      1.5127198046405996,
+      1.3933413349615327,
+      1.3120901210203582
+     ],
+     "run_ids": [
+      "e0-20261004T103838Z-c58a86-000-repair",
+      "e0-20261004T103838Z-c58a86-001-repair"
+     ]
+    },
+    {
+     "candidate": 1,
+     "mean_val_bpb": [
+      1.5075782325235259,
+      1.385647347442999,
+      1.3058534250065286
+     ],
+     "run_ids": [
+      "e0-20261004T103838Z-c58a86-002-repair",
+      "e0-20261004T103838Z-c58a86-003-repair"
+     ]
+    }
+   ]
+  },
+  "tuning-ternary": {
+   "byte_comparable": true,
+   "phase": "tuning-ternary",
+   "scores": [
+    {
+     "candidate": 0,
+     "mean_val_bpb": [
+      1.5986641360276388,
+      1.4543299279393478,
+      1.3442227172972925
+     ],
+     "run_ids": [
+      "e0-20261004T103838Z-c58a86-010-repair"
+     ]
+    },
+    {
+     "candidate": 1,
+     "mean_val_bpb": [
+      1.577117911980482,
+      1.432598815543148,
+      1.3300535271294167
+     ],
+     "run_ids": [
+      "e0-20261004T103838Z-c58a86-011-repair"
+     ]
+    },
+    {
+     "candidate": 2,
+     "mean_val_bpb": [
+      1.48286262239298,
+      1.3593217943391387,
+      1.277154344221675
+     ],
+     "run_ids": [
+      "e0-20261004T103838Z-c58a86-012-repair"
+     ]
+    },
+    {
+     "candidate": 3,
+     "mean_val_bpb": [
+      1.4795938736607994,
+      1.3651451086752209,
+      1.2788736073039366
+     ],
+     "run_ids": [
+      "e0-20261004T103838Z-c58a86-013-repair"
+     ]
+    },
+    {
+     "candidate": 4,
+     "mean_val_bpb": [
+      1.460200553636171,
+      1.3480944767695358,
+      1.2720078291023684
+     ],
+     "run_ids": [
+      "e0-20261004T103838Z-c58a86-014-repair"
+     ]
+    },
+    {
+     "candidate": 5,
+     "mean_val_bpb": [
+      1.4619460001284013,
+      1.3532761861947975,
+      1.2792493093290718
+     ],
+     "run_ids": [
+      "e0-20261004T103838Z-c58a86-015-repair"
+     ]
+    }
+   ]
+  }
+ },
+ "created": "2026-10-04T10:38:38+00:00",
+ "decisions": {
+  "neutral-mlp": {
+   "core_fmt": "ternary",
+   "ctx": 256,
+   "d": 96,
+   "d_ff": 274,
+   "delta": 0.5,
+   "emb_fmt": "4bit",
+   "mlp": "swiglu",
+   "n_heads": 6,
+   "n_layers": 3,
+   "qk_norm": false,
+   "scale_policy": "row8log",
+   "vocab": 256
+  },
+  "neutral-scale": {
+   "core_fmt": "ternary",
+   "ctx": 256,
+   "d": 96,
+   "d_ff": 415,
+   "delta": 0.5,
+   "emb_fmt": "4bit",
+   "mlp": "gelu",
+   "n_heads": 6,
+   "n_layers": 3,
+   "qk_norm": false,
+   "scale_policy": "row8log",
+   "vocab": 256
+  }
+ },
+ "error": "RuntimeError('grid-ternary: candidates fail byte parity')",
+ "id": "e0-20261004T103838Z-c58a86",
+ "package": "GianlucaMazza.XgpuE0_0.1.0.105_x64__g0p5dcfz4t9z4",
+ "phase": "grid-ternary",
+ "pid": 3843188,
+ "process_identity": {
+  "boot_id": "383b5bf4-fec7-4101-8b32-019838bab3da",
+  "pid": 3843188,
+  "start_ticks": 325815981
+ },
+ "protocol": {
+  "2bit_wd": [
+   0,
+   0.1
+  ],
+  "batch": 32,
+  "budget_frac": 0.0625,
+  "byte_repair": "at most one fresh attempt per trial, preserving recipe",
+  "ctx": 256,
+  "eligibility": "actual individual and reciprocal byte parity; saturation recorded",
+  "grid_embedding_share": [
+   0.08,
+   0.2
+  ],
+  "grid_ff_range": [
+   2.0,
+   6.0
+  ],
+  "grid_layers": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12,
+   13,
+   14,
+   15,
+   16
+  ],
+  "grid_min_nominal_fill": 0.995,
+  "grid_seed": 0,
+  "grid_widths": [
+   64,
+   80,
+   96,
+   112,
+   128,
+   144,
+   160,
+   176,
+   192,
+   208,
+   224,
+   240,
+   256
+  ],
+  "lr": [
+   0.001,
+   0.003,
+   0.01
+  ],
+  "mlp_order": [
+   "gelu",
+   "swiglu",
+   "relu2"
+  ],
+  "neutral_layers": 3,
+  "neutral_seeds": [
+   0,
+   1
+  ],
+  "neutral_width": 96,
+  "paired_seeds": [
+   0,
+   1,
+   2,
+   3,
+   4
+  ],
+  "rank_stability": "4T winner is a minimizer of mean val bpb at T and 2T",
+  "scale_order": [
+   "row16",
+   "row8log"
+  ],
+  "selection": "minimum mean 4T val bpb; declared enumeration order breaks ties",
+  "ternary_delta": [
+   0.5,
+   0.7
+  ],
+  "ternary_wd": 0.1,
+  "tuning_seed": 0
+ },
+ "protocol_adr": "0015",
+ "schema": "floppylm.e0.campaign.v1",
+ "sources": {
+  "files": {
+   "experiments/e0_campaign.py": "fbca730da0c0545e4300354c752172102fd4a5da486bfb9673c14e387a107f75",
+   "experiments/e0_v2.py": "60cf53a7da47558ab5e4eb603365ec43913520855b51b22b8fb864a8dccd2bcb",
+   "experiments/xbox_acceptance.py": "3cda309a3a129df8bf38ec046459bc8c441894a66567b2e48c82b3721313fa3c",
+   "experiments/xbox_benchmark.py": "42b3e92019743106b20dc57806dc9c8208922a3507c389d5da9a2890d2595234",
+   "experiments/xbox_lifecycle_acceptance.py": "a47e7109a4b4cced28ed1d0f4e1bc5fdfc8cb9b9ec2890ff1241e71127993d84",
+   "experiments/xbox_recovery_acceptance.py": "7895c4397c2160b11a70eca60b405151bfbcb1af24c52a065e7fe142f7e8b03f",
+   "experiments/xbox_watchdog_acceptance.py": "d2463f41f313842756cfcd3780cb9f5c9b5abf3bc3219b1cff9c6db6349bd517",
+   "experiments/xbox_worker_acceptance.py": "6854a4519de6ed8dbe28ac1202035a9557e7bf16cdb3c5754de72f3472cfc2ff",
+   "src/floppylm/__init__.py": "7f2f61b038b0618bf2a758162e40609e32dc2a7522cb481aeac175109905f510",
+   "src/floppylm/bpe.py": "fb6b84e5739be40cbd00fdecb8d14d37495ee43aa3db097f3a0c99440fd69e40",
+   "src/floppylm/campaign_protocol.py": "dc11bd97219aec41c06c48dc37129ca72bf14c90cb9ca66423ac52b4aa0f3c08",
+   "src/floppylm/campaign_report.py": "5d8ee46344970fa862a4585a1d69492671837265d85288b6fff1b8b9cdc7f21e",
+   "src/floppylm/codec.py": "5b77ee42f51360ee0c386ee23cbf9f7d474f709a082e642089978eaeb93a8359",
+   "src/floppylm/data.py": "ee77ecbc3993a0a2101adaba8d70a905cb95a328d62acc3a2d457b6d85e74611",
+   "src/floppylm/metrics.py": "ca90d1ecd537d102758d422a3af4e2e3403abd6e84a92f63bb09bcc15e4e200f",
+   "src/floppylm/model.py": "85186800e1daf26adcb9da9aec4263026325848b62f84dade4d21b2a4c99803a",
+   "src/floppylm/pack.py": "5d733a3265b800dc0cf635f046b2d55bc4b6bf5a863260a9e0802e4fd8a19898",
+   "src/floppylm/parity.py": "3020c298c38f58f7ba71a5afbc84de4b349fd254860d9c3c0584c269c86df659",
+   "src/floppylm/rans.py": "281c640d1b54eaff6164de6c942d5c1c0a3ca5233a896d3bf067ed20348ee37b",
+   "src/floppylm/runlog.py": "70a4c787f71726f57d41783278eba7d36244ce199aa499bb7a7f4a696736f54d",
+   "src/floppylm/seed.py": "694dd86fef042e51edd0dac601958cfda4192677a8aeb264ffc63935df7d7713",
+   "src/floppylm/shapes.py": "2da4f4211742a6c5befc7f8c5a24617a9fcbefa31af56e4b64627a0e7ac4b1cb",
+   "src/floppylm/train.py": "c6a029010b3f6768e9e1f82d87dc6207d78c9fecbc1fb213af96528f1cd0e9c2",
+   "src/floppylm/vq.py": "0bcd6da245cc71878f1813a1178240d0fd53968e984952b8962e427d7baa6e56",
+   "src/floppylm_xbox/__init__.py": "b00e5391f251de1a21d9628cea506b7a60e62c41d6fe00df0093e243652626df",
+   "src/floppylm_xbox/jobs.py": "d473678be4c6ae8297603de5d2be46bbd443490423a2e0a545207c7b2a603774",
+   "src/floppylm_xbox/kernels.py": "e9223dfb5832a0a587a68f56b680fdcba4e53c5f2c27345c31f28d508a6f55f0",
+   "src/floppylm_xbox/portal.py": "98ce901b63fa5587fef1135e8ba98e19ae7c6e6d5ad5631aa9076b5286f6a7a2",
+   "src/floppylm_xbox/runtime.py": "e36f9f8cdef6f121c732d43515f13203ae8f4a75ad539c174a2740793caa8364"
+  },
+  "git": {
+   "commit": "f76b4c8b67e9858a467cc3e0d77190bd6271e558",
+   "dirty": false
+  }
+ },
+ "status": "stopped",
+ "stopped": "2026-10-07T12:26:34+00:00",
+ "trials": {
+  "grid-ternary-0": {
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 64,
+     "d_ff": 226,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 4,
+     "n_layers": 6,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.01,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "result": "e0-20261004T103838Z-c58a86-016",
+   "run_id": "e0-20261004T103838Z-c58a86-016",
+   "status": "eligible"
+  },
+  "grid-ternary-1": {
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 64,
+     "d_ff": 180,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 4,
+     "n_layers": 7,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.01,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "result": "e0-20261004T103838Z-c58a86-017",
+   "run_id": "e0-20261004T103838Z-c58a86-017",
+   "status": "eligible"
+  },
+  "grid-ternary-10": {
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 112,
+     "d_ff": 358,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 7,
+     "n_layers": 2,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.01,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "repair_id": "e0-20261004T103838Z-c58a86-104-repair",
+   "result": "e0-20261004T103838Z-c58a86-104-repair",
+   "run_id": "e0-20261004T103838Z-c58a86-104",
+   "status": "eligible"
+  },
+  "grid-ternary-11": {
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 112,
+     "d_ff": 185,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 7,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.01,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "repair_id": "e0-20261004T103838Z-c58a86-105-repair",
+   "result": "e0-20261004T103838Z-c58a86-105-repair",
+   "run_id": "e0-20261004T103838Z-c58a86-105",
+   "status": "eligible"
+  },
+  "grid-ternary-12": {
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 128,
+     "d_ff": 260,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 8,
+     "n_layers": 2,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.01,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "repair_id": "e0-20261004T103838Z-c58a86-106-repair",
+   "result": "e0-20261004T103838Z-c58a86-106-repair",
+   "run_id": "e0-20261004T103838Z-c58a86-106",
+   "status": "eligible"
+  },
+  "grid-ternary-2": {
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 64,
+     "d_ff": 145,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 4,
+     "n_layers": 8,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.01,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "result": "e0-20261004T103838Z-c58a86-018",
+   "run_id": "e0-20261004T103838Z-c58a86-018",
+   "status": "eligible"
+  },
+  "grid-ternary-3": {
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 64,
+     "d_ff": 119,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 4,
+     "n_layers": 9,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.01,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "result": "e0-20261004T103838Z-c58a86-019",
+   "run_id": "e0-20261004T103838Z-c58a86-019",
+   "status": "eligible"
+  },
+  "grid-ternary-4": {
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 64,
+     "d_ff": 97,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 4,
+     "n_layers": 10,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.01,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "result": "e0-20261004T103838Z-c58a86-020",
+   "run_id": "e0-20261004T103838Z-c58a86-020",
+   "status": "eligible"
+  },
+  "grid-ternary-5": {
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 80,
+     "d_ff": 262,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 5,
+     "n_layers": 4,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.01,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "result": "e0-20261004T103838Z-c58a86-022-r3",
+   "run_id": "e0-20261004T103838Z-c58a86-022-r3",
+   "status": "eligible"
+  },
+  "grid-ternary-6": {
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 80,
+     "d_ff": 186,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 5,
+     "n_layers": 5,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.01,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "result": "e0-20261004T103838Z-c58a86-100",
+   "run_id": "e0-20261004T103838Z-c58a86-100",
+   "status": "eligible"
+  },
+  "grid-ternary-7": {
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 80,
+     "d_ff": 136,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 5,
+     "n_layers": 6,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.01,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "result": "e0-20261004T103838Z-c58a86-101",
+   "run_id": "e0-20261004T103838Z-c58a86-101",
+   "status": "eligible"
+  },
+  "grid-ternary-8": {
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 274,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.01,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "repair_id": "e0-20261004T103838Z-c58a86-102-repair",
+   "result": "e0-20261004T103838Z-c58a86-102-repair",
+   "run_id": "e0-20261004T103838Z-c58a86-102",
+   "status": "eligible"
+  },
+  "grid-ternary-9": {
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 171,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 6,
+     "n_layers": 4,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.01,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "repair_id": "e0-20261004T103838Z-c58a86-103-repair",
+   "result": "e0-20261004T103838Z-c58a86-103-repair",
+   "run_id": "e0-20261004T103838Z-c58a86-103",
+   "status": "eligible"
+  },
+  "neutral-mlp-0-0": {
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 415,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "gelu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.003,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "repair_id": "e0-20261004T103838Z-c58a86-004-repair",
+   "result": "e0-20261004T103838Z-c58a86-004-repair",
+   "run_id": "e0-20261004T103838Z-c58a86-004",
+   "status": "eligible"
+  },
+  "neutral-mlp-0-1": {
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 415,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "gelu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.003,
+    "seed": 1,
+    "wd": 0.1
+   },
+   "repair_id": "e0-20261004T103838Z-c58a86-005-repair",
+   "result": "e0-20261004T103838Z-c58a86-005-repair",
+   "run_id": "e0-20261004T103838Z-c58a86-005",
+   "status": "eligible"
+  },
+  "neutral-mlp-1-0": {
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 274,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.003,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "repair_id": "e0-20261004T103838Z-c58a86-006-repair",
+   "result": "e0-20261004T103838Z-c58a86-006-repair",
+   "run_id": "e0-20261004T103838Z-c58a86-006",
+   "status": "eligible"
+  },
+  "neutral-mlp-1-1": {
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 274,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.003,
+    "seed": 1,
+    "wd": 0.1
+   },
+   "repair_id": "e0-20261004T103838Z-c58a86-007-repair",
+   "result": "e0-20261004T103838Z-c58a86-007-repair",
+   "run_id": "e0-20261004T103838Z-c58a86-007",
+   "status": "eligible"
+  },
+  "neutral-mlp-2-0": {
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 415,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "relu2",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.003,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "repair_id": "e0-20261004T103838Z-c58a86-008-repair",
+   "result": "e0-20261004T103838Z-c58a86-008-repair",
+   "run_id": "e0-20261004T103838Z-c58a86-008",
+   "status": "eligible"
+  },
+  "neutral-mlp-2-1": {
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 415,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "relu2",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.003,
+    "seed": 1,
+    "wd": 0.1
+   },
+   "repair_id": "e0-20261004T103838Z-c58a86-009-repair",
+   "result": "e0-20261004T103838Z-c58a86-009-repair",
+   "run_id": "e0-20261004T103838Z-c58a86-009",
+   "status": "eligible"
+  },
+  "neutral-scale-0-0": {
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 391,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "gelu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row16",
+     "vocab": 256
+    },
+    "lr": 0.003,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "repair_id": "e0-20261004T103838Z-c58a86-000-repair",
+   "result": "e0-20261004T103838Z-c58a86-000-repair",
+   "run_id": "e0-20261004T103838Z-c58a86-000",
+   "status": "eligible"
+  },
+  "neutral-scale-0-1": {
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 391,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "gelu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row16",
+     "vocab": 256
+    },
+    "lr": 0.003,
+    "seed": 1,
+    "wd": 0.1
+   },
+   "repair_id": "e0-20261004T103838Z-c58a86-001-repair",
+   "result": "e0-20261004T103838Z-c58a86-001-repair",
+   "run_id": "e0-20261004T103838Z-c58a86-001",
+   "status": "eligible"
+  },
+  "neutral-scale-1-0": {
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 415,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "gelu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.003,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "repair_id": "e0-20261004T103838Z-c58a86-002-repair",
+   "result": "e0-20261004T103838Z-c58a86-002-repair",
+   "run_id": "e0-20261004T103838Z-c58a86-002",
+   "status": "eligible"
+  },
+  "neutral-scale-1-1": {
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 415,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "gelu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.003,
+    "seed": 1,
+    "wd": 0.1
+   },
+   "repair_id": "e0-20261004T103838Z-c58a86-003-repair",
+   "result": "e0-20261004T103838Z-c58a86-003-repair",
+   "run_id": "e0-20261004T103838Z-c58a86-003",
+   "status": "eligible"
+  },
+  "tune-ternary-0.001-0.5": {
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 274,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.001,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "repair_id": "e0-20261004T103838Z-c58a86-010-repair",
+   "result": "e0-20261004T103838Z-c58a86-010-repair",
+   "run_id": "e0-20261004T103838Z-c58a86-010",
+   "status": "eligible"
+  },
+  "tune-ternary-0.001-0.7": {
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 274,
+     "delta": 0.7,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.001,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "repair_id": "e0-20261004T103838Z-c58a86-011-repair",
+   "result": "e0-20261004T103838Z-c58a86-011-repair",
+   "run_id": "e0-20261004T103838Z-c58a86-011",
+   "status": "eligible"
+  },
+  "tune-ternary-0.003-0.5": {
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 274,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.003,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "repair_id": "e0-20261004T103838Z-c58a86-012-repair",
+   "result": "e0-20261004T103838Z-c58a86-012-repair",
+   "run_id": "e0-20261004T103838Z-c58a86-012",
+   "status": "eligible"
+  },
+  "tune-ternary-0.003-0.7": {
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 274,
+     "delta": 0.7,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.003,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "repair_id": "e0-20261004T103838Z-c58a86-013-repair",
+   "result": "e0-20261004T103838Z-c58a86-013-repair",
+   "run_id": "e0-20261004T103838Z-c58a86-013",
+   "status": "eligible"
+  },
+  "tune-ternary-0.01-0.5": {
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 274,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.01,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "repair_id": "e0-20261004T103838Z-c58a86-014-repair",
+   "result": "e0-20261004T103838Z-c58a86-014-repair",
+   "run_id": "e0-20261004T103838Z-c58a86-014",
+   "status": "eligible"
+  },
+  "tune-ternary-0.01-0.7": {
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 274,
+     "delta": 0.7,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.01,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "repair_id": "e0-20261004T103838Z-c58a86-015-repair",
+   "result": "e0-20261004T103838Z-c58a86-015-repair",
+   "run_id": "e0-20261004T103838Z-c58a86-015",
+   "status": "eligible"
+  }
+ }
+}

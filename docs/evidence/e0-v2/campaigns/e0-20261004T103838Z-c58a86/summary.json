@@ -1,0 +1,3839 @@
+{
+ "baseline_complete": false,
+ "campaign": "e0-20261004T103838Z-c58a86",
+ "commit": "128434e81837ec1558f7e3d68a7f8849a91aa054",
+ "comparisons": {
+  "grid-ternary": {
+   "byte_comparable": false,
+   "phase": "grid-ternary",
+   "scores": [
+    {
+     "candidate": 0,
+     "mean_val_bpb": [
+      1.4770177618821079,
+      1.3594612253492115,
+      1.269856463942368
+     ],
+     "run_ids": [
+      "e0-20261004T103838Z-c58a86-016"
+     ]
+    },
+    {
+     "candidate": 1,
+     "mean_val_bpb": [
+      1.4744398914626173,
+      1.3590542740628835,
+      1.2788021345620748
+     ],
+     "run_ids": [
+      "e0-20261004T103838Z-c58a86-017"
+     ]
+    },
+    {
+     "candidate": 2,
+     "mean_val_bpb": [
+      1.4789239879374687,
+      1.3665646954526094,
+      1.2763536245217428
+     ],
+     "run_ids": [
+      "e0-20261004T103838Z-c58a86-018"
+     ]
+    },
+    {
+     "candidate": 3,
+     "mean_val_bpb": [
+      1.5024378799817923,
+      1.376127046693324,
+      1.285591374015726
+     ],
+     "run_ids": [
+      "e0-20261004T103838Z-c58a86-019"
+     ]
+    },
+    {
+     "candidate": 4,
+     "mean_val_bpb": [
+      1.5182757459811809,
+      1.3944802182750322,
+      1.3089125477456627
+     ],
+     "run_ids": [
+      "e0-20261004T103838Z-c58a86-020"
+     ]
+    },
+    {
+     "candidate": 5,
+     "mean_val_bpb": [
+      1.4599394277321986,
+      1.337519634854345,
+      1.2522095493186078
+     ],
+     "run_ids": [
+      "e0-20261004T103838Z-c58a86-022-r3"
+     ]
+    },
+    {
+     "candidate": 6,
+     "mean_val_bpb": [
+      1.4656358711414172,
+      1.3467458614393735,
+      1.2614328630837948
+     ],
+     "run_ids": [
+      "e0-20261004T103838Z-c58a86-100"
+     ]
+    },
+    {
+     "candidate": 7,
+     "mean_val_bpb": [
+      1.4906137254027605,
+      1.3698704686082275,
+      1.2763551704513745
+     ],
+     "run_ids": [
+      "e0-20261004T103838Z-c58a86-101"
+     ]
+    },
+    {
+     "candidate": 8,
+     "mean_val_bpb": [
+      1.460200553636171,
+      1.3480944767695358,
+      1.2720078291023684
+     ],
+     "run_ids": [
+      "e0-20261004T103838Z-c58a86-102-repair"
+     ]
+    },
+    {
+     "candidate": 9,
+     "mean_val_bpb": [
+      1.464183568312696,
+      1.3438834704643887,
+      1.2666492206509585
+     ],
+     "run_ids": [
+      "e0-20261004T103838Z-c58a86-103-repair"
+     ]
+    },
+    {
+     "candidate": 10,
+     "mean_val_bpb": [
+      1.473937734383309,
+      1.3701302602440355,
+      1.2972286719667454
+     ],
+     "run_ids": [
+      "e0-20261004T103838Z-c58a86-104-repair"
+     ]
+    },
+    {
+     "candidate": 11,
+     "mean_val_bpb": [
+      1.4836872214065762,
+      1.3653347763599284,
+      1.2903106121729908
+     ],
+     "run_ids": [
+      "e0-20261004T103838Z-c58a86-105-repair"
+     ]
+    },
+    {
+     "candidate": 12,
+     "mean_val_bpb": [
+      1.5379958847473805,
+      1.4258737348774408,
+      1.347029919053639
+     ],
+     "run_ids": [
+      "e0-20261004T103838Z-c58a86-106-repair"
+     ]
+    }
+   ]
+  },
+  "neutral-mlp": {
+   "byte_comparable": true,
+   "phase": "neutral-mlp",
+   "scores": [
+    {
+     "candidate": 0,
+     "mean_val_bpb": [
+      1.5075782325235259,
+      1.385647347442999,
+      1.3058534250065286
+     ],
+     "run_ids": [
+      "e0-20261004T103838Z-c58a86-004-repair",
+      "e0-20261004T103838Z-c58a86-005-repair"
+     ]
+    },
+    {
+     "candidate": 1,
+     "mean_val_bpb": [
+      1.4631233361105016,
+      1.3473339062105325,
+      1.2703767982085834
+     ],
+     "run_ids": [
+      "e0-20261004T103838Z-c58a86-006-repair",
+      "e0-20261004T103838Z-c58a86-007-repair"
+     ]
+    },
+    {
+     "candidate": 2,
+     "mean_val_bpb": [
+      1.4769576961833368,
+      1.363806239853606,
+      1.2822394609905838
+     ],
+     "run_ids": [
+      "e0-20261004T103838Z-c58a86-008-repair",
+      "e0-20261004T103838Z-c58a86-009-repair"
+     ]
+    }
+   ]
+  },
+  "neutral-scale": {
+   "byte_comparable": true,
+   "phase": "neutral-scale",
+   "scores": [
+    {
+     "candidate": 0,
+     "mean_val_bpb": [
+      1.5127198046405996,
+      1.3933413349615327,
+      1.3120901210203582
+     ],
+     "run_ids": [
+      "e0-20261004T103838Z-c58a86-000-repair",
+      "e0-20261004T103838Z-c58a86-001-repair"
+     ]
+    },
+    {
+     "candidate": 1,
+     "mean_val_bpb": [
+      1.5075782325235259,
+      1.385647347442999,
+      1.3058534250065286
+     ],
+     "run_ids": [
+      "e0-20261004T103838Z-c58a86-002-repair",
+      "e0-20261004T103838Z-c58a86-003-repair"
+     ]
+    }
+   ]
+  },
+  "tuning-ternary": {
+   "byte_comparable": true,
+   "phase": "tuning-ternary",
+   "scores": [
+    {
+     "candidate": 0,
+     "mean_val_bpb": [
+      1.5986641360276388,
+      1.4543299279393478,
+      1.3442227172972925
+     ],
+     "run_ids": [
+      "e0-20261004T103838Z-c58a86-010-repair"
+     ]
+    },
+    {
+     "candidate": 1,
+     "mean_val_bpb": [
+      1.577117911980482,
+      1.432598815543148,
+      1.3300535271294167
+     ],
+     "run_ids": [
+      "e0-20261004T103838Z-c58a86-011-repair"
+     ]
+    },
+    {
+     "candidate": 2,
+     "mean_val_bpb": [
+      1.48286262239298,
+      1.3593217943391387,
+      1.277154344221675
+     ],
+     "run_ids": [
+      "e0-20261004T103838Z-c58a86-012-repair"
+     ]
+    },
+    {
+     "candidate": 3,
+     "mean_val_bpb": [
+      1.4795938736607994,
+      1.3651451086752209,
+      1.2788736073039366
+     ],
+     "run_ids": [
+      "e0-20261004T103838Z-c58a86-013-repair"
+     ]
+    },
+    {
+     "candidate": 4,
+     "mean_val_bpb": [
+      1.460200553636171,
+      1.3480944767695358,
+      1.2720078291023684
+     ],
+     "run_ids": [
+      "e0-20261004T103838Z-c58a86-014-repair"
+     ]
+    },
+    {
+     "candidate": 5,
+     "mean_val_bpb": [
+      1.4619460001284013,
+      1.3532761861947975,
+      1.2792493093290718
+     ],
+     "run_ids": [
+      "e0-20261004T103838Z-c58a86-015-repair"
+     ]
+    }
+   ]
+  }
+ },
+ "cost": {
+  "eval_seconds": 28667.717437505722,
+  "native_execution_seconds": 200300.264308725,
+  "total_flops": 4379443658489856.0,
+  "total_tokens": 1604059136,
+  "wall_seconds": 242148.429582119
+ },
+ "cost_scope": "completed trial compute; host wall per recorded host attempt",
+ "cost_unavailable_trials": [],
+ "decisions": {
+  "neutral-mlp": {
+   "core_fmt": "ternary",
+   "ctx": 256,
+   "d": 96,
+   "d_ff": 274,
+   "delta": 0.5,
+   "emb_fmt": "4bit",
+   "mlp": "swiglu",
+   "n_heads": 6,
+   "n_layers": 3,
+   "qk_norm": false,
+   "scale_policy": "row8log",
+   "vocab": 256
+  },
+  "neutral-scale": {
+   "core_fmt": "ternary",
+   "ctx": 256,
+   "d": 96,
+   "d_ff": 415,
+   "delta": 0.5,
+   "emb_fmt": "4bit",
+   "mlp": "gelu",
+   "n_heads": 6,
+   "n_layers": 3,
+   "qk_norm": false,
+   "scale_policy": "row8log",
+   "vocab": 256
+  }
+ },
+ "instability": null,
+ "original_trials": 29,
+ "package": "GianlucaMazza.XgpuE0_0.1.0.105_x64__g0p5dcfz4t9z4",
+ "repair_trials": 21,
+ "status": "stopped",
+ "trials": [
+  {
+   "attempt": "original",
+   "compute": {
+    "cooldown_flops": 14890114744320.0,
+    "cooldown_tokens": 5242880,
+    "eval_seconds": 818.4508669376373,
+    "flops_per_token_forward": 946688.0,
+    "formula": "3 * (2 * stored_params + 4 * n_layers * (ctx / 2) * d) * tokens",
+    "native_execution_seconds": 4503.983272469,
+    "total_flops": 91527674068992.0,
+    "total_tokens": 32227328,
+    "trunk_flops": 76637559324672.0,
+    "trunk_seconds": 3773.4811347850004,
+    "trunk_tokens": 26984448,
+    "wall_scope": "current host attempt",
+    "wall_seconds": 5637.011273860931
+   },
+   "eligibility": "eligible",
+   "eligibility_scope": "individual 4T serialized-byte parity; group gates are separate",
+   "exclusion_reasons": [],
+   "key": "grid-ternary-0",
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 64,
+     "d_ff": 226,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 4,
+     "n_layers": 6,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.01,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "requested_recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 64,
+     "d_ff": 226,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 4,
+     "n_layers": 6,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.01,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "run_id": "e0-20261004T103838Z-c58a86-016",
+   "saturation": {
+    "criterion": "|bpb(4T) - bpb(2T)| < 0.01",
+    "delta_signed": -0.08960476140684359,
+    "verdict": "non saturo"
+   },
+   "selected": true,
+   "status": "completed",
+   "trial_outcome": "eligible"
+  },
+  {
+   "attempt": "original",
+   "compute": {
+    "cooldown_flops": 15269174968320.0,
+    "cooldown_tokens": 5218304,
+    "eval_seconds": 885.8720464706421,
+    "flops_per_token_forward": 975360.0,
+    "formula": "3 * (2 * stored_params + 4 * n_layers * (ctx / 2) * d) * tokens",
+    "native_execution_seconds": 5862.352386347,
+    "total_flops": 93796360519680.0,
+    "total_tokens": 32055296,
+    "trunk_flops": 78527185551360.0,
+    "trunk_seconds": 4910.057017615,
+    "trunk_tokens": 26836992,
+    "wall_scope": "current host attempt",
+    "wall_seconds": 7071.02539563179
+   },
+   "eligibility": "eligible",
+   "eligibility_scope": "individual 4T serialized-byte parity; group gates are separate",
+   "exclusion_reasons": [],
+   "key": "grid-ternary-1",
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 64,
+     "d_ff": 180,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 4,
+     "n_layers": 7,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.01,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "requested_recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 64,
+     "d_ff": 180,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 4,
+     "n_layers": 7,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.01,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "run_id": "e0-20261004T103838Z-c58a86-017",
+   "saturation": {
+    "criterion": "|bpb(4T) - bpb(2T)| < 0.01",
+    "delta_signed": -0.08025213950080867,
+    "verdict": "non saturo"
+   },
+   "selected": true,
+   "status": "completed",
+   "trial_outcome": "eligible"
+  },
+  {
+   "attempt": "original",
+   "compute": {
+    "cooldown_flops": 13220645437440.0,
+    "cooldown_tokens": 5160960,
+    "eval_seconds": 576.3852360248566,
+    "flops_per_token_forward": 853888.0,
+    "formula": "3 * (2 * stored_params + 4 * n_layers * (ctx / 2) * d) * tokens",
+    "native_execution_seconds": 2968.020195632,
+    "total_flops": 81380417470464.0,
+    "total_tokens": 31768576,
+    "trunk_flops": 68159772033024.0,
+    "trunk_seconds": 2486.9064645860003,
+    "trunk_tokens": 26607616,
+    "wall_scope": "current host attempt",
+    "wall_seconds": 3870.9496717453003
+   },
+   "eligibility": "excluded",
+   "eligibility_scope": "individual 4T serialized-byte parity; group gates are separate",
+   "exclusion_reasons": [
+    "e0-20261004T103838Z-c58a86-104: 84600 B is -1.56% from target"
+   ],
+   "key": "grid-ternary-10",
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 112,
+     "d_ff": 358,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 7,
+     "n_layers": 2,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.01,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "requested_recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 112,
+     "d_ff": 358,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 7,
+     "n_layers": 2,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.01,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "run_id": "e0-20261004T103838Z-c58a86-104",
+   "saturation": {
+    "criterion": "|bpb(4T) - bpb(2T)| < 0.01",
+    "delta_signed": -0.07380044043033629,
+    "verdict": "non saturo"
+   },
+   "selected": false,
+   "status": "completed",
+   "trial_outcome": "eligible"
+  },
+  {
+   "attempt": "repair",
+   "compute": {
+    "cooldown_flops": 13620750581760.0,
+    "cooldown_tokens": 5242880,
+    "eval_seconds": 581.4514944553375,
+    "flops_per_token_forward": 865984.0,
+    "formula": "3 * (2 * stored_params + 4 * n_layers * (ctx / 2) * d) * tokens",
+    "native_execution_seconds": 3016.84458578,
+    "total_flops": 83895310614528.0,
+    "total_tokens": 32292864,
+    "trunk_flops": 70274560032768.0,
+    "trunk_seconds": 2530.471772744,
+    "trunk_tokens": 27049984,
+    "wall_scope": "current host attempt",
+    "wall_seconds": 3917.116688966751
+   },
+   "eligibility": "eligible",
+   "eligibility_scope": "individual 4T serialized-byte parity; group gates are separate",
+   "exclusion_reasons": [],
+   "key": "grid-ternary-10",
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 112,
+     "d_ff": 367,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 7,
+     "n_layers": 2,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.01,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "requested_recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 112,
+     "d_ff": 358,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 7,
+     "n_layers": 2,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.01,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "run_id": "e0-20261004T103838Z-c58a86-104-repair",
+   "saturation": {
+    "criterion": "|bpb(4T) - bpb(2T)| < 0.01",
+    "delta_signed": -0.0729015882772901,
+    "verdict": "non saturo"
+   },
+   "selected": true,
+   "status": "completed",
+   "trial_outcome": "eligible"
+  },
+  {
+   "attempt": "original",
+   "compute": {
+    "cooldown_flops": 13831697596416.0,
+    "cooldown_tokens": 5103616,
+    "eval_seconds": 691.2303190231323,
+    "flops_per_token_forward": 903392.0,
+    "formula": "3 * (2 * stored_params + 4 * n_layers * (ctx / 2) * d) * tokens",
+    "native_execution_seconds": 4288.097274386,
+    "total_flops": 85143756472320.0,
+    "total_tokens": 31416320,
+    "trunk_flops": 71312058875904.0,
+    "trunk_seconds": 3595.2734374210004,
+    "trunk_tokens": 26312704,
+    "wall_scope": "current host attempt",
+    "wall_seconds": 5310.310566186905
+   },
+   "eligibility": "excluded",
+   "eligibility_scope": "individual 4T serialized-byte parity; group gates are separate",
+   "exclusion_reasons": [
+    "e0-20261004T103838Z-c58a86-105: 84357 B is -1.84% from target"
+   ],
+   "key": "grid-ternary-11",
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 112,
+     "d_ff": 185,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 7,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.01,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "requested_recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 112,
+     "d_ff": 185,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 7,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.01,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "run_id": "e0-20261004T103838Z-c58a86-105",
+   "saturation": {
+    "criterion": "|bpb(4T) - bpb(2T)| < 0.01",
+    "delta_signed": -0.07778342034080388,
+    "verdict": "non saturo"
+   },
+   "selected": false,
+   "status": "completed",
+   "trial_outcome": "eligible"
+  },
+  {
+   "attempt": "repair",
+   "compute": {
+    "cooldown_flops": 14363444379648.0,
+    "cooldown_tokens": 5218304,
+    "eval_seconds": 692.6841263771057,
+    "flops_per_token_forward": 917504.0,
+    "formula": "3 * (2 * stored_params + 4 * n_layers * (ctx / 2) * d) * tokens",
+    "native_execution_seconds": 4380.678541727,
+    "total_flops": 88232586903552.0,
+    "total_tokens": 32055296,
+    "trunk_flops": 73869142523904.0,
+    "trunk_seconds": 3671.372655526,
+    "trunk_tokens": 26836992,
+    "wall_scope": "current host attempt",
+    "wall_seconds": 5407.93802022934
+   },
+   "eligibility": "eligible",
+   "eligibility_scope": "individual 4T serialized-byte parity; group gates are separate",
+   "exclusion_reasons": [],
+   "key": "grid-ternary-11",
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 112,
+     "d_ff": 192,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 7,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.01,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "requested_recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 112,
+     "d_ff": 185,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 7,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.01,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "run_id": "e0-20261004T103838Z-c58a86-105-repair",
+   "saturation": {
+    "criterion": "|bpb(4T) - bpb(2T)| < 0.01",
+    "delta_signed": -0.07502416418693758,
+    "verdict": "non saturo"
+   },
+   "selected": true,
+   "status": "completed",
+   "trial_outcome": "eligible"
+  },
+  {
+   "attempt": "original",
+   "compute": {
+    "cooldown_flops": 13054066556928.0,
+    "cooldown_tokens": 5070848,
+    "eval_seconds": 598.0158236026764,
+    "flops_per_token_forward": 858112.0,
+    "formula": "3 * (2 * stored_params + 4 * n_layers * (ctx / 2) * d) * tokens",
+    "native_execution_seconds": 4261.757309408,
+    "total_flops": 80412206432256.0,
+    "total_tokens": 31236096,
+    "trunk_flops": 67358139875328.0,
+    "trunk_seconds": 3571.52829567,
+    "trunk_tokens": 26165248,
+    "wall_scope": "current host attempt",
+    "wall_seconds": 5189.650681257248
+   },
+   "eligibility": "excluded",
+   "eligibility_scope": "individual 4T serialized-byte parity; group gates are separate",
+   "exclusion_reasons": [
+    "e0-20261004T103838Z-c58a86-106: 84264 B is -1.95% from target"
+   ],
+   "key": "grid-ternary-12",
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 128,
+     "d_ff": 260,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 8,
+     "n_layers": 2,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.01,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "requested_recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 128,
+     "d_ff": 260,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 8,
+     "n_layers": 2,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.01,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "run_id": "e0-20261004T103838Z-c58a86-106",
+   "saturation": {
+    "criterion": "|bpb(4T) - bpb(2T)| < 0.01",
+    "delta_signed": -0.08278648456955229,
+    "verdict": "non saturo"
+   },
+   "selected": false,
+   "status": "completed",
+   "trial_outcome": "eligible"
+  },
+  {
+   "attempt": "repair",
+   "compute": {
+    "cooldown_flops": 13588261502976.0,
+    "cooldown_tokens": 5185536,
+    "eval_seconds": 599.3654437065125,
+    "flops_per_token_forward": 873472.0,
+    "formula": "3 * (2 * stored_params + 4 * n_layers * (ctx / 2) * d) * tokens",
+    "native_execution_seconds": 4352.940539423,
+    "total_flops": 83611814461440.0,
+    "total_tokens": 31907840,
+    "trunk_flops": 70023552958464.0,
+    "trunk_seconds": 3648.2764374569997,
+    "trunk_tokens": 26722304,
+    "wall_scope": "current host attempt",
+    "wall_seconds": 5280.994600534439
+   },
+   "eligibility": "eligible",
+   "eligibility_scope": "individual 4T serialized-byte parity; group gates are separate",
+   "exclusion_reasons": [],
+   "key": "grid-ternary-12",
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 128,
+     "d_ff": 270,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 8,
+     "n_layers": 2,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.01,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "requested_recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 128,
+     "d_ff": 260,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 8,
+     "n_layers": 2,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.01,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "run_id": "e0-20261004T103838Z-c58a86-106-repair",
+   "saturation": {
+    "criterion": "|bpb(4T) - bpb(2T)| < 0.01",
+    "delta_signed": -0.07884381582380184,
+    "verdict": "non saturo"
+   },
+   "selected": true,
+   "status": "completed",
+   "trial_outcome": "eligible"
+  },
+  {
+   "attempt": "original",
+   "compute": {
+    "cooldown_flops": 15546162610176.0,
+    "cooldown_tokens": 5169152,
+    "eval_seconds": 938.7479519844055,
+    "flops_per_token_forward": 1002496.0,
+    "formula": "3 * (2 * stored_params + 4 * n_layers * (ctx / 2) * d) * tokens",
+    "native_execution_seconds": 5811.552424789,
+    "total_flops": 95642160463872.0,
+    "total_tokens": 31801344,
+    "trunk_flops": 80095997853696.0,
+    "trunk_seconds": 4868.346047960999,
+    "trunk_tokens": 26632192,
+    "wall_scope": "current host attempt",
+    "wall_seconds": 7074.950666427612
+   },
+   "eligibility": "eligible",
+   "eligibility_scope": "individual 4T serialized-byte parity; group gates are separate",
+   "exclusion_reasons": [],
+   "key": "grid-ternary-2",
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 64,
+     "d_ff": 145,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 4,
+     "n_layers": 8,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.01,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "requested_recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 64,
+     "d_ff": 145,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 4,
+     "n_layers": 8,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.01,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "run_id": "e0-20261004T103838Z-c58a86-018",
+   "saturation": {
+    "criterion": "|bpb(4T) - bpb(2T)| < 0.01",
+    "delta_signed": -0.09021107093086655,
+    "verdict": "non saturo"
+   },
+   "selected": true,
+   "status": "completed",
+   "trial_outcome": "eligible"
+  },
+  {
+   "attempt": "original",
+   "compute": {
+    "cooldown_flops": 16007068385280.0,
+    "cooldown_tokens": 5160960,
+    "eval_seconds": 990.8537254333496,
+    "flops_per_token_forward": 1033856.0,
+    "formula": "3 * (2 * stored_params + 4 * n_layers * (ctx / 2) * d) * tokens",
+    "native_execution_seconds": 5880.026779499,
+    "total_flops": 98532398727168.0,
+    "total_tokens": 31768576,
+    "trunk_flops": 82525330341888.0,
+    "trunk_seconds": 4926.256306824001,
+    "trunk_tokens": 26607616,
+    "wall_scope": "current host attempt",
+    "wall_seconds": 7187.617546796799
+   },
+   "eligibility": "eligible",
+   "eligibility_scope": "individual 4T serialized-byte parity; group gates are separate",
+   "exclusion_reasons": [],
+   "key": "grid-ternary-3",
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 64,
+     "d_ff": 119,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 4,
+     "n_layers": 9,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.01,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "requested_recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 64,
+     "d_ff": 119,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 4,
+     "n_layers": 9,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.01,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "run_id": "e0-20261004T103838Z-c58a86-019",
+   "saturation": {
+    "criterion": "|bpb(4T) - bpb(2T)| < 0.01",
+    "delta_signed": -0.09053567267759788,
+    "verdict": "non saturo"
+   },
+   "selected": true,
+   "status": "completed",
+   "trial_outcome": "eligible"
+  },
+  {
+   "attempt": "original",
+   "compute": {
+    "cooldown_flops": 16264873377792.0,
+    "cooldown_tokens": 5111808,
+    "eval_seconds": 1073.7077474594116,
+    "flops_per_token_forward": 1060608.0,
+    "formula": "3 * (2 * stored_params + 4 * n_layers * (ctx / 2) * d) * tokens",
+    "native_execution_seconds": 6959.69650161,
+    "total_flops": 100169724985344.0,
+    "total_tokens": 31481856,
+    "trunk_flops": 83904851607552.0,
+    "trunk_seconds": 5830.636342459,
+    "trunk_tokens": 26370048,
+    "wall_scope": "current host attempt",
+    "wall_seconds": 8364.95983505249
+   },
+   "eligibility": "eligible",
+   "eligibility_scope": "individual 4T serialized-byte parity; group gates are separate",
+   "exclusion_reasons": [],
+   "key": "grid-ternary-4",
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 64,
+     "d_ff": 97,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 4,
+     "n_layers": 10,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.01,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "requested_recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 64,
+     "d_ff": 97,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 4,
+     "n_layers": 10,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.01,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "run_id": "e0-20261004T103838Z-c58a86-020",
+   "saturation": {
+    "criterion": "|bpb(4T) - bpb(2T)| < 0.01",
+    "delta_signed": -0.08556767052936953,
+    "verdict": "non saturo"
+   },
+   "selected": true,
+   "status": "completed",
+   "trial_outcome": "eligible"
+  },
+  {
+   "attempt": "original",
+   "compute": {
+    "cooldown_flops": 14309727928320.0,
+    "cooldown_tokens": 5226496,
+    "eval_seconds": 713.0496761798859,
+    "flops_per_token_forward": 912640.0,
+    "formula": "3 * (2 * stored_params + 4 * n_layers * (ctx / 2) * d) * tokens",
+    "native_execution_seconds": 4481.643354762,
+    "total_flops": 88123700674560.0,
+    "total_tokens": 32186368,
+    "trunk_flops": 73813972746240.0,
+    "trunk_seconds": 3755.838465566,
+    "trunk_tokens": 26959872,
+    "wall_scope": "current host attempt",
+    "wall_seconds": 5526.845815658569
+   },
+   "eligibility": "eligible",
+   "eligibility_scope": "individual 4T serialized-byte parity; group gates are separate",
+   "exclusion_reasons": [],
+   "key": "grid-ternary-5",
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 80,
+     "d_ff": 262,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 5,
+     "n_layers": 4,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.01,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "requested_recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 80,
+     "d_ff": 262,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 5,
+     "n_layers": 4,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.01,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "run_id": "e0-20261004T103838Z-c58a86-022-r3",
+   "saturation": {
+    "criterion": "|bpb(4T) - bpb(2T)| < 0.01",
+    "delta_signed": -0.08531008553573716,
+    "verdict": "non saturo"
+   },
+   "selected": true,
+   "status": "completed",
+   "trial_outcome": "eligible"
+  },
+  {
+   "attempt": "original",
+   "compute": {
+    "cooldown_flops": 14750153441280.0,
+    "cooldown_tokens": 5185536,
+    "eval_seconds": 802.7612340450287,
+    "flops_per_token_forward": 948160.0,
+    "formula": "3 * (2 * stored_params + 4 * n_layers * (ctx / 2) * d) * tokens",
+    "native_execution_seconds": 4458.553378494,
+    "total_flops": 90854420643840.0,
+    "total_tokens": 31940608,
+    "trunk_flops": 76104267202560.0,
+    "trunk_seconds": 3737.4113664379997,
+    "trunk_tokens": 26755072,
+    "wall_scope": "current host attempt",
+    "wall_seconds": 5589.77312707901
+   },
+   "eligibility": "eligible",
+   "eligibility_scope": "individual 4T serialized-byte parity; group gates are separate",
+   "exclusion_reasons": [],
+   "key": "grid-ternary-6",
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 80,
+     "d_ff": 186,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 5,
+     "n_layers": 5,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.01,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "requested_recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 80,
+     "d_ff": 186,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 5,
+     "n_layers": 5,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.01,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "run_id": "e0-20261004T103838Z-c58a86-100",
+   "saturation": {
+    "criterion": "|bpb(4T) - bpb(2T)| < 0.01",
+    "delta_signed": -0.0853129983555787,
+    "verdict": "non saturo"
+   },
+   "selected": true,
+   "status": "completed",
+   "trial_outcome": "eligible"
+  },
+  {
+   "attempt": "original",
+   "compute": {
+    "cooldown_flops": 15284148633600.0,
+    "cooldown_tokens": 5169152,
+    "eval_seconds": 865.4992203712463,
+    "flops_per_token_forward": 985600.0,
+    "formula": "3 * (2 * stored_params + 4 * n_layers * (ctx / 2) * d) * tokens",
+    "native_execution_seconds": 4438.58973299,
+    "total_flops": 94030213939200.0,
+    "total_tokens": 31801344,
+    "trunk_flops": 78746065305600.0,
+    "trunk_seconds": 3719.232693334,
+    "trunk_tokens": 26632192,
+    "wall_scope": "current host attempt",
+    "wall_seconds": 5643.301144599915
+   },
+   "eligibility": "eligible",
+   "eligibility_scope": "individual 4T serialized-byte parity; group gates are separate",
+   "exclusion_reasons": [],
+   "key": "grid-ternary-7",
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 80,
+     "d_ff": 136,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 5,
+     "n_layers": 6,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.01,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "requested_recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 80,
+     "d_ff": 136,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 5,
+     "n_layers": 6,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.01,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "run_id": "e0-20261004T103838Z-c58a86-101",
+   "saturation": {
+    "criterion": "|bpb(4T) - bpb(2T)| < 0.01",
+    "delta_signed": -0.093515298156853,
+    "verdict": "non saturo"
+   },
+   "selected": true,
+   "status": "completed",
+   "trial_outcome": "eligible"
+  },
+  {
+   "attempt": "original",
+   "compute": {
+    "cooldown_flops": 13865044672512.0,
+    "cooldown_tokens": 5185536,
+    "eval_seconds": 681.1903102397919,
+    "flops_per_token_forward": 891264.0,
+    "formula": "3 * (2 * stored_params + 4 * n_layers * (ctx / 2) * d) * tokens",
+    "native_execution_seconds": 4258.704346655,
+    "total_flops": 85402542145536.0,
+    "total_tokens": 31940608,
+    "trunk_flops": 71537497473024.0,
+    "trunk_seconds": 3571.8687562160003,
+    "trunk_tokens": 26755072,
+    "wall_scope": "current host attempt",
+    "wall_seconds": 5265.818204879761
+   },
+   "eligibility": "excluded",
+   "eligibility_scope": "individual 4T serialized-byte parity; group gates are separate",
+   "exclusion_reasons": [
+    "e0-20261004T103838Z-c58a86-102: 84688 B is -1.45% from target"
+   ],
+   "key": "grid-ternary-8",
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 274,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.01,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "requested_recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 274,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.01,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "run_id": "e0-20261004T103838Z-c58a86-102",
+   "saturation": {
+    "criterion": "|bpb(4T) - bpb(2T)| < 0.01",
+    "delta_signed": -0.08216342478116379,
+    "verdict": "non saturo"
+   },
+   "selected": false,
+   "status": "completed",
+   "trial_outcome": "eligible"
+  },
+  {
+   "attempt": "repair",
+   "compute": {
+    "cooldown_flops": 14297428131840.0,
+    "cooldown_tokens": 5275648,
+    "eval_seconds": 678.2952687740326,
+    "flops_per_token_forward": 903360.0,
+    "formula": "3 * (2 * stored_params + 4 * n_layers * (ctx / 2) * d) * tokens",
+    "native_execution_seconds": 4376.653091191,
+    "total_flops": 88004666327040.0,
+    "total_tokens": 32473088,
+    "trunk_flops": 73707238195200.0,
+    "trunk_seconds": 3664.961105229,
+    "trunk_tokens": 27197440,
+    "wall_scope": "current host attempt",
+    "wall_seconds": 5384.599851608276
+   },
+   "eligibility": "eligible",
+   "eligibility_scope": "individual 4T serialized-byte parity; group gates are separate",
+   "exclusion_reasons": [],
+   "key": "grid-ternary-8",
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 281,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.01,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "requested_recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 274,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.01,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "run_id": "e0-20261004T103838Z-c58a86-102-repair",
+   "saturation": {
+    "criterion": "|bpb(4T) - bpb(2T)| < 0.01",
+    "delta_signed": -0.07608664766716733,
+    "verdict": "non saturo"
+   },
+   "selected": true,
+   "status": "completed",
+   "trial_outcome": "eligible"
+  },
+  {
+   "attempt": "original",
+   "compute": {
+    "cooldown_flops": 14471166689280.0,
+    "cooldown_tokens": 5160960,
+    "eval_seconds": 763.3771998882294,
+    "flops_per_token_forward": 934656.0,
+    "formula": "3 * (2 * stored_params + 4 * n_layers * (ctx / 2) * d) * tokens",
+    "native_execution_seconds": 4409.073265472,
+    "total_flops": 88894309662720.0,
+    "total_tokens": 31703040,
+    "trunk_flops": 74423142973440.0,
+    "trunk_seconds": 3691.6480728909996,
+    "trunk_tokens": 26542080,
+    "wall_scope": "current host attempt",
+    "wall_seconds": 5501.213405132294
+   },
+   "eligibility": "excluded",
+   "eligibility_scope": "individual 4T serialized-byte parity; group gates are separate",
+   "exclusion_reasons": [
+    "e0-20261004T103838Z-c58a86-103: 84659 B is -1.49% from target"
+   ],
+   "key": "grid-ternary-9",
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 171,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 6,
+     "n_layers": 4,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.01,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "requested_recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 171,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 6,
+     "n_layers": 4,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.01,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "run_id": "e0-20261004T103838Z-c58a86-103",
+   "saturation": {
+    "criterion": "|bpb(4T) - bpb(2T)| < 0.01",
+    "delta_signed": -0.08571181922886217,
+    "verdict": "non saturo"
+   },
+   "selected": false,
+   "status": "completed",
+   "trial_outcome": "eligible"
+  },
+  {
+   "attempt": "repair",
+   "compute": {
+    "cooldown_flops": 14882061680640.0,
+    "cooldown_tokens": 5242880,
+    "eval_seconds": 746.8473556041718,
+    "flops_per_token_forward": 946176.0,
+    "formula": "3 * (2 * stored_params + 4 * n_layers * (ctx / 2) * d) * tokens",
+    "native_execution_seconds": 4495.033877059,
+    "total_flops": 91478172893184.0,
+    "total_tokens": 32227328,
+    "trunk_flops": 76596111212544.0,
+    "trunk_seconds": 3765.9217765979997,
+    "trunk_tokens": 26984448,
+    "wall_scope": "current host attempt",
+    "wall_seconds": 5577.775008201599
+   },
+   "eligibility": "eligible",
+   "eligibility_scope": "individual 4T serialized-byte parity; group gates are separate",
+   "exclusion_reasons": [],
+   "key": "grid-ternary-9",
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 176,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 6,
+     "n_layers": 4,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.01,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "requested_recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 171,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 6,
+     "n_layers": 4,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.01,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "run_id": "e0-20261004T103838Z-c58a86-103-repair",
+   "saturation": {
+    "criterion": "|bpb(4T) - bpb(2T)| < 0.01",
+    "delta_signed": -0.07723424981343019,
+    "verdict": "non saturo"
+   },
+   "selected": true,
+   "status": "completed",
+   "trial_outcome": "eligible"
+  },
+  {
+   "attempt": "original",
+   "compute": {
+    "cooldown_flops": 14046814273536.0,
+    "cooldown_tokens": 5226496,
+    "eval_seconds": 288.787522315979,
+    "flops_per_token_forward": 895872.0,
+    "formula": "3 * (2 * stored_params + 4 * n_layers * (ctx / 2) * d) * tokens",
+    "native_execution_seconds": 3010.708922959,
+    "total_flops": 86416529817600.0,
+    "total_tokens": 32153600,
+    "trunk_flops": 72369715544064.0,
+    "trunk_seconds": 2524.260575099,
+    "trunk_tokens": 26927104,
+    "wall_scope": "current host attempt",
+    "wall_seconds": 3344.033130645752
+   },
+   "eligibility": "excluded",
+   "eligibility_scope": "individual 4T serialized-byte parity; group gates are separate",
+   "exclusion_reasons": [
+    "e0-20261004T103838Z-c58a86-004: 84854 B is -1.26% from target"
+   ],
+   "key": "neutral-mlp-0-0",
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 415,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "gelu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.003,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "requested_recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 415,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "gelu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.003,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "run_id": "e0-20261004T103838Z-c58a86-004",
+   "saturation": {
+    "criterion": "|bpb(4T) - bpb(2T)| < 0.01",
+    "delta_signed": -0.08570209813485907,
+    "verdict": "non saturo"
+   },
+   "selected": false,
+   "status": "completed",
+   "trial_outcome": "eligible"
+  },
+  {
+   "attempt": "repair",
+   "compute": {
+    "cooldown_flops": 14409824993280.0,
+    "cooldown_tokens": 5300224,
+    "eval_seconds": 237.7440025806427,
+    "flops_per_token_forward": 906240.0,
+    "formula": "3 * (2 * stored_params + 4 * n_layers * (ctx / 2) * d) * tokens",
+    "native_execution_seconds": 3057.027933709,
+    "total_flops": 88663853629440.0,
+    "total_tokens": 32612352,
+    "trunk_flops": 74254028636160.0,
+    "trunk_seconds": 2562.429709313,
+    "trunk_tokens": 27312128,
+    "wall_scope": "current host attempt",
+    "wall_seconds": 3336.2605650424957
+   },
+   "eligibility": "eligible",
+   "eligibility_scope": "individual 4T serialized-byte parity; group gates are separate",
+   "exclusion_reasons": [],
+   "key": "neutral-mlp-0-0",
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 424,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "gelu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.003,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "requested_recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 415,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "gelu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.003,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "run_id": "e0-20261004T103838Z-c58a86-004-repair",
+   "saturation": {
+    "criterion": "|bpb(4T) - bpb(2T)| < 0.01",
+    "delta_signed": -0.07900326163836913,
+    "verdict": "non saturo"
+   },
+   "selected": true,
+   "status": "completed",
+   "trial_outcome": "eligible"
+  },
+  {
+   "attempt": "original",
+   "compute": {
+    "cooldown_flops": 14046814273536.0,
+    "cooldown_tokens": 5226496,
+    "eval_seconds": 287.73700499534607,
+    "flops_per_token_forward": 895872.0,
+    "formula": "3 * (2 * stored_params + 4 * n_layers * (ctx / 2) * d) * tokens",
+    "native_execution_seconds": 3011.344588059,
+    "total_flops": 86416529817600.0,
+    "total_tokens": 32153600,
+    "trunk_flops": 72369715544064.0,
+    "trunk_seconds": 2524.0377126330004,
+    "trunk_tokens": 26927104,
+    "wall_scope": "current host attempt",
+    "wall_seconds": 3334.863343000412
+   },
+   "eligibility": "excluded",
+   "eligibility_scope": "individual 4T serialized-byte parity; group gates are separate",
+   "exclusion_reasons": [
+    "e0-20261004T103838Z-c58a86-005: 84888 B is -1.22% from target"
+   ],
+   "key": "neutral-mlp-0-1",
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 415,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "gelu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.003,
+    "seed": 1,
+    "wd": 0.1
+   },
+   "requested_recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 415,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "gelu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.003,
+    "seed": 1,
+    "wd": 0.1
+   },
+   "run_id": "e0-20261004T103838Z-c58a86-005",
+   "saturation": {
+    "criterion": "|bpb(4T) - bpb(2T)| < 0.01",
+    "delta_signed": -0.0799335912232293,
+    "verdict": "non saturo"
+   },
+   "selected": false,
+   "status": "completed",
+   "trial_outcome": "eligible"
+  },
+  {
+   "attempt": "repair",
+   "compute": {
+    "cooldown_flops": 14409824993280.0,
+    "cooldown_tokens": 5300224,
+    "eval_seconds": 285.0669689178467,
+    "flops_per_token_forward": 906240.0,
+    "formula": "3 * (2 * stored_params + 4 * n_layers * (ctx / 2) * d) * tokens",
+    "native_execution_seconds": 3054.572955833,
+    "total_flops": 88663853629440.0,
+    "total_tokens": 32612352,
+    "trunk_flops": 74254028636160.0,
+    "trunk_seconds": 2559.77326262,
+    "trunk_tokens": 27312128,
+    "wall_scope": "current host attempt",
+    "wall_seconds": 3368.1357192993164
+   },
+   "eligibility": "eligible",
+   "eligibility_scope": "individual 4T serialized-byte parity; group gates are separate",
+   "exclusion_reasons": [],
+   "key": "neutral-mlp-0-1",
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 424,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "gelu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.003,
+    "seed": 1,
+    "wd": 0.1
+   },
+   "requested_recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 415,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "gelu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.003,
+    "seed": 1,
+    "wd": 0.1
+   },
+   "run_id": "e0-20261004T103838Z-c58a86-005-repair",
+   "saturation": {
+    "criterion": "|bpb(4T) - bpb(2T)| < 0.01",
+    "delta_signed": -0.08058458323457107,
+    "verdict": "non saturo"
+   },
+   "selected": true,
+   "status": "completed",
+   "trial_outcome": "eligible"
+  },
+  {
+   "attempt": "original",
+   "compute": {
+    "cooldown_flops": 13865044672512.0,
+    "cooldown_tokens": 5185536,
+    "eval_seconds": 393.9591233730316,
+    "flops_per_token_forward": 891264.0,
+    "formula": "3 * (2 * stored_params + 4 * n_layers * (ctx / 2) * d) * tokens",
+    "native_execution_seconds": 4269.302094671,
+    "total_flops": 85402542145536.0,
+    "total_tokens": 31940608,
+    "trunk_flops": 71537497473024.0,
+    "trunk_seconds": 3578.2284715980004,
+    "trunk_tokens": 26755072,
+    "wall_scope": "current host attempt",
+    "wall_seconds": 4703.436012029648
+   },
+   "eligibility": "excluded",
+   "eligibility_scope": "individual 4T serialized-byte parity; group gates are separate",
+   "exclusion_reasons": [
+    "e0-20261004T103838Z-c58a86-006: 84821 B is -1.30% from target"
+   ],
+   "key": "neutral-mlp-1-0",
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 274,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.003,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "requested_recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 274,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.003,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "run_id": "e0-20261004T103838Z-c58a86-006",
+   "saturation": {
+    "criterion": "|bpb(4T) - bpb(2T)| < 0.01",
+    "delta_signed": -0.08165509029727258,
+    "verdict": "non saturo"
+   },
+   "selected": false,
+   "status": "completed",
+   "trial_outcome": "eligible"
+  },
+  {
+   "attempt": "repair",
+   "compute": {
+    "cooldown_flops": 14270079172608.0,
+    "cooldown_tokens": 5275648,
+    "eval_seconds": 321.3907861709595,
+    "flops_per_token_forward": 901632.0,
+    "formula": "3 * (2 * stored_params + 4 * n_layers * (ctx / 2) * d) * tokens",
+    "native_execution_seconds": 4314.68386661,
+    "total_flops": 87659057774592.0,
+    "total_tokens": 32407552,
+    "trunk_flops": 73388978601984.0,
+    "trunk_seconds": 3609.219730787,
+    "trunk_tokens": 27131904,
+    "wall_scope": "current host attempt",
+    "wall_seconds": 4676.553334712982
+   },
+   "eligibility": "eligible",
+   "eligibility_scope": "individual 4T serialized-byte parity; group gates are separate",
+   "exclusion_reasons": [],
+   "key": "neutral-mlp-1-0",
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 280,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.003,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "requested_recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 274,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.003,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "run_id": "e0-20261004T103838Z-c58a86-006-repair",
+   "saturation": {
+    "criterion": "|bpb(4T) - bpb(2T)| < 0.01",
+    "delta_signed": -0.07883648990068237,
+    "verdict": "non saturo"
+   },
+   "selected": true,
+   "status": "completed",
+   "trial_outcome": "eligible"
+  },
+  {
+   "attempt": "original",
+   "compute": {
+    "cooldown_flops": 13865044672512.0,
+    "cooldown_tokens": 5185536,
+    "eval_seconds": 407.31919717788696,
+    "flops_per_token_forward": 891264.0,
+    "formula": "3 * (2 * stored_params + 4 * n_layers * (ctx / 2) * d) * tokens",
+    "native_execution_seconds": 4220.075278584,
+    "total_flops": 85402542145536.0,
+    "total_tokens": 31940608,
+    "trunk_flops": 71537497473024.0,
+    "trunk_seconds": 3547.6066315190005,
+    "trunk_tokens": 26755072,
+    "wall_scope": "current host attempt",
+    "wall_seconds": 4666.447157621384
+   },
+   "eligibility": "excluded",
+   "eligibility_scope": "individual 4T serialized-byte parity; group gates are separate",
+   "exclusion_reasons": [
+    "e0-20261004T103838Z-c58a86-007: 84848 B is -1.27% from target"
+   ],
+   "key": "neutral-mlp-1-1",
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 274,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.003,
+    "seed": 1,
+    "wd": 0.1
+   },
+   "requested_recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 274,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.003,
+    "seed": 1,
+    "wd": 0.1
+   },
+   "run_id": "e0-20261004T103838Z-c58a86-007",
+   "saturation": {
+    "criterion": "|bpb(4T) - bpb(2T)| < 0.01",
+    "delta_signed": -0.07987113106737076,
+    "verdict": "non saturo"
+   },
+   "selected": false,
+   "status": "completed",
+   "trial_outcome": "eligible"
+  },
+  {
+   "attempt": "repair",
+   "compute": {
+    "cooldown_flops": 14270079172608.0,
+    "cooldown_tokens": 5275648,
+    "eval_seconds": 410.40281891822815,
+    "flops_per_token_forward": 901632.0,
+    "formula": "3 * (2 * stored_params + 4 * n_layers * (ctx / 2) * d) * tokens",
+    "native_execution_seconds": 4308.546845515,
+    "total_flops": 87659057774592.0,
+    "total_tokens": 32407552,
+    "trunk_flops": 73388978601984.0,
+    "trunk_seconds": 3605.967464886,
+    "trunk_tokens": 27131904,
+    "wall_scope": "current host attempt",
+    "wall_seconds": 4758.163571834564
+   },
+   "eligibility": "eligible",
+   "eligibility_scope": "individual 4T serialized-byte parity; group gates are separate",
+   "exclusion_reasons": [],
+   "key": "neutral-mlp-1-1",
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 280,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.003,
+    "seed": 1,
+    "wd": 0.1
+   },
+   "requested_recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 274,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.003,
+    "seed": 1,
+    "wd": 0.1
+   },
+   "run_id": "e0-20261004T103838Z-c58a86-007-repair",
+   "saturation": {
+    "criterion": "|bpb(4T) - bpb(2T)| < 0.01",
+    "delta_signed": -0.07507772610321606,
+    "verdict": "non saturo"
+   },
+   "selected": true,
+   "status": "completed",
+   "trial_outcome": "eligible"
+  },
+  {
+   "attempt": "original",
+   "compute": {
+    "cooldown_flops": 14046814273536.0,
+    "cooldown_tokens": 5226496,
+    "eval_seconds": 411.2786936759949,
+    "flops_per_token_forward": 895872.0,
+    "formula": "3 * (2 * stored_params + 4 * n_layers * (ctx / 2) * d) * tokens",
+    "native_execution_seconds": 3015.338537182,
+    "total_flops": 86416529817600.0,
+    "total_tokens": 32153600,
+    "trunk_flops": 72369715544064.0,
+    "trunk_seconds": 2527.967128256,
+    "trunk_tokens": 26927104,
+    "wall_scope": "current host attempt",
+    "wall_seconds": 3473.2431302070618
+   },
+   "eligibility": "excluded",
+   "eligibility_scope": "individual 4T serialized-byte parity; group gates are separate",
+   "exclusion_reasons": [
+    "e0-20261004T103838Z-c58a86-008: 84885 B is -1.22% from target"
+   ],
+   "key": "neutral-mlp-2-0",
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 415,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "relu2",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.003,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "requested_recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 415,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "relu2",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.003,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "run_id": "e0-20261004T103838Z-c58a86-008",
+   "saturation": {
+    "criterion": "|bpb(4T) - bpb(2T)| < 0.01",
+    "delta_signed": -0.0876387965134835,
+    "verdict": "non saturo"
+   },
+   "selected": false,
+   "status": "completed",
+   "trial_outcome": "eligible"
+  },
+  {
+   "attempt": "repair",
+   "compute": {
+    "cooldown_flops": 14409824993280.0,
+    "cooldown_tokens": 5300224,
+    "eval_seconds": 408.5086181163788,
+    "flops_per_token_forward": 906240.0,
+    "formula": "3 * (2 * stored_params + 4 * n_layers * (ctx / 2) * d) * tokens",
+    "native_execution_seconds": 3053.112148588,
+    "total_flops": 88663853629440.0,
+    "total_tokens": 32612352,
+    "trunk_flops": 74254028636160.0,
+    "trunk_seconds": 2558.483563728,
+    "trunk_tokens": 27312128,
+    "wall_scope": "current host attempt",
+    "wall_seconds": 3504.9411001205444
+   },
+   "eligibility": "eligible",
+   "eligibility_scope": "individual 4T serialized-byte parity; group gates are separate",
+   "exclusion_reasons": [],
+   "key": "neutral-mlp-2-0",
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 424,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "relu2",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.003,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "requested_recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 415,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "relu2",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.003,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "run_id": "e0-20261004T103838Z-c58a86-008-repair",
+   "saturation": {
+    "criterion": "|bpb(4T) - bpb(2T)| < 0.01",
+    "delta_signed": -0.07899705314955119,
+    "verdict": "non saturo"
+   },
+   "selected": true,
+   "status": "completed",
+   "trial_outcome": "eligible"
+  },
+  {
+   "attempt": "original",
+   "compute": {
+    "cooldown_flops": 14046814273536.0,
+    "cooldown_tokens": 5226496,
+    "eval_seconds": 340.1331293582916,
+    "flops_per_token_forward": 895872.0,
+    "formula": "3 * (2 * stored_params + 4 * n_layers * (ctx / 2) * d) * tokens",
+    "native_execution_seconds": 3015.564643526,
+    "total_flops": 86416529817600.0,
+    "total_tokens": 32153600,
+    "trunk_flops": 72369715544064.0,
+    "trunk_seconds": 2527.472874892,
+    "trunk_tokens": 26927104,
+    "wall_scope": "current host attempt",
+    "wall_seconds": 3397.870202064514
+   },
+   "eligibility": "excluded",
+   "eligibility_scope": "individual 4T serialized-byte parity; group gates are separate",
+   "exclusion_reasons": [
+    "e0-20261004T103838Z-c58a86-009: 84944 B is -1.16% from target"
+   ],
+   "key": "neutral-mlp-2-1",
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 415,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "relu2",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.003,
+    "seed": 1,
+    "wd": 0.1
+   },
+   "requested_recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 415,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "relu2",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.003,
+    "seed": 1,
+    "wd": 0.1
+   },
+   "run_id": "e0-20261004T103838Z-c58a86-009",
+   "saturation": {
+    "criterion": "|bpb(4T) - bpb(2T)| < 0.01",
+    "delta_signed": -0.07964830916039234,
+    "verdict": "non saturo"
+   },
+   "selected": false,
+   "status": "completed",
+   "trial_outcome": "eligible"
+  },
+  {
+   "attempt": "repair",
+   "compute": {
+    "cooldown_flops": 14347020533760.0,
+    "cooldown_tokens": 5283840,
+    "eval_seconds": 366.15096521377563,
+    "flops_per_token_forward": 905088.0,
+    "formula": "3 * (2 * stored_params + 4 * n_layers * (ctx / 2) * d) * tokens",
+    "native_execution_seconds": 3055.383324963,
+    "total_flops": 88350954356736.0,
+    "total_tokens": 32538624,
+    "trunk_flops": 74003933822976.0,
+    "trunk_seconds": 2561.5466303330004,
+    "trunk_tokens": 27254784,
+    "wall_scope": "current host attempt",
+    "wall_seconds": 3464.7249195575714
+   },
+   "eligibility": "eligible",
+   "eligibility_scope": "individual 4T serialized-byte parity; group gates are separate",
+   "exclusion_reasons": [],
+   "key": "neutral-mlp-2-1",
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 423,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "relu2",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.003,
+    "seed": 1,
+    "wd": 0.1
+   },
+   "requested_recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 415,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "relu2",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.003,
+    "seed": 1,
+    "wd": 0.1
+   },
+   "run_id": "e0-20261004T103838Z-c58a86-009-repair",
+   "saturation": {
+    "criterion": "|bpb(4T) - bpb(2T)| < 0.01",
+    "delta_signed": -0.08413650457649302,
+    "verdict": "non saturo"
+   },
+   "selected": true,
+   "status": "completed",
+   "trial_outcome": "eligible"
+  },
+  {
+   "attempt": "original",
+   "compute": {
+    "cooldown_flops": 13079870963712.0,
+    "cooldown_tokens": 5021696,
+    "eval_seconds": 249.77346420288086,
+    "flops_per_token_forward": 868224.0,
+    "formula": "3 * (2 * stored_params + 4 * n_layers * (ctx / 2) * d) * tokens",
+    "native_execution_seconds": 2891.039151957,
+    "total_flops": 80612973084672.0,
+    "total_tokens": 30949376,
+    "trunk_flops": 67533102120960.0,
+    "trunk_seconds": 2425.046654118,
+    "trunk_tokens": 25927680,
+    "wall_scope": "current host attempt",
+    "wall_seconds": 3164.7865879535675
+   },
+   "eligibility": "excluded",
+   "eligibility_scope": "individual 4T serialized-byte parity; group gates are separate",
+   "exclusion_reasons": [
+    "e0-20261004T103838Z-c58a86-000: 84800 B is -1.32% from target"
+   ],
+   "key": "neutral-scale-0-0",
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 391,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "gelu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row16",
+     "vocab": 256
+    },
+    "lr": 0.003,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "requested_recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 391,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "gelu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row16",
+     "vocab": 256
+    },
+    "lr": 0.003,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "run_id": "e0-20261004T103838Z-c58a86-000",
+   "saturation": {
+    "criterion": "|bpb(4T) - bpb(2T)| < 0.01",
+    "delta_signed": -0.08184694643023382,
+    "verdict": "non saturo"
+   },
+   "selected": false,
+   "status": "completed",
+   "trial_outcome": "eligible"
+  },
+  {
+   "attempt": "repair",
+   "compute": {
+    "cooldown_flops": 13451988566016.0,
+    "cooldown_tokens": 5103616,
+    "eval_seconds": 244.54180884361267,
+    "flops_per_token_forward": 878592.0,
+    "formula": "3 * (2 * stored_params + 4 * n_layers * (ctx / 2) * d) * tokens",
+    "native_execution_seconds": 2935.329519195,
+    "total_flops": 82806382264320.0,
+    "total_tokens": 31416320,
+    "trunk_flops": 69354393698304.0,
+    "trunk_seconds": 2460.655236654,
+    "trunk_tokens": 26312704,
+    "wall_scope": "current host attempt",
+    "wall_seconds": 3223.91349196434
+   },
+   "eligibility": "eligible",
+   "eligibility_scope": "individual 4T serialized-byte parity; group gates are separate",
+   "exclusion_reasons": [],
+   "key": "neutral-scale-0-0",
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 400,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "gelu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row16",
+     "vocab": 256
+    },
+    "lr": 0.003,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "requested_recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 391,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "gelu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row16",
+     "vocab": 256
+    },
+    "lr": 0.003,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "run_id": "e0-20261004T103838Z-c58a86-000-repair",
+   "saturation": {
+    "criterion": "|bpb(4T) - bpb(2T)| < 0.01",
+    "delta_signed": -0.07907501984609122,
+    "verdict": "non saturo"
+   },
+   "selected": true,
+   "status": "completed",
+   "trial_outcome": "eligible"
+  },
+  {
+   "attempt": "original",
+   "compute": {
+    "cooldown_flops": 13079870963712.0,
+    "cooldown_tokens": 5021696,
+    "eval_seconds": 231.13069605827332,
+    "flops_per_token_forward": 868224.0,
+    "formula": "3 * (2 * stored_params + 4 * n_layers * (ctx / 2) * d) * tokens",
+    "native_execution_seconds": 2893.029194811,
+    "total_flops": 80612973084672.0,
+    "total_tokens": 30949376,
+    "trunk_flops": 67533102120960.0,
+    "trunk_seconds": 2425.962960337,
+    "trunk_tokens": 25927680,
+    "wall_scope": "current host attempt",
+    "wall_seconds": 3151.814261198044
+   },
+   "eligibility": "excluded",
+   "eligibility_scope": "individual 4T serialized-byte parity; group gates are separate",
+   "exclusion_reasons": [
+    "e0-20261004T103838Z-c58a86-001: 84827 B is -1.29% from target"
+   ],
+   "key": "neutral-scale-0-1",
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 391,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "gelu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row16",
+     "vocab": 256
+    },
+    "lr": 0.003,
+    "seed": 1,
+    "wd": 0.1
+   },
+   "requested_recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 391,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "gelu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row16",
+     "vocab": 256
+    },
+    "lr": 0.003,
+    "seed": 1,
+    "wd": 0.1
+   },
+   "run_id": "e0-20261004T103838Z-c58a86-001",
+   "saturation": {
+    "criterion": "|bpb(4T) - bpb(2T)| < 0.01",
+    "delta_signed": -0.08478091969375146,
+    "verdict": "non saturo"
+   },
+   "selected": false,
+   "status": "completed",
+   "trial_outcome": "eligible"
+  },
+  {
+   "attempt": "repair",
+   "compute": {
+    "cooldown_flops": 13451988566016.0,
+    "cooldown_tokens": 5103616,
+    "eval_seconds": 277.5051734447479,
+    "flops_per_token_forward": 878592.0,
+    "formula": "3 * (2 * stored_params + 4 * n_layers * (ctx / 2) * d) * tokens",
+    "native_execution_seconds": 2937.278833413,
+    "total_flops": 82806382264320.0,
+    "total_tokens": 31416320,
+    "trunk_flops": 69354393698304.0,
+    "trunk_seconds": 2462.226028823,
+    "trunk_tokens": 26312704,
+    "wall_scope": "current host attempt",
+    "wall_seconds": 3269.8955574035645
+   },
+   "eligibility": "eligible",
+   "eligibility_scope": "individual 4T serialized-byte parity; group gates are separate",
+   "exclusion_reasons": [],
+   "key": "neutral-scale-0-1",
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 400,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "gelu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row16",
+     "vocab": 256
+    },
+    "lr": 0.003,
+    "seed": 1,
+    "wd": 0.1
+   },
+   "requested_recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 391,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "gelu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row16",
+     "vocab": 256
+    },
+    "lr": 0.003,
+    "seed": 1,
+    "wd": 0.1
+   },
+   "run_id": "e0-20261004T103838Z-c58a86-001-repair",
+   "saturation": {
+    "criterion": "|bpb(4T) - bpb(2T)| < 0.01",
+    "delta_signed": -0.08342740803625803,
+    "verdict": "non saturo"
+   },
+   "selected": true,
+   "status": "completed",
+   "trial_outcome": "eligible"
+  },
+  {
+   "attempt": "original",
+   "compute": {
+    "cooldown_flops": 14046814273536.0,
+    "cooldown_tokens": 5226496,
+    "eval_seconds": 348.6521906852722,
+    "flops_per_token_forward": 895872.0,
+    "formula": "3 * (2 * stored_params + 4 * n_layers * (ctx / 2) * d) * tokens",
+    "native_execution_seconds": 3008.723706096,
+    "total_flops": 86416529817600.0,
+    "total_tokens": 32153600,
+    "trunk_flops": 72369715544064.0,
+    "trunk_seconds": 2522.84817127,
+    "trunk_tokens": 26927104,
+    "wall_scope": "current host attempt",
+    "wall_seconds": 6396.3166308403015
+   },
+   "eligibility": "excluded",
+   "eligibility_scope": "individual 4T serialized-byte parity; group gates are separate",
+   "exclusion_reasons": [
+    "e0-20261004T103838Z-c58a86-002: 84854 B is -1.26% from target"
+   ],
+   "key": "neutral-scale-1-0",
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 415,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "gelu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.003,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "requested_recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 415,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "gelu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.003,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "run_id": "e0-20261004T103838Z-c58a86-002",
+   "saturation": {
+    "criterion": "|bpb(4T) - bpb(2T)| < 0.01",
+    "delta_signed": -0.08570209813485907,
+    "verdict": "non saturo"
+   },
+   "selected": false,
+   "status": "completed",
+   "trial_outcome": "eligible"
+  },
+  {
+   "attempt": "repair",
+   "compute": {
+    "cooldown_flops": 14409824993280.0,
+    "cooldown_tokens": 5300224,
+    "eval_seconds": 341.97174549102783,
+    "flops_per_token_forward": 906240.0,
+    "formula": "3 * (2 * stored_params + 4 * n_layers * (ctx / 2) * d) * tokens",
+    "native_execution_seconds": 3049.355092846,
+    "total_flops": 88663853629440.0,
+    "total_tokens": 32612352,
+    "trunk_flops": 74254028636160.0,
+    "trunk_seconds": 2555.927071448,
+    "trunk_tokens": 27312128,
+    "wall_scope": "current host attempt",
+    "wall_seconds": 3441.903502702713
+   },
+   "eligibility": "eligible",
+   "eligibility_scope": "individual 4T serialized-byte parity; group gates are separate",
+   "exclusion_reasons": [],
+   "key": "neutral-scale-1-0",
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 424,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "gelu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.003,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "requested_recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 415,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "gelu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.003,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "run_id": "e0-20261004T103838Z-c58a86-002-repair",
+   "saturation": {
+    "criterion": "|bpb(4T) - bpb(2T)| < 0.01",
+    "delta_signed": -0.07900326163836913,
+    "verdict": "non saturo"
+   },
+   "selected": true,
+   "status": "completed",
+   "trial_outcome": "eligible"
+  },
+  {
+   "attempt": "original",
+   "compute": {
+    "cooldown_flops": 14046814273536.0,
+    "cooldown_tokens": 5226496,
+    "eval_seconds": 344.2948694229126,
+    "flops_per_token_forward": 895872.0,
+    "formula": "3 * (2 * stored_params + 4 * n_layers * (ctx / 2) * d) * tokens",
+    "native_execution_seconds": 3007.213501699,
+    "total_flops": 86416529817600.0,
+    "total_tokens": 32153600,
+    "trunk_flops": 72369715544064.0,
+    "trunk_seconds": 2519.682658177,
+    "trunk_tokens": 26927104,
+    "wall_scope": "current host attempt",
+    "wall_seconds": 3397.639671087265
+   },
+   "eligibility": "excluded",
+   "eligibility_scope": "individual 4T serialized-byte parity; group gates are separate",
+   "exclusion_reasons": [
+    "e0-20261004T103838Z-c58a86-003: 84888 B is -1.22% from target"
+   ],
+   "key": "neutral-scale-1-1",
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 415,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "gelu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.003,
+    "seed": 1,
+    "wd": 0.1
+   },
+   "requested_recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 415,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "gelu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.003,
+    "seed": 1,
+    "wd": 0.1
+   },
+   "run_id": "e0-20261004T103838Z-c58a86-003",
+   "saturation": {
+    "criterion": "|bpb(4T) - bpb(2T)| < 0.01",
+    "delta_signed": -0.0799335912232293,
+    "verdict": "non saturo"
+   },
+   "selected": false,
+   "status": "completed",
+   "trial_outcome": "eligible"
+  },
+  {
+   "attempt": "repair",
+   "compute": {
+    "cooldown_flops": 14409824993280.0,
+    "cooldown_tokens": 5300224,
+    "eval_seconds": 345.98058915138245,
+    "flops_per_token_forward": 906240.0,
+    "formula": "3 * (2 * stored_params + 4 * n_layers * (ctx / 2) * d) * tokens",
+    "native_execution_seconds": 3054.188314436,
+    "total_flops": 88663853629440.0,
+    "total_tokens": 32612352,
+    "trunk_flops": 74254028636160.0,
+    "trunk_seconds": 2559.674256379,
+    "trunk_tokens": 27312128,
+    "wall_scope": "current host attempt",
+    "wall_seconds": 3448.414338350296
+   },
+   "eligibility": "eligible",
+   "eligibility_scope": "individual 4T serialized-byte parity; group gates are separate",
+   "exclusion_reasons": [],
+   "key": "neutral-scale-1-1",
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 424,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "gelu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.003,
+    "seed": 1,
+    "wd": 0.1
+   },
+   "requested_recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 415,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "gelu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.003,
+    "seed": 1,
+    "wd": 0.1
+   },
+   "run_id": "e0-20261004T103838Z-c58a86-003-repair",
+   "saturation": {
+    "criterion": "|bpb(4T) - bpb(2T)| < 0.01",
+    "delta_signed": -0.08058458323457107,
+    "verdict": "non saturo"
+   },
+   "selected": true,
+   "status": "completed",
+   "trial_outcome": "eligible"
+  },
+  {
+   "attempt": "original",
+   "compute": {
+    "cooldown_flops": 13865044672512.0,
+    "cooldown_tokens": 5185536,
+    "eval_seconds": 712.2373132705688,
+    "flops_per_token_forward": 891264.0,
+    "formula": "3 * (2 * stored_params + 4 * n_layers * (ctx / 2) * d) * tokens",
+    "native_execution_seconds": 4229.584774655,
+    "total_flops": 85402542145536.0,
+    "total_tokens": 31940608,
+    "trunk_flops": 71537497473024.0,
+    "trunk_seconds": 3544.837954824,
+    "trunk_tokens": 26755072,
+    "wall_scope": "current host attempt",
+    "wall_seconds": 4992.987870693207
+   },
+   "eligibility": "excluded",
+   "eligibility_scope": "individual 4T serialized-byte parity; group gates are separate",
+   "exclusion_reasons": [
+    "e0-20261004T103838Z-c58a86-010: 84934 B is -1.17% from target"
+   ],
+   "key": "tune-ternary-0.001-0.5",
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 274,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.001,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "requested_recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 274,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.001,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "run_id": "e0-20261004T103838Z-c58a86-010",
+   "saturation": {
+    "criterion": "|bpb(4T) - bpb(2T)| < 0.01",
+    "delta_signed": -0.09948734854587205,
+    "verdict": "non saturo"
+   },
+   "selected": false,
+   "status": "completed",
+   "trial_outcome": "eligible"
+  },
+  {
+   "attempt": "repair",
+   "compute": {
+    "cooldown_flops": 14176382091264.0,
+    "cooldown_tokens": 5251072,
+    "eval_seconds": 930.4015469551086,
+    "flops_per_token_forward": 899904.0,
+    "formula": "3 * (2 * stored_params + 4 * n_layers * (ctx / 2) * d) * tokens",
+    "native_execution_seconds": 4331.346843219,
+    "total_flops": 87269896617984.0,
+    "total_tokens": 32325632,
+    "trunk_flops": 73093514526720.0,
+    "trunk_seconds": 3626.457252598,
+    "trunk_tokens": 27074560,
+    "wall_scope": "current host attempt",
+    "wall_seconds": 5334.121601343155
+   },
+   "eligibility": "eligible",
+   "eligibility_scope": "individual 4T serialized-byte parity; group gates are separate",
+   "exclusion_reasons": [],
+   "key": "tune-ternary-0.001-0.5",
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 279,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.001,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "requested_recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 274,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.001,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "run_id": "e0-20261004T103838Z-c58a86-010-repair",
+   "saturation": {
+    "criterion": "|bpb(4T) - bpb(2T)| < 0.01",
+    "delta_signed": -0.11010721064205531,
+    "verdict": "non saturo"
+   },
+   "selected": true,
+   "status": "completed",
+   "trial_outcome": "eligible"
+  },
+  {
+   "attempt": "original",
+   "compute": {
+    "cooldown_flops": 13865044672512.0,
+    "cooldown_tokens": 5185536,
+    "eval_seconds": 682.6957457065582,
+    "flops_per_token_forward": 891264.0,
+    "formula": "3 * (2 * stored_params + 4 * n_layers * (ctx / 2) * d) * tokens",
+    "native_execution_seconds": 4240.41834461,
+    "total_flops": 85402542145536.0,
+    "total_tokens": 31940608,
+    "trunk_flops": 71537497473024.0,
+    "trunk_seconds": 3553.282728149,
+    "trunk_tokens": 26755072,
+    "wall_scope": "current host attempt",
+    "wall_seconds": 5246.420540809631
+   },
+   "eligibility": "excluded",
+   "eligibility_scope": "individual 4T serialized-byte parity; group gates are separate",
+   "exclusion_reasons": [
+    "e0-20261004T103838Z-c58a86-011: 83485 B is -2.85% from target"
+   ],
+   "key": "tune-ternary-0.001-0.7",
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 274,
+     "delta": 0.7,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.001,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "requested_recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 274,
+     "delta": 0.7,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.001,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "run_id": "e0-20261004T103838Z-c58a86-011",
+   "saturation": {
+    "criterion": "|bpb(4T) - bpb(2T)| < 0.01",
+    "delta_signed": -0.10772433267744908,
+    "verdict": "non saturo"
+   },
+   "selected": false,
+   "status": "completed",
+   "trial_outcome": "eligible"
+  },
+  {
+   "attempt": "repair",
+   "compute": {
+    "cooldown_flops": 14713853313024.0,
+    "cooldown_tokens": 5357568,
+    "eval_seconds": 658.6523163318634,
+    "flops_per_token_forward": 915456.0,
+    "formula": "3 * (2 * stored_params + 4 * n_layers * (ctx / 2) * d) * tokens",
+    "native_execution_seconds": 4504.642736396,
+    "total_flops": 90622937530368.0,
+    "total_tokens": 32997376,
+    "trunk_flops": 75909084217344.0,
+    "trunk_seconds": 3775.1940906590003,
+    "trunk_tokens": 27639808,
+    "wall_scope": "current host attempt",
+    "wall_seconds": 5481.333251237869
+   },
+   "eligibility": "eligible",
+   "eligibility_scope": "individual 4T serialized-byte parity; group gates are separate",
+   "exclusion_reasons": [],
+   "key": "tune-ternary-0.001-0.7",
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 288,
+     "delta": 0.7,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.001,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "requested_recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 274,
+     "delta": 0.7,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.001,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "run_id": "e0-20261004T103838Z-c58a86-011-repair",
+   "saturation": {
+    "criterion": "|bpb(4T) - bpb(2T)| < 0.01",
+    "delta_signed": -0.10254528841373123,
+    "verdict": "non saturo"
+   },
+   "selected": true,
+   "status": "completed",
+   "trial_outcome": "eligible"
+  },
+  {
+   "attempt": "original",
+   "compute": {
+    "cooldown_flops": 13865044672512.0,
+    "cooldown_tokens": 5185536,
+    "eval_seconds": 682.0497152805328,
+    "flops_per_token_forward": 891264.0,
+    "formula": "3 * (2 * stored_params + 4 * n_layers * (ctx / 2) * d) * tokens",
+    "native_execution_seconds": 4232.327375913,
+    "total_flops": 85402542145536.0,
+    "total_tokens": 31940608,
+    "trunk_flops": 71537497473024.0,
+    "trunk_seconds": 3546.5124853519997,
+    "trunk_tokens": 26755072,
+    "wall_scope": "current host attempt",
+    "wall_seconds": 5239.577374219894
+   },
+   "eligibility": "excluded",
+   "eligibility_scope": "individual 4T serialized-byte parity; group gates are separate",
+   "exclusion_reasons": [
+    "e0-20261004T103838Z-c58a86-012: 84912 B is -1.19% from target"
+   ],
+   "key": "tune-ternary-0.003-0.5",
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 274,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.003,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "requested_recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 274,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.003,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "run_id": "e0-20261004T103838Z-c58a86-012",
+   "saturation": {
+    "criterion": "|bpb(4T) - bpb(2T)| < 0.01",
+    "delta_signed": -0.07720732599770885,
+    "verdict": "non saturo"
+   },
+   "selected": false,
+   "status": "completed",
+   "trial_outcome": "eligible"
+  },
+  {
+   "attempt": "repair",
+   "compute": {
+    "cooldown_flops": 14176382091264.0,
+    "cooldown_tokens": 5251072,
+    "eval_seconds": 680.8553998470306,
+    "flops_per_token_forward": 899904.0,
+    "formula": "3 * (2 * stored_params + 4 * n_layers * (ctx / 2) * d) * tokens",
+    "native_execution_seconds": 4340.072689294,
+    "total_flops": 87269896617984.0,
+    "total_tokens": 32325632,
+    "trunk_flops": 73093514526720.0,
+    "trunk_seconds": 3644.0400698820004,
+    "trunk_tokens": 27074560,
+    "wall_scope": "current host attempt",
+    "wall_seconds": 5345.444936037064
+   },
+   "eligibility": "eligible",
+   "eligibility_scope": "individual 4T serialized-byte parity; group gates are separate",
+   "exclusion_reasons": [],
+   "key": "tune-ternary-0.003-0.5",
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 279,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.003,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "requested_recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 274,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.003,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "run_id": "e0-20261004T103838Z-c58a86-012-repair",
+   "saturation": {
+    "criterion": "|bpb(4T) - bpb(2T)| < 0.01",
+    "delta_signed": -0.08216745011746363,
+    "verdict": "non saturo"
+   },
+   "selected": true,
+   "status": "completed",
+   "trial_outcome": "eligible"
+  },
+  {
+   "attempt": "original",
+   "compute": {
+    "cooldown_flops": 13865044672512.0,
+    "cooldown_tokens": 5185536,
+    "eval_seconds": 687.6318974494934,
+    "flops_per_token_forward": 891264.0,
+    "formula": "3 * (2 * stored_params + 4 * n_layers * (ctx / 2) * d) * tokens",
+    "native_execution_seconds": 4224.543109761,
+    "total_flops": 85402542145536.0,
+    "total_tokens": 31940608,
+    "trunk_flops": 71537497473024.0,
+    "trunk_seconds": 3539.514118492,
+    "trunk_tokens": 26755072,
+    "wall_scope": "current host attempt",
+    "wall_seconds": 5244.883514404297
+   },
+   "eligibility": "excluded",
+   "eligibility_scope": "individual 4T serialized-byte parity; group gates are separate",
+   "exclusion_reasons": [
+    "e0-20261004T103838Z-c58a86-013: 83248 B is -3.13% from target"
+   ],
+   "key": "tune-ternary-0.003-0.7",
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 274,
+     "delta": 0.7,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.003,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "requested_recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 274,
+     "delta": 0.7,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.003,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "run_id": "e0-20261004T103838Z-c58a86-013",
+   "saturation": {
+    "criterion": "|bpb(4T) - bpb(2T)| < 0.01",
+    "delta_signed": -0.07766689369634383,
+    "verdict": "non saturo"
+   },
+   "selected": false,
+   "status": "completed",
+   "trial_outcome": "eligible"
+  },
+  {
+   "attempt": "repair",
+   "compute": {
+    "cooldown_flops": 14764167659520.0,
+    "cooldown_tokens": 5365760,
+    "eval_seconds": 687.5748689174652,
+    "flops_per_token_forward": 917184.0,
+    "formula": "3 * (2 * stored_params + 4 * n_layers * (ctx / 2) * d) * tokens",
+    "native_execution_seconds": 4491.352532688,
+    "total_flops": 90974321639424.0,
+    "total_tokens": 33062912,
+    "trunk_flops": 76210153979904.0,
+    "trunk_seconds": 3766.461807433,
+    "trunk_tokens": 27697152,
+    "wall_scope": "current host attempt",
+    "wall_seconds": 5544.147337675095
+   },
+   "eligibility": "eligible",
+   "eligibility_scope": "individual 4T serialized-byte parity; group gates are separate",
+   "exclusion_reasons": [],
+   "key": "tune-ternary-0.003-0.7",
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 289,
+     "delta": 0.7,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.003,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "requested_recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 274,
+     "delta": 0.7,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.003,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "run_id": "e0-20261004T103838Z-c58a86-013-repair",
+   "saturation": {
+    "criterion": "|bpb(4T) - bpb(2T)| < 0.01",
+    "delta_signed": -0.08627150137128425,
+    "verdict": "non saturo"
+   },
+   "selected": true,
+   "status": "completed",
+   "trial_outcome": "eligible"
+  },
+  {
+   "attempt": "original",
+   "compute": {
+    "cooldown_flops": 13865044672512.0,
+    "cooldown_tokens": 5185536,
+    "eval_seconds": 682.9662704467773,
+    "flops_per_token_forward": 891264.0,
+    "formula": "3 * (2 * stored_params + 4 * n_layers * (ctx / 2) * d) * tokens",
+    "native_execution_seconds": 4232.355961403,
+    "total_flops": 85402542145536.0,
+    "total_tokens": 31940608,
+    "trunk_flops": 71537497473024.0,
+    "trunk_seconds": 3555.448187867,
+    "trunk_tokens": 26755072,
+    "wall_scope": "current host attempt",
+    "wall_seconds": 5246.172696590424
+   },
+   "eligibility": "excluded",
+   "eligibility_scope": "individual 4T serialized-byte parity; group gates are separate",
+   "exclusion_reasons": [
+    "e0-20261004T103838Z-c58a86-014: 84688 B is -1.45% from target"
+   ],
+   "key": "tune-ternary-0.01-0.5",
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 274,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.01,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "requested_recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 274,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.01,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "run_id": "e0-20261004T103838Z-c58a86-014",
+   "saturation": {
+    "criterion": "|bpb(4T) - bpb(2T)| < 0.01",
+    "delta_signed": -0.08216342478116379,
+    "verdict": "non saturo"
+   },
+   "selected": false,
+   "status": "completed",
+   "trial_outcome": "eligible"
+  },
+  {
+   "attempt": "repair",
+   "compute": {
+    "cooldown_flops": 14297428131840.0,
+    "cooldown_tokens": 5275648,
+    "eval_seconds": 679.8583645820618,
+    "flops_per_token_forward": 903360.0,
+    "formula": "3 * (2 * stored_params + 4 * n_layers * (ctx / 2) * d) * tokens",
+    "native_execution_seconds": 4392.951397957,
+    "total_flops": 88004666327040.0,
+    "total_tokens": 32473088,
+    "trunk_flops": 73707238195200.0,
+    "trunk_seconds": 3682.0188491510003,
+    "trunk_tokens": 27197440,
+    "wall_scope": "current host attempt",
+    "wall_seconds": 5401.383482456207
+   },
+   "eligibility": "eligible",
+   "eligibility_scope": "individual 4T serialized-byte parity; group gates are separate",
+   "exclusion_reasons": [],
+   "key": "tune-ternary-0.01-0.5",
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 281,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.01,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "requested_recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 274,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.01,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "run_id": "e0-20261004T103838Z-c58a86-014-repair",
+   "saturation": {
+    "criterion": "|bpb(4T) - bpb(2T)| < 0.01",
+    "delta_signed": -0.07608664766716733,
+    "verdict": "non saturo"
+   },
+   "selected": true,
+   "status": "completed",
+   "trial_outcome": "eligible"
+  },
+  {
+   "attempt": "original",
+   "compute": {
+    "cooldown_flops": 13865044672512.0,
+    "cooldown_tokens": 5185536,
+    "eval_seconds": 681.1573445796967,
+    "flops_per_token_forward": 891264.0,
+    "formula": "3 * (2 * stored_params + 4 * n_layers * (ctx / 2) * d) * tokens",
+    "native_execution_seconds": 4207.455380665,
+    "total_flops": 85402542145536.0,
+    "total_tokens": 31940608,
+    "trunk_flops": 71537497473024.0,
+    "trunk_seconds": 3523.187121625,
+    "trunk_tokens": 26755072,
+    "wall_scope": "current host attempt",
+    "wall_seconds": 5251.896756649017
+   },
+   "eligibility": "excluded",
+   "eligibility_scope": "individual 4T serialized-byte parity; group gates are separate",
+   "exclusion_reasons": [
+    "e0-20261004T103838Z-c58a86-015: 83391 B is -2.96% from target"
+   ],
+   "key": "tune-ternary-0.01-0.7",
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 274,
+     "delta": 0.7,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.01,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "requested_recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 274,
+     "delta": 0.7,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.01,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "run_id": "e0-20261004T103838Z-c58a86-015",
+   "saturation": {
+    "criterion": "|bpb(4T) - bpb(2T)| < 0.01",
+    "delta_signed": -0.07201909297949527,
+    "verdict": "non saturo"
+   },
+   "selected": false,
+   "status": "completed",
+   "trial_outcome": "eligible"
+  },
+  {
+   "attempt": "repair",
+   "compute": {
+    "cooldown_flops": 14713853313024.0,
+    "cooldown_tokens": 5357568,
+    "eval_seconds": 661.52223944664,
+    "flops_per_token_forward": 915456.0,
+    "formula": "3 * (2 * stored_params + 4 * n_layers * (ctx / 2) * d) * tokens",
+    "native_execution_seconds": 4507.193849819,
+    "total_flops": 90622937530368.0,
+    "total_tokens": 32997376,
+    "trunk_flops": 75909084217344.0,
+    "trunk_seconds": 3779.3737982420002,
+    "trunk_tokens": 27639808,
+    "wall_scope": "current host attempt",
+    "wall_seconds": 5494.852488517761
+   },
+   "eligibility": "eligible",
+   "eligibility_scope": "individual 4T serialized-byte parity; group gates are separate",
+   "exclusion_reasons": [],
+   "key": "tune-ternary-0.01-0.7",
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 288,
+     "delta": 0.7,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.01,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "requested_recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 274,
+     "delta": 0.7,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.01,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "run_id": "e0-20261004T103838Z-c58a86-015-repair",
+   "saturation": {
+    "criterion": "|bpb(4T) - bpb(2T)| < 0.01",
+    "delta_signed": -0.07402687686572573,
+    "verdict": "non saturo"
+   },
+   "selected": true,
+   "status": "completed",
+   "trial_outcome": "eligible"
+  }
+ ],
+ "validation_paired": null
+}
