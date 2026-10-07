@@ -2,10 +2,11 @@
 
 ## Status
 
-Not adopted — 2026-10-07. Does not amend [ADR 0005](../0005-e0v2-protocol.md) or
-[ADR 0015](../0015-e0-fixed-data-frontier.md). Does not apply to the thirteen
-cells of campaign `e0-20261004T103838Z-c58a86`. Does not authorize a code change,
-a resume, a dropped cell, a second S3 repair, or a loosened tolerance.
+accepted — 2026-10-07; recorded in [ADR 0020](../0020-target-window-parity.md).
+
+The decision section below is the same-day record that campaign `c58a86` is not
+reopened and that its diagnostic minimum is not a shape. ADR 0020 applies the
+shared-target window to a successor written before its first cell.
 
 ## Context
 
@@ -65,3 +66,11 @@ stable order stays a diagnostic.
 No change. ADR 0005 and ADR 0015 stay as written. Campaign `c58a86` has no
 ternary winner and is not resumed. A later campaign may use a different band
 only through an accepted ADR written before its first cell.
+
+## Later (2026-10-07)
+
+The owner accepted that later ADR the same day, before any new cell.
+[ADR 0020](../0020-target-window-parity.md) withdraws the reciprocal spread check
+for a successor. Acceptance does not reopen `c58a86` and does not name the
+diagnostic minimum of its thirteen cells. The four alternatives above stay
+unapplied to that set.

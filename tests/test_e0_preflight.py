@@ -253,7 +253,15 @@ def test_protocol_copy_and_grid_match_accepted_defaults(preflight):
             ROOT / "docs/evidence/e0-v2/campaigns/e0-20261002T191632Z-ca781f/campaign.json"
         ).read_text()
     )
-    assert q == historical["protocol"]
+    live = {key: value for key, value in q.items() if key != "eligibility"}
+    frozen = {key: value for key, value in historical["protocol"].items() if key != "eligibility"}
+    assert live == frozen
+    assert q["eligibility"] == (
+        "each candidate within ±1% of the shared target; saturation recorded"
+    )
+    assert historical["protocol"]["eligibility"] == (
+        "actual individual and reciprocal byte parity; saturation recorded"
+    )
     p["paired_seeds"].clear()
     assert q["paired_seeds"] == list(range(5))
     base = preflight.GPTConfig(d=96, n_layers=3, n_heads=6, ctx=256)

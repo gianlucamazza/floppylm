@@ -18,7 +18,7 @@ One line per term; the owner holds the definition of record.
 | Boot                             | Mount → decode/expand → first token                                            | [ADR 0001](adr/0001-floppy-budget.md)                                     |
 | Trunk / cooldown                 | Constant-LR training; branches decaying to LR 0 and ending at T, 2T, 4T        | [ADR 0005](adr/0005-e0v2-protocol.md)                                     |
 | Saturated                        | \|bpb(4T) − bpb(2T)\| < 0.01 on val; recorded, not an eligibility gate         | [ADR 0005](adr/0005-e0v2-protocol.md) §4, [ADR 0015](adr/0015-e0-fixed-data-frontier.md) |
-| Byte parity                      | Each within ±1% of target and max/min − 1 ≤ 1% on serialized bytes             | [ADR 0005](adr/0005-e0v2-protocol.md)                                     |
+| Byte parity                      | Each compared candidate within ±1% of the shared serialized-byte target        | [ADR 0005](adr/0005-e0v2-protocol.md), [ADR 0020](adr/0020-target-window-parity.md) |
 | Paired σ                         | Standard deviation of the differences between two conditions on the same seeds | [ADR 0005](adr/0005-e0v2-protocol.md)                                     |
 | Frozen selection                 | Artifacts chosen on val, fixed by hash before the test                         | [ADR 0005](adr/0005-e0v2-protocol.md)                                     |
 | S1–S10 | The accepted E0 numerical choices | [roadmap](roadmap.md#e0-v2--accepted-numerical-choices), [ADR 0008](adr/0008-e0-numeric-protocol.md) |

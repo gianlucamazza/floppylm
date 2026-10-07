@@ -9,6 +9,7 @@ Superseded in part by [ADR 0006](0006-flp2-only.md): the "including the legacy `
 Clarified by [ADR 0007](0007-e0v2-review-gates.md): selection and artifact invariants.
 Completed by [ADR 0008](0008-e0-numeric-protocol.md): the numerical choices this ADR left not yet approved (S1–S10) are resolved there.
 Superseded in part by [ADR 0015](0015-e0-fixed-data-frontier.md): §4 saturation as an eligibility gate; the signed delta is still recorded.
+Superseded in part by [ADR 0020](0020-target-window-parity.md): the reciprocal clause of decision 1.
 
 ## Context
 
@@ -58,3 +59,10 @@ choices, not yet approved at the time, were recorded separately and are resolved
 [ADR 0015](0015-e0-fixed-data-frontier.md) keeps the §4 criterion and the signed
 delta on every completed run, and removes saturation from eligibility and from
 scientific freeze. Token base, cooldown ends and "no automatic extension" stand.
+
+## Amendment — 2026-10-07
+
+[ADR 0020](0020-target-window-parity.md) withdraws the reciprocal clause of
+decision 1 (`max(bytes)/min(bytes) − 1 ≤ 0.01`). Each compared candidate must
+still lie within ±1% of the shared target. Campaign `e0-20261004T103838Z-c58a86`
+keeps the decision 1 result already recorded.

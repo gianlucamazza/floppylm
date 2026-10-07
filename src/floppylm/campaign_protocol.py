@@ -2,7 +2,8 @@
 
 from . import shapes
 
-PROTOCOL_ADR = "0015"
+PROTOCOL_ADR = "0020"
+SUCCESSOR_OF = "e0-20261004T103838Z-c58a86"
 
 
 def protocol_spec() -> dict:
@@ -29,10 +30,36 @@ def protocol_spec() -> dict:
         "grid_embedding_share": [0.08, 0.20],
         "grid_min_nominal_fill": 0.995,
         "selection": "minimum mean 4T val bpb; declared enumeration order breaks ties",
-        "eligibility": ("actual individual and reciprocal byte parity; saturation recorded"),
+        "eligibility": ("each candidate within ±1% of the shared target; saturation recorded"),
         "rank_stability": "4T winner is a minimizer of mean val bpb at T and 2T",
         "byte_repair": "at most one fresh attempt per trial, preserving recipe",
     }
+
+
+def inherited_neutral_scale() -> dict:
+    """Closed row8log choice of campaign c58a86. Not remeasured."""
+    return {
+        "vocab": 256,
+        "d": 96,
+        "n_layers": 3,
+        "n_heads": 6,
+        "d_ff": 415,
+        "mlp": "gelu",
+        "core_fmt": "ternary",
+        "emb_fmt": "4bit",
+        "scale_policy": "row8log",
+        "delta": 0.5,
+        "qk_norm": False,
+        "ctx": 256,
+    }
+
+
+def inherited_ternary_tuning() -> dict:
+    """Closed SwiGLU shape and the ternary tuning recipe of campaign c58a86."""
+    config = inherited_neutral_scale()
+    config["mlp"] = "swiglu"
+    config["d_ff"] = 274
+    return {"config": config, "lr": 0.01, "wd": 0.1}
 
 
 def grid_configs(base, budget, protocol):

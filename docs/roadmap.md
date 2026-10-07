@@ -63,7 +63,8 @@ E0-lite grid is diagnostic only ([pre-v2](evidence/e0-lite/pre-v2/notes.md)).
 - **Training**: WSD with trunk and cooldowns at T/2T/4T, trunk checkpoints; saturation is
   recorded at 4T ([ADR 0015](adr/0015-e0-fixed-data-frontier.md)).
 - **Selection and test**: `--freeze` requires completed, non-smoke, byte-admissible runs with
-  equal targets and individual/reciprocal parity verified on the real files. `--freeze ... --functional` admits
+  equal targets and each candidate within ±1% of that target
+  ([ADR 0020](adr/0020-target-window-parity.md)). `--freeze ... --functional` admits
   only smoke runs and marks selection and final result as functional. `--final-test` evaluates a
   selection exactly once. Details in [ADR 0007](adr/0007-e0v2-review-gates.md),
   [ADR 0015](adr/0015-e0-fixed-data-frontier.md).

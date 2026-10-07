@@ -25,11 +25,12 @@ are delta 0.5 at `d_ff` 281 (val bpb 1.4602/1.3481/1.2720) and delta 0.7 at `d_f
 SwiGLU seed 0 repair (1.4568/1.3403/1.2615) at all three horizons.
 
 The ternary grid is closed. All thirteen shapes are individually inside ±1% of 85937.5
-bytes. Selection refused the set: 4T size runs from 85098 to 85982 bytes, and
-`max/min − 1` is 1.0388% ([ADR 0005](adr/0005-e0v2-protocol.md) §1). No ternary shape is
-selected. The diagnostic minimum at T, 2T and 4T is `d` 80, 4 layers, `d_ff` 262
-(1.4599/1.3375/1.2522) and is not a decision. 2-bit did not start. The band-width tension
-is recorded in [a proposal](adr/proposals/e0-reciprocal-parity-band.md) and is not adopted.
+bytes. Selection refused the set under the rule then in force: 4T size runs from 85098
+to 85982 bytes, and `max/min − 1` is 1.0388% ([ADR 0005](adr/0005-e0v2-protocol.md) §1).
+No ternary shape is selected. The diagnostic minimum at T, 2T and 4T is `d` 80, 4 layers,
+`d_ff` 262 (1.4599/1.3375/1.2522) and is not a decision. 2-bit did not start. The
+shared-target window is accepted as [ADR 0020](adr/0020-target-window-parity.md) for a
+successor. `c58a86` stays stopped and is not reopened. No successor is running.
 The generated report records 29 trials and 21 byte repairs, and no completed
 baseline: [campaign report](evidence/e0-v2/campaigns/e0-20261004T103838Z-c58a86/notes.md).
 
