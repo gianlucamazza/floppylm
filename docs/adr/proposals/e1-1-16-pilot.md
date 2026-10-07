@@ -31,6 +31,13 @@ E0 will not measure book size, assignment cadence, or the F1 threshold. Those
 rules are fixed below so the later ADR has nothing left to invent except the
 scalar recipe and the on-disk layout.
 
+## Later (2026-10-07)
+
+The ternary grid of campaign `c58a86` finished and selection refused a winner.
+The thirteen eligible cells span 85098 to 85982 bytes at 4T, and `max/min − 1`
+is 1.0388%. Width, depth and core format stay unselected. 2-bit did not start.
+The scalar recipe stays unnamed.
+
 ## Decision
 
 1. **Scope.** K=1, no recursion, no trellis. Trellis remains E1b. E1a, the 1/4

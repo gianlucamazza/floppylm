@@ -36,3 +36,9 @@ later cells across devices would split the instrument.
 
 No change. `c58a86` continues on its accepted package. A later campaign that uses another
 backend needs its own acceptance and its own ADR.
+
+## Later (2026-10-07)
+
+Campaign `c58a86` stopped at 2026-10-07T12:26:34Z during ternary selection. That
+stop does not adopt another console or a cloud backend. The decision above stays
+not adopted.

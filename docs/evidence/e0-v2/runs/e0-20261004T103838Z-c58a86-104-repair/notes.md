@@ -1,0 +1,23 @@
+# e0-20261004T103838Z-c58a86-104-repair
+
+Status: **completed**. Full configuration and environment in `summary.json`; manifest in
+`runs/e0-20261004T103838Z-c58a86-104-repair/manifest.json`.
+
+| Cooldown end (step) | Tokens seen | Bytes | Fill | val bpb | sha256 |
+| --- | --- | --- | --- | --- | --- |
+| 917 | 7,512,064 | 85,969 | 1.0004 | 1.4739 | `31d4518ff414` |
+| 1834 | 15,024,128 | 85,954 | 1.0002 | 1.3701 | `460e4974793d` |
+| 3668 | 30,048,256 | 85,771 | 0.9981 | 1.2972 | `fdb43709fb9f` |
+
+- Saturation: not saturated (bpb(4T) − bpb(2T) = -0.0729015882772901).
+- Individual parity ±1% of target: True.
+- Estimated compute: 8.390e+13 FLOP (3 * (2 * stored_params + 4 * n_layers * (ctx / 2) * d) * tokens), wall
+  3917 s at 2 threads.
+
+Not measured here: test (only `--final-test` on a frozen selection), paired σ, comparison
+between arms.
+
+## Later (2026-10-07)
+
+Eligible after the S3 repair: `d` 112, 2 layers, `d_ff` 367, val bpb 1.4739/1.3701/1.2972.
+One grid cell. Not a shape decision.

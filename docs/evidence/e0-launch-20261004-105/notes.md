@@ -121,3 +121,12 @@ cells at T, 2T and 4T, so the ternary grid uses lr 0.01, delta 0.5, wd 0.1. It s
 above the neutral SwiGLU seed 0 repair. Trials `016` and `017` are the first two grid
 shapes and are eligible on the first pack. The shape is not selected. Trial `018` is in
 progress and is not a result.
+
+## Later (2026-10-07, ternary selection refused)
+
+The ternary grid is closed. All thirteen shapes are individually inside ±1% of 85937.5
+bytes. Selection refused the set: 4T size runs from 85098 to 85982 bytes, and
+`max/min − 1` is 1.0388%. No ternary shape is selected. The diagnostic minimum at T, 2T
+and 4T is `d` 80, 4 layers, `d_ff` 262 (1.4599/1.3375/1.2522) and is not a decision.
+2-bit did not start. Trials `021` and `022` failed before a branch and are not results.
+Trial `022-r3` is the measured `d` 80, 4-layer cell and the small end of the set.
