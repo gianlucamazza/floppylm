@@ -17,3 +17,8 @@ Later note (2026-10-08): campaign `e0-20261007T164712Z-766d4b` repeated the
 cooldown artifacts of grid cells `016`, `017`, `018`, `019`, `020`, `022-r3`,
 `100` and `101`. This campaign stays stopped. Those repeated cells are not a
 shape decision.
+
+Later note (2026-10-08): the same successor repeated the cooldown artifacts of
+grid cell `104-repair` as its cell `010`. Its cells `008` and `009` are eligible
+at submitted `d_ff` 279 and 174 and do not repeat `102`, `102-repair`, `103` or
+`103-repair`. This campaign stays stopped. Those cells are not a shape decision.

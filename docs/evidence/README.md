@@ -135,6 +135,9 @@ Same campaign, eligible MLP repairs only. The green mean is the two gelu seeds, 
 | [`e0-v2/runs/e0-20261007T164712Z-766d4b-005`](e0-v2/runs/e0-20261007T164712Z-766d4b-005/notes.md) | successor ternary grid, `d` 80, 4 layers, `d_ff` 262; artifacts match `c58a86-022-r3`, 85098 bytes, val bpb 1.4599/1.3375/1.2522, Δ(2T→4T) = −0.085 | eligible |
 | [`e0-v2/runs/e0-20261007T164712Z-766d4b-006`](e0-v2/runs/e0-20261007T164712Z-766d4b-006/notes.md) | successor ternary grid, `d` 80, 5 layers, `d_ff` 186; artifacts match `c58a86-100`, val bpb 1.4656/1.3467/1.2614, Δ(2T→4T) = −0.085 | eligible |
 | [`e0-v2/runs/e0-20261007T164712Z-766d4b-007`](e0-v2/runs/e0-20261007T164712Z-766d4b-007/notes.md) | successor ternary grid, `d` 80, 6 layers, `d_ff` 136; artifacts match `c58a86-101`, val bpb 1.4906/1.3699/1.2764, Δ(2T→4T) = −0.094 | eligible |
+| [`e0-v2/runs/e0-20261007T164712Z-766d4b-008`](e0-v2/runs/e0-20261007T164712Z-766d4b-008/notes.md) | successor ternary grid, `d` 96, 3 layers, submitted `d_ff` 279; artifacts differ from `c58a86-102` and `102-repair`, val bpb 1.4667/1.3477/1.2654, Δ(2T→4T) = −0.082 | eligible |
+| [`e0-v2/runs/e0-20261007T164712Z-766d4b-009`](e0-v2/runs/e0-20261007T164712Z-766d4b-009/notes.md) | successor ternary grid, `d` 96, 4 layers, submitted `d_ff` 174; artifacts differ from `c58a86-103` and `103-repair`, val bpb 1.4681/1.3507/1.2641, Δ(2T→4T) = −0.087 | eligible |
+| [`e0-v2/runs/e0-20261007T164712Z-766d4b-010`](e0-v2/runs/e0-20261007T164712Z-766d4b-010/notes.md) | successor ternary grid, `d` 112, 2 layers, `d_ff` 367; artifacts match `c58a86-104-repair`, val bpb 1.4739/1.3701/1.2972, Δ(2T→4T) = −0.073 | eligible |
 | [`e0-lite/pre-v2`](e0-lite/pre-v2/notes.md)                                                                                                 | stopped E0-lite grid; diagnostic, excluded from verdicts, FLP1 blobs | —           |
 
 ### Xbox package acceptance
