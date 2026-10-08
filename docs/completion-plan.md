@@ -52,13 +52,14 @@ commit `8b76068` assigned 0012 to repository boundaries; the decision is unchang
 Continue in this order:
 
 1. The E0 campaign named in [STATUS](STATUS.md) is `e0-20261007T164712Z-766d4b`. It is in
-   phase `grid-ternary` on package 0.1.0.105 under [ADR 0020](adr/0020-target-window-parity.md).
+   phase `tuning-2bit` on package 0.1.0.105 under [ADR 0020](adr/0020-target-window-parity.md).
    Scale, MLP and ternary tuning are closed facts copied from
    `e0-20261004T103838Z-c58a86`. That campaign stays stopped; its ternary set was refused.
-   Eleven ternary cells are indexed. Cells 000–007 repeat that campaign's
-   cooldown artifacts, and cell 010 repeats `104-repair`. Cells 008 and 009
-   are eligible at submitted `d_ff` 279 and 174. The grid is not selected. 2-bit tuning, the 2-bit grid, paired seeds and the
-   reserved final test remain.
+   All thirteen ternary cells are indexed. The comparison is byte-comparable
+   and rank-stable. The stored ternary phase selection is `d` 80, 4 layers,
+   `d_ff` 262, lr 0.01, wd 0.1. It is not the scalar recipe. The campaign is
+   in 2-bit tuning on the neutral shape. Two 2-bit cells are indexed. The
+   2-bit grid, paired seeds and the reserved final test remain.
    `4236fd` is an earlier stopped campaign.
 2. Review the completed E0 report (roadmap gate 4) before accepting a scientific
    E1 ADR. The rules that do not depend on that report — books, assignment,

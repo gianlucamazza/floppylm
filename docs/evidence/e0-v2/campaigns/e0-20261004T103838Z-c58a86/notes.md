@@ -22,3 +22,7 @@ Later note (2026-10-08): the same successor repeated the cooldown artifacts of
 grid cell `104-repair` as its cell `010`. Its cells `008` and `009` are eligible
 at submitted `d_ff` 279 and 174 and do not repeat `102`, `102-repair`, `103` or
 `103-repair`. This campaign stays stopped. Those cells are not a shape decision.
+
+Later note (2026-10-08): successor cells `011` and `012` are eligible at
+submitted `d_ff` 191 and 269 and do not repeat `105`, `105-repair`, `106` or
+`106-repair`. This campaign stays stopped.

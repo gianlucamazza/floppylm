@@ -23,3 +23,10 @@ between arms.
 Eligible on the first pack under ADR 0019 and ADR 0020. The three cooldown
 artifacts match `e0-20261004T103838Z-c58a86-022-r3`. One grid cell of campaign `e0-20261007T164712Z-766d4b`.
 Not a shape decision.
+
+## Later (2026-10-08)
+
+The ternary grid comparison is byte-comparable and rank-stable at T, 2T and 4T.
+This cell is the stored ternary phase selection (`d` 80, 4 layers, `d_ff` 262,
+lr 0.01, wd 0.1). It is not the scalar recipe. 2-bit tuning, the 2-bit grid,
+paired seeds and the final test remain.
