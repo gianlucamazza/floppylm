@@ -127,3 +127,7 @@ Decode-like inference (chain of fp32 matvecs, batch 1, one token):
 Later note (2026-10-01): the `bg` instructions above (overnight rate, `bg` nights, 30-min
 pin) are superseded by [ADR 0003](../adr/0003-lab-practices.md). Reproduce with
 `nohup python` and a log under `runs/`. The 2026-09-30 estimates are unchanged.
+
+Later note (2026-10-08): E0 is not the laptop bit-width sweep in the minimum
+experiment. It trains on one Xbox Series S. A rented GPU is not part of the
+scientific record ([ADR 0009](../adr/0009-xbox-e0-backend.md)).

@@ -172,3 +172,8 @@ expanded effective parameters (10M, 30M, 100M) measuring expansion time, peak RS
 i7-1165G7 to trace where F3 cuts. E4 writes the real 1 474 560-byte FAT12 image with static runtime,
 tokenizer and weights, boots it from scratch on a clean machine and repeats the E0–E3 measurements on
 the image contents alone.
+
+Later note (2026-10-08): the minimum experiment is the v0.1 plan. The accepted
+measurement is roadmap E0: byte-level TinyStories, ternary and 2-bit cores, and
+one shared serialized-byte target. Closed choices and the running grid are in the
+[evidence index](../evidence/README.md). This survey does not own those numbers.

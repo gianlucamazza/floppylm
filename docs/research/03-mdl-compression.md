@@ -150,3 +150,7 @@ bytes, "rate loss + rANS" beats "QAT + Brotli" by a margin greater than seed-to-
 triggers if E1's procedural advantage vanishes when the dense model also receives rate loss + entropy
 coding + pruning. The prequential control (compressed corpus + trainer) goes into E2 as a single table
 row, with boot time noted for E3.
+
+Later note (2026-10-08): E0 does not sweep int4, 3-bit and 2-bit image sizes at
+0.5, 1.0 and 1.44 MB. The accepted dense baseline is the roadmap scalar campaign.
+Rate loss and rANS stay at E2. This survey does not own the measured numbers.

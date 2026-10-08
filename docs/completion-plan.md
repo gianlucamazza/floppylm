@@ -55,7 +55,9 @@ Continue in this order:
    phase `grid-ternary` on package 0.1.0.105 under [ADR 0020](adr/0020-target-window-parity.md).
    Scale, MLP and ternary tuning are closed facts copied from
    `e0-20261004T103838Z-c58a86`. That campaign stays stopped; its ternary set was refused.
-   2-bit tuning, the 2-bit grid, paired seeds and the reserved final test remain.
+   Eight ternary cells are indexed and repeat that campaign's cooldown artifacts.
+   The grid is not selected. 2-bit tuning, the 2-bit grid, paired seeds and the
+   reserved final test remain.
    `4236fd` is an earlier stopped campaign.
 2. Review the completed E0 report (roadmap gate 4) before accepting a scientific
    E1 ADR. The rules that do not depend on that report — books, assignment,

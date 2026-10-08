@@ -140,3 +140,8 @@ measures M4 for each point, declaring where F3 fails. E4 writes the real FAT12 i
 machine without Python environments and repeats M1, M4 and M5 using only the image files, comparing the
 results with those of E1–E3 to rule out that the model evaluated in the lab differs from the one on the
 floppy.
+
+Later note (2026-10-08): E0 reports validation bpb from the packed artifact.
+Compared cells must each lie within ±1% of one shared target
+([ADR 0020](../adr/0020-target-window-parity.md)). The C runtime, the FAT12 image
+and the human judge remain E3 and E4.

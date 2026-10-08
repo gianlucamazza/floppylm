@@ -249,3 +249,7 @@ not trigger". The individual pieces are published and must be cited as state of 
 
 The claimable novelty is the controlled byte-exact comparison in the sub-1.5 MB regime, not the
 mechanism. The literature's prior is that the learned codebook will _not_ beat the seeded one.
+
+Later note (2026-10-08): the five-arm plan is not an accepted protocol. E0 must
+name the scalar recipe before a scientific E1 ADR. The 1/16 pilot proposal stays
+unaccepted. Scalar measurements live in the evidence index, not in this survey.

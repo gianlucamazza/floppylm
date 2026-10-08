@@ -153,3 +153,7 @@ Byte count (FAT12 data area = 1 457 664 B):
   expected <5 s.
 - **E4**: image `mkfs.fat -C -F 12 fd.img 1440` + `mcopy`, check `mdir` and boot from a clean
   host (container without toolchain) → `image_bytes` = 1 474 560 measured, not estimated.
+
+Later note (2026-10-08): the bit-accounting harness and the FAT12 image are E3
+and E4. E0 counts serialized model bytes against one shared target. Runtime and
+tokenizer bytes are not the E0 selection metric.

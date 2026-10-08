@@ -12,3 +12,8 @@ individually inside ±1% of 85937.5 bytes. Selection refused the set: 4T size
 runs from 85098 to 85982 bytes, and `max/min − 1` is 1.0388%. No ternary shape
 is selected. 2-bit, the paired seeds and the final test did not start. Trials
 `021` and `022` failed before a branch and are not in this report. Do not resume this campaign.
+
+Later note (2026-10-08): campaign `e0-20261007T164712Z-766d4b` repeated the
+cooldown artifacts of grid cells `016`, `017`, `018`, `019`, `020`, `022-r3`,
+`100` and `101`. This campaign stays stopped. Those repeated cells are not a
+shape decision.

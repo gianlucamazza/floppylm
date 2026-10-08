@@ -173,3 +173,8 @@ procedural-weights thesis falls and only weight sharing remains. Expansion cost 
 immediately (boot time on the reference CPU, peak RAM), because it is the point where Parameter Golf saw
 all generator variants fail. E2 then adds entropy coding and the rate loss to all arms. Only if E1/E2
 give a margin does it make sense to scale the effective parameters (E3) and produce the FAT12 image (E4).
+
+Later note (2026-10-08): the procedural-weights kill test above is not the live
+protocol. Thesis v0.2 compares learned, seeded and computed vector codes with a
+scalar core at equal coded bytes. That comparison waits for a completed E0
+scalar recipe. The survey body stays the 2026-09-30 record.
