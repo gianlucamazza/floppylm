@@ -58,8 +58,9 @@ Continue in this order:
    not a result. The stored decisions remain ternary `d` 80, 4 layers, `d_ff` 262
    and 2-bit nominal `d_ff` 193 (trained cell `027` submitted `d_ff` 205,
    1.4914/1.3663/1.2766). The scalar recipe is not named. `766d4b` and `4236fd`
-   stay stopped. A new trainer package is a separate decision; do not resume
-   this campaign onto the installed package.
+   stay stopped. [ADR 0022](adr/0022-paired-campaign-on-109.md) authorizes one
+   new `--from-paired` campaign on accepted package 0.1.0.109. It does not
+   resume `87686a`.
 2. Review the completed E0 report (roadmap gate 4) before accepting a scientific
    E1 ADR. The rules that do not depend on that report — books, assignment,
    dead codes, checkpoints, token parity, F1, and what the container must count —

@@ -113,7 +113,8 @@ the command in this packet, and it does not resume cell `031`.
 ## Later (2026-10-09, package 0.1.0.109)
 
 0.1.0.109 passed the hardware gates and is bit-identical 38/38 to 0.1.0.105
-([evidence](../evidence/xbox-e0-20261009-109/notes.md)). A new `--from-paired`
-campaign binds that acceptance and benchmark. It does not resume `87686a`,
-`766d4b` cell `031`, or any earlier campaign. The commands earlier in this
-packet remain the 0.1.0.105 preparation.
+([evidence](../evidence/xbox-e0-20261009-109/notes.md)).
+[ADR 0022](../adr/0022-paired-campaign-on-109.md) authorizes one new
+`--from-paired` campaign bound to that acceptance and benchmark. It does not
+resume `87686a`, `766d4b` cell `031`, or any earlier campaign. The commands
+earlier in this packet remain the 0.1.0.105 preparation.

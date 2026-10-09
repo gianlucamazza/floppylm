@@ -2,9 +2,11 @@
 
 ## Status
 
-`accepted` — 2026-10-09. Follows [ADR 0020](0020-target-window-parity.md).
+`amended` — 2026-10-09. Follows [ADR 0020](0020-target-window-parity.md).
 Does not amend ADR 0020 decision 3: that decision still forbids copying 2-bit
 from `c58a86`. Records [the paired-seed successor proposal](proposals/e0-paired-seed-successor.md).
+[ADR 0022](0022-paired-campaign-on-109.md) amends decision 3 after campaign
+`87686a` stopped on the 0.1.0.105 binding.
 
 ## Context
 
@@ -45,6 +47,14 @@ of a fresh seed. S3 remains the single post-training repair. The stored recipe
 width stays the nominal decision. A missing worker contract that persists is
 still an acceptance error; a short reread of that file is not a second
 training attempt.
+
+## Amendment — 2026-10-09
+
+Campaign `e0-20261009T150330Z-87686a` consumed the 0.1.0.105 binding and stopped
+with no result. Run `87686a-000` and cell `031` stay closed. [ADR 0022](0022-paired-campaign-on-109.md)
+authorizes one new paired campaign on package 0.1.0.109. Decisions 1 and 2, and
+the stop rule in decision 4, are unchanged. Decision 3 remains the record of
+the 0.1.0.105 binding and does not authorize another campaign on that package.
 
 ## Alternatives
 
