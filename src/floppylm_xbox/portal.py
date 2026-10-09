@@ -27,6 +27,8 @@ CHUNK_BYTES = 2 << 20
 CREDENTIAL_KEYS = ("XBOX_IP", "XBOX_USER", "XBOX_PASS", "XBOX_CERT_SHA256")
 DEFAULT_PORT = 11443
 DEFAULT_PACKAGE_NAME = "XgpuE0"
+# A worker.json blip is not a new package. A miss that lasts this long is.
+WORKER_MISSING_RETRY_S = 5.0
 
 
 def env_file() -> Path:
@@ -413,13 +415,19 @@ class Portal:
         return json.loads(self.get("status.json", "inbox/results/" + job_id))
 
     def worker(self, *, commit: str | None = None) -> dict:
-        try:
-            record = json.loads(self.get("worker.json", ""))
-        except FileNotFoundError as error:
-            raise RuntimeError(
-                "worker contract missing; new runtime acceptance required"
-            ) from error
-        return validate_worker(record, self.package, commit)
+        """Reread a briefly absent contract. A persistent miss stays an acceptance error."""
+        deadline = time.monotonic() + WORKER_MISSING_RETRY_S
+        while True:
+            try:
+                record = json.loads(self.get("worker.json", ""))
+            except FileNotFoundError as error:
+                if time.monotonic() >= deadline:
+                    raise RuntimeError(
+                        "worker contract missing; new runtime acceptance required"
+                    ) from error
+                time.sleep(0.5)
+            else:
+                return validate_worker(record, self.package, commit)
 
     def live_worker(self, *, commit: str | None = None) -> dict:
         """Require two advancing heartbeats of one instance before recovery authority."""

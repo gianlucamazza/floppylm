@@ -30,10 +30,12 @@ from e0_v2 import (
 )
 from floppylm import parity, runlog, shapes
 from floppylm.campaign_protocol import (
+    PAIRED_SUCCESSOR_OF,
     PROTOCOL_ADR,
     SUCCESSOR_OF,
     grid_configs,
     inherited_neutral_scale,
+    inherited_paired_decisions,
     inherited_ternary_tuning,
     protocol_spec,
 )
@@ -50,7 +52,10 @@ class Campaign:
         *,
         recover: bool = False,
         from_grid_ternary: bool = False,
+        from_paired: bool = False,
     ):
+        if from_grid_ternary and from_paired:
+            raise RuntimeError("a campaign has one successor start")
         self.root, self.acceptance = root, acceptance.resolve()
         self.recover_trials = recover
         self.child = None
@@ -65,8 +70,14 @@ class Campaign:
         self.path = root / "campaign.json"
         if self.path.exists():
             self.state = json.loads(self.path.read_text())
-            if from_grid_ternary and not self.state.get("inherited_from"):
+            if (from_grid_ternary or from_paired) and not self.state.get("inherited_from"):
                 raise RuntimeError("successor start applies only to a new campaign")
+            if from_paired and (
+                self.state.get("id") == PAIRED_SUCCESSOR_OF
+                or self.state.get("inherited_from") != PAIRED_SUCCESSOR_OF
+            ):
+                raise RuntimeError("stopped campaign is not resumed")
+            self._refuse_failed_run()
             if self.state.get("protocol_adr") != PROTOCOL_ADR:
                 raise RuntimeError("campaign protocol differs; no implicit migration")
             if self.state["benchmark_sha256"] != runlog.sha256_file(benchmark):
@@ -81,7 +92,13 @@ class Campaign:
                 "id": runlog.new_run_id("e0"),
                 "created": runlog.now(),
                 "status": "running",
-                "phase": "grid-ternary" if from_grid_ternary else "neutral-scale",
+                "phase": (
+                    "paired-seeds"
+                    if from_paired
+                    else "grid-ternary"
+                    if from_grid_ternary
+                    else "neutral-scale"
+                ),
                 "acceptance_sha256": runlog.sha256_file(acceptance),
                 "benchmark_sha256": runlog.sha256_file(benchmark),
                 "package": proof["package"],
@@ -90,7 +107,10 @@ class Campaign:
                 "trials": {},
                 "decisions": {},
             }
-            if from_grid_ternary:
+            if from_paired:
+                self.state["inherited_from"] = PAIRED_SUCCESSOR_OF
+                self.state["decisions"] = inherited_paired_decisions()
+            elif from_grid_ternary:
                 tuning = inherited_ternary_tuning()
                 self.state["inherited_from"] = SUCCESSOR_OF
                 self.state["decisions"] = {
@@ -165,6 +185,7 @@ class Campaign:
             self.state.update(
                 status="running", pid=os.getpid(), process_identity=runlog.process_identity()
             )
+            self.state.pop("error", None)
             self.save()
             self.event("worker_started", process_identity=self.state["process_identity"])
             self.run()
@@ -499,6 +520,31 @@ class Campaign:
         self.save()
         return cfg, lr, wd
 
+    def _refuse_failed_run(self):
+        """Cell 031 failed on the console. It is not a trial of any later campaign."""
+        banned = PAIRED_SUCCESSOR_OF + "-031"
+        if self.state.get("id") == PAIRED_SUCCESSOR_OF:
+            raise RuntimeError("stopped campaign is not resumed")
+        for record in self.state.get("trials", {}).values():
+            if banned in (record.get("run_id"), record.get("repair_id")):
+                raise RuntimeError("failed run 031 is not opened")
+
+    def paired_recipes(self):
+        """Copy the stored decisions. Do not refill nominal d_ff and do not open run 031."""
+        self._refuse_failed_run()
+        if self.state.get("inherited_from") != PAIRED_SUCCESSOR_OF:
+            raise RuntimeError("paired start requires the stored 766d4b decisions")
+        recipes = {}
+        for fmt in ("ternary", "2bit"):
+            saved = self.state["decisions"].get(fmt)
+            if not isinstance(saved, dict) or "config" not in saved:
+                raise RuntimeError("paired start requires the stored " + fmt + " decision")
+            chosen = GPTConfig(**saved["config"])
+            if chosen.core_fmt != fmt:
+                raise RuntimeError("stored " + fmt + " decision has another format")
+            recipes[fmt] = (chosen, saved["lr"], saved["wd"])
+        return recipes
+
     def inherited_ternary_grid(self, protocol, budget):
         """Copy the closed ternary recipe. Do not refill it and do not copy 2-bit."""
         saved = self.state["decisions"]["tuning-ternary"]
@@ -555,6 +601,9 @@ class Campaign:
     def run(self):
         protocol = self.state["protocol"]
         budget = FULL_BUDGET_BITS * protocol["budget_frac"]
+        if self.state.get("inherited_from") == PAIRED_SUCCESSOR_OF:
+            self.finish_paired(protocol, self.paired_recipes())
+            return
         if self.state.get("inherited_from"):
             chosen = GPTConfig(**self.state["decisions"]["tuning-ternary"]["config"])
             recipes = {"ternary": self.inherited_ternary_grid(protocol, budget)}
@@ -599,6 +648,11 @@ def main():
         action="store_true",
         help="open a new campaign at the ternary grid from the closed c58a86 recipe",
     )
+    parser.add_argument(
+        "--from-paired",
+        action="store_true",
+        help="open a new campaign at paired seeds from the stored 766d4b decisions",
+    )
     a = parser.parse_args()
     campaign = Campaign(
         a.out,
@@ -606,6 +660,7 @@ def main():
         a.benchmark,
         recover=a.recover,
         from_grid_ternary=a.from_grid_ternary,
+        from_paired=a.from_paired,
     )
     campaign.run_managed()
     return 0

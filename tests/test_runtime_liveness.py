@@ -142,11 +142,29 @@ def test_wait_persists_stall_and_clears_without_cancel(tmp_path, monkeypatch):
     client.cancel.assert_not_called()
 
 
-def test_missing_worker_contract_is_explicitly_unavailable():
+def _advance_clock(monkeypatch):
+    now = [0.0]
+    monkeypatch.setattr("floppylm_xbox.portal.time.monotonic", lambda: now[0])
+    monkeypatch.setattr("floppylm_xbox.portal.time.sleep", lambda n: now.__setitem__(0, now[0] + n))
+
+
+def test_missing_worker_contract_is_explicitly_unavailable(monkeypatch):
     client = portal()
     client.get = Mock(side_effect=FileNotFoundError)
+    _advance_clock(monkeypatch)
     with pytest.raises(RuntimeError, match="acceptance"):
         client.worker()
+    assert client.get.call_count >= 2
+
+
+def test_transient_missing_worker_contract_is_reread(monkeypatch):
+    client = portal()
+    client.get = Mock(side_effect=[FileNotFoundError, json.dumps(sample())])
+    _advance_clock(monkeypatch)
+    found = client.worker()
+    assert found["schema"] == "floppylm.worker.v1"
+    assert found["package"] == client.package
+    assert client.get.call_count == 2
 
 
 def test_transport_failure_persists_unknown_not_dead(tmp_path):

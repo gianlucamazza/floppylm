@@ -102,3 +102,9 @@ explicitly on the same package. Never run a keep-alive/requeue loop.
 This packet is the preparation record for campaign `e0-20261004T103838Z-c58a86`.
 [ADR 0019](../adr/0019-host-init-pack.md) and [ADR 0020](../adr/0020-target-window-parity.md)
 apply to a successor campaign. They do not reopen `c58a86`.
+
+## Later (2026-10-09)
+
+Campaign `766d4b` stopped in `paired-seeds`. [ADR 0021](../adr/0021-paired-seed-successor.md)
+opens a new campaign with `--from-paired` on package 0.1.0.105. It does not use
+the command in this packet, and it does not resume cell `031`.

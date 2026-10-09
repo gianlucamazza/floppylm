@@ -45,6 +45,7 @@ It is not a brainstorm, a survey or a TODO.
 | [0018](0018-e0-correctness-and-runtime-qualification.md) | Uniform selection gates, attempt evidence and functional watchdog qualification | accepted |
 | [0019](0019-host-init-pack.md) | One init-pack `d_ff` adjustment before the first training attempt; S3 stays the trained-artifact fallback | accepted |
 | [0020](0020-target-window-parity.md) | A shared target is enough: each candidate within ±1% of that target; `c58a86` is not migrated | accepted |
+| [0021](0021-paired-seed-successor.md) | The next E0 campaign starts at the paired seeds from the stored `766d4b` decisions; cell `031` is not resumed | accepted |
 
 ## Proposals
 
@@ -59,6 +60,7 @@ It is not a brainstorm, a survey or a TODO.
 | [E1 1/16 pilot protocol](proposals/e1-1-16-pilot.md) | proposal |
 | [E0 stays on one accepted Series S](proposals/e0-single-console.md) | not adopted |
 | [Reciprocal parity and the ±1% window](proposals/e0-reciprocal-parity-band.md) | accepted → ADR 0020 |
+| [Paired-seed successor of 766d4b](proposals/e0-paired-seed-successor.md) | accepted → ADR 0021 |
 
 An idea that would change the protocol, the backend, or a running campaign is written
 here on the day it is considered, with status `proposal` or `not adopted` and the reason.

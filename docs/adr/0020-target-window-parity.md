@@ -5,6 +5,8 @@
 `accepted` — 2026-10-07. Amends the reciprocal clause of [ADR 0005](0005-e0v2-protocol.md) §1
 and the reciprocal wording of [ADR 0015](0015-e0-fixed-data-frontier.md) decision 1.
 Records [the reciprocal-band proposal](proposals/e0-reciprocal-parity-band.md).
+[ADR 0021](0021-paired-seed-successor.md) follows this rule for a new campaign that
+starts at the paired seeds. Decision 3 still forbids copying 2-bit from `c58a86`.
 
 ## Context
 

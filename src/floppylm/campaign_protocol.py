@@ -4,6 +4,7 @@ from . import shapes
 
 PROTOCOL_ADR = "0020"
 SUCCESSOR_OF = "e0-20261004T103838Z-c58a86"
+PAIRED_SUCCESSOR_OF = "e0-20261007T164712Z-766d4b"
 
 
 def protocol_spec() -> dict:
@@ -60,6 +61,43 @@ def inherited_ternary_tuning() -> dict:
     config["mlp"] = "swiglu"
     config["d_ff"] = 274
     return {"config": config, "lr": 0.01, "wd": 0.1}
+
+
+def inherited_paired_decisions() -> dict:
+    """Stored phase selections of stopped campaign 766d4b.
+
+    Widths are the nominal decision values. The trained 2-bit cell submitted
+    d_ff 205; that width is not copied and is not refilled here.
+    """
+    shared = {
+        "vocab": 256,
+        "mlp": "swiglu",
+        "emb_fmt": "4bit",
+        "scale_policy": "row8log",
+        "delta": 0.5,
+        "qk_norm": False,
+        "ctx": 256,
+    }
+    ternary = {
+        **shared,
+        "d": 80,
+        "n_layers": 4,
+        "n_heads": 5,
+        "d_ff": 262,
+        "core_fmt": "ternary",
+    }
+    two_bit = {
+        **shared,
+        "d": 96,
+        "n_layers": 3,
+        "n_heads": 6,
+        "d_ff": 193,
+        "core_fmt": "2bit",
+    }
+    return {
+        "ternary": {"config": ternary, "lr": 0.01, "wd": 0.1},
+        "2bit": {"config": two_bit, "lr": 0.003, "wd": 0.1},
+    }
 
 
 def grid_configs(base, budget, protocol):

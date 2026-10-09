@@ -84,6 +84,10 @@ c. Tuning with the S4 budget for ternary and 2-bit.
 d. Solver grid with WSD: saturation curve and parity per shape.
 e. Paired σ over 5 seeds at the best point → gate; adversary freeze; `notes.md` and `summary.json`.
 
+A campaign that already stores both phase selections may start at step e.
+[ADR 0021](adr/0021-paired-seed-successor.md) does that for the successor of
+`766d4b` and does not replay steps b–d.
+
 Completion gates:
 
 1. Run scale/MLP selection, tuning, solver grids and five paired seeds sequentially.

@@ -360,3 +360,119 @@ def test_successor_refuses_a_non_ternary_inheritance(tmp_path, campaign_module):
     with pytest.raises(RuntimeError, match="only ternary tuning is inherited"):
         campaign.run()
     campaign.lock.close()
+
+
+def test_running_campaign_clears_a_stale_error(tmp_path, campaign_module):
+    proof, speed = inputs(tmp_path)
+    campaign = campaign_module.Campaign(tmp_path / "campaign", proof, speed)
+    campaign.state.update(status="stopped", error="CalledProcessError stale")
+    campaign.save()
+
+    def run():
+        assert campaign.state["status"] == "running"
+        assert "error" not in campaign.state
+        raise RuntimeError("fresh failure")
+
+    campaign.run = run
+    campaign.report = lambda: None
+    with pytest.raises(RuntimeError, match="fresh failure"):
+        campaign.run_managed()
+    saved = json.loads((tmp_path / "campaign" / "campaign.json").read_text())
+    assert saved["status"] == "stopped"
+    assert "stale" not in saved["error"]
+    assert "fresh failure" in saved["error"]
+
+
+def test_paired_successor_copies_stored_decisions_and_refuses_the_stopped_campaign(
+    tmp_path, campaign_module
+):
+    proof, speed = inputs(tmp_path)
+    fresh = campaign_module.Campaign(tmp_path / "paired", proof, speed, from_paired=True)
+    state = json.loads(fresh.path.read_text())
+    assert state["protocol_adr"] == "0020"
+    assert state["phase"] == "paired-seeds"
+    assert state["inherited_from"] == "e0-20261007T164712Z-766d4b"
+    assert state["trials"] == {}
+    ternary, two_bit = state["decisions"]["ternary"], state["decisions"]["2bit"]
+    assert (ternary["config"]["d"], ternary["config"]["n_layers"], ternary["config"]["d_ff"]) == (
+        80,
+        4,
+        262,
+    )
+    assert ternary["lr"] == 0.01 and ternary["wd"] == 0.1
+    assert ternary["config"]["core_fmt"] == "ternary"
+    assert (two_bit["config"]["d"], two_bit["config"]["n_layers"], two_bit["config"]["d_ff"]) == (
+        96,
+        3,
+        193,
+    )
+    assert two_bit["lr"] == 0.003 and two_bit["wd"] == 0.1
+    assert two_bit["config"]["core_fmt"] == "2bit"
+    assert set(state["decisions"]) == {"ternary", "2bit"}
+    copied = json.loads(json.dumps(state["decisions"]))
+    fresh.lock.close()
+    again = campaign_module.Campaign(tmp_path / "paired", proof, speed, from_paired=True)
+    assert again.state["decisions"] == copied
+    again.lock.close()
+    stopped = campaign_module.Campaign(tmp_path / "stopped", proof, speed, from_grid_ternary=True)
+    stopped.state["id"] = "e0-20261007T164712Z-766d4b"
+    stopped.state["trials"]["paired-ternary-1"] = {
+        "run_id": "e0-20261007T164712Z-766d4b-031",
+        "status": "failed",
+    }
+    before = json.loads(json.dumps(stopped.state["decisions"]))
+    stopped.save()
+    stopped.lock.close()
+    with pytest.raises(RuntimeError, match="not resumed"):
+        campaign_module.Campaign(tmp_path / "stopped", proof, speed, from_paired=True)
+    on_disk = json.loads((tmp_path / "stopped" / "campaign.json").read_text())
+    assert on_disk["decisions"] == before
+    assert on_disk["trials"]["paired-ternary-1"]["run_id"].endswith("-031")
+    plain = campaign_module.Campaign(tmp_path / "plain", proof, speed)
+    plain.lock.close()
+    with pytest.raises(RuntimeError, match="successor start applies only to a new campaign"):
+        campaign_module.Campaign(tmp_path / "plain", proof, speed, from_paired=True)
+    with pytest.raises(RuntimeError, match="one successor start"):
+        campaign_module.Campaign(
+            tmp_path / "both", proof, speed, from_grid_ternary=True, from_paired=True
+        )
+
+
+def test_paired_successor_trains_only_the_ten_seeds(tmp_path, monkeypatch, campaign_module):
+    proof, speed = inputs(tmp_path)
+    campaign = campaign_module.Campaign(tmp_path / "paired", proof, speed, from_paired=True)
+    monkeypatch.setattr(campaign_module, "EVIDENCE", tmp_path / "evidence")
+    monkeypatch.setattr(campaign_module, "selection_branch", lambda summary: summary["branches"][2])
+    monkeypatch.setattr(
+        campaign_module.shapes, "fill_d_ff", Mock(side_effect=AssertionError("refilled"))
+    )
+    monkeypatch.setattr(
+        campaign_module.shapes, "grid", Mock(side_effect=AssertionError("replayed"))
+    )
+    for name in ("neutral", "tune_format", "grid_format", "inherited_ternary_grid"):
+        monkeypatch.setattr(campaign, name, Mock(side_effect=AssertionError(name)))
+    calls = []
+
+    def trial(key, cfg, seed, lr, wd):
+        calls.append((key, cfg.d_ff, cfg.core_fmt, seed, lr, wd))
+        return _summary_run(key, 1.2, 1.1, 1.0)
+
+    monkeypatch.setattr(campaign, "trial", trial)
+    monkeypatch.setattr(campaign, "run_command", lambda *_args, **_kwargs: None)
+    campaign.run()
+    assert calls == [
+        ("paired-ternary-0", 262, "ternary", 0, 0.01, 0.1),
+        ("paired-ternary-1", 262, "ternary", 1, 0.01, 0.1),
+        ("paired-ternary-2", 262, "ternary", 2, 0.01, 0.1),
+        ("paired-ternary-3", 262, "ternary", 3, 0.01, 0.1),
+        ("paired-ternary-4", 262, "ternary", 4, 0.01, 0.1),
+        ("paired-2bit-0", 193, "2bit", 0, 0.003, 0.1),
+        ("paired-2bit-1", 193, "2bit", 1, 0.003, 0.1),
+        ("paired-2bit-2", 193, "2bit", 2, 0.003, 0.1),
+        ("paired-2bit-3", 193, "2bit", 3, 0.003, 0.1),
+        ("paired-2bit-4", 193, "2bit", 4, 0.003, 0.1),
+    ]
+    assert campaign.state["decisions"]["ternary"]["config"]["d_ff"] == 262
+    assert campaign.state["decisions"]["2bit"]["config"]["d_ff"] == 193
+    assert campaign.state["status"] == "completed"
+    campaign.lock.close()
