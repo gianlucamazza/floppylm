@@ -51,16 +51,15 @@ commit `8b76068` assigned 0012 to repository boundaries; the decision is unchang
 
 Continue in this order:
 
-1. The E0 campaign named in [STATUS](STATUS.md) is `e0-20261007T164712Z-766d4b`. It is in
-   phase `tuning-2bit` on package 0.1.0.105 under [ADR 0020](adr/0020-target-window-parity.md).
-   Scale, MLP and ternary tuning are closed facts copied from
-   `e0-20261004T103838Z-c58a86`. That campaign stays stopped; its ternary set was refused.
-   All thirteen ternary cells are indexed. The comparison is byte-comparable
-   and rank-stable. The stored ternary phase selection is `d` 80, 4 layers,
-   `d_ff` 262, lr 0.01, wd 0.1. It is not the scalar recipe. The campaign is
-   in 2-bit tuning on the neutral shape. Two 2-bit cells are indexed. The
-   2-bit grid, paired seeds and the reserved final test remain.
-   `4236fd` is an earlier stopped campaign.
+1. Campaign `e0-20261007T164712Z-766d4b` stopped at 2026-10-09T12:07:22Z in
+   `paired-seeds` on package 0.1.0.105. Cell `031` failed on the console and is
+   not a result. Do not recover it. Cells `015`–`030` are indexed. The 2-bit
+   grid is byte-comparable and rank-stable. Its phase selection is the neutral
+   shape, decision nominal `d_ff` 193, trained cell `027` at submitted `d_ff`
+   205 (1.4914/1.3663/1.2766). The ternary phase selection remains `d` 80,
+   4 layers, `d_ff` 262. The scalar recipe is not named. The next campaign
+   starts at the paired seeds under a new id. `4236fd` is an earlier stopped
+   campaign.
 2. Review the completed E0 report (roadmap gate 4) before accepting a scientific
    E1 ADR. The rules that do not depend on that report — books, assignment,
    dead codes, checkpoints, token parity, F1, and what the container must count —
