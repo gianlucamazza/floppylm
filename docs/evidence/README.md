@@ -177,6 +177,7 @@ Same campaign, eligible MLP repairs only. The green mean is the two gelu seeds, 
 | [xbox-e0-20261003-098](xbox-e0-20261003-098/notes.md) | 0.1.0.98 | claim validation and resume binding; full hardware gates; bit-identical 38/38 vs 0.1.0.95 |
 | [xbox-e0-20261004-102](xbox-e0-20261004-102/notes.md) | 0.1.0.102 | published-fence `progress_stall` classification; full hardware gates; bit-identical 38/38 vs 0.1.0.98 |
 | [xbox-e0-20261004-105](xbox-e0-20261004-105/notes.md) | 0.1.0.105 | checkpoint publish without a stable empty temporary; full hardware gates; bit-identical 38/38 vs 0.1.0.102 |
+| [xbox-e0-20261009-109](xbox-e0-20261009-109/notes.md) | 0.1.0.109 | JSON open reports path and Win32 code; full hardware gates; bit-identical 38/38 vs 0.1.0.105 |
 | [architecture-20261002](architecture-20261002/) | CPU | S3 coded/nominal fill on `2fe64f-000` vs repair; E1 1/16 VQ book-fit table. Proposals, not ADRs. |
 
 ### E1 functional qualification
@@ -190,7 +191,7 @@ A dated narrative of these packages is in the [archive](../archive/xbox-e0-histo
 `ca781f` is the first row16 pair with both seeds eligible under ADR 0015. The rest of the E0
 grid, paired σ and the held-out test remain open; the [roadmap](../roadmap.md) defines those gates.
 
-Real-deadline watchdog: [xbox-e0-20261003-098](xbox-e0-20261003-098/notes.md), complete functional qualification with exact recovery and preservation evidence. The [0.1.0.96 incomplete attempt](xbox-e0-20261003-096-incomplete/notes.md) records the defect discovered before the final qualification. [xbox-e0-20261004-102](xbox-e0-20261004-102/notes.md) records the parked probe as `progress_stall` with requested fence 0, bit-identical to 0.1.0.98. [xbox-e0-20261004-105](xbox-e0-20261004-105/notes.md) is the accepted successor: the same classification, bit-identical 38/38 versus 0.1.0.102, shader unchanged. The large checkpoint publish no longer truncates a stable temporary. The scientific 600 s stall is not yet shown to be gone.
+Real-deadline watchdog: [xbox-e0-20261003-098](xbox-e0-20261003-098/notes.md), complete functional qualification with exact recovery and preservation evidence. The [0.1.0.96 incomplete attempt](xbox-e0-20261003-096-incomplete/notes.md) records the defect discovered before the final qualification. [xbox-e0-20261004-102](xbox-e0-20261004-102/notes.md) records the parked probe as `progress_stall` with requested fence 0, bit-identical to 0.1.0.98. [xbox-e0-20261004-105](xbox-e0-20261004-105/notes.md) recorded the same classification, bit-identical 38/38 versus 0.1.0.102, shader unchanged. The large checkpoint publish no longer truncates a stable temporary. [xbox-e0-20261009-109](xbox-e0-20261009-109/notes.md) is the accepted successor: bit-identical 38/38 versus 0.1.0.105, shader unchanged. A failed JSON open reports the path and Win32 code and retries only sharing and lock violations. Campaign `87686a` stays stopped and is not resumed. The scientific write failure is not shown to be gone.
 
 [E0 readiness, 2026-10-03](e0-readiness-20261003/notes.md): integrated fixes, read-only
 Odroid observation, corpus/protocol binding and cost envelope; no campaign launched.

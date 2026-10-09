@@ -1,0 +1,25 @@
+{
+  "ci_run": 37194378620,
+  "source_commit": "128434e81837ec1558f7e3d68a7f8849a91aa054",
+  "pr_head": "b9d814527c3d1b3345e8fd6c665d1719bb7a7d1a",
+  "unsigned_package_sha256": "7ef577e72fb74a621618d7596c0b273a97fc3ebabf07c00c0af4161c69096d3a",
+  "signed_package_sha256": "7493df52c51e03121f71b33cf9d3dbae9056cf5939d32d6063ddebeeba053712",
+  "payloads_preserved": true,
+  "payloads": {
+    "AppxManifest.xml": "5b47b7c1072fdf2efb4b5898ab1413553215b9a0da906403182fb5e1fa600626",
+    "Assets/SplashScreen.png": "edfe7e4d70af5fbe5f5ffcb65070890652158f9b7211eeb78ec9ca9e9568f899",
+    "Assets/Square150x150Logo.png": "32a61fbd3fd32ecb510622dbe6874c672a2230947de4f42d377e2cedb124ba5b",
+    "Assets/Square44x44Logo.png": "e327904750554d042d6bd92b4caae66a680b9b7c465e9c295fdadc4d160ff1f6",
+    "Assets/StoreLogo.png": "43c67680f58ce418a71a46fdf70a8892adc68d18847031674bb70c8914952073",
+    "Assets/e0_tensor.cso": "a6e6c2f641b6a1362e69c06d92f4faf2ae86b41baea9a681a86655ac994ca50f",
+    "Xgpu.winmd": "f07b17313f656a933834a339be23dbc6fcc6b905f84d42ee1c5a41faa76cdd8b",
+    "XgpuE0.exe": "8960eb673c4b02391cf23752add4586cea523b6ea8ac442f76186c33be492931",
+    "resources.pri": "d3ec79b2d2f42c1c825f5d80181052447bec92c7eb3d11574bad7c27c2a1ba94"
+  },
+  "signing_certificate": "existing uwp-crossbuild development certificate",
+  "package": "GianlucaMazza.XgpuE0_0.1.0.105_x64__g0p5dcfz4t9z4",
+  "version": "0.1.0.105",
+  "publisher": "CN=uwp-crossbuild-dev",
+  "purpose": "functional",
+  "tls_certificate_sha256": "d7e09b511243e0cb08e967cb51fe9ac1fb9a24e21d60ec34f2da40a7df57d587"
+}

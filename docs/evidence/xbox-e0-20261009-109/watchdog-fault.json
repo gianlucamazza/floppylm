@@ -1,0 +1,54 @@
+{
+ "adapter": "SraKmd_arden",
+ "branches": [],
+ "checkpoint": {
+  "bytes": 1014570,
+  "path": "results/watchdog-20261009T164721Z-fb0991-probe/checkpoint.json",
+  "sha256": "895e0b25b4ed27d0a66f9edb02cd2511a7960c7499dd6cec49d42392cbada07a"
+ },
+ "dispatches": 244,
+ "gpu_seconds": 0.0015953884711779462,
+ "hardware_gpu": true,
+ "job_id": "watchdog-20261009T164721Z-fb0991-probe",
+ "job_sha256": "d82f8b7478776e3847b1d0d0bf36771e56b3576729622cef082967580616a9ce",
+ "last_loss": 5.959905833005905,
+ "loss_series": [
+  {
+   "loss": 6.280833572149277,
+   "step": 1
+  },
+  {
+   "loss": 5.959905833005905,
+   "step": 2
+  }
+ ],
+ "peak_memory_bytes": 41791488,
+ "phase": "trunk",
+ "runtime_fault": {
+  "completed_fence": 332,
+  "elapsed_ms": 600005,
+  "error": "published progress frozen without an in-flight GPU request",
+  "kind": "progress_stall",
+  "requested_fence": 0
+ },
+ "schedule": {
+  "T": 8,
+  "cooldown_starts": [
+   7,
+   15,
+   29
+  ],
+  "ends": [
+   8,
+   16,
+   32
+  ],
+  "tokens_per_step": 16,
+  "warmup": 1
+ },
+ "schema": "floppylm.e0.result.v1",
+ "state": "interrupted",
+ "transfer_bytes": 371456,
+ "trunk_step": 2,
+ "wall_seconds": 0.074158557
+}

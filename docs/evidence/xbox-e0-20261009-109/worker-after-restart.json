@@ -1,0 +1,19 @@
+{
+ "active_job": null,
+ "commit": "961ccc2ab2e800eb25ea1ea33c1af1a46389ee59",
+ "fault": null,
+ "heartbeat_seq": 2,
+ "package": "GianlucaMazza.XgpuE0_0.1.0.109_x64__g0p5dcfz4t9z4",
+ "pid": 860,
+ "progress": {
+  "completed_fence": 0,
+  "cooldown_step": 0,
+  "operation": "",
+  "phase": "idle",
+  "sequence": 0,
+  "trunk_step": 0
+ },
+ "schema": "floppylm.worker.v1",
+ "state": "ready",
+ "worker_id": "cd072010-eb90-4238-ae03-4c89c3129108"
+}

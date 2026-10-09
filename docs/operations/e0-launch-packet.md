@@ -1,8 +1,9 @@
 # E0 launch packet: preparation only
 
 This packet does not by itself launch or reserve a campaign. The accepted hardware
-is [package 0.1.0.105](../evidence/xbox-e0-20261004-105/notes.md). The source of live
-project state remains [STATUS](../STATUS.md). All historical campaigns stay retired.
+is [package 0.1.0.109](../evidence/xbox-e0-20261009-109/notes.md). The sections below,
+through the first Later note of 2026-10-09, record preparation on 0.1.0.105. The source
+of live project state remains [STATUS](../STATUS.md). All historical campaigns stay retired.
 
 ## Provenance and preflight
 
@@ -108,3 +109,11 @@ apply to a successor campaign. They do not reopen `c58a86`.
 Campaign `766d4b` stopped in `paired-seeds`. [ADR 0021](../adr/0021-paired-seed-successor.md)
 opens a new campaign with `--from-paired` on package 0.1.0.105. It does not use
 the command in this packet, and it does not resume cell `031`.
+
+## Later (2026-10-09, package 0.1.0.109)
+
+0.1.0.109 passed the hardware gates and is bit-identical 38/38 to 0.1.0.105
+([evidence](../evidence/xbox-e0-20261009-109/notes.md)). A new `--from-paired`
+campaign binds that acceptance and benchmark. It does not resume `87686a`,
+`766d4b` cell `031`, or any earlier campaign. The commands earlier in this
+packet remain the 0.1.0.105 preparation.
