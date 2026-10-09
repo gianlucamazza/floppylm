@@ -51,14 +51,15 @@ commit `8b76068` assigned 0012 to repository boundaries; the decision is unchang
 
 Continue in this order:
 
-1. Campaign `e0-20261009T150330Z-87686a` is running at `paired-seeds` on package
-   0.1.0.105, host freeze `46f316d`, unit `floppylm-e0-campaign-20261009T150327Z`,
-   under [ADR 0021](adr/0021-paired-seed-successor.md). It copied the stored
-   decisions of stopped `766d4b` and trains all ten paired seeds fresh. Ternary
-   remains `d` 80, 4 layers, `d_ff` 262. The 2-bit decision remains nominal
-   `d_ff` 193; trained cell `027` submitted `d_ff` 205 (1.4914/1.3663/1.2766).
-   Cell `031` is not a result and is not recovered. The scalar recipe is not
-   named. `766d4b` and `4236fd` stay stopped.
+1. Campaign `e0-20261009T150330Z-87686a` stopped at 2026-10-09T15:12:23Z in
+   `paired-seeds` on package 0.1.0.105. Run `87686a-000` failed on the console
+   at trunk step 64 with `JSON write failed` and wrote no branch. Do not recover
+   it. Cell `031` of `766d4b` failed earlier with the same device message and is
+   not a result. The stored decisions remain ternary `d` 80, 4 layers, `d_ff` 262
+   and 2-bit nominal `d_ff` 193 (trained cell `027` submitted `d_ff` 205,
+   1.4914/1.3663/1.2766). The scalar recipe is not named. `766d4b` and `4236fd`
+   stay stopped. A new trainer package is a separate decision; do not resume
+   this campaign onto the installed package.
 2. Review the completed E0 report (roadmap gate 4) before accepting a scientific
    E1 ADR. The rules that do not depend on that report — books, assignment,
    dead codes, checkpoints, token parity, F1, and what the container must count —

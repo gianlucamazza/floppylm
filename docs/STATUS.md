@@ -5,13 +5,14 @@ bump or campaign start/stop. Last updated: **2026-10-09**.
 
 ## Where this stands
 
-E0 is running campaign `e0-20261009T150330Z-87686a` on the accepted Xbox package 0.1.0.105.
-Host freeze `46f316d`, unit `floppylm-e0-campaign-20261009T150327Z`, phase `paired-seeds`,
-under [ADR 0020](adr/0020-target-window-parity.md) and [ADR 0021](adr/0021-paired-seed-successor.md).
-It copies the stored decisions of stopped campaign `e0-20261007T164712Z-766d4b` and trains
-all ten paired seeds fresh. Ternary is `d` 80, 4 layers, `d_ff` 262, lr 0.01, wd 0.1.
-2-bit is `d` 96, 3 layers, nominal `d_ff` 193, lr 0.003, wd 0.1. The scalar recipe is not named.
-A failed device job stops this campaign and is not recovered.
+E0 stopped campaign `e0-20261009T150330Z-87686a` at 2026-10-09T15:12:23Z on the accepted
+Xbox package 0.1.0.105. Host freeze `46f316d`, unit `floppylm-e0-campaign-20261009T150327Z`,
+phase `paired-seeds`, under [ADR 0020](adr/0020-target-window-parity.md) and
+[ADR 0021](adr/0021-paired-seed-successor.md). The first fresh seed, run `87686a-000`
+(ternary `d` 80, 4 layers, `d_ff` 262, seed 0), failed on the console at trunk step 64
+with `JSON write failed`. No branch was written. It is not a result. Do not recover it.
+The worker is ready on package 0.1.0.105 and holds no job. The same device message stopped
+`766d4b` cell `031` at trunk step 128. The scalar recipe is not named.
 
 Campaign `766d4b` stays stopped at 2026-10-09T12:07:22Z. It opened at `grid-ternary` under
 ADR 0020, host freeze `11d608a`, unit `floppylm-e0-campaign-20261008T063808Z`. Cell `031`,
@@ -59,8 +60,8 @@ phase selection is the neutral shape, `d` 96, 3 layers, nominal `d_ff` 193,
 lr 0.003, wd 0.1, at 1.4914/1.3663/1.2766. The campaign then stopped in
 `paired-seeds`: cell `031`, ternary seed 1, failed at trunk step 128 with
 `JSON write failed`. Do not recover that failed job.
-Campaign `e0-20261009T150330Z-87686a` is the running paired-seed successor. It does not
-resume `c58a86` or `766d4b`.
+Campaign `e0-20261009T150330Z-87686a` stopped on its first fresh seed and is not a result.
+It does not resume `c58a86` or `766d4b`.
 The generated report records 29 trials and 21 byte repairs, and no completed
 baseline: [campaign report](evidence/e0-v2/campaigns/e0-20261004T103838Z-c58a86/notes.md).
 
@@ -69,8 +70,8 @@ The 1/16 pilot rules that do not name the scalar winner are proposed in
 [the pilot proposal](adr/proposals/e1-1-16-pilot.md) and are not accepted.
 Host init-pack is on main as [ADR 0019](adr/0019-host-init-pack.md)
 ([PR #22](https://github.com/gianlucamazza/floppylm/pull/22), `328c906`). It applies
-to fresh attempts of campaign `e0-20261009T150330Z-87686a`. It is not part of `c58a86`
-and does not apply to the cells already measured.
+to a future fresh attempt. It is not part of `c58a86` and does not apply to the cells
+already measured. Run `87686a-000` failed before a branch.
 
 The table is the operator record: package identity, campaign ids, and stopped jobs. The
 paragraph above is the quality state. Measured cells are in the
@@ -82,12 +83,12 @@ paragraph above is the quality state. Measured cells are in the
 | E0 v2 software       | **measured**: harness, gates and smoke ([evidence](evidence/README.md))                                                                                                                 |
 | S1–S10, scale policy | accepted ([ADR 0008](adr/0008-e0-numeric-protocol.md), [ADR 0011](adr/0011-e0-row-scale-selection.md))                                                                                  |
 | Xbox package | **accepted** `GianlucaMazza.XgpuE0_0.1.0.105_x64__g0p5dcfz4t9z4`, source `128434e81837ec1558f7e3d68a7f8849a91aa054`, CI [37194378620](https://github.com/gianlucamazza/xbox-gpu-training/actions/runs/37194378620). [Evidence](evidence/xbox-e0-20261004-105/notes.md): full gates, bit-identical 38/38 versus [0.1.0.102](evidence/xbox-e0-20261004-102/notes.md). Shader CSO unchanged. The publish path no longer truncates a stable checkpoint temporary. Scientific 4T jobs on this package passed trunk 896 and 2112. |
-| E0 campaign | **running** `e0-20261009T150330Z-87686a` since 2026-10-09T15:03:30Z on `0.1.0.105`, host freeze `46f316d`, protocol ADR 0020, [ADR 0021](adr/0021-paired-seed-successor.md), phase `paired-seeds`, unit `floppylm-e0-campaign-20261009T150327Z`. Ten paired seeds train fresh from the stored `766d4b` decisions: ternary `d` 80, 4 layers, `d_ff` 262, lr 0.01, wd 0.1; 2-bit `d` 96, 3 layers, nominal `d_ff` 193, lr 0.003, wd 0.1. The scalar recipe is not named. A failed device job stops the campaign and is not recovered. `e0-20261007T164712Z-766d4b` stays stopped at 2026-10-09T12:07:22Z. Cell `031` is not a result. Do not start `floppylm-e0-campaign-20261008T063808Z` or `floppylm-e0-campaign-20261007T164709Z`. `e0-20261004T103838Z-c58a86` stays stopped. [Launch record](evidence/e0-launch-20261004-105/notes.md). |
+| E0 campaign | **stopped** `e0-20261009T150330Z-87686a` at 2026-10-09T15:12:23Z on `0.1.0.105`, host freeze `46f316d`, protocol ADR 0020, [ADR 0021](adr/0021-paired-seed-successor.md), phase `paired-seeds`, unit `floppylm-e0-campaign-20261009T150327Z`. Run `87686a-000` (ternary seed 0, `d` 80, 4 layers, `d_ff` 262) failed on the console at trunk step 64 with `JSON write failed`. No branch. Not a result. Do not recover it. Worker is ready and holds no job. Do not start that unit, `floppylm-e0-campaign-20261008T063808Z`, or `floppylm-e0-campaign-20261007T164709Z`. `766d4b` cell `031` failed earlier with the same device message at trunk step 128 and is not a result. Stored decisions remain ternary `d_ff` 262 and 2-bit nominal `d_ff` 193. The scalar recipe is not named. `c58a86` stays stopped. [Launch record](evidence/e0-launch-20261004-105/notes.md). |
 | Previous E0 campaign | **stopped** `e0-20261004T082243Z-31972d` at 2026-10-04T09:28:41Z on `0.1.0.102` (freeze `4de17b3`). `progress_stall` at published trunk 2112. Preserved checkpoint sha256 `3fb5d57cb03591afcbf90054c97544f6abcb6e075c1a297139335d6ae0c86483`, 23713680 bytes. Not resumed onto `0.1.0.105`. Before that, `e0-20261002T191632Z-ca781f` on 0.1.0.93 (2026-10-03T00:04:51Z). Trial `000` **eligible** (fill 0.9990/0.9998/1.0012, val bpb 1.5155/1.3951/1.3160). Trial `001` **eligible** after S3 `d_ff` 400 (fill 0.9996/1.0007/1.0009, val bpb 1.5100/1.3916/1.3082, bytes 85904/86000/86015). Trial `002` row8log **interrupted** at stop, not a result. Do not resume `ca781f` onto 0.1.0.95. Frozen FloppyLM `3c3c79d`. |
 | Previous campaign    | `e0-20261001T163456Z-fdab67` (0.1.0.56) **stopped**, 001 incomplete; do not resume. Before that, `e0-20261001T090514Z-4236fd` (0.1.0.28) stopped unsaturated — [record](evidence/e0-v2/campaigns/e0-20261001T090514Z-4236fd/notes.md) |
 | E0 saturation gate   | recorded, not an eligibility gate ([ADR 0015](adr/0015-e0-fixed-data-frontier.md)) |
 | Host recovery        | [ADR 0017](adr/0017-runtime-liveness.md) merged ([PR #7](https://github.com/gianlucamazza/floppylm/pull/7)); paired with accepted 0.1.0.93. |
-| E0 quality results   | scale selected `row8log`; MLP selected SwiGLU, nominal `d_ff` 274; ternary tuning closed at lr 0.01, delta 0.5; `c58a86` ternary grid refused; `766d4b` stopped in `paired-seeds` on 2026-10-09; ternary phase selection `d` 80, 4 layers, `d_ff` 262; 2-bit phase selection is the neutral shape at 4T val bpb 1.2766; `87686a` is training the ten paired seeds; the scalar recipe is not named |
+| E0 quality results   | scale selected `row8log`; MLP selected SwiGLU, nominal `d_ff` 274; ternary tuning closed at lr 0.01, delta 0.5; `c58a86` ternary grid refused; `766d4b` stopped in `paired-seeds` on 2026-10-09; ternary phase selection `d` 80, 4 layers, `d_ff` 262; 2-bit phase selection is the neutral shape at 4T val bpb 1.2766; `87686a` stopped on its first fresh seed with no branch; the scalar recipe is not named |
 | E1 qualification     | CPU functional qualification **measured** ([ADR 0013](adr/0013-e1-functional-qualification.md), [evidence](evidence/e1-qualification-20261001/notes.md)); Xbox vector qualification pending |
 | Scientific E1–E4     | **specified**, gated by E0 and an accepted E1 protocol ([roadmap](roadmap.md), [completion plan](completion-plan.md)) |
 
