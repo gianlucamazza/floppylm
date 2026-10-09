@@ -1,11 +1,11 @@
 # Status
 
 The only page that states live project state. Update it — and nothing else — on every package
-bump or campaign start/stop. Last updated: **2026-10-08**.
+bump or campaign start/stop. Last updated: **2026-10-09**.
 
 ## Where this stands
 
-E0 is training a successor scalar grid on the accepted Xbox package 0.1.0.105.
+E0 stopped a successor scalar campaign on the accepted Xbox package 0.1.0.105.
 Campaign `e0-20261007T164712Z-766d4b` opened at `grid-ternary` under
 [ADR 0020](adr/0020-target-window-parity.md), host freeze `11d608a`, unit
 `floppylm-e0-campaign-20261008T063808Z`. It copied the closed row8log scale,
@@ -15,8 +15,14 @@ Cells 000–007 repeat the `c58a86` cooldown artifacts. Cell 010 repeats
 `c58a86-104-repair`. Cells 008, 009, 011 and 012 do not repeat the earlier
 nominal or repaired artifacts. The grid comparison is byte-comparable and
 rank-stable. The stored ternary phase selection is `d` 80, 4 layers, `d_ff` 262,
-lr 0.01, wd 0.1 (1.4599/1.3375/1.2522). The campaign is in `tuning-2bit` on the
-neutral shape. Two 2-bit cells are indexed. The scalar recipe is not named.
+lr 0.01, wd 0.1 (1.4599/1.3375/1.2522). The campaign stopped at 2026-10-09T12:07:22Z in phase `paired-seeds`.
+Paired ternary seed 1, cell `031`, failed on the console at trunk step 128
+with `JSON write failed`. The worker is ready on package 0.1.0.105 and holds
+no job. Do not recover that failed job. Before the stop, the 2-bit grid closed
+byte-comparable and rank-stable. Its stored phase selection is `d` 96, 3 layers,
+nominal `d_ff` 193, lr 0.003, wd 0.1. Trained cell 027 submitted `d_ff` 205 and
+reached 1.4914/1.3663/1.2766. Paired ternary seed 0 repeated the ternary phase
+selection. The scalar recipe is not named.
 Campaign `e0-20261004T103838Z-c58a86` stays stopped. Its ternary set was refused
 and is not a decision.
 
@@ -48,9 +54,11 @@ All thirteen cells are eligible and indexed. The comparison is byte-comparable.
 The stored ternary phase selection is `d` 80, 4 layers, `d_ff` 262
 (1.4599/1.3375/1.2522), also the minimum at T and 2T. The gap to the neutral
 SwiGLU seed 0 repair at 4T (1.2615) is 0.009. The two SwiGLU seeds differ by
-0.018. The phase is now `tuning-2bit` on the neutral shape. Two eligible 2-bit
-cells are indexed, both at submitted `d_ff` 205 and lr 0.001: wd 0 reaches
-1.3559 at 4T, wd 0.1 reaches 1.3451. They are not a format decision.
+0.018. The 2-bit grid later closed byte-comparable and rank-stable. Its stored
+phase selection is the neutral shape, `d` 96, 3 layers, nominal `d_ff` 193,
+lr 0.003, wd 0.1, at 1.4914/1.3663/1.2766. The campaign then stopped in
+`paired-seeds`: cell `031`, ternary seed 1, failed at trunk step 128 with
+`JSON write failed`. Do not recover that failed job.
 The generated report records 29 trials and 21 byte repairs, and no completed
 baseline: [campaign report](evidence/e0-v2/campaigns/e0-20261004T103838Z-c58a86/notes.md).
 
@@ -72,12 +80,12 @@ paragraph above is the quality state. Measured cells are in the
 | E0 v2 software       | **measured**: harness, gates and smoke ([evidence](evidence/README.md))                                                                                                                 |
 | S1–S10, scale policy | accepted ([ADR 0008](adr/0008-e0-numeric-protocol.md), [ADR 0011](adr/0011-e0-row-scale-selection.md))                                                                                  |
 | Xbox package | **accepted** `GianlucaMazza.XgpuE0_0.1.0.105_x64__g0p5dcfz4t9z4`, source `128434e81837ec1558f7e3d68a7f8849a91aa054`, CI [37194378620](https://github.com/gianlucamazza/xbox-gpu-training/actions/runs/37194378620). [Evidence](evidence/xbox-e0-20261004-105/notes.md): full gates, bit-identical 38/38 versus [0.1.0.102](evidence/xbox-e0-20261004-102/notes.md). Shader CSO unchanged. The publish path no longer truncates a stable checkpoint temporary. Scientific 4T jobs on this package passed trunk 896 and 2112. |
-| E0 campaign | **running** `e0-20261007T164712Z-766d4b` since 2026-10-07T16:47:12Z on `0.1.0.105`, host freeze `11d608a`, protocol ADR 0020, phase `tuning-2bit`. Unit `floppylm-e0-campaign-20261008T063808Z` (explicit recover; do not start `floppylm-e0-campaign-20261007T164709Z`). Copied closed facts: row8log, SwiGLU nominal `d_ff` 274, ternary tuning lr 0.01, delta 0.5, wd 0.1. Thirteen indexed ternary cells are eligible and byte-comparable. The stored ternary phase selection is `d` 80, 4 layers, `d_ff` 262. Two indexed 2-bit tuning cells are not a format decision. The scalar recipe is not named. `e0-20261004T103838Z-c58a86` stays stopped (host freeze `f76b4c8`; ternary set refused, 4T bytes 85098–85982, `max/min − 1` = 1.0388%). Do not resume `c58a86`. [Launch record](evidence/e0-launch-20261004-105/notes.md). [Stopped report](evidence/e0-v2/campaigns/e0-20261004T103838Z-c58a86/notes.md). |
+| E0 campaign | **stopped** `e0-20261007T164712Z-766d4b` at 2026-10-09T12:07:22Z on `0.1.0.105`, host freeze `11d608a`, protocol ADR 0020, phase `paired-seeds`. Cell `031` (paired ternary seed 1, `d` 80, 4 layers, `d_ff` 262) failed on the console at trunk step 128 with `JSON write failed`. Worker is ready and holds no job. Do not recover that failed job. Do not start `floppylm-e0-campaign-20261008T063808Z` or `floppylm-e0-campaign-20261007T164709Z`. Ternary phase selection remains `d` 80, 4 layers, `d_ff` 262. The 2-bit grid is byte-comparable and rank-stable; stored phase selection `d` 96, 3 layers, nominal `d_ff` 193, lr 0.003, wd 0.1, trained 4T val bpb 1.2766. Paired ternary seed 0 repeated 1.4599/1.3375/1.2522. The scalar recipe is not named. `e0-20261004T103838Z-c58a86` stays stopped. Do not resume `c58a86`. [Launch record](evidence/e0-launch-20261004-105/notes.md). |
 | Previous E0 campaign | **stopped** `e0-20261004T082243Z-31972d` at 2026-10-04T09:28:41Z on `0.1.0.102` (freeze `4de17b3`). `progress_stall` at published trunk 2112. Preserved checkpoint sha256 `3fb5d57cb03591afcbf90054c97544f6abcb6e075c1a297139335d6ae0c86483`, 23713680 bytes. Not resumed onto `0.1.0.105`. Before that, `e0-20261002T191632Z-ca781f` on 0.1.0.93 (2026-10-03T00:04:51Z). Trial `000` **eligible** (fill 0.9990/0.9998/1.0012, val bpb 1.5155/1.3951/1.3160). Trial `001` **eligible** after S3 `d_ff` 400 (fill 0.9996/1.0007/1.0009, val bpb 1.5100/1.3916/1.3082, bytes 85904/86000/86015). Trial `002` row8log **interrupted** at stop, not a result. Do not resume `ca781f` onto 0.1.0.95. Frozen FloppyLM `3c3c79d`. |
 | Previous campaign    | `e0-20261001T163456Z-fdab67` (0.1.0.56) **stopped**, 001 incomplete; do not resume. Before that, `e0-20261001T090514Z-4236fd` (0.1.0.28) stopped unsaturated — [record](evidence/e0-v2/campaigns/e0-20261001T090514Z-4236fd/notes.md) |
 | E0 saturation gate   | recorded, not an eligibility gate ([ADR 0015](adr/0015-e0-fixed-data-frontier.md)) |
 | Host recovery        | [ADR 0017](adr/0017-runtime-liveness.md) merged ([PR #7](https://github.com/gianlucamazza/floppylm/pull/7)); paired with accepted 0.1.0.93. |
-| E0 quality results   | scale selected `row8log`; MLP selected SwiGLU, nominal `d_ff` 274; ternary tuning closed at lr 0.01, delta 0.5; `c58a86` ternary grid refused; successor `766d4b` has thirteen eligible ternary cells and a byte-comparable, rank-stable ternary phase selection (`d` 80, 4 layers, `d_ff` 262); phase `tuning-2bit` has two indexed cells; the scalar recipe is not named |
+| E0 quality results   | scale selected `row8log`; MLP selected SwiGLU, nominal `d_ff` 274; ternary tuning closed at lr 0.01, delta 0.5; `c58a86` ternary grid refused; successor `766d4b` stopped in `paired-seeds` on 2026-10-09; ternary phase selection `d` 80, 4 layers, `d_ff` 262; 2-bit phase selection is the neutral shape at 4T val bpb 1.2766; the scalar recipe is not named |
 | E1 qualification     | CPU functional qualification **measured** ([ADR 0013](adr/0013-e1-functional-qualification.md), [evidence](evidence/e1-qualification-20261001/notes.md)); Xbox vector qualification pending |
 | Scientific E1–E4     | **specified**, gated by E0 and an accepted E1 protocol ([roadmap](roadmap.md), [completion plan](completion-plan.md)) |
 
