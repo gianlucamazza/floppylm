@@ -10,12 +10,14 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 from .codec import SCALE_POLICIES, ScalarCodec, scalar
+from .vq import VectorBook, VectorCodec
 
 MLPS = ("gelu", "relu2", "swiglu")
 ROPE_THETA = 10000.0
 RMSNORM_EPS = float(torch.finfo(torch.float32).eps)  # torch default, stated explicitly
 GELU_APPROXIMATE = "none"  # exact erf form
-FORMATS = ("ternary", "2bit", "4bit")
+FORMATS = ("ternary", "2bit", "4bit")  # E0 scalar formats; the vq core is not one of them
+CORE_FORMATS = (*FORMATS, "vq")
 
 
 @dataclass(frozen=True)
@@ -39,8 +41,10 @@ class GPTConfig:
             raise ValueError(f"config sizes must be positive ints: {self}")
         if self.d % self.n_heads or (self.d // self.n_heads) % 2:
             raise ValueError("d must split into heads of even size")
-        if self.mlp not in MLPS or self.core_fmt not in FORMATS or self.emb_fmt not in FORMATS:
+        if self.mlp not in MLPS or self.core_fmt not in CORE_FORMATS or self.emb_fmt not in FORMATS:
             raise ValueError(f"unknown mlp or format: {self}")
+        if self.core_fmt == "vq" and (self.emb_fmt != "4bit" or self.scale_policy != "row8log"):
+            raise ValueError("vq core uses a 4-bit embedding and row8log scales")
         if self.scale_policy not in SCALE_POLICIES:
             raise ValueError(f"unknown scale policy: {self}")
         if not (0 <= self.delta < 4) or not isinstance(self.qk_norm, bool):
@@ -66,11 +70,15 @@ class GPTConfig:
         return [("q", (self.vocab, d))] + block * self.n_layers + [("n", (d,))]
 
     def codecs(self) -> tuple[ScalarCodec, ScalarCodec]:
-        """(embedding codec, core codec)."""
+        """(embedding codec, core codec). A vq core needs the shared book on the model."""
+        if self.core_fmt == "vq":
+            raise ValueError("vq core codec needs the shared book; construct TinyGPT")
         emb = scalar(self.emb_fmt, self.scale_policy)
         return emb, scalar(self.core_fmt, self.scale_policy, self.delta)
 
     def nominal_bits(self) -> float:
+        if self.core_fmt == "vq":
+            raise ValueError("vq nominal bits include the shared book; ask the model")
         emb, core = self.codecs()
         bits = 0.0
         for i, (kind, shape) in enumerate(self.tensor_shapes()):
@@ -88,7 +96,7 @@ def _fp16(w: torch.Tensor) -> torch.Tensor:
 class QLinear(nn.Module):
     """Linear layer whose weight is always the codec's reconstruction (frozen after unpack)."""
 
-    def __init__(self, d_in: int, d_out: int, codec: ScalarCodec, std: float) -> None:
+    def __init__(self, d_in: int, d_out: int, codec: ScalarCodec | VectorCodec, std: float) -> None:
         super().__init__()
         self.codec = codec
         self.frozen = False
@@ -127,7 +135,7 @@ class Rope(nn.Module):
 
 
 class Block(nn.Module):
-    def __init__(self, cfg: GPTConfig, codec: ScalarCodec, rope: Rope) -> None:
+    def __init__(self, cfg: GPTConfig, codec: ScalarCodec | VectorCodec, rope: Rope) -> None:
         super().__init__()
         d, f = cfg.d, cfg.d_ff
         out_std = 1 / math.sqrt(2 * cfg.n_layers)
@@ -162,11 +170,23 @@ class Block(nn.Module):
 
 
 class TinyGPT(nn.Module):
-    def __init__(self, cfg: GPTConfig) -> None:
+    def __init__(self, cfg: GPTConfig, book: VectorBook | None = None) -> None:
         super().__init__()
         assert cfg.d % cfg.n_heads == 0
         self.cfg = cfg
-        emb, core = cfg.codecs()
+        # The book is not a GPTConfig field. ADR 0023 puts one VQB1 in the FLP2
+        # shared section; delta stays in the header and the vector core ignores it.
+        if cfg.core_fmt == "vq":
+            if not isinstance(book, VectorBook):
+                raise ValueError("vq core requires one VectorBook")
+            self.book: VectorBook | None = book
+            emb = scalar(cfg.emb_fmt, cfg.scale_policy)
+            core: ScalarCodec | VectorCodec = VectorCodec(book, "row8log")
+        else:
+            if book is not None:
+                raise ValueError("scalar core carries no book")
+            self.book = None
+            emb, core = cfg.codecs()
         rope = Rope(cfg.d // cfg.n_heads, cfg.ctx)
         self.emb = QLinear(cfg.d, cfg.vocab, emb, 1 / math.sqrt(cfg.d))  # (vocab, d), tied
         self.blocks = nn.ModuleList(Block(cfg, core, rope) for _ in range(cfg.n_layers))
@@ -191,11 +211,28 @@ class TinyGPT(nn.Module):
             out += [b.norm1, b.qkv, b.proj, b.norm2, b.fc, b.fc2]
         return out + [self.norm]
 
+    def shared_section(self) -> bytes:
+        """One VQB1 book, or empty for a scalar core. Not once per matrix."""
+        return b"" if self.book is None else self.book.to_bytes()
+
     def nominal_bits(self) -> float:
-        return self.cfg.nominal_bits()
+        if self.book is None:
+            return self.cfg.nominal_bits()
+        bits = 8 * len(self.shared_section())
+        emb = scalar(self.cfg.emb_fmt, self.cfg.scale_policy)
+        core = VectorCodec(self.book, "row8log")
+        for i, (kind, shape) in enumerate(self.cfg.tensor_shapes()):
+            if kind == "n":
+                bits += 16 * shape[0]
+            else:
+                bits += (emb if i == 0 else core).nominal_bits(shape)
+        return bits
 
     def stored_params(self) -> int:
-        return sum(t.weight.numel() for t in self.stored_tensors() if isinstance(t, QLinear))
+        n = sum(t.weight.numel() for t in self.stored_tensors() if isinstance(t, QLinear))
+        if self.book is not None and self.book.learned:
+            n += self.book.values.numel()
+        return n
 
     def core_params(self) -> int:
         return self.stored_params() - self.emb.weight.numel()

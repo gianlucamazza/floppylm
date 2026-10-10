@@ -1,4 +1,8 @@
-"""Standalone vector-weight oracles; not a scientific model or FLP2 extension."""
+"""Vector-weight oracle.
+
+VQB1 bytes are the one FLP2 shared section of a vq core. VQF1 stays the
+functional fixture and is not that container.
+"""
 
 from __future__ import annotations
 
@@ -106,6 +110,28 @@ class VectorCodec:
             raise CodecError("invalid vector scale policy or assignment chunk")
         self.book, self.policy, self.chunk = book, policy, chunk
         self.scales = scalar("2bit", policy)
+
+    @property
+    def levels(self) -> int:
+        return self.book.levels
+
+    def scale_nbytes(self, rows: int) -> int:
+        return self.scales.scale_nbytes(rows)
+
+    def nominal_bits(self, shape: tuple[int, int]) -> float:
+        rows, cols = shape
+        groups = math.ceil(cols / self.book.dimension)
+        return rows * groups * self.book.bits + self.scales.scale_bits(rows)
+
+    def shared_state(self) -> bytes:
+        # The model writes the book once. Repeating it on every matrix would
+        # count the same entries more than once.
+        return b""
+
+    def weight(self, w: torch.Tensor) -> torch.Tensor:
+        symbols, scale_bytes = self.encode(w)
+        recon = self.decode(symbols, scale_bytes, tuple(w.shape))
+        return recon + (w - w.detach())
 
     def _inputs(self, weight):
         if weight.ndim != 2 or min(weight.shape) < 1 or weight.device.type != "cpu":

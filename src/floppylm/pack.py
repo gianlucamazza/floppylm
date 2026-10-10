@@ -2,7 +2,7 @@
 
 Layout (FLP2):
   "FLP2" | u16 header_len | header JSON (GPTConfig, sorted keys, no spaces)
-  | u32 shared_len | shared section (codebooks / seeds, counted once; empty for scalar codecs)
+  | u32 shared_len | shared section (one VQB1 book for a vq core; empty for scalar codecs)
   | per tensor in `GPTConfig.tensor_shapes()` order:
       quantized -> scale bytes | u32 len | tagged symbol stream (rans.encode_best)
       norm      -> fp16 values
@@ -22,6 +22,7 @@ import torch
 from . import rans
 from .codec import CodecError
 from .model import GPTConfig, QLinear, TinyGPT
+from .vq import VectorBook
 
 MAGIC = b"FLP2"
 LEGACY_MAGIC = b"FLP1"
@@ -69,7 +70,7 @@ def pack_sections(m: TinyGPT) -> tuple[bytes, dict[str, int]]:
             if not torch.equal(current[name].detach().cpu(), original):
                 raise FormatError(f"loaded inference model was modified: {name}")
     header = _header(m.cfg)
-    shared = b"".join(t.codec.shared_state() for t in m.stored_tensors() if isinstance(t, QLinear))
+    shared = m.shared_section()
     out = bytearray(MAGIC + struct.pack("<H", len(header)) + header)
     out += struct.pack("<I", len(shared)) + shared
     parts = {
@@ -129,9 +130,19 @@ def unpack(blob: bytes) -> TinyGPT:
     """Rebuild the model exactly as stored. Raises FormatError on any malformed input."""
     r = _Reader(bytes(blob))
     cfg = _read_config(r)
-    if r.take(r.u32("shared length"), "shared section"):
+    shared = r.take(r.u32("shared length"), "shared section")
+    if cfg.core_fmt == "vq":
+        if not shared:
+            raise FormatError("vq core requires one shared book")
+        try:
+            book = VectorBook.from_bytes(shared)
+        except CodecError as error:
+            raise FormatError(f"shared book: {error}") from error
+        m = TinyGPT(cfg, book)
+    elif shared:
         raise FormatError("scalar codecs carry no shared section")
-    m = TinyGPT(cfg)
+    else:
+        m = TinyGPT(cfg)
     with torch.no_grad():
         for i, t in enumerate(m.stored_tensors()):
             w = t.weight
