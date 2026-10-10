@@ -22,7 +22,9 @@ records ternary minus 2-bit −0.023838 bpb, sample SD 0.013733, frozen gate
 [report](evidence/e0-v2/campaigns/e0-20261009T174028Z-94847b/notes.md) marks
 the baseline complete and keeps both stored arms. Roadmap gate 4 is recorded
 in the [review](evidence/e0-review-20261010-94847b/notes.md). The 1/16 pilot
-proposal stays unaccepted.
+proposal now copies both stored arms, the selection hash, and the ADR 0020
+window. It stays unaccepted: the FLP2 book byte order and the header seed
+are still unchosen.
 [Issue #26](https://github.com/gianlucamazza/floppylm/issues/26) is closed.
 [Issue #25](https://github.com/gianlucamazza/floppylm/issues/25) stays open.
 Campaign
@@ -88,8 +90,9 @@ baseline: [campaign report](evidence/e0-v2/campaigns/e0-20261004T103838Z-c58a86/
 
 E1–E4 stay specified. The gate 4 review of the completed E0 report is recorded.
 They wait for an accepted E1 protocol.
-The 1/16 pilot rules that do not name the scalar winner are proposed in
-[the pilot proposal](adr/proposals/e1-1-16-pilot.md) and are not accepted.
+The 1/16 pilot proposal now names both stored arms, the selection hash, and
+the ADR 0020 window. It is not accepted: the FLP2 book byte order is unchosen
+([the pilot proposal](adr/proposals/e1-1-16-pilot.md)).
 Host init-pack is on main as [ADR 0019](adr/0019-host-init-pack.md)
 ([PR #22](https://github.com/gianlucamazza/floppylm/pull/22), `328c906`). It applies
 to a future fresh attempt. It is not part of `c58a86` and does not apply to the cells

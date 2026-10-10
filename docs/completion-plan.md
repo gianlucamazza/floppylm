@@ -72,9 +72,11 @@ Continue in this order:
    The rules that do not depend on that report — books, assignment,
    dead codes, checkpoints, token parity, F1, and what the container must count —
    stay proposed in [the 1/16 pilot proposal](adr/proposals/e1-1-16-pilot.md)
-   and are not accepted. A later ADR still has to copy both stored decisions
-   and that selection hash, replace the proposal's reciprocal byte check with
-   the ADR 0020 window, and fix the byte layout.
+   and are not accepted. That proposal now copies both stored decisions and
+   the selection hash, and its equal-byte rule is the ADR 0020 window. The
+   scientific file is FLP2. `VQF1` stays the functional fixture. The byte
+   order of the book and the header seed is still unchosen, so the proposal
+   cannot be accepted as it stands.
 3. The console is free. No Xbox vector executor exists in this repository or in
    the accepted trainer. `src/floppylm/vq.py` remains the CPU fixture oracle from
    [ADR 0013](adr/0013-e1-functional-qualification.md). Qualification has not

@@ -3,9 +3,10 @@
 ## Status
 
 Proposed — 2026-10-04. Not an ADR. Does not authorize code, a campaign, a console
-job, or an F1 verdict. Roadmap gate 4 still requires a review of the completed
-E0 report before any acceptance. Accepting this proposal creates the scientific
-E1 ADR; this file stays as context.
+job, or an F1 verdict. The gate 4 review is recorded and does not accept this
+file. Accepting this proposal would create the scientific E1 ADR; this file
+would stay as context. The FLP2 vector byte order is still unchosen, so this
+file cannot be accepted as it stands.
 
 ## Context
 
@@ -57,12 +58,16 @@ The scalar recipe stays unnamed.
    choice. VQ-seed uses the same G and rate as the learned arm beside it and
    stores the generator seed instead of the entries.
 4. **Equal coded bytes.** The target is the 1/16 serialized-byte target of the
-   E0 selection. Every arm's packed file must pass ADR 0015 individual and
-   reciprocal parity. Learned-book bytes are inside that file. A seed book
-   contributes no entry bytes. One width repair is allowed, under the repair
-   rule of the completed E0 campaign. The repair does not change G, rate, or
-   the book length. An init-pack adjustment applies only when that rule is
-   already accepted before the pilot starts.
+   E0 selection, 85937.5 bytes. Every arm's packed file must pass the
+   [ADR 0020](../0020-target-window-parity.md) window: each serialized size
+   within ±1% of that target. The reciprocal check `max/min − 1 ≤ 0.01` is
+   not a rule of this proposal. Learned-book bytes are inside that file. A
+   seed book contributes no entry bytes. Before the first training attempt,
+   one init-pack `d_ff` adjustment is allowed under
+   [ADR 0019](../0019-host-init-pack.md). After training, one S3 width repair
+   is allowed under the repair rule of campaign
+   `e0-20261009T174028Z-94847b`. Neither repair changes G, rate, or the book
+   length.
 5. **Tokens.** T is 20 times the stored-parameter count of the largest arm.
    Every arm sees that same token count, with cooldowns at T, 2T and 4T.
    Saturation is recorded and is not a gate.
@@ -98,21 +103,34 @@ The scalar recipe stays unnamed.
 14. **Accounting.** The file that parity reads contains the header, the
     embedding, the indices, the scales, the norms, and the learned book when
     the arm has one. The seed of a fixed book is inside the header. No side
-    file counts. The byte layout of that container is chosen at implementation
-    time, after acceptance, and must satisfy this list.
+    file counts. The scientific file is FLP2
+    ([ADR 0006](../0006-flp2-only.md)). `VQF1` and `VQB1` in
+    `src/floppylm/vq.py` are the functional fixture and are not that file.
+    FLP2's shared section is empty for every scalar codec, and nothing writes
+    a vector book into it. `GPTConfig` has no book-seed field. The byte order
+    that puts the seed in the header and the book in the counted file is not
+    chosen here.
 
-## Left until the E0 report
+## Copied from the E0 report
 
-- Scalar width, depth, `d_ff`, MLP, scale policy, learning rate, weight decay,
-  and which format won the paired comparison.
-- The selection-file hash those configs are copied from.
-- Whether the single width repair is only the trained-artifact repair, or also
-  an init-pack pass, if that pass has been accepted by then.
+These three blanks were open until the report. They are filled from
+`e0-20261009T174028Z-94847b` and are not a new measurement.
+
+- Both stored arms remain. Ternary is lower at T, 2T, 4T and on the test.
+  The paired magnitude is inside the frozen gate, so neither format is the
+  sole scalar recipe. Scalar ternary copies `d` 80, 4 layers, nominal
+  `d_ff` 262, SwiGLU, `row8log`, lr 0.01, wd 0.1. Scalar 2-bit copies `d` 96,
+  3 layers, nominal `d_ff` 193, SwiGLU, `row8log`, lr 0.003, wd 0.1.
+  Submitted `d_ff` 205 is not the stored 2-bit width.
+- The selection hash is
+  `de80fff08e750702784e6efbcb583ca86de566965207212c1c6531822a05bbe4`.
+- The width repair is both passes already used on that campaign: one
+  init-pack under ADR 0019, then at most one S3 repair.
 
 ## Consequences
 
-The text can be reviewed while E0 runs. Accepting it, merging vector training
-into the model, or starting a pilot remains forbidden until gate 4. A
+Accepting it, merging vector training into the model, or starting a pilot
+remains forbidden while the FLP2 book byte order is unchosen. A
 4096-entry G=16 book cannot be added afterwards as the 1/16 learned arm. The
 six ADR 0013 snapping pairs are not a validation search.
 
@@ -135,3 +153,13 @@ nominal `d_ff` 193, lr 0.003, wd 0.1. The selection hash is
 [ADR 0019](../0019-host-init-pack.md) is accepted, and the campaign also used
 one S3 repair. This proposal stays unaccepted. Its reciprocal byte check is
 not the rule of that campaign. Recording gate 4 does not accept this file.
+
+## Later (2026-10-10, evaluation)
+
+Decision 4 now cites the ADR 0020 window and the two repairs already used,
+init-pack then one S3. The copied recipes and the selection hash are in
+"Copied from the E0 report". Decision 14 no longer postpones the byte order
+until after acceptance. `VQF1` stays the functional fixture. The scientific
+file stays FLP2, and the order of the book and the header seed is still
+unchosen. This file stays proposed. No code, campaign, or console job is
+authorized.

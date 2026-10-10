@@ -88,3 +88,11 @@ The reading stands: draft PR #2 stays closed and unmerged, and the pages on
 `docs/excellence-research-20261001` are an audit dated 2026-10-01. They are
 not the live protocol. Acceptance of the pilot remains
 [issue #25](https://github.com/gianlucamazza/floppylm/issues/25).
+
+## Later (2026-10-10, evaluation)
+
+The 1/16 proposal now copies both stored arms and the selection hash, and its
+equal-byte rule is the ADR 0020 window. `VQF1` remains the functional fixture.
+The scientific file remains FLP2, and the byte order of the book and the
+header seed is still unchosen. The proposal stays unaccepted. No console job
+was started.
