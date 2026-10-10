@@ -65,12 +65,16 @@ Continue in this order:
    ternary minus 2-bit −0.023838 bpb against frozen gate 0.026322, inside the
    gate. The report keeps both stored arms. The campaign does not
    resume `87686a`.
-2. Review the completed E0 report (roadmap gate 4) before accepting a scientific
-   E1 ADR. The rules that do not depend on that report — books, assignment,
+2. The completed E0 report was reviewed on 2026-10-10
+   ([gate 4](evidence/e0-review-20261010-94847b/notes.md)). Both stored arms
+   remain. The selection hash is
+   `de80fff08e750702784e6efbcb583ca86de566965207212c1c6531822a05bbe4`.
+   The rules that do not depend on that report — books, assignment,
    dead codes, checkpoints, token parity, F1, and what the container must count —
-   are proposed in [the 1/16 pilot proposal](adr/proposals/e1-1-16-pilot.md) and
-   are not accepted. The ADR still has to copy the scalar recipe and the
-   selection hash from the E0 report, and to fix the byte layout.
+   stay proposed in [the 1/16 pilot proposal](adr/proposals/e1-1-16-pilot.md)
+   and are not accepted. A later ADR still has to copy both stored decisions
+   and that selection hash, replace the proposal's reciprocal byte check with
+   the ADR 0020 window, and fix the byte layout.
 3. After E0 releases the console, qualify any Xbox vector executor against the CPU
    oracle with identical inputs and artifact bytes. Choose backend/tokenizer only
    from the controlled qualification required by the owner. A scalar throughput

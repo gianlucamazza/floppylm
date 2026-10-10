@@ -123,3 +123,15 @@ does not measure books, cadence, or the F1 threshold. Training every allowed
 G as a search was rejected because G=16 at rate 0.75 does not fit and because
 choosing G after validation is a second comparison. Treating the ADR 0013
 canaries as the scientific ranking was already rejected by that ADR.
+
+## Later (2026-10-10, gate 4)
+
+[The review](../../evidence/e0-review-20261010-94847b/notes.md) records the
+completed paired campaign. Ternary is lower at T, 2T, 4T and on the test. The
+magnitude is inside the frozen gate, so both stored decisions remain: ternary
+`d` 80, 4 layers, nominal `d_ff` 262, lr 0.01, wd 0.1; 2-bit `d` 96, 3 layers,
+nominal `d_ff` 193, lr 0.003, wd 0.1. The selection hash is
+`de80fff08e750702784e6efbcb583ca86de566965207212c1c6531822a05bbe4`.
+[ADR 0019](../0019-host-init-pack.md) is accepted, and the campaign also used
+one S3 repair. This proposal stays unaccepted. Its reciprocal byte check is
+not the rule of that campaign. Recording gate 4 does not accept this file.

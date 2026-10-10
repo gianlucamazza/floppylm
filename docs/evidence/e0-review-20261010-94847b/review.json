@@ -1,0 +1,47 @@
+{
+  "review": "roadmap-gate-4",
+  "date": "2026-10-10",
+  "campaign": "e0-20261009T174028Z-94847b",
+  "finished": "2026-10-10T10:02:53+00:00",
+  "protocol_adr": "0020",
+  "host_freeze": "96a3054a2b0a0f8478abd4cd961b524c7b49cfdd",
+  "host_dirty": false,
+  "package": "GianlucaMazza.XgpuE0_0.1.0.109_x64__g0p5dcfz4t9z4",
+  "selection_sha256": "de80fff08e750702784e6efbcb583ca86de566965207212c1c6531822a05bbe4",
+  "test_report_sha256": "6ce7c1d5a9dc20b84a293c677e6f468ddfa2c2b9ca105ddd7edd99404c3db1f7",
+  "target_bytes": 85937.5,
+  "checks": {
+    "selection_sha256_matches_report": true,
+    "test_sha256_matches_report": true,
+    "ten_artifact_identities_match": true,
+    "baseline_complete": true,
+    "instability": null,
+    "counted_branches_inside_byte_window": true,
+    "counted_cells_unsaturated": true,
+    "rank_signs": {"T": -1, "2T": -1, "4T": -1},
+    "validation_paired_matches_report": true,
+    "test_paired_matches_report": true,
+    "validation_difference_inside_gate": true,
+    "test_difference_inside_gate": true
+  },
+  "means_val_bpb": {
+    "T": {"ternary": 1.460359107780096, "2bit": 1.5022786368831507},
+    "2T": {"ternary": 1.3422729419548807, "2bit": 1.3743939973488508},
+    "4T": {"ternary": 1.2621013606473734, "2bit": 1.2856275387350293}
+  },
+  "validation_paired": {
+    "mean": -0.02352617808765567,
+    "sd": 0.013161159132267848,
+    "gate_bpb": 0.026322318264535696
+  },
+  "test_paired": {
+    "mean": -0.023837978612919475,
+    "sd": 0.013733483433244126,
+    "frozen_gate_bpb": 0.026322318264535696
+  },
+  "stored_decisions": {
+    "ternary": {"d": 80, "n_layers": 4, "d_ff": 262, "lr": 0.01, "wd": 0.1},
+    "2bit": {"d": 96, "n_layers": 3, "d_ff": 193, "lr": 0.003, "wd": 0.1}
+  },
+  "outcome": "both stored arms remain; the 1/16 pilot proposal stays unaccepted"
+}

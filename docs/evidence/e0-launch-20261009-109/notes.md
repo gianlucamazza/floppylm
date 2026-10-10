@@ -66,3 +66,9 @@ test records ternary minus 2-bit −0.023838 bpb, sample SD 0.013733, frozen
 gate 0.026322. That difference is inside the gate. The
 [report](../e0-v2/campaigns/e0-20261009T174028Z-94847b/notes.md) marks the
 baseline complete and keeps both stored arms.
+
+## Later (2026-10-10, gate 4)
+
+Roadmap gate 4 is recorded in the
+[review](../e0-review-20261010-94847b/notes.md). Both stored arms remain. The
+1/16 pilot proposal stays unaccepted.

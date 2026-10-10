@@ -144,3 +144,9 @@ test is in progress. The scalar recipe is not named.
 Campaign `e0-20261009T174028Z-94847b` completed at 2026-10-10T10:02:53Z. The
 final-test difference is inside the frozen gate. The report keeps both stored
 arms.
+
+## Later (2026-10-10, gate 4)
+
+Roadmap gate 4 is recorded in the
+[review](../evidence/e0-review-20261010-94847b/notes.md). Both stored arms
+remain. The 1/16 pilot proposal stays unaccepted. No console job was started.
