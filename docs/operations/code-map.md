@@ -1,6 +1,7 @@
 # Code map
 
 One line per module; the code is the authority on behaviour, `--help` on flags.
+How the layers fit is [architecture](../architecture.md).
 
 ## Library — `src/floppylm/`
 

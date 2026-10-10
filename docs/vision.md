@@ -11,7 +11,7 @@ beat ternary — and must the code be learned, or is generating it enough?
 These criteria belong to thesis v0.2. The closed v0.1 stress test is a record in
 [concept](concept.md#stress-test-v01), not a success target.
 
-- Success requires E0–E2 **measured**, with F1 and F2 decided one way or the other. E0 quality is still pending.
+- Success requires E0–E2 **measured**, with F1 and F2 decided one way or the other. E0 is measured and keeps both stored arms ([STATUS](STATUS.md)). F1 and F2 are not decided.
 - If the thesis holds: E4 produces an image within the [ADR 0001](adr/0001-floppy-budget.md)
   budget that generates coherent TinyStories stories.
 - If it does not: the bpb-per-byte frontier under 1.5 MB (scalar vs vector, with and without

@@ -23,6 +23,8 @@ One line per term; the owner holds the definition of record.
 | Frozen selection                 | Artifacts chosen on val, fixed by hash before the test                         | [ADR 0005](adr/0005-e0v2-protocol.md)                                     |
 | S1–S10 | The accepted E0 numerical choices | [roadmap](roadmap.md#e0-v2--accepted-numerical-choices), [ADR 0008](adr/0008-e0-numeric-protocol.md) |
 | FLP2                             | The only blob format; FLP1 (pre-v2) is rejected                                | [ADR 0006](adr/0006-flp2-only.md)                                         |
+| `VQB1`                           | The one shared book in the FLP2 shared section of a vector core                | [ADR 0023](adr/0023-e1-1-16-pilot.md), [architecture](architecture.md)    |
+| `VQF1`                           | The CPU qualification fixture; not the scientific vector file                  | [ADR 0013](adr/0013-e1-functional-qualification.md), [architecture](architecture.md) |
 | `row16` / `row8log` / `tensor16` | Scale policies; scientific E0 uses only the first two                          | [ADR 0011](adr/0011-e0-row-scale-selection.md)                            |
 | Python oracle                    | The host PyTorch implementation every native result is checked against         | [ADR 0009](adr/0009-xbox-e0-backend.md)                                   |
 | Xbox backend / package           | The DX12/UWP E0 trainer; a package is one signed, installed build              | [ADR 0009](adr/0009-xbox-e0-backend.md), [runbook](operations/xbox-e0.md) |

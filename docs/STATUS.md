@@ -27,6 +27,7 @@ hash `de80fff08e750702784e6efbcb583ca86de566965207212c1c6531822a05bbe4`, the
 ADR 0020 window, and the FLP2 byte order. No further E0 campaign is opened.
 The host layout is `b362991`. The host trainer is `e9e7ef8`
 ([python run 38095852624](https://github.com/gianlucamazza/floppylm/actions/runs/38095852624)).
+The layer map is [architecture](architecture.md) (`860b92c`).
 The pilot has not started, and no console job is authorized.
 [Issue #26](https://github.com/gianlucamazza/floppylm/issues/26) is closed.
 [Issue #25](https://github.com/gianlucamazza/floppylm/issues/25) is closed by
@@ -95,7 +96,9 @@ baseline: [campaign report](evidence/e0-v2/campaigns/e0-20261004T103838Z-c58a86/
 E1–E4 stay specified. The gate 4 review of the completed E0 report is recorded.
 The 1/16 protocol is accepted as [ADR 0023](adr/0023-e1-1-16-pilot.md).
 The host layout is `b362991`. The host trainer is `e9e7ef8`: decisions 7–9
-on CPU. The pilot has not started. No console job is authorized.
+on CPU. The layer map is [architecture](architecture.md) (`860b92c`,
+[python run 38096623398](https://github.com/gianlucamazza/floppylm/actions/runs/38096623398)).
+The pilot has not started. No console job is authorized.
 E1a/E1/E1b and E2–E4 still wait on their own gates.
 Host init-pack is on main as [ADR 0019](adr/0019-host-init-pack.md)
 ([PR #22](https://github.com/gianlucamazza/floppylm/pull/22), `328c906`). It applies
@@ -119,7 +122,7 @@ paragraph above is the quality state. Measured cells are in the
 | Host recovery        | [ADR 0017](adr/0017-runtime-liveness.md) merged ([PR #7](https://github.com/gianlucamazza/floppylm/pull/7)); paired with accepted 0.1.0.93. |
 | E0 quality results   | scale selected `row8log`; MLP selected SwiGLU, nominal `d_ff` 274; ternary tuning closed at lr 0.01, delta 0.5; `c58a86` ternary grid refused; `766d4b` stopped in `paired-seeds` on 2026-10-09; ternary phase selection `d` 80, 4 layers, `d_ff` 262; 2-bit phase selection is the neutral shape at 4T val bpb 1.2766; `87686a` stopped on its first fresh seed with no branch; `94847b` completed at 2026-10-10T10:02:53Z with ten eligible paired cells, a ten-hash freeze, and a final-test difference inside the frozen gate; both stored arms remain in the baseline; roadmap gate 4 is recorded and the 1/16 protocol is accepted as [ADR 0023](adr/0023-e1-1-16-pilot.md); the pilot has not started |
 | E1 qualification     | CPU functional qualification **measured** ([ADR 0013](adr/0013-e1-functional-qualification.md), [evidence](evidence/e1-qualification-20261001/notes.md)); Xbox vector qualification has not started: no vector executor exists to compare with that oracle |
-| Scientific E1–E4     | **specified**. The 1/16 protocol is accepted as [ADR 0023](adr/0023-e1-1-16-pilot.md). The host layout is `b362991`. The host trainer is `e9e7ef8` (decisions 7–9 on CPU; [python run 38095852624](https://github.com/gianlucamazza/floppylm/actions/runs/38095852624)). The pilot has not started. No console job is authorized. E1a/E1/E1b and E2–E4 stay behind their own gates ([roadmap](roadmap.md), [completion plan](completion-plan.md)) |
+| Scientific E1–E4     | **specified**. The 1/16 protocol is accepted as [ADR 0023](adr/0023-e1-1-16-pilot.md). The host layout is `b362991`. The host trainer is `e9e7ef8` (decisions 7–9 on CPU; [python run 38095852624](https://github.com/gianlucamazza/floppylm/actions/runs/38095852624)). The layer map is [architecture](architecture.md) (`860b92c`). The pilot has not started. No console job is authorized. E1a/E1/E1b and E2–E4 stay behind their own gates ([roadmap](roadmap.md), [completion plan](completion-plan.md)) |
 
 `31972d` stays stopped on `0.1.0.102`. `a8d8b9` stays stopped on `0.1.0.98`. `ca781f` stays stopped on `0.1.0.93`. Completed 4T jobs on `0.1.0.105` passed trunk 896 and 2112 without a `progress_stall`. [E1 book budget](adr/proposals/e1-1-16-book-budget.md) stays a proposal.
 

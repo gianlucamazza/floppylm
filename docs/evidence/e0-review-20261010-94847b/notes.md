@@ -131,3 +131,9 @@ The host trainer in the note above is signed commit `e9e7ef8`
 ([python run 38095852624](https://github.com/gianlucamazza/floppylm/actions/runs/38095852624)).
 The pilot has not started. No console job was started. This note does not
 change the review.
+
+## Later (2026-10-11, architecture)
+
+The host division is [architecture](../../architecture.md), signed commit
+`860b92c`. The pilot has not started. No console job was started. This note
+does not change the review.

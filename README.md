@@ -5,8 +5,9 @@ A lab whose goal is the best language model that fits **entirely** on a real 3.5
 1 474 560 bytes is empty FAT12 geometry (2880×512), not a packed image of weights, tokenizer,
 and runtime — there is no `.img` yet ([what counts](docs/adr/0001-floppy-budget.md)).
 
-**Status:** the E0 scalar baseline runs on an Xbox Series S GPU backend; live state, including
-whether any quality result exists, is in [docs/STATUS.md](docs/STATUS.md).
+**Status:** the E0 scalar baseline is complete. How the host is divided is in
+[docs/architecture.md](docs/architecture.md). Live state is in
+[docs/STATUS.md](docs/STATUS.md).
 
 ## The idea in thirty seconds
 
@@ -26,7 +27,8 @@ E0 measures the scalar frontier (ternary and 2-bit cores at miniature budgets) t
 code must beat. It runs on a separate DX12 trainer,
 [xbox-gpu-training](https://github.com/gianlucamazza/xbox-gpu-training), on an Xbox Series S,
 checked op by op against the Python oracle in this repository
-([ADR 0009](docs/adr/0009-xbox-e0-backend.md)). E1–E4 then test the vector core, coding, full
+([ADR 0009](docs/adr/0009-xbox-e0-backend.md)). How this repository is divided
+is [architecture](docs/architecture.md). E1–E4 then test the vector core, coding, full
 scale and the real disk image ([roadmap](docs/roadmap.md)).
 
 ## Quickstart
@@ -58,7 +60,7 @@ Flags and the Xbox procedure: [code map](docs/operations/code-map.md),
 | [docs/STATUS.md](docs/STATUS.md)                                     | Live state                                                 |
 | [docs/vision.md](docs/vision.md)                                     | Mission, success, non-goals                                |
 | [docs/concept.md](docs/concept.md)                                   | Thesis v0.2, principles, F0–F4, v0.1 stress test           |
-| [docs/architecture.md](docs/architecture.md)                             | How the host is divided                                    |
+| [docs/architecture.md](docs/architecture.md)                         | How the host is divided                                    |
 | [docs/roadmap.md](docs/roadmap.md)                                   | E0–E4 and their gates                                      |
 | [docs/positioning.md](docs/positioning.md)                           | Vs Quant-Noise, Sign Lock-In, QTIP, SeedLM, Parameter Golf |
 | [docs/adr/](docs/adr/README.md)                                      | Accepted decisions                                         |
