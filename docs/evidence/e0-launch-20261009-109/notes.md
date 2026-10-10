@@ -31,3 +31,13 @@ package name and the two thread caps. Failed units, including
 
 `87686a`, `766d4b`, `c58a86`, and every earlier campaign stay on their original
 packages. No recovery of those campaigns is running.
+
+## Later (2026-10-10)
+
+Eight paired cells are eligible and indexed. Ternary seeds 0, 1 and 3 were
+outside ±1% on the first pack and eligible after one S3 repair (`d_ff` 266,
+266 and 268). Ternary seeds 2 and 4 were eligible at submitted `d_ff` 262.
+2-bit seeds 0, 1 and 2 were eligible at submitted `d_ff` 205; the stored
+nominal width remains 193. Run `94847b-008`, 2-bit seed 3, is in progress and
+is not a result. 2-bit seed 4 has not started. The paired comparison, the
+ten-hash freeze and the final test have not run. This is not a scalar recipe.

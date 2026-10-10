@@ -58,8 +58,10 @@ Continue in this order:
    not a result. The stored decisions remain ternary `d` 80, 4 layers, `d_ff` 262
    and 2-bit nominal `d_ff` 193 (trained cell `027` submitted `d_ff` 205,
    1.4914/1.3663/1.2766). The scalar recipe is not named. `766d4b` and `4236fd`
-   stay stopped. [ADR 0022](adr/0022-paired-campaign-on-109.md) authorizes one
-   new `--from-paired` campaign on accepted package 0.1.0.109. It does not
+   stay stopped. [ADR 0022](adr/0022-paired-campaign-on-109.md) opened
+   `e0-20261009T174028Z-94847b` on package 0.1.0.109. Eight paired cells are
+   eligible. Run `94847b-008` is in progress and is not a result. The comparison,
+   the ten-hash freeze and the final test have not run. The campaign does not
    resume `87686a`.
 2. Review the completed E0 report (roadmap gate 4) before accepting a scientific
    E1 ADR. The rules that do not depend on that report — books, assignment,

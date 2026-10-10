@@ -158,6 +158,17 @@ Same campaign, eligible MLP repairs only. The green mean is the two gelu seeds, 
 | [`e0-v2/runs/e0-20261007T164712Z-766d4b-028`](e0-v2/runs/e0-20261007T164712Z-766d4b-028/notes.md) | successor 2-bit grid, `d` 112, 2 layers, submitted `d_ff` 272; val bpb 1.5419/1.4220/1.3377, Δ(2T→4T) = −0.084 | eligible |
 | [`e0-v2/runs/e0-20261007T164712Z-766d4b-029`](e0-v2/runs/e0-20261007T164712Z-766d4b-029/notes.md) | successor 2-bit grid, `d` 128, 2 layers, submitted `d_ff` 189; val bpb 1.5715/1.4461/1.3566, Δ(2T→4T) = −0.089 | eligible |
 | [`e0-v2/runs/e0-20261007T164712Z-766d4b-030`](e0-v2/runs/e0-20261007T164712Z-766d4b-030/notes.md) | successor paired ternary seed 0, `d` 80, 4 layers, `d_ff` 262; artifacts match `005`, val bpb 1.4599/1.3375/1.2522, Δ(2T→4T) = −0.085 | eligible |
+| [`e0-v2/runs/e0-20261009T174028Z-94847b-000`](e0-v2/runs/e0-20261009T174028Z-94847b-000/notes.md) | paired ternary seed 0 on 0.1.0.109, `d` 80, 4 layers, submitted `d_ff` 262: bytes short, val bpb 1.4654/1.3405/1.2538, Δ(2T→4T) = −0.087 | excluded |
+| [`e0-v2/runs/e0-20261009T174028Z-94847b-000-repair`](e0-v2/runs/e0-20261009T174028Z-94847b-000-repair/notes.md) | its S3 repair, `d_ff` 266, val bpb 1.4828/1.3632/1.2788, Δ(2T→4T) = −0.084 | eligible |
+| [`e0-v2/runs/e0-20261009T174028Z-94847b-001`](e0-v2/runs/e0-20261009T174028Z-94847b-001/notes.md) | paired ternary seed 1, submitted `d_ff` 262: bytes short, val bpb 1.4471/1.3341/1.2522, Δ(2T→4T) = −0.082 | excluded |
+| [`e0-v2/runs/e0-20261009T174028Z-94847b-001-repair`](e0-v2/runs/e0-20261009T174028Z-94847b-001-repair/notes.md) | its S3 repair, `d_ff` 266, val bpb 1.4387/1.3272/1.2511, Δ(2T→4T) = −0.076 | eligible |
+| [`e0-v2/runs/e0-20261009T174028Z-94847b-002`](e0-v2/runs/e0-20261009T174028Z-94847b-002/notes.md) | paired ternary seed 2, submitted `d_ff` 262, val bpb 1.4662/1.3496/1.2704, Δ(2T→4T) = −0.079 | eligible |
+| [`e0-v2/runs/e0-20261009T174028Z-94847b-003`](e0-v2/runs/e0-20261009T174028Z-94847b-003/notes.md) | paired ternary seed 3, submitted `d_ff` 262: bytes short, val bpb 1.4638/1.3489/1.2680, Δ(2T→4T) = −0.081 | excluded |
+| [`e0-v2/runs/e0-20261009T174028Z-94847b-003-repair`](e0-v2/runs/e0-20261009T174028Z-94847b-003-repair/notes.md) | its S3 repair, `d_ff` 268, val bpb 1.4557/1.3367/1.2557, Δ(2T→4T) = −0.081 | eligible |
+| [`e0-v2/runs/e0-20261009T174028Z-94847b-004`](e0-v2/runs/e0-20261009T174028Z-94847b-004/notes.md) | paired ternary seed 4, submitted `d_ff` 262, val bpb 1.4585/1.3347/1.2544, Δ(2T→4T) = −0.080 | eligible |
+| [`e0-v2/runs/e0-20261009T174028Z-94847b-005`](e0-v2/runs/e0-20261009T174028Z-94847b-005/notes.md) | paired 2-bit seed 0, nominal `d_ff` 193, submitted `d_ff` 205, val bpb 1.4973/1.3675/1.2820, Δ(2T→4T) = −0.085 | eligible |
+| [`e0-v2/runs/e0-20261009T174028Z-94847b-006`](e0-v2/runs/e0-20261009T174028Z-94847b-006/notes.md) | paired 2-bit seed 1, nominal `d_ff` 193, submitted `d_ff` 205, val bpb 1.5021/1.3737/1.2821, Δ(2T→4T) = −0.092 | eligible |
+| [`e0-v2/runs/e0-20261009T174028Z-94847b-007`](e0-v2/runs/e0-20261009T174028Z-94847b-007/notes.md) | paired 2-bit seed 2, nominal `d_ff` 193, submitted `d_ff` 205, val bpb 1.5053/1.3785/1.2911, Δ(2T→4T) = −0.087 | eligible |
 | [`e0-lite/pre-v2`](e0-lite/pre-v2/notes.md)                                                                                                 | stopped E0-lite grid; diagnostic, excluded from verdicts, FLP1 blobs | —           |
 
 ### Xbox package acceptance

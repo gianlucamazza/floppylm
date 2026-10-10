@@ -118,3 +118,11 @@ the command in this packet, and it does not resume cell `031`.
 `--from-paired` campaign bound to that acceptance and benchmark. It does not
 resume `87686a`, `766d4b` cell `031`, or any earlier campaign. The commands
 earlier in this packet remain the 0.1.0.105 preparation.
+
+## Later (2026-10-10)
+
+That campaign is `e0-20261009T174028Z-94847b`, recorded in
+[the launch note](../evidence/e0-launch-20261009-109/notes.md). Eight paired
+cells are eligible and indexed. Run `94847b-008` is in progress and is not a
+result. The comparison, the ten-hash freeze and the final test have not run.
+The scalar recipe is not named.
