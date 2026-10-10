@@ -150,13 +150,13 @@ sharing (recursion plus per-depth LoRA, Relaxed Recursive/MoR family) as the mai
 baseline. Seeded bases should be seen as an orthogonal addition (free random features in MLPs, fixed
 binary codes for the input), not as a full replacement of the weights.
 
-**F0 verdict: partial.** It does not fully trigger because no work found trains from scratch an LM with
+**F0 verdict: partial.** It does not fully trigger because the bounded literature search has not identified a work that trains from scratch an LM with
 total description ≤1.44 MB and effective model ≫ stored bits, with rate-aware loss and measured boot;
 the academic literature explicitly leaves it open (MCNC, Kilobyte Models). One cannot, however, say "it
 does not trigger": Parameter Golf has publicly formulated and implemented the same underlying idea (seed
 → frozen weights → learned adapters, 30M effective in 5.19 MB; supermasks on a seeded network;
 hypernetwork 26.5M from 2.09 MB). The novelty claim must therefore narrow to the regime (under 1.5 MB,
-complete bootable artifact, real FAT12), the method (MDL training of the coefficients with entropy
+complete data-floppy artifact, real FAT12), the method (MDL training of the coefficients with entropy
 coding, equal-byte comparison against ternary dense and recursive) and the measurement (boot cost and
 TinyStories coherence), and must cite Parameter Golf as the closest state of the art.
 
