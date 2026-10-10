@@ -1,0 +1,82 @@
+Metadata-Version: 2.4
+Name: floppylm
+Version: 0.0.0
+Summary: Best LM that fits a real 1.44 MB floppy: sub-bit core codes vs scalar quantization
+License-Expression: MIT
+Requires-Python: >=3.12
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: numpy>=2.0
+Requires-Dist: torch>=2.4
+Provides-Extra: dev
+Requires-Dist: cryptography>=42; extra == "dev"
+Requires-Dist: jsonschema>=4.18; extra == "dev"
+Requires-Dist: pytest>=8.0; extra == "dev"
+Requires-Dist: ruff>=0.6; extra == "dev"
+Dynamic: license-file
+
+# FloppyLM
+
+A lab for the best language model that fits **entirely** on a real 3.5" floppy: weight description,
+tokenizer and runtime inside one 1 474 560-byte disk ([what counts](docs/adr/0001-floppy-budget.md)).
+
+**Status:** the E0 scalar baseline runs on an Xbox Series S GPU backend; live state, including
+whether any quality result exists, is in [docs/STATUS.md](docs/STATUS.md).
+
+## The idea in thirty seconds
+
+The floppy limits bits at rest, not RAM at runtime. A dense ternary model in 11 Mbit stops at ~7M
+parameters; beyond that is the **sub-bit regime**, where only one thing matters: where the bits
+are — in the transformer core. The thesis (v0.2): a recursive core whose weights are indices into a
+vector code at 0.5–0.75 bits/weight, trained from scratch, beats the best ternary/2-bit core at
+equal coded bytes. Three codes compete — seed-generated, computed trellis, learned codebook — with
+a declared prior: the computed codes, at zero bytes, are favoured.
+
+v0.1 (seed perturbations of the recursive blocks) was closed before any code was written: it acted
+on ~0.1% of the bits and seeds carry no information ([stress test](docs/concept.md#stress-test-v01)).
+
+## How the work is staged
+
+E0 measures the scalar frontier (ternary and 2-bit cores at miniature budgets) that every vector
+code must beat. It runs on a separate DX12 trainer on an Xbox Series S, checked op by op against the
+Python oracle in this repository ([ADR 0009](docs/adr/0009-xbox-e0-backend.md)). E1–E4 then test
+the vector core, coding, full scale and the real disk image ([roadmap](docs/roadmap.md)).
+
+## Quickstart
+
+```bash
+pytest                            # full suite; native tests need xbox-gpu-training's xgpu_e0_train
+                                  #   (or XGPU_E0_BINARY), or run pytest -m 'not native'
+python experiments/e0_v2.py --run --smoke   # functional CPU smoke; needs data/, writes a tracked evidence dir
+python scripts/e0_status.py --campaign runs/<campaign-dir>   # read-only campaign state
+```
+
+Requirements: Python ≥ 3.12 with `numpy` and `torch` ≥ 2.4, plus the `dev` extras (`pytest`, `ruff`,
+`jsonschema`, `cryptography`) for development
+([pyproject.toml](pyproject.toml)); no install step is needed, since scripts and pytest put `src/` on the path.
+Training reads the prepared TinyStoriesV2-GPT4 corpus in `data/tinystories/`: download the raw
+files listed in `floppylm.data.SOURCES` into `data/raw/` and call the Python function
+`floppylm.data.prepare`. `python experiments/e0_v2.py --verify-data` re-prepares the corpus in
+`runs/tmp` (~2.2 GB) and rewrites `data/tinystories/reproducibility.json`.
+Flags and the Xbox procedure: [code map](docs/operations/code-map.md),
+[runbook](docs/operations/xbox-e0.md).
+
+## Map
+
+[docs/README.md](docs/README.md) gives reading paths and says which file owns which fact.
+
+| Document                                                             | Owns                                                       |
+| -------------------------------------------------------------------- | ---------------------------------------------------------- |
+| [docs/STATUS.md](docs/STATUS.md)                                     | Live state                                                 |
+| [docs/vision.md](docs/vision.md)                                     | Mission, success, non-goals                                |
+| [docs/concept.md](docs/concept.md)                                   | Thesis v0.2, principles, F0–F4, v0.1 stress test           |
+| [docs/roadmap.md](docs/roadmap.md)                                   | E0–E4 and their gates                                      |
+| [docs/positioning.md](docs/positioning.md)                           | Vs Quant-Noise, Sign Lock-In, QTIP, SeedLM, Parameter Golf |
+| [docs/adr/](docs/adr/README.md)                                      | Accepted decisions                                         |
+| [docs/research/](docs/research/README.md)                            | Surveys R1–R7                                              |
+| [docs/evidence/](docs/evidence/README.md)                            | Measured numbers                                           |
+| [docs/stack.md](docs/stack.md), [docs/glossary.md](docs/glossary.md) | Toolchain and machines; terms                              |
+
+## License
+
+[MIT](LICENSE).

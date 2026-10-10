@@ -1,0 +1,8 @@
+numpy>=2.0
+torch>=2.4
+
+[dev]
+cryptography>=42
+jsonschema>=4.18
+pytest>=8.0
+ruff>=0.6
