@@ -5,6 +5,8 @@
 `accepted` — accepted 2026-10-01. The owner explicitly approved the qualification proposal.
 The accepted decision is the eight-point Decision section and its Consequences
 in [the preserved proposal](proposals/e1-qualification-proposal.md).
+The scientific E1 1/16 protocol left open in Consequences is recorded in
+[ADR 0023](0023-e1-1-16-pilot.md). This qualification decision is unchanged.
 
 Administrative numbering: the owner approved the proposal as ADR 0012. Concurrent
 main commit `8b76068` assigned 0012 to repository boundaries, so this isolated

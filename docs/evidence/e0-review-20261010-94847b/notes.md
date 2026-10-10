@@ -111,3 +111,10 @@ selection hash, the ADR 0020 window, and the FLP2 byte order. It stays
 proposed. The pilot does not start until
 [issue #25](https://github.com/gianlucamazza/floppylm/issues/25) accepts it.
 No console job is authorized.
+
+## Later (2026-10-11, acceptance)
+
+[ADR 0023](../../adr/0023-e1-1-16-pilot.md) accepts the 1/16 protocol and names
+the selection hash. The pilot has not started. No console job was started.
+The next engineering step is the host FLP2 vector layout. The Xbox executor
+qualification described above still waits on an executor.

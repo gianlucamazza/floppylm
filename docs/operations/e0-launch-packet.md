@@ -150,3 +150,8 @@ arms.
 Roadmap gate 4 is recorded in the
 [review](../evidence/e0-review-20261010-94847b/notes.md). Both stored arms
 remain. The 1/16 pilot proposal stays unaccepted. No console job was started.
+
+## Later (2026-10-11, acceptance)
+
+The 1/16 protocol is accepted as [ADR 0023](../adr/0023-e1-1-16-pilot.md).
+The pilot has not started. No console job was started.

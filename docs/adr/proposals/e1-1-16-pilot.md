@@ -2,11 +2,8 @@
 
 ## Status
 
-Proposed — 2026-10-04. Not an ADR. Does not authorize code, a campaign, a console
-job, or an F1 verdict. The gate 4 review is recorded and does not accept this
-file. Decision 14 specifies the FLP2 byte order. Acceptance is still a separate
-step. Accepting this proposal would create the scientific E1 ADR; this file
-would stay as context.
+accepted — 2026-10-11; recorded in [ADR 0023](../0023-e1-1-16-pilot.md).
+This file stays as context.
 
 ## Context
 
@@ -189,3 +186,10 @@ Decision 14 now specifies the order. The seed is the u64 in the single
 A vector arm sets `core_fmt` to `vq`. `VQF1` stays the functional fixture.
 This file stays proposed. Acceptance is still
 [issue #25](https://github.com/gianlucamazza/floppylm/issues/25).
+
+## Later (2026-10-11, acceptance)
+
+Accepted and recorded in [ADR 0023](../0023-e1-1-16-pilot.md). That ADR
+authorizes the host implementation of this protocol. It does not open a
+campaign, reserve a final test, or start a console job. The sentence in
+Consequences that forbids acceptance describes the file before this note.

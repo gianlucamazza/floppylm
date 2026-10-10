@@ -71,32 +71,35 @@ Continue in this order:
    `de80fff08e750702784e6efbcb583ca86de566965207212c1c6531822a05bbe4`.
    The rules that do not depend on that report — books, assignment,
    dead codes, checkpoints, token parity, F1, and what the container must count —
-   stay proposed in [the 1/16 pilot proposal](adr/proposals/e1-1-16-pilot.md)
-   and are not accepted. That proposal now copies both stored decisions and
+   are recorded from [the 1/16 pilot proposal](adr/proposals/e1-1-16-pilot.md).
+   That proposal copies both stored decisions and
    the selection hash, and its equal-byte rule is the ADR 0020 window. The
    scientific file is FLP2. Decision 14 specifies the byte order: one `VQB1`
    book in the shared section, `core_fmt` `vq` on a vector arm, and the
    existing per-tensor framing. `VQF1` stays the functional fixture.
-   The proposal stays unaccepted.
    On 2026-10-11 the E0 experiment series stops. No further scalar campaign
-   is opened to force one named format. The 1/16 pilot does not start before
-   acceptance.
+   is opened to force one named format. The same day the proposal is accepted
+   as [ADR 0023](adr/0023-e1-1-16-pilot.md). The pilot does not start with
+   that acceptance.
 3. The console is free. No Xbox vector executor exists in this repository or in
    the accepted trainer. `src/floppylm/vq.py` remains the CPU fixture oracle from
    [ADR 0013](adr/0013-e1-functional-qualification.md). Qualification has not
    started. When an executor exists, the tasks are: give it the inputs of a
    published CPU vector fixture; require identical artifact bytes and a decode
    that matches that oracle; record the comparison under `docs/evidence`. A
-   scalar throughput measurement does not qualify it. Do not build that
-   executor under the unaccepted 1/16 proposal.
-4. Acceptance of the 1/16 pilot is a separate explicit step
-   ([issue #25](https://github.com/gianlucamazza/floppylm/issues/25)). It is not
-   taken here. Draft [PR #2](https://github.com/gianlucamazza/floppylm/pull/2)
-   was closed on 2026-10-10 without merge.
+   scalar throughput measurement does not qualify it. ADR 0023 keeps the pilot
+   on CPU until that match is recorded. Building the executor is not the next
+   task.
+4. Acceptance of the 1/16 pilot is recorded on 2026-10-11 as
+   [ADR 0023](adr/0023-e1-1-16-pilot.md)
+   ([issue #25](https://github.com/gianlucamazza/floppylm/issues/25)). Draft
+   [PR #2](https://github.com/gianlucamazza/floppylm/pull/2) stays closed and
+   unmerged.
    [Issue #26](https://github.com/gianlucamazza/floppylm/issues/26) is closed:
    the pages left on `docs/excellence-research-20261001` are an audit dated
-   2026-10-01. They are not the live protocol and are not merged. Once a scientific protocol is
-   accepted, integrate the model/format and run the paired 1/16 pilot; proceed
+   2026-10-01. They are not the live protocol and are not merged. The next
+   engineering step is the host implementation of the FLP2 vector layout.
+   The paired 1/16 pilot runs after that implementation exists. Proceed
    through E1a/E1/E1b and E2–E4 only on passing gates. Keep local-judge
    qualification and actual 30 blind human ratings explicit at E4.
 

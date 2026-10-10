@@ -253,3 +253,7 @@ mechanism. The literature's prior is that the learned codebook will _not_ beat t
 Later note (2026-10-08): the five-arm plan is not an accepted protocol. E0 must
 name the scalar recipe before a scientific E1 ADR. The 1/16 pilot proposal stays
 unaccepted. Scalar measurements live in the evidence index, not in this survey.
+
+Later note (2026-10-11): the scientific E1 1/16 protocol is
+[ADR 0023](../adr/0023-e1-1-16-pilot.md). This survey's five-arm plan stays
+unaccepted. The pilot has not started.
