@@ -71,3 +71,12 @@ byte layout stays unfixed. No Xbox vector executor is qualified here. `87686a`,
 The next written experiment is that executor qualification against the CPU
 oracle, on identical inputs and identical artifact bytes. It is not started
 by this review.
+
+## Later (2026-10-10, tasks)
+
+The inventory for that qualification found no Xbox vector executor. `vq.py`
+remains the measured CPU fixture oracle. The tasks, once an executor exists,
+are identical fixture inputs, identical artifact bytes, and a decode that
+matches the oracle. Building that executor under the unaccepted 1/16 proposal
+is not one of those tasks. Draft PR #2 stays closed and unmerged. Acceptance
+of the pilot remains a separate explicit step.

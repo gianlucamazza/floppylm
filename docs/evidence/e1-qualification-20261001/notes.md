@@ -59,3 +59,9 @@ by E0 completion. No F1/F2 verdict follows from these probes.
 Later note (2026-10-01): long jobs must not run through `bg` / `background.slice`
 ([ADR 0003](../../adr/0003-lab-practices.md) amendment). Reproduce with `python`
 (or `nohup python` and a log under `runs/`), not `/home/gianluca/.local/bin/bg python`.
+
+## Later (2026-10-10)
+
+E0 campaign `e0-20261009T174028Z-94847b` has completed and the console is free.
+No Xbox vector executor exists to qualify against these CPU fixtures. The
+sentence above that reserves the console for E0 is the 2026-10-01 state.

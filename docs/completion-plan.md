@@ -75,13 +75,23 @@ Continue in this order:
    and are not accepted. A later ADR still has to copy both stored decisions
    and that selection hash, replace the proposal's reciprocal byte check with
    the ADR 0020 window, and fix the byte layout.
-3. After E0 releases the console, qualify any Xbox vector executor against the CPU
-   oracle with identical inputs and artifact bytes. Choose backend/tokenizer only
-   from the controlled qualification required by the owner. A scalar throughput
-   measurement does not qualify a vector backend.
-4. Once the scientific protocol is accepted, integrate the model/format and run
-   the paired 1/16 pilot; proceed through E1a/E1/E1b and E2–E4 only on passing gates.
-   Keep local-judge qualification and actual 30 blind human ratings explicit at E4.
+3. The console is free. No Xbox vector executor exists in this repository or in
+   the accepted trainer. `src/floppylm/vq.py` remains the CPU fixture oracle from
+   [ADR 0013](adr/0013-e1-functional-qualification.md). Qualification has not
+   started. When an executor exists, the tasks are: give it the inputs of a
+   published CPU vector fixture; require identical artifact bytes and a decode
+   that matches that oracle; record the comparison under `docs/evidence`. A
+   scalar throughput measurement does not qualify it. Do not build that
+   executor under the unaccepted 1/16 proposal.
+4. Acceptance of the 1/16 pilot is a separate explicit step
+   ([issue #25](https://github.com/gianlucamazza/floppylm/issues/25)). It is not
+   taken here. Draft [PR #2](https://github.com/gianlucamazza/floppylm/pull/2)
+   was closed on 2026-10-10 without merge. The pages left on
+   `docs/excellence-research-20261001` are an audit dated 2026-10-01. They are
+   not the live protocol and are not merged. Once a scientific protocol is
+   accepted, integrate the model/format and run the paired 1/16 pilot; proceed
+   through E1a/E1/E1b and E2–E4 only on passing gates. Keep local-judge
+   qualification and actual 30 blind human ratings explicit at E4.
 
 The `c58a86` source freeze was released by that stop. [PR #22](https://github.com/gianlucamazza/floppylm/pull/22)
 merged the host init-pack ([ADR 0019](adr/0019-host-init-pack.md)) for a future campaign.
