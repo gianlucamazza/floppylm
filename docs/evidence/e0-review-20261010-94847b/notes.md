@@ -118,3 +118,9 @@ No console job is authorized.
 the selection hash. The pilot has not started. No console job was started.
 The next engineering step is the host FLP2 vector layout. The Xbox executor
 qualification described above still waits on an executor.
+
+## Later (2026-10-11, host training)
+
+The host FLP2 layout is commit `b362991`. The host trainer applies ADR 0023
+decisions 7–9. The pilot has not started. No console job was started. This
+note does not change the review.

@@ -101,10 +101,25 @@ class QLinear(nn.Module):
         self.codec = codec
         self.frozen = False
         self.canonical: bytes | None = None  # exact stored record after unpack; re-saved verbatim
+        self.assignment: tuple | None = None  # (symbols, scale bytes) held between vq cadence steps
         self.weight = nn.Parameter(torch.randn(d_out, d_in) * std)
 
     def qweight(self) -> torch.Tensor:
-        return self.weight if self.frozen else self.codec.weight(self.weight)
+        if self.frozen:
+            return self.weight
+        # No held assignment: full fake-quant, including every scalar matrix.
+        if self.assignment is None:
+            return self.codec.weight(self.weight)
+        # Held indices are the ADR 0023 assignment. Eval uses every group.
+        # Training uses the partial mask stored by the prepared step.
+        symbols, scale_bytes = self.assignment
+        probability = 1.0 if not self.training else getattr(self, "_partial_prob", None)
+        seed = 0 if not self.training else getattr(self, "_mask_seed", None)
+        if probability is None or seed is None:
+            raise RuntimeError("vq training forward has no prepared step")
+        return self.codec.partial_weight(
+            self.weight, probability, seed, symbols=symbols, scale_bytes=scale_bytes
+        )
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         return F.linear(x, self.qweight())
@@ -182,6 +197,9 @@ class TinyGPT(nn.Module):
             self.book: VectorBook | None = book
             emb = scalar(cfg.emb_fmt, cfg.scale_policy)
             core: ScalarCodec | VectorCodec = VectorCodec(book, "row8log")
+            # Cadence state is not a config field and not a stored result.
+            self.reseed_log: list[dict] = []
+            self.assigned_at: int | None = None
         else:
             if book is not None:
                 raise ValueError("scalar core carries no book")

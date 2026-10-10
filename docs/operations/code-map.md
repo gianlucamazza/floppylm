@@ -8,16 +8,16 @@ One line per module; the code is the authority on behaviour, `--help` on flags.
 codec.py         ScalarCodec: ternary / 2bit / 4bit, scales row16 | row8log | tensor16
 rans.py          15-bit rANS and bitpack, shortest per tensor, explicit errors
 model.py         validated GPTConfig, TinyGPT; a vq core takes a VectorBook, not a config field
-pack.py          FLP2 ↔ model; one VQB1 shared book when core_fmt is vq; FLP1 rejected (ADR 0006)
+pack.py          FLP2 ↔ model; one VQB1 when core_fmt is vq; held assignment packed as-is; FLP1 rejected
 shapes.py        shape solver: d, n_layers, free d_ff at 99.5–100% of the budget
-train.py         WSD with trunk and cooldowns, checkpoints, sliding evaluation
+train.py         WSD trunk and cooldowns; a vq core assigns every 64 steps at probability 0.1
 parity.py        eligibility on serialized bytes, paired σ
 metrics.py       bits per byte (byte tokenizer: one token is one byte)
 seed.py          single RNG entry point (ADR 0003 §3)
 runlog.py        unique ids, exclusive directories, atomic writes, state, manifests
 data.py          TinyStoriesV2: exact dedup, hash split, manifest, reproducibility
 bpe.py           train-only byte-exact BPE oracle (E1 functional qualification, ADR 0013)
-vq.py            VQB1 book and vector oracle; VQF1 fixture stays separate (ADR 0013, ADR 0023)
+vq.py            VQB1 book and vector oracle; learned reseeds continue the PCG32 stream; VQF1 stays a fixture
 ```
 
 ## Xbox execution — `src/floppylm_xbox/`

@@ -1,7 +1,8 @@
 """Vector-weight oracle.
 
 VQB1 bytes are the one FLP2 shared section of a vq core. VQF1 stays the
-functional fixture and is not that container.
+functional fixture and is not that container. A learned book's PCG32 stream
+continues after the initial draws so a dead entry can be reseeded.
 """
 
 from __future__ import annotations
@@ -23,24 +24,68 @@ BOOK_HEADER = struct.Struct("<4sBBBBQ")
 GENERATOR_ID = 1
 
 
-def pcg32(seed: int, count: int) -> np.ndarray:
-    """PCG XSH-RR with fixed odd stream; exact unsigned integer operations."""
-    if type(seed) is not int or not 0 <= seed <= MASK64 or count < 0:
-        raise CodecError("invalid PCG seed or count")
-    state, increment = 0, 1442695040888963407
+class Pcg32:
+    """ADR 0013 PCG XSH-RR. The two setup steps are not outputs; draw() continues."""
 
-    def step():
-        nonlocal state
-        old = state
-        state = (old * 6364136223846793005 + increment) & MASK64
+    _MULT = 6364136223846793005
+    _INC = 1442695040888963407
+
+    def __init__(self, seed: int) -> None:
+        if type(seed) is not int or not 0 <= seed <= MASK64:
+            raise CodecError("invalid PCG seed or count")
+        self.seed = seed
+        self.state = 0
+        self._step()
+        self.state = (self.state + seed) & MASK64
+        self._step()
+        self.drawn = 0
+
+    def _step(self) -> int:
+        old = self.state
+        self.state = (old * self._MULT + self._INC) & MASK64
         shifted = (((old >> 18) ^ old) >> 27) & 0xFFFFFFFF
         rotation = old >> 59
         return ((shifted >> rotation) | (shifted << ((-rotation) & 31))) & 0xFFFFFFFF
 
-    step()
-    state = (state + seed) & MASK64
-    step()
-    return np.fromiter((step() for _ in range(count)), dtype=np.uint32, count=count)
+    def draw(self, count: int) -> np.ndarray:
+        if type(count) is not int or count < 0:
+            raise CodecError("invalid PCG seed or count")
+        out = np.empty(count, dtype=np.uint32)
+        for i in range(count):
+            out[i] = self._step()
+        self.drawn += count
+        return out
+
+    def state_dict(self) -> dict:
+        return {"seed": self.seed, "state": self.state, "drawn": self.drawn}
+
+    def load_state_dict(self, state: dict) -> None:
+        if (
+            set(state) != {"seed", "state", "drawn"}
+            or state["seed"] != self.seed
+            or type(state["state"]) is not int
+            or type(state["drawn"]) is not int
+            or not 0 <= state["state"] <= MASK64
+            or state["drawn"] < 0
+        ):
+            raise CodecError("invalid PCG state")
+        self.state = state["state"]
+        self.drawn = state["drawn"]
+
+
+def pcg32(seed: int, count: int) -> np.ndarray:
+    """PCG XSH-RR with fixed odd stream; exact unsigned integer operations."""
+    if type(seed) is not int or not 0 <= seed <= MASK64 or type(count) is not int or count < 0:
+        raise CodecError("invalid PCG seed or count")
+    return Pcg32(seed).draw(count)
+
+
+def _fp16_rows(stream: Pcg32, rows: int, dimension: int) -> torch.Tensor:
+    """Sum of twelve unsigned 16-bit draws, centered, then rounded to fp16."""
+    draws = stream.draw(rows * dimension * 12).astype(np.uint64) & 0xFFFF
+    summed = draws.reshape(rows, dimension, 12).sum(-1).astype(np.int64)
+    values = ((summed - 393210) / 65536).astype(np.float32)
+    return torch.from_numpy(np.ascontiguousarray(values)).half().float()
 
 
 class VectorBook(torch.nn.Module):
@@ -56,16 +101,34 @@ class VectorBook(torch.nn.Module):
             seed,
             learned,
         )
-        draws = pcg32(seed, self.levels * dimension * 12).astype(np.uint64) & 0xFFFF
-        summed = draws.reshape(self.levels, dimension, 12).sum(-1).astype(np.int64)
-        values = ((summed - 393210) / 65536).astype(np.float32)
+        # The stream stays live. A later reseed draws the next outputs; it does
+        # not start pcg32 again, which would repeat the initial entries.
+        self.stream = Pcg32(seed)
         self.values = torch.nn.Parameter(
-            torch.from_numpy(values).half().float(), requires_grad=learned
+            _fp16_rows(self.stream, self.levels, dimension), requires_grad=learned
         )
 
     @property
     def levels(self):
         return 1 << self.bits
+
+    def reseed(self, indices: list[int]) -> None:
+        """Replace these learned rows from the stream that built the book.
+
+        A fixed book stores only its seed. Rewriting a row would make
+        `to_bytes` reject the book, and the file could not keep the reseed.
+        Callers log that dead entry and leave the generated rows in place.
+        """
+        if not self.learned:
+            raise CodecError("fixed book stores its seed and has no rows to reseed")
+        if any(type(index) is not int or not 0 <= index < self.levels for index in indices):
+            raise CodecError("book reseed index out of range")
+        if not indices:
+            return
+        rows = _fp16_rows(self.stream, len(indices), self.dimension)
+        with torch.no_grad():
+            for index, row in zip(indices, rows, strict=True):
+                self.values[index].copy_(row)
 
     def stored_values(self):
         if not torch.isfinite(self.values).all() or self.values.abs().max() > FP16_MAX:
@@ -179,13 +242,23 @@ class VectorCodec:
         scale = self.scales.scale_from_bytes(scale_bytes, shape[0])
         return self._reconstruct(symbols, scale, shape)
 
-    def partial_weight(self, weight, probability: float, seed: int, *, symbols=None):
-        """Partial QAT oracle; callers may reuse assignments between declared snap steps."""
+    def partial_weight(
+        self, weight, probability: float, seed: int, *, symbols=None, scale_bytes=None
+    ):
+        """Partial QAT oracle. Pass symbols and scale bytes to reuse an assignment.
+
+        Omitting scale bytes recomputes them from the current master weight.
+        That is the qualification path. Training holds the bytes from the
+        cadence step and passes them back.
+        """
         if not 0 <= probability <= 1 or type(seed) is not int or seed < 0:
             raise CodecError("invalid partial-quantization recipe")
-        _, scale, scale_bytes = self._inputs(weight)
-        if symbols is None:
-            symbols, scale_bytes = self.encode(weight)
+        if scale_bytes is None:
+            _, _, scale_bytes = self._inputs(weight)
+            if symbols is None:
+                symbols, scale_bytes = self.encode(weight)
+        elif symbols is None:
+            raise CodecError("held scales require held symbols")
         reconstructed = self.decode(symbols, scale_bytes, tuple(weight.shape))
         groups = math.ceil(weight.shape[1] / self.book.dimension)
         rng = torch.Generator().manual_seed(seed)

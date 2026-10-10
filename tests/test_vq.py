@@ -107,6 +107,31 @@ def test_shared_book_counted_once_and_fixture_decodes_exactly():
             unpack_vectors(corrupted)
 
 
+def test_book_stream_continues_past_the_initial_draws():
+    book = VectorBook(8, 0.5, 19, learned=True)
+    consumed = book.levels * book.dimension * 12
+    assert book.stream.drawn == consumed
+    assert int(book.stream.draw(1)[0]) == int(pcg32(19, consumed + 1)[-1])
+
+
+def test_partial_weight_keeps_held_scales():
+    book = VectorBook(8, 0.5, 19, learned=True)
+    codec = VectorCodec(book)
+    weights = torch.arange(16, dtype=torch.float32).reshape(2, 8).div(20)
+    symbols, scales = codec.encode(weights)
+    bigger = weights * 10
+    held = codec.partial_weight(bigger, 1, 0, symbols=symbols, scale_bytes=scales)
+    recomputed = codec.partial_weight(bigger, 1, 0, symbols=symbols)
+    assert torch.equal(held, codec.decode(symbols, scales, tuple(bigger.shape)))
+    assert not torch.equal(held, recomputed)
+
+
+def test_fixed_book_reseed_is_rejected():
+    book = VectorBook(8, 0.5, 19)
+    with pytest.raises(CodecError, match="seed"):
+        book.reseed([0])
+
+
 def test_mutated_fixed_book_and_nonfinite_weights_fail():
     fixed = VectorBook(8, 0.5, 19)
     with torch.no_grad():

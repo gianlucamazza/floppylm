@@ -97,11 +97,17 @@ Continue in this order:
    unmerged.
    [Issue #26](https://github.com/gianlucamazza/floppylm/issues/26) is closed:
    the pages left on `docs/excellence-research-20261001` are an audit dated
-   2026-10-01. They are not the live protocol and are not merged. The next
-   engineering step is the host implementation of the FLP2 vector layout.
-   The paired 1/16 pilot runs after that implementation exists. Proceed
-   through E1a/E1/E1b and E2–E4 only on passing gates. Keep local-judge
-   qualification and actual 30 blind human ratings explicit at E4.
+   2026-10-01. They are not the live protocol and are not merged. The host
+   FLP2 layout is on main (`b362991`): one `VQB1` book in the shared section.
+   The host trainer applies ADR 0023 decisions 7–9 on CPU. Assignment is
+   every 64 steps at probability 0.1. A dead learned entry is reseeded from
+   that arm's PCG32 stream and logged. A fixed book logs the dead entry and
+   keeps the seed. Resume continues the master weights, indices, scales,
+   book, and optimizer moments. The cooldown artifact is that quantized
+   container. The paired 1/16 pilot has not started. No console job is
+   authorized. Proceed through E1a/E1/E1b and E2–E4 only on passing gates.
+   Keep local-judge qualification and actual 30 blind human ratings explicit
+   at E4.
 
 The `c58a86` source freeze was released by that stop. [PR #22](https://github.com/gianlucamazza/floppylm/pull/22)
 merged the host init-pack ([ADR 0019](adr/0019-host-init-pack.md)) for a future campaign.

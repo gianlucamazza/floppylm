@@ -55,7 +55,12 @@ def _header(cfg: GPTConfig) -> bytes:
 def _record(t: QLinear) -> bytes:
     if t.frozen and t.canonical is not None:
         return t.canonical
-    sym, scale = t.codec.encode(t.weight.detach())
+    # A vq core packs the assignment it is training with. Encoding the master
+    # again would be a new run (ADR 0023). Scalar tensors hold no assignment.
+    if t.assignment is None:
+        sym, scale = t.codec.encode(t.weight.detach())
+    else:
+        sym, scale = t.assignment
     stream = rans.encode_best(sym, t.codec.levels)
     return scale + struct.pack("<I", len(stream)) + stream
 

@@ -4,11 +4,16 @@ Protocol (ADR 0005 §3–5): the trunk runs at constant LR after warmup; for eac
 E in (T, 2T, 4T, ...) a deep copy of model, optimizer and data stream cools down linearly to
 zero over the last `cooldown_frac * E` steps. The trunk never sees the cooldowns: they use
 their own copy of the data-stream RNG, so the trunk continues exactly as if they had not run.
+
+A vq core (ADR 0023) assigns group indices every 64 steps and keeps those indices and
+scales. Training forwards use partial-quantization probability 0.1. The cooldown artifact
+is the quantized container of that held assignment. Scalar trunks do not take this path.
 """
 
 from __future__ import annotations
 
 import copy
+import hashlib
 import time
 from collections.abc import Callable
 from dataclasses import asdict, dataclass
@@ -18,11 +23,15 @@ import torch
 import torch.nn.functional as F
 
 from .model import QLinear, TinyGPT
+from .vq import VectorCodec
 
 # Optimization constants of the E0 protocol (ADR 0005, ADR 0008; S2 for the WSD fractions).
 WARMUP_FRAC, COOLDOWN_FRAC = 0.02, 0.1
 ADAMW_BETAS, ADAMW_EPS = (0.9, 0.95), 1e-8
 GRAD_CLIP = 1.0
+# ADR 0023 decision 7. Not TrainSpec fields: a scalar checkpoint's spec must stay exact.
+ASSIGN_EVERY = 64
+PARTIAL_PROB = 0.1
 
 
 @dataclass(frozen=True)
@@ -139,6 +148,7 @@ def sliding_bpb(
 
 
 def _optimizer(model: TinyGPT, spec: TrainSpec) -> torch.optim.Optimizer:
+    # Matrices take the recipe's weight decay. Norms and a learned book do not.
     q = [m.weight for m in model.modules() if isinstance(m, QLinear)]
     ids = {id(p) for p in q}
     other = [p for p in model.parameters() if id(p) not in ids]
@@ -160,7 +170,7 @@ class Trunk:
     step: int = 0
 
     def checkpoint(self, spec: TrainSpec) -> dict:
-        return {
+        ckpt = {
             "model": copy.deepcopy(self.model.state_dict()),
             "opt": copy.deepcopy(self.opt.state_dict()),
             "step": self.step,
@@ -168,12 +178,21 @@ class Trunk:
             "torch_rng": torch.get_rng_state(),
             "spec": asdict(spec),
         }
+        if self.model.cfg.core_fmt == "vq":
+            ckpt["vq"] = vector_state(self.model)
+        return ckpt
 
     @classmethod
     def restore(cls, model: TinyGPT, data: np.ndarray, spec: TrainSpec, ckpt: dict) -> Trunk:
         if ckpt["spec"] != asdict(spec):
             raise ValueError("checkpoint was made with a different TrainSpec")
         model.load_state_dict(ckpt["model"])
+        if model.cfg.core_fmt == "vq":
+            if "vq" not in ckpt:
+                raise ValueError("vq checkpoint is missing assignment state")
+            load_vector_state(model, ckpt["vq"])
+        elif "vq" in ckpt:
+            raise ValueError("scalar checkpoint carries vector assignment state")
         opt = _optimizer(model, spec)
         opt.load_state_dict(ckpt["opt"])
         stream = DataStream(data, spec.batch, model.cfg.ctx, spec.seed)
@@ -182,7 +201,142 @@ class Trunk:
         return cls(model, opt, stream, ckpt["step"])
 
 
-def _step(model: TinyGPT, opt: torch.optim.Optimizer, stream: DataStream, lr: float) -> float:
+def mask_seed(arm_seed: int, step: int, name: str) -> int:
+    """Partial-quantization mask seed. It does not touch the global RNG."""
+    digest = hashlib.sha256(f"{arm_seed}:{step}:{name}".encode()).digest()
+    return int.from_bytes(digest[:8], "little") & ((1 << 63) - 1)
+
+
+def _core_linears(model: TinyGPT) -> list[tuple[str, QLinear]]:
+    return [
+        (name, module)
+        for name, module in model.named_modules()
+        if isinstance(module, QLinear) and isinstance(module.codec, VectorCodec)
+    ]
+
+
+def _tie_book(model: TinyGPT) -> None:
+    """Point every core codec at the module book. A fork must not grow a second one."""
+    book = model.book
+    if book is None:
+        return
+    for _, module in _core_linears(model):
+        module.codec.book = book
+
+
+def prepare_vector_step(model: TinyGPT, step: int, arm_seed: int) -> None:
+    """Assign on the cadence, then hold indices and scales. Master weights stay put."""
+    if model.cfg.core_fmt != "vq":
+        return
+    if type(step) is not int or step < 0 or type(arm_seed) is not int or arm_seed < 0:
+        raise ValueError("vq step and arm seed must be non-negative ints")
+    _tie_book(model)
+    cores = _core_linears(model)
+    if step % ASSIGN_EVERY == 0:
+        used: set[int] = set()
+        for _, module in cores:
+            symbols, scale_bytes = module.codec.encode(module.weight.detach())
+            stored = np.ascontiguousarray(symbols, dtype=np.int64)
+            module.assignment = (stored, bytes(scale_bytes))
+            used.update(int(i) for i in np.unique(stored).tolist())
+        book = model.book
+        assert book is not None
+        dead = [i for i in range(book.levels) if i not in used]
+        # A fixed book is the seed. Log the dead entry and do not rewrite it.
+        for index in dead:
+            model.reseed_log.append({"step": step, "index": index, "learned": book.learned})
+        if dead and book.learned:
+            book.reseed(dead)
+        model.assigned_at = step
+    elif model.assigned_at is None:
+        raise ValueError("vq training step before the first assignment")
+    for name, module in cores:
+        if module.assignment is None:
+            raise ValueError(f"vq core {name} has no assignment")
+        module._partial_prob = PARTIAL_PROB
+        module._mask_seed = mask_seed(arm_seed, step, name)
+
+
+def vector_state(model: TinyGPT) -> dict:
+    """Indices, scales, book identity, and the PCG stream. Not the master weights."""
+    if model.cfg.core_fmt != "vq" or model.book is None:
+        raise ValueError("vector state requires a vq model")
+    _tie_book(model)
+    book = model.book
+    if model.assigned_at is None:
+        cores = None
+    else:
+        cores = {}
+        for name, module in _core_linears(model):
+            if module.assignment is None:
+                raise ValueError(f"vq checkpoint missing assignment for {name}")
+            symbols, scales = module.assignment
+            cores[name] = {
+                "symbols": np.array(symbols, dtype=np.int64, copy=True),
+                "scales": bytes(scales),
+            }
+    return {
+        "book": {
+            "seed": book.seed,
+            "learned": book.learned,
+            "dimension": book.dimension,
+            "bits": book.bits,
+        },
+        "stream": book.stream.state_dict(),
+        "assigned_at": model.assigned_at,
+        "reseed_log": [dict(row) for row in model.reseed_log],
+        "cores": cores,
+    }
+
+
+def load_vector_state(model: TinyGPT, state: dict) -> None:
+    """Restore a held assignment. This does not encode the master weights."""
+    if model.cfg.core_fmt != "vq" or model.book is None:
+        raise ValueError("vector state requires a vq model")
+    _tie_book(model)
+    book = model.book
+    meta = state["book"]
+    if (book.seed, book.learned, book.dimension, book.bits) != (
+        meta["seed"],
+        meta["learned"],
+        meta["dimension"],
+        meta["bits"],
+    ):
+        raise ValueError("checkpoint book does not match the model")
+    book.stream.load_state_dict(state["stream"])
+    model.assigned_at = state["assigned_at"]
+    model.reseed_log = [dict(row) for row in state["reseed_log"]]
+    cores = _core_linears(model)
+    saved = state["cores"]
+    if state["assigned_at"] is None:
+        if saved:
+            raise ValueError("vq checkpoint assignment does not match the step")
+        for _, module in cores:
+            module.assignment = None
+        return
+    if set(saved) != {name for name, _ in cores}:
+        raise ValueError("checkpoint assignments do not match the core tensors")
+    for name, module in cores:
+        row = saved[name]
+        module.assignment = (
+            np.array(row["symbols"], dtype=np.int64, copy=True),
+            bytes(row["scales"]),
+        )
+
+
+def _step(
+    model: TinyGPT,
+    opt: torch.optim.Optimizer,
+    stream: DataStream,
+    lr: float,
+    *,
+    step: int | None = None,
+    seed: int = 0,
+) -> float:
+    if model.cfg.core_fmt == "vq":
+        if step is None:
+            raise ValueError("vq step is required")
+        prepare_vector_step(model, step, seed)
     for g in opt.param_groups:
         g["lr"] = lr
     x, y = stream.next()
@@ -233,17 +387,26 @@ def train_wsd(
     else:
         trunk = Trunk.restore(model, data, spec, resume)
     acct = {"trunk_steps": 0, "cooldowns": [], "trunk_seconds": 0.0}
+
+    def take(target: TinyGPT, opt: torch.optim.Optimizer, stream: DataStream, lr: float, step: int):
+        before = len(getattr(target, "reseed_log", ()))
+        _step(target, opt, stream, lr, step=step, seed=spec.seed)
+        fresh = len(getattr(target, "reseed_log", ())) - before
+        if fresh:
+            log(f"dead code step={step} entries={fresh}")
+
     for end, cd_len in zip(sch["ends"], sch["cooldowns"], strict=True):
         cd_start = end - cd_len
         if trunk.step > cd_start:
             continue  # resumed past this branch point
         t0 = time.time()
         while trunk.step < cd_start:
-            _step(
+            take(
                 trunk.model,
                 trunk.opt,
                 trunk.stream,
                 lr_at(trunk.step, sch["warmup"], spec.lr, None, 0),
+                trunk.step,
             )
             trunk.step += 1
             acct["trunk_steps"] += 1
@@ -252,12 +415,13 @@ def train_wsd(
         if on_checkpoint is not None:
             on_checkpoint(ckpt)
         branch = copy.deepcopy(trunk.model)
+        _tie_book(branch)
         bopt = _optimizer(branch, spec)
         bopt.load_state_dict(copy.deepcopy(trunk.opt.state_dict()))
         bstream = trunk.stream.fork()
         t0 = time.time()
         for s in range(cd_start, end):
-            _step(branch, bopt, bstream, lr_at(s, sch["warmup"], spec.lr, cd_start, cd_len))
+            take(branch, bopt, bstream, lr_at(s, sch["warmup"], spec.lr, cd_start, cd_len), s)
         info = {
             "end_step": end,
             "cooldown_steps": cd_len,
