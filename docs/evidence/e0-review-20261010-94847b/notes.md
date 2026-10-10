@@ -102,3 +102,12 @@ was started.
 The proposal's decision 14 now specifies that order. One `VQB1` book sits in
 the FLP2 shared section, a vector arm sets `core_fmt` to `vq`, and `GPTConfig`
 gains no field. The proposal stays unaccepted. No console job was started.
+
+## Later (2026-10-11, consolidation)
+
+E0 experiments stop with the completed baseline. No further scalar campaign
+is opened to name one format. The 1/16 proposal carries both stored arms, the
+selection hash, the ADR 0020 window, and the FLP2 byte order. It stays
+proposed. The pilot does not start until
+[issue #25](https://github.com/gianlucamazza/floppylm/issues/25) accepts it.
+No console job is authorized.

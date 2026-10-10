@@ -24,8 +24,10 @@ the baseline complete and keeps both stored arms. Roadmap gate 4 is recorded
 in the [review](evidence/e0-review-20261010-94847b/notes.md). The 1/16 pilot
 proposal now copies both stored arms, the selection hash, and the ADR 0020
 window, and decision 14 specifies the FLP2 byte order. It stays unaccepted.
+No further E0 campaign is opened. The 1/16 pilot does not start.
 [Issue #26](https://github.com/gianlucamazza/floppylm/issues/26) is closed.
-[Issue #25](https://github.com/gianlucamazza/floppylm/issues/25) stays open.
+[Issue #25](https://github.com/gianlucamazza/floppylm/issues/25) stays open
+until an explicit acceptance.
 Campaign
 `e0-20261009T150330Z-87686a` stays stopped on 0.1.0.105.
 Run `87686a-000` failed at trunk step 64 with `JSON write failed`, wrote no

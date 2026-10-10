@@ -78,6 +78,9 @@ Continue in this order:
    book in the shared section, `core_fmt` `vq` on a vector arm, and the
    existing per-tensor framing. `VQF1` stays the functional fixture.
    The proposal stays unaccepted.
+   On 2026-10-11 the E0 experiment series stops. No further scalar campaign
+   is opened to force one named format. The 1/16 pilot does not start before
+   acceptance.
 3. The console is free. No Xbox vector executor exists in this repository or in
    the accepted trainer. `src/floppylm/vq.py` remains the CPU fixture oracle from
    [ADR 0013](adr/0013-e1-functional-qualification.md). Qualification has not
