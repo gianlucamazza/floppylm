@@ -18,7 +18,7 @@ From the operational checkout, open a dedicated tunnel in a separate terminal:
 ```bash
 ssh -S none -N -o BatchMode=yes -o ExitOnForwardFailure=yes \
   -o ServerAliveInterval=15 \
-  -L 127.0.0.1:31443:192.168.1.44:11443 odroid
+  -L 127.0.0.1:31443:<console-ip>:11443 <jump-host>
 ```
 
 Use the existing pinned certificate and credentials from `xbox.env`. Do not change

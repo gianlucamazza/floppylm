@@ -26,7 +26,7 @@ the single final evaluation. No final evaluation has occurred at this observatio
 
 Three transient user services use suffix `20261003T104300Z`: `floppylm-e0-tunnel`,
 `floppylm-e0-campaign` and `floppylm-e0-monitor`. Linger is enabled. The dedicated
-SSH tunnel goes through Odroid to the console's Device Portal; it does not depend
+SSH tunnel is a jump-host SSH tunnel to the console's Device Portal; it does not depend
 on the invoking terminal. All services have `Restart=no`. The campaign uses
 `KillMode=mixed` and an unlimited stop timeout to allow its existing cooperative
 child cleanup. The read-only monitor observes every 30 seconds and is bound to

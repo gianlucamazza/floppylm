@@ -11,7 +11,7 @@ from squash `4b8f51c3a5ee985ce8fcb71327f0ffc88e487545`
 ([PR #40](https://github.com/gianlucamazza/xbox-gpu-training/pull/40), PR head `bd9dfb4`).
 [Lineage](package-lineage.json) binds the unsigned and signed package hashes and the
 preserved CI payloads. Signing used the existing development certificate. Deployment
-used the existing Odroid SSH tunnel and the TLS pin already published for 0.1.0.98.
+used a jump-host SSH tunnel and the TLS pin already published for 0.1.0.98.
 That pin matched; it was not replaced. No uninstall was required: the install replaced
 0.1.0.98 in place and kept LocalState.
 

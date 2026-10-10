@@ -3,7 +3,7 @@
 Purpose: preparation only. No campaign, job publication, final-test reservation,
 recovery, app restart or package installation occurred.
 
-[Preflight](preflight.json) passed through a dedicated Odroid tunnel with the
+[Preflight](preflight.json) passed through a jump-host SSH tunnel with the
 existing TLS pin. It records the exact source hashes and observation commit,
 acceptance/benchmark hashes, train/validation bytes and hashes, accepted package,
 worker/PID, reservation metadata and the phase cost envelope. Test data was not

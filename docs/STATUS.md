@@ -157,7 +157,7 @@ deliberately, kept as a record), **measured**
 Selection/reporting corrections and bounded host observation are integrated
 (PRs #13 and #14). Merged backend PR #39 supplies the functional probe
 and verified resume normalization. Package `0.1.0.98` passed the complete
-[hardware qualification](evidence/xbox-e0-20261003-098/notes.md) through Odroid.
+[hardware qualification](evidence/xbox-e0-20261003-098/notes.md) through a jump-host SSH tunnel.
 The [incomplete 0.1.0.96 attempt](evidence/xbox-e0-20261003-096-incomplete/notes.md)
 is retained: it exposed the native resume-binding defect, repaired before final
 qualification. No historical campaign may be resumed onto this package. No new
@@ -171,7 +171,7 @@ source freeze under the existing scientific protocol. Readiness is timestamped a
 must be rechecked at launch; preparation does not authorize or start a campaign.
 
 The [2026-10-03 readiness observation](evidence/e0-readiness-20261003/notes.md) passed
-through Odroid on the unchanged accepted package. It is preparation evidence, not
+through a jump-host SSH tunnel on the unchanged accepted package. It is preparation evidence, not
 a campaign start or final-test reservation.
 
 ## Authorized E0 launch

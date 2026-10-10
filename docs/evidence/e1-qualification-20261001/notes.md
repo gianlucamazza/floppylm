@@ -41,7 +41,7 @@ Raw artifacts live in ignored `runs/e1-functional-20261001-adr0013/` and can be
 reproduced with the committed runner and frozen train hash:
 
 ```bash
-/home/gianluca/.local/bin/bg python scripts/e1_qualify.py \
+~/.local/bin/bg python scripts/e1_qualify.py \
   --train data/tinystories/train.bin \
   --train-sha256 8745f0d0f0c2ede79305e35393f90b35ff15c91fa1d85abed2acafdf4046e092 \
   --out runs/e1-functional-new
@@ -58,7 +58,7 @@ by E0 completion. No F1/F2 verdict follows from these probes.
 
 Later note (2026-10-01): long jobs must not run through `bg` / `background.slice`
 ([ADR 0003](../../adr/0003-lab-practices.md) amendment). Reproduce with `python`
-(or `nohup python` and a log under `runs/`), not `/home/gianluca/.local/bin/bg python`.
+(or `nohup python` and a log under `runs/`), not `~/.local/bin/bg python`.
 
 ## Later (2026-10-10)
 
