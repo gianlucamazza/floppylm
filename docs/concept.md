@@ -25,9 +25,9 @@ elsewhere is decoration (the lesson of the stress test below, and of the closed 
 Seed weights with adapters, from-scratch product quantization, low-rank sign templates and learned
 sub-bit codebooks all exist; the comparison table is owned by [positioning](positioning.md).
 
-No work found trains an LM from scratch with a **vector-coded core below 1 bit/weight** and compares
+The bounded literature search has not identified a work that trains an LM from scratch with a **vector-coded core below 1 bit/weight** and compares
 **learned, seed-generated and computed codes** at exactly equal coded bytes, under 1.5 MB, with a
-bootable artifact. The claimable novelty is that comparison and its result, not the mechanism.
+complete data-floppy artifact. The claimable novelty is that comparison and its result, not the mechanism.
 
 The scalar adversary is a common decoder-only GPT: pre-norm RMSNorm, RoPE, causal attention,
 a tied 4-bit embedding, and a ternary or 2-bit core. E0 exists to make that ordinary family
