@@ -83,8 +83,9 @@ Continue in this order:
    that acceptance.
 3. The console is free. No Xbox vector executor exists in this repository or in
    the accepted trainer. `src/floppylm/vq.py` remains the CPU fixture oracle from
-   [ADR 0013](adr/0013-e1-functional-qualification.md). Qualification has not
-   started. When an executor exists, the tasks are: give it the inputs of a
+   [ADR 0013](adr/0013-e1-functional-qualification.md). CPU functional
+   qualification is measured. Xbox vector qualification has not started.
+   When an executor exists, the tasks are: give it the inputs of a
    published CPU vector fixture; require identical artifact bytes and a decode
    that matches that oracle; record the comparison under `docs/evidence`. A
    scalar throughput measurement does not qualify it. ADR 0023 keeps the pilot
@@ -99,7 +100,9 @@ Continue in this order:
    the pages left on `docs/excellence-research-20261001` are an audit dated
    2026-10-01. They are not the live protocol and are not merged. The host
    FLP2 layout is on main (`b362991`): one `VQB1` book in the shared section.
-   The host trainer applies ADR 0023 decisions 7–9 on CPU. Assignment is
+   The host trainer is `e9e7ef8`
+   ([python run 38095852624](https://github.com/gianlucamazza/floppylm/actions/runs/38095852624)).
+   It applies ADR 0023 decisions 7–9 on CPU. Assignment is
    every 64 steps at probability 0.1. A dead learned entry is reseeded from
    that arm's PCG32 stream and logged. A fixed book logs the dead entry and
    keeps the seed. Resume continues the master weights, indices, scales,

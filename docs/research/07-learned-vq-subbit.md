@@ -257,3 +257,8 @@ unaccepted. Scalar measurements live in the evidence index, not in this survey.
 Later note (2026-10-11): the scientific E1 1/16 protocol is
 [ADR 0023](../adr/0023-e1-1-16-pilot.md). This survey's five-arm plan stays
 unaccepted. The pilot has not started.
+
+Later note (2026-10-11, host code): the host layout is `b362991` and the host
+trainer is `e9e7ef8`. Live state is in [STATUS](../STATUS.md). This survey
+stays background. Its five-arm plan stays unaccepted. The pilot has not
+started.

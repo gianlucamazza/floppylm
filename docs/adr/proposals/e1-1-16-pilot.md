@@ -193,3 +193,9 @@ Accepted and recorded in [ADR 0023](../0023-e1-1-16-pilot.md). That ADR
 authorizes the host implementation of this protocol. It does not open a
 campaign, reserve a final test, or start a console job. The sentence in
 Consequences that forbids acceptance describes the file before this note.
+
+## Later (2026-10-11, host trainer)
+
+The host layout `b362991` and the host trainer `e9e7ef8` are on main. Live
+state is in [STATUS](../../STATUS.md). The pilot has not started. No console
+job was started. This note does not change the proposal.

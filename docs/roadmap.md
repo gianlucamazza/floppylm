@@ -104,7 +104,9 @@ unaffected.
 ## E1 pilot — Vector vs scalar core at 1/16 (signal on F1, F1-abl)
 
 The accepted protocol is [ADR 0023](adr/0023-e1-1-16-pilot.md). This section
-does not restate it. The pilot has not started.
+does not restate it. The host layout (`b362991`) and the host trainer
+(`e9e7ef8`) are on main. Live state is in [STATUS](STATUS.md). The pilot has
+not started.
 
 - K=1, no recursion. 3 seeds, vector rate 0.5 and 0.75 bit/weight, tokens ≈ 20 per stored
   parameter of the largest arm, equal for all.

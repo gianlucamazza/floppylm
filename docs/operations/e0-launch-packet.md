@@ -155,3 +155,9 @@ remain. The 1/16 pilot proposal stays unaccepted. No console job was started.
 
 The 1/16 protocol is accepted as [ADR 0023](../adr/0023-e1-1-16-pilot.md).
 The pilot has not started. No console job was started.
+
+## Later (2026-10-11, host trainer)
+
+The host layout is `b362991` and the host trainer is `e9e7ef8`. Live state is
+in [STATUS](../STATUS.md). The pilot has not started. No console job was
+started.

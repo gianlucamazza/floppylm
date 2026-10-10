@@ -124,3 +124,10 @@ qualification described above still waits on an executor.
 The host FLP2 layout is commit `b362991`. The host trainer applies ADR 0023
 decisions 7–9. The pilot has not started. No console job was started. This
 note does not change the review.
+
+## Later (2026-10-11, trainer commit)
+
+The host trainer in the note above is signed commit `e9e7ef8`
+([python run 38095852624](https://github.com/gianlucamazza/floppylm/actions/runs/38095852624)).
+The pilot has not started. No console job was started. This note does not
+change the review.
