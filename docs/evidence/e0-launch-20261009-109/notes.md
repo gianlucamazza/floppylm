@@ -49,3 +49,12 @@ Run `94847b-008`, 2-bit seed 3, is eligible at submitted `d_ff` 205. Val bpb
 Nine paired cells are eligible. Run `94847b-009`, 2-bit seed 4, is in progress
 and is not a result. The paired comparison, the ten-hash freeze and the final
 test have not run. This is not a scalar recipe.
+
+## Later (2026-10-10, cell 009)
+
+Run `94847b-009`, 2-bit seed 4, is eligible at submitted `d_ff` 205. Val bpb
+1.5142/1.3858/1.2927, Δ(2T→4T) = −0.093. The stored nominal width remains 193.
+All ten paired cells are eligible. The ten counted hashes are frozen in
+[`e0-20261009T174028Z-94847b.json`](../e0-v2/selections/e0-20261009T174028Z-94847b.json).
+Byte parity and rank stability passed. The final test is in progress. This is
+not a scalar recipe.
