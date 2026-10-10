@@ -173,6 +173,7 @@ Same campaign, eligible MLP repairs only. The green mean is the two gelu seeds, 
 | [`e0-v2/runs/e0-20261009T174028Z-94847b-009`](e0-v2/runs/e0-20261009T174028Z-94847b-009/notes.md) | paired 2-bit seed 4, nominal `d_ff` 193, submitted `d_ff` 205, val bpb 1.5142/1.3858/1.2927, Δ(2T→4T) = −0.093 | eligible |
 | [`e0-v2/selections/e0-20261009T174028Z-94847b.json`](e0-v2/selections/e0-20261009T174028Z-94847b.json) | ten-hash freeze of the counted paired cells | frozen |
 | [`e0-v2/selections/e0-20261009T174028Z-94847b.test.json`](e0-v2/selections/e0-20261009T174028Z-94847b.test.json) | final test of those ten hashes; ternary minus 2-bit −0.023838 bpb, SD 0.013733, gate 0.026322, inside the gate | completed |
+| [`e0-v2/selections/e0-20261009T174028Z-94847b.test.reservation.json`](e0-v2/selections/e0-20261009T174028Z-94847b.test.reservation.json) | final-test reservation, state `completed` at 2026-10-10T10:02:51Z | completed |
 | [`e0-v2/campaigns/e0-20261009T174028Z-94847b`](e0-v2/campaigns/e0-20261009T174028Z-94847b/notes.md) | paired campaign on 0.1.0.109, completed 2026-10-10T10:02:53Z; baseline complete, both stored arms kept | completed |
 | [`e0-review-20261010-94847b`](e0-review-20261010-94847b/notes.md) | roadmap gate 4 review; ternary lower at T, 2T, 4T and on the test, magnitude inside the frozen gate | recorded |
 | [`e0-lite/pre-v2`](e0-lite/pre-v2/notes.md)                                                                                                 | stopped E0-lite grid; diagnostic, excluded from verdicts, FLP1 blobs | —           |

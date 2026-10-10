@@ -86,9 +86,10 @@ Continue in this order:
 4. Acceptance of the 1/16 pilot is a separate explicit step
    ([issue #25](https://github.com/gianlucamazza/floppylm/issues/25)). It is not
    taken here. Draft [PR #2](https://github.com/gianlucamazza/floppylm/pull/2)
-   was closed on 2026-10-10 without merge. The pages left on
-   `docs/excellence-research-20261001` are an audit dated 2026-10-01. They are
-   not the live protocol and are not merged. Once a scientific protocol is
+   was closed on 2026-10-10 without merge.
+   [Issue #26](https://github.com/gianlucamazza/floppylm/issues/26) is closed:
+   the pages left on `docs/excellence-research-20261001` are an audit dated
+   2026-10-01. They are not the live protocol and are not merged. Once a scientific protocol is
    accepted, integrate the model/format and run the paired 1/16 pilot; proceed
    through E1a/E1/E1b and E2–E4 only on passing gates. Keep local-judge
    qualification and actual 30 blind human ratings explicit at E4.

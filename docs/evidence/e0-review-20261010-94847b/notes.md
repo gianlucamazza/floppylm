@@ -80,3 +80,11 @@ are identical fixture inputs, identical artifact bytes, and a decode that
 matches the oracle. Building that executor under the unaccepted 1/16 proposal
 is not one of those tasks. Draft PR #2 stays closed and unmerged. Acceptance
 of the pilot remains a separate explicit step.
+
+## Later (2026-10-10, issue 26)
+
+[Issue #26](https://github.com/gianlucamazza/floppylm/issues/26) is closed.
+The reading stands: draft PR #2 stays closed and unmerged, and the pages on
+`docs/excellence-research-20261001` are an audit dated 2026-10-01. They are
+not the live protocol. Acceptance of the pilot remains
+[issue #25](https://github.com/gianlucamazza/floppylm/issues/25).

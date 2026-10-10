@@ -46,3 +46,12 @@ backend, never in a copy. xbox-gpu-training docs must refer here, not to xllama.
 
 Campaign `e0-20261004T103838Z-c58a86` stopped on 2026-10-07. The two follow-ups above
 remain open. This note does not change the decision.
+
+## Later (2026-10-10)
+
+The schema files and golden fixtures are published in this repository.
+xbox-gpu-training vendors that set at floppylm commit `3e5ab3c` and tests the
+pin. Watchdog fields added to `floppylm.e0.job.v1` after that pin are not in
+the vendored copy. This note does not move the pin. Xbox connection code lives
+in `src/floppylm_xbox/portal.py` and reads `~/.config/floppylm/xbox.env`. It
+does not read `~/.config/xllama/xbox-env`. This note does not change the decision.
