@@ -41,3 +41,11 @@ outside ±1% on the first pack and eligible after one S3 repair (`d_ff` 266,
 nominal width remains 193. Run `94847b-008`, 2-bit seed 3, is in progress and
 is not a result. 2-bit seed 4 has not started. The paired comparison, the
 ten-hash freeze and the final test have not run. This is not a scalar recipe.
+
+## Later (2026-10-10, cell 008)
+
+Run `94847b-008`, 2-bit seed 3, is eligible at submitted `d_ff` 205. Val bpb
+1.4925/1.3665/1.2801, Δ(2T→4T) = −0.086. The stored nominal width remains 193.
+Nine paired cells are eligible. Run `94847b-009`, 2-bit seed 4, is in progress
+and is not a result. The paired comparison, the ten-hash freeze and the final
+test have not run. This is not a scalar recipe.

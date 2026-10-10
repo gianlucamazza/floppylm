@@ -169,6 +169,7 @@ Same campaign, eligible MLP repairs only. The green mean is the two gelu seeds, 
 | [`e0-v2/runs/e0-20261009T174028Z-94847b-005`](e0-v2/runs/e0-20261009T174028Z-94847b-005/notes.md) | paired 2-bit seed 0, nominal `d_ff` 193, submitted `d_ff` 205, val bpb 1.4973/1.3675/1.2820, Δ(2T→4T) = −0.085 | eligible |
 | [`e0-v2/runs/e0-20261009T174028Z-94847b-006`](e0-v2/runs/e0-20261009T174028Z-94847b-006/notes.md) | paired 2-bit seed 1, nominal `d_ff` 193, submitted `d_ff` 205, val bpb 1.5021/1.3737/1.2821, Δ(2T→4T) = −0.092 | eligible |
 | [`e0-v2/runs/e0-20261009T174028Z-94847b-007`](e0-v2/runs/e0-20261009T174028Z-94847b-007/notes.md) | paired 2-bit seed 2, nominal `d_ff` 193, submitted `d_ff` 205, val bpb 1.5053/1.3785/1.2911, Δ(2T→4T) = −0.087 | eligible |
+| [`e0-v2/runs/e0-20261009T174028Z-94847b-008`](e0-v2/runs/e0-20261009T174028Z-94847b-008/notes.md) | paired 2-bit seed 3, nominal `d_ff` 193, submitted `d_ff` 205, val bpb 1.4925/1.3665/1.2801, Δ(2T→4T) = −0.086 | eligible |
 | [`e0-lite/pre-v2`](e0-lite/pre-v2/notes.md)                                                                                                 | stopped E0-lite grid; diagnostic, excluded from verdicts, FLP1 blobs | —           |
 
 ### Xbox package acceptance

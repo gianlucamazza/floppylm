@@ -126,3 +126,10 @@ That campaign is `e0-20261009T174028Z-94847b`, recorded in
 cells are eligible and indexed. Run `94847b-008` is in progress and is not a
 result. The comparison, the ten-hash freeze and the final test have not run.
 The scalar recipe is not named.
+
+## Later (2026-10-10, cell 008)
+
+Run `94847b-008`, 2-bit seed 3, is eligible and indexed. Nine paired cells are
+eligible. Run `94847b-009`, 2-bit seed 4, is in progress and is not a result.
+The comparison, the ten-hash freeze and the final test have not run. The
+scalar recipe is not named.
