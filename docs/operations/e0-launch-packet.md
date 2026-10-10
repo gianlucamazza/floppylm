@@ -138,3 +138,9 @@ scalar recipe is not named.
 
 All ten paired cells are eligible and the ten hashes are frozen. The final
 test is in progress. The scalar recipe is not named.
+
+## Later (2026-10-10, completed)
+
+Campaign `e0-20261009T174028Z-94847b` completed at 2026-10-10T10:02:53Z. The
+final-test difference is inside the frozen gate. The report keeps both stored
+arms.

@@ -58,3 +58,11 @@ All ten paired cells are eligible. The ten counted hashes are frozen in
 [`e0-20261009T174028Z-94847b.json`](../e0-v2/selections/e0-20261009T174028Z-94847b.json).
 Byte parity and rank stability passed. The final test is in progress. This is
 not a scalar recipe.
+
+## Later (2026-10-10, completed)
+
+The campaign completed at 2026-10-10T10:02:53Z. The unit exited 0. The final
+test records ternary minus 2-bit −0.023838 bpb, sample SD 0.013733, frozen
+gate 0.026322. That difference is inside the gate. The
+[report](../e0-v2/campaigns/e0-20261009T174028Z-94847b/notes.md) marks the
+baseline complete and keeps both stored arms.

@@ -5,20 +5,25 @@ bump or campaign start/stop. Last updated: **2026-10-10**.
 
 ## Where this stands
 
-E0 campaign `e0-20261009T174028Z-94847b` is running at `paired-seeds` on the
-accepted Xbox package 0.1.0.109. Host freeze `96a3054`, unit
-`floppylm-e0-campaign-20261009T174006Z`, under [ADR 0020](adr/0020-target-window-parity.md)
-and [ADR 0022](adr/0022-paired-campaign-on-109.md). Ten paired cells are
-eligible. Ternary seeds 0, 1 and 3 needed one S3 repair; seeds 2 and 4 were
-eligible on the first pack. 2-bit seeds 0–4 were eligible on the first pack,
-with submitted `d_ff` 205 and the stored nominal width still 193. The ten
-counted cells are frozen in
+E0 campaign `e0-20261009T174028Z-94847b` completed at 2026-10-10T10:02:53Z on
+the accepted Xbox package 0.1.0.109. Host freeze `96a3054`, unit
+`floppylm-e0-campaign-20261009T174006Z` exited 0, under
+[ADR 0020](adr/0020-target-window-parity.md) and
+[ADR 0022](adr/0022-paired-campaign-on-109.md). Ten paired cells are eligible.
+Ternary seeds 0, 1 and 3 needed one S3 repair; seeds 2 and 4 were eligible on
+the first pack. 2-bit seeds 0–4 were eligible on the first pack, with submitted
+`d_ff` 205 and the stored nominal width still 193. The ten counted cells are
+frozen in
 [the selection](evidence/e0-v2/selections/e0-20261009T174028Z-94847b.json).
-Byte parity and rank stability passed. The final test is in progress. Campaign
+Byte parity and rank stability passed. The
+[final test](evidence/e0-v2/selections/e0-20261009T174028Z-94847b.test.json)
+records ternary minus 2-bit −0.023838 bpb, sample SD 0.013733, frozen gate
+0.026322. That difference is inside the gate. The
+[report](evidence/e0-v2/campaigns/e0-20261009T174028Z-94847b/notes.md) marks
+the baseline complete and keeps both stored arms. Campaign
 `e0-20261009T150330Z-87686a` stays stopped on 0.1.0.105.
 Run `87686a-000` failed at trunk step 64 with `JSON write failed`, wrote no
-branch, and is not recovered. `766d4b` cell `031` stays closed. The scalar
-recipe is not named.
+branch, and is not recovered. `766d4b` cell `031` stays closed.
 
 Campaign `766d4b` stays stopped at 2026-10-09T12:07:22Z. It opened at `grid-ternary` under
 ADR 0020, host freeze `11d608a`, unit `floppylm-e0-campaign-20261008T063808Z`. Cell `031`,
@@ -68,9 +73,10 @@ lr 0.003, wd 0.1, at 1.4914/1.3663/1.2766. The campaign then stopped in
 `JSON write failed`. Do not recover that failed job.
 Campaign `e0-20261009T150330Z-87686a` stopped on its first fresh seed and is not a result.
 It does not resume `c58a86` or `766d4b`. Campaign `e0-20261009T174028Z-94847b`
-is the [ADR 0022](adr/0022-paired-campaign-on-109.md) successor. All ten
-paired cells are eligible and the ten hashes are frozen. The final test is in
-progress. It is not a named scalar recipe.
+is the [ADR 0022](adr/0022-paired-campaign-on-109.md) successor. It completed
+at 2026-10-10T10:02:53Z. All ten paired cells are eligible, the ten hashes are
+frozen, and the final test difference is inside the frozen gate. Both stored
+arms remain in the baseline.
 The generated report records 29 trials and 21 byte repairs, and no completed
 baseline: [campaign report](evidence/e0-v2/campaigns/e0-20261004T103838Z-c58a86/notes.md).
 
@@ -92,12 +98,12 @@ paragraph above is the quality state. Measured cells are in the
 | E0 v2 software       | **measured**: harness, gates and smoke ([evidence](evidence/README.md))                                                                                                                 |
 | S1–S10, scale policy | accepted ([ADR 0008](adr/0008-e0-numeric-protocol.md), [ADR 0011](adr/0011-e0-row-scale-selection.md))                                                                                  |
 | Xbox package | **accepted** `GianlucaMazza.XgpuE0_0.1.0.109_x64__g0p5dcfz4t9z4`, source `961ccc2ab2e800eb25ea1ea33c1af1a46389ee59`, CI [37959310043](https://github.com/gianlucamazza/xbox-gpu-training/actions/runs/37959310043). [Evidence](evidence/xbox-e0-20261009-109/notes.md): full gates, bit-identical 38/38 versus [0.1.0.105](evidence/xbox-e0-20261004-105/notes.md). Shader CSO unchanged. A failed JSON open reports the path and Win32 code and retries only sharing and lock violations. `87686a` and `766d4b` cell `031` stay stopped and are not resumed onto this package. |
-| E0 campaign | **running** `e0-20261009T174028Z-94847b` on `0.1.0.109`, host freeze `96a3054`, protocol ADR 0020, [ADR 0022](adr/0022-paired-campaign-on-109.md), phase `paired-seeds`, unit `floppylm-e0-campaign-20261009T174006Z`. Ten paired cells are eligible: ternary seeds 0, 1 and 3 after one S3 repair, ternary seeds 2 and 4 and 2-bit seeds 0–4 on the first pack. 2-bit submitted `d_ff` is 205; the stored nominal width stays 193. The ten counted hashes are frozen. Byte parity and rank stability passed. The final test is in progress. `87686a` stays stopped on `0.1.0.105`: run `87686a-000` failed at trunk step 64 with `JSON write failed`, wrote no branch, and is not recovered. Do not start `floppylm-e0-campaign-20261009T150327Z`, `floppylm-e0-campaign-20261008T063808Z`, or `floppylm-e0-campaign-20261007T164709Z`. `766d4b` cell `031` stays closed. The scalar recipe is not named. `c58a86` stays stopped. [Launch record](evidence/e0-launch-20261009-109/notes.md). |
+| E0 campaign | **completed** `e0-20261009T174028Z-94847b` at 2026-10-10T10:02:53Z on `0.1.0.109`, host freeze `96a3054`, protocol ADR 0020, [ADR 0022](adr/0022-paired-campaign-on-109.md), unit `floppylm-e0-campaign-20261009T174006Z` exited 0. Ten paired cells are eligible: ternary seeds 0, 1 and 3 after one S3 repair, ternary seeds 2 and 4 and 2-bit seeds 0–4 on the first pack. 2-bit submitted `d_ff` is 205; the stored nominal width stays 193. The ten counted hashes are frozen. Byte parity and rank stability passed. Final test ternary minus 2-bit −0.023838 bpb, sample SD 0.013733, frozen gate 0.026322; the difference is inside the gate. The [report](evidence/e0-v2/campaigns/e0-20261009T174028Z-94847b/notes.md) marks the baseline complete and keeps both stored arms. `87686a` stays stopped on `0.1.0.105`: run `87686a-000` failed at trunk step 64 with `JSON write failed`, wrote no branch, and is not recovered. Do not start `floppylm-e0-campaign-20261009T150327Z`, `floppylm-e0-campaign-20261008T063808Z`, or `floppylm-e0-campaign-20261007T164709Z`. `766d4b` cell `031` stays closed. `c58a86` stays stopped. [Launch record](evidence/e0-launch-20261009-109/notes.md). |
 | Previous E0 campaign | **stopped** `e0-20261004T082243Z-31972d` at 2026-10-04T09:28:41Z on `0.1.0.102` (freeze `4de17b3`). `progress_stall` at published trunk 2112. Preserved checkpoint sha256 `3fb5d57cb03591afcbf90054c97544f6abcb6e075c1a297139335d6ae0c86483`, 23713680 bytes. Not resumed onto `0.1.0.105`. Before that, `e0-20261002T191632Z-ca781f` on 0.1.0.93 (2026-10-03T00:04:51Z). Trial `000` **eligible** (fill 0.9990/0.9998/1.0012, val bpb 1.5155/1.3951/1.3160). Trial `001` **eligible** after S3 `d_ff` 400 (fill 0.9996/1.0007/1.0009, val bpb 1.5100/1.3916/1.3082, bytes 85904/86000/86015). Trial `002` row8log **interrupted** at stop, not a result. Do not resume `ca781f` onto 0.1.0.95. Frozen FloppyLM `3c3c79d`. |
 | Previous campaign    | `e0-20261001T163456Z-fdab67` (0.1.0.56) **stopped**, 001 incomplete; do not resume. Before that, `e0-20261001T090514Z-4236fd` (0.1.0.28) stopped unsaturated — [record](evidence/e0-v2/campaigns/e0-20261001T090514Z-4236fd/notes.md) |
 | E0 saturation gate   | recorded, not an eligibility gate ([ADR 0015](adr/0015-e0-fixed-data-frontier.md)) |
 | Host recovery        | [ADR 0017](adr/0017-runtime-liveness.md) merged ([PR #7](https://github.com/gianlucamazza/floppylm/pull/7)); paired with accepted 0.1.0.93. |
-| E0 quality results   | scale selected `row8log`; MLP selected SwiGLU, nominal `d_ff` 274; ternary tuning closed at lr 0.01, delta 0.5; `c58a86` ternary grid refused; `766d4b` stopped in `paired-seeds` on 2026-10-09; ternary phase selection `d` 80, 4 layers, `d_ff` 262; 2-bit phase selection is the neutral shape at 4T val bpb 1.2766; `87686a` stopped on its first fresh seed with no branch; `94847b` has ten eligible paired cells and a ten-hash freeze; the final test is in progress and the scalar recipe is not named |
+| E0 quality results   | scale selected `row8log`; MLP selected SwiGLU, nominal `d_ff` 274; ternary tuning closed at lr 0.01, delta 0.5; `c58a86` ternary grid refused; `766d4b` stopped in `paired-seeds` on 2026-10-09; ternary phase selection `d` 80, 4 layers, `d_ff` 262; 2-bit phase selection is the neutral shape at 4T val bpb 1.2766; `87686a` stopped on its first fresh seed with no branch; `94847b` completed at 2026-10-10T10:02:53Z with ten eligible paired cells, a ten-hash freeze, and a final-test difference inside the frozen gate; both stored arms remain in the baseline |
 | E1 qualification     | CPU functional qualification **measured** ([ADR 0013](adr/0013-e1-functional-qualification.md), [evidence](evidence/e1-qualification-20261001/notes.md)); Xbox vector qualification pending |
 | Scientific E1–E4     | **specified**, gated by E0 and an accepted E1 protocol ([roadmap](roadmap.md), [completion plan](completion-plan.md)) |
 

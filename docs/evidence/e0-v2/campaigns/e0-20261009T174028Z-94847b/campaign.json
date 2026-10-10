@@ -1,0 +1,450 @@
+{
+ "acceptance_sha256": "fbeb45ce97463283fe2d8297e00ea237f243d8738fc56bf5a0b485eacc63e1eb",
+ "benchmark_sha256": "7b50073c1f8f9a0dcb3624e589422d9c0c18462bc766d200d42e3d5b22585846",
+ "commit": "961ccc2ab2e800eb25ea1ea33c1af1a46389ee59",
+ "created": "2026-10-09T17:40:28+00:00",
+ "decisions": {
+  "2bit": {
+   "config": {
+    "core_fmt": "2bit",
+    "ctx": 256,
+    "d": 96,
+    "d_ff": 193,
+    "delta": 0.5,
+    "emb_fmt": "4bit",
+    "mlp": "swiglu",
+    "n_heads": 6,
+    "n_layers": 3,
+    "qk_norm": false,
+    "scale_policy": "row8log",
+    "vocab": 256
+   },
+   "lr": 0.003,
+   "wd": 0.1
+  },
+  "ternary": {
+   "config": {
+    "core_fmt": "ternary",
+    "ctx": 256,
+    "d": 80,
+    "d_ff": 262,
+    "delta": 0.5,
+    "emb_fmt": "4bit",
+    "mlp": "swiglu",
+    "n_heads": 5,
+    "n_layers": 4,
+    "qk_norm": false,
+    "scale_policy": "row8log",
+    "vocab": 256
+   },
+   "lr": 0.01,
+   "wd": 0.1
+  }
+ },
+ "finished": "2026-10-10T10:02:53+00:00",
+ "id": "e0-20261009T174028Z-94847b",
+ "inherited_from": "e0-20261007T164712Z-766d4b",
+ "package": "GianlucaMazza.XgpuE0_0.1.0.109_x64__g0p5dcfz4t9z4",
+ "paired": {
+  "diffs": [
+   -0.0032563341898481646,
+   -0.03100992593633478,
+   -0.020704771549589607,
+   -0.024393288192690044,
+   -0.03826657056981575
+  ],
+  "gate_bpb": 0.026322318264535696,
+  "mean": -0.02352617808765567,
+  "n": 5,
+  "sd": 0.013161159132267848,
+  "seeds": [
+   0,
+   1,
+   2,
+   3,
+   4
+  ]
+ },
+ "phase": "completed",
+ "pid": 2861765,
+ "process_identity": {
+  "boot_id": "699c2c8c-9278-4929-b9f3-adc11d50c623",
+  "pid": 2861765,
+  "start_ticks": 55643760
+ },
+ "protocol": {
+  "2bit_wd": [
+   0,
+   0.1
+  ],
+  "batch": 32,
+  "budget_frac": 0.0625,
+  "byte_repair": "at most one fresh attempt per trial, preserving recipe",
+  "ctx": 256,
+  "eligibility": "each candidate within \u00b11% of the shared target; saturation recorded",
+  "grid_embedding_share": [
+   0.08,
+   0.2
+  ],
+  "grid_ff_range": [
+   2.0,
+   6.0
+  ],
+  "grid_layers": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12,
+   13,
+   14,
+   15,
+   16
+  ],
+  "grid_min_nominal_fill": 0.995,
+  "grid_seed": 0,
+  "grid_widths": [
+   64,
+   80,
+   96,
+   112,
+   128,
+   144,
+   160,
+   176,
+   192,
+   208,
+   224,
+   240,
+   256
+  ],
+  "lr": [
+   0.001,
+   0.003,
+   0.01
+  ],
+  "mlp_order": [
+   "gelu",
+   "swiglu",
+   "relu2"
+  ],
+  "neutral_layers": 3,
+  "neutral_seeds": [
+   0,
+   1
+  ],
+  "neutral_width": 96,
+  "paired_seeds": [
+   0,
+   1,
+   2,
+   3,
+   4
+  ],
+  "rank_stability": "4T winner is a minimizer of mean val bpb at T and 2T",
+  "scale_order": [
+   "row16",
+   "row8log"
+  ],
+  "selection": "minimum mean 4T val bpb; declared enumeration order breaks ties",
+  "ternary_delta": [
+   0.5,
+   0.7
+  ],
+  "ternary_wd": 0.1,
+  "tuning_seed": 0
+ },
+ "protocol_adr": "0020",
+ "schema": "floppylm.e0.campaign.v1",
+ "selection": "e0-20261009T174028Z-94847b",
+ "sources": {
+  "files": {
+   "experiments/e0_campaign.py": "1dac9f67e468d459f438b7b0805b44c21f8bfa5c458d381e4ba0ce65d84f88d8",
+   "experiments/e0_v2.py": "c962555ad36e1ca2e4b9b9505cba5b58acc8c16b61207bb1e8b9c0239d2546b7",
+   "experiments/xbox_acceptance.py": "3cda309a3a129df8bf38ec046459bc8c441894a66567b2e48c82b3721313fa3c",
+   "experiments/xbox_benchmark.py": "42b3e92019743106b20dc57806dc9c8208922a3507c389d5da9a2890d2595234",
+   "experiments/xbox_lifecycle_acceptance.py": "a47e7109a4b4cced28ed1d0f4e1bc5fdfc8cb9b9ec2890ff1241e71127993d84",
+   "experiments/xbox_recovery_acceptance.py": "7895c4397c2160b11a70eca60b405151bfbcb1af24c52a065e7fe142f7e8b03f",
+   "experiments/xbox_watchdog_acceptance.py": "d2463f41f313842756cfcd3780cb9f5c9b5abf3bc3219b1cff9c6db6349bd517",
+   "experiments/xbox_worker_acceptance.py": "6854a4519de6ed8dbe28ac1202035a9557e7bf16cdb3c5754de72f3472cfc2ff",
+   "src/floppylm/__init__.py": "7f2f61b038b0618bf2a758162e40609e32dc2a7522cb481aeac175109905f510",
+   "src/floppylm/bpe.py": "fb6b84e5739be40cbd00fdecb8d14d37495ee43aa3db097f3a0c99440fd69e40",
+   "src/floppylm/campaign_protocol.py": "02dd19cac4d6216d5afe03d9781b4ef9a9f93a495c8b2b92e541c35ba3503361",
+   "src/floppylm/campaign_report.py": "5d8ee46344970fa862a4585a1d69492671837265d85288b6fff1b8b9cdc7f21e",
+   "src/floppylm/codec.py": "5b77ee42f51360ee0c386ee23cbf9f7d474f709a082e642089978eaeb93a8359",
+   "src/floppylm/data.py": "ee77ecbc3993a0a2101adaba8d70a905cb95a328d62acc3a2d457b6d85e74611",
+   "src/floppylm/metrics.py": "ca90d1ecd537d102758d422a3af4e2e3403abd6e84a92f63bb09bcc15e4e200f",
+   "src/floppylm/model.py": "85186800e1daf26adcb9da9aec4263026325848b62f84dade4d21b2a4c99803a",
+   "src/floppylm/pack.py": "5d733a3265b800dc0cf635f046b2d55bc4b6bf5a863260a9e0802e4fd8a19898",
+   "src/floppylm/parity.py": "ca958a21e3420f88791d36f0c2bca300c491838b35c737df79163942dbf036c9",
+   "src/floppylm/rans.py": "281c640d1b54eaff6164de6c942d5c1c0a3ca5233a896d3bf067ed20348ee37b",
+   "src/floppylm/runlog.py": "70a4c787f71726f57d41783278eba7d36244ce199aa499bb7a7f4a696736f54d",
+   "src/floppylm/seed.py": "694dd86fef042e51edd0dac601958cfda4192677a8aeb264ffc63935df7d7713",
+   "src/floppylm/shapes.py": "2da4f4211742a6c5befc7f8c5a24617a9fcbefa31af56e4b64627a0e7ac4b1cb",
+   "src/floppylm/train.py": "c6a029010b3f6768e9e1f82d87dc6207d78c9fecbc1fb213af96528f1cd0e9c2",
+   "src/floppylm/vq.py": "0bcd6da245cc71878f1813a1178240d0fd53968e984952b8962e427d7baa6e56",
+   "src/floppylm_xbox/__init__.py": "b00e5391f251de1a21d9628cea506b7a60e62c41d6fe00df0093e243652626df",
+   "src/floppylm_xbox/jobs.py": "d473678be4c6ae8297603de5d2be46bbd443490423a2e0a545207c7b2a603774",
+   "src/floppylm_xbox/kernels.py": "e9223dfb5832a0a587a68f56b680fdcba4e53c5f2c27345c31f28d508a6f55f0",
+   "src/floppylm_xbox/portal.py": "286a5912e01084aa55b6db5f13ed11bd9704486e47478c92dba9b5c63d88c328",
+   "src/floppylm_xbox/runtime.py": "e36f9f8cdef6f121c732d43515f13203ae8f4a75ad539c174a2740793caa8364"
+  },
+  "git": {
+   "commit": "96a3054a2b0a0f8478abd4cd961b524c7b49cfdd",
+   "dirty": false
+  }
+ },
+ "status": "completed",
+ "trials": {
+  "paired-2bit-0": {
+   "recipe": {
+    "config": {
+     "core_fmt": "2bit",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 193,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.003,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "result": "e0-20261009T174028Z-94847b-005",
+   "run_id": "e0-20261009T174028Z-94847b-005",
+   "status": "eligible"
+  },
+  "paired-2bit-1": {
+   "recipe": {
+    "config": {
+     "core_fmt": "2bit",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 193,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.003,
+    "seed": 1,
+    "wd": 0.1
+   },
+   "result": "e0-20261009T174028Z-94847b-006",
+   "run_id": "e0-20261009T174028Z-94847b-006",
+   "status": "eligible"
+  },
+  "paired-2bit-2": {
+   "recipe": {
+    "config": {
+     "core_fmt": "2bit",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 193,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.003,
+    "seed": 2,
+    "wd": 0.1
+   },
+   "result": "e0-20261009T174028Z-94847b-007",
+   "run_id": "e0-20261009T174028Z-94847b-007",
+   "status": "eligible"
+  },
+  "paired-2bit-3": {
+   "recipe": {
+    "config": {
+     "core_fmt": "2bit",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 193,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.003,
+    "seed": 3,
+    "wd": 0.1
+   },
+   "result": "e0-20261009T174028Z-94847b-008",
+   "run_id": "e0-20261009T174028Z-94847b-008",
+   "status": "eligible"
+  },
+  "paired-2bit-4": {
+   "recipe": {
+    "config": {
+     "core_fmt": "2bit",
+     "ctx": 256,
+     "d": 96,
+     "d_ff": 193,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 6,
+     "n_layers": 3,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.003,
+    "seed": 4,
+    "wd": 0.1
+   },
+   "result": "e0-20261009T174028Z-94847b-009",
+   "run_id": "e0-20261009T174028Z-94847b-009",
+   "status": "eligible"
+  },
+  "paired-ternary-0": {
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 80,
+     "d_ff": 262,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 5,
+     "n_layers": 4,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.01,
+    "seed": 0,
+    "wd": 0.1
+   },
+   "repair_id": "e0-20261009T174028Z-94847b-000-repair",
+   "result": "e0-20261009T174028Z-94847b-000-repair",
+   "run_id": "e0-20261009T174028Z-94847b-000",
+   "status": "eligible"
+  },
+  "paired-ternary-1": {
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 80,
+     "d_ff": 262,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 5,
+     "n_layers": 4,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.01,
+    "seed": 1,
+    "wd": 0.1
+   },
+   "repair_id": "e0-20261009T174028Z-94847b-001-repair",
+   "result": "e0-20261009T174028Z-94847b-001-repair",
+   "run_id": "e0-20261009T174028Z-94847b-001",
+   "status": "eligible"
+  },
+  "paired-ternary-2": {
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 80,
+     "d_ff": 262,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 5,
+     "n_layers": 4,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.01,
+    "seed": 2,
+    "wd": 0.1
+   },
+   "result": "e0-20261009T174028Z-94847b-002",
+   "run_id": "e0-20261009T174028Z-94847b-002",
+   "status": "eligible"
+  },
+  "paired-ternary-3": {
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 80,
+     "d_ff": 262,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 5,
+     "n_layers": 4,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.01,
+    "seed": 3,
+    "wd": 0.1
+   },
+   "repair_id": "e0-20261009T174028Z-94847b-003-repair",
+   "result": "e0-20261009T174028Z-94847b-003-repair",
+   "run_id": "e0-20261009T174028Z-94847b-003",
+   "status": "eligible"
+  },
+  "paired-ternary-4": {
+   "recipe": {
+    "config": {
+     "core_fmt": "ternary",
+     "ctx": 256,
+     "d": 80,
+     "d_ff": 262,
+     "delta": 0.5,
+     "emb_fmt": "4bit",
+     "mlp": "swiglu",
+     "n_heads": 5,
+     "n_layers": 4,
+     "qk_norm": false,
+     "scale_policy": "row8log",
+     "vocab": 256
+    },
+    "lr": 0.01,
+    "seed": 4,
+    "wd": 0.1
+   },
+   "result": "e0-20261009T174028Z-94847b-004",
+   "run_id": "e0-20261009T174028Z-94847b-004",
+   "status": "eligible"
+  }
+ }
+}
