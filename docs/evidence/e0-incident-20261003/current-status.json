@@ -18,7 +18,7 @@
   "trial_counts": {
     "reserved": 1
   },
-  "error": "CalledProcessError(1, ['/home/gianluca/Workspace/experiments/floppy_4mb/.venv/bin/python', '-u', '/home/gianluca/Workspace/experiments/floppy_4mb/experiments/e0_v2.py', '--run-id', 'e0-20261003T104407Z-a8d8b9-000', '--backend', 'xbox', '--xbox-acceptance', '/home/gianluca/Workspace/experiments/floppy_4mb/docs/evidence/xbox-e0-20261003-098/acceptance.json', '--threads', '2', '--run', '--d', '96', '--layers', '3', '--d-ff', '391', '--fmt', 'ternary', '--mlp', 'gelu', '--scale-policy', 'row16', '--delta', '0.5', '--ctx', '256', '--seed', '0', '--batch', '32', '--lr', '0.003', '--wd', '0.1'])",
+  "error": "CalledProcessError(1, ['<repo>/.venv/bin/python', '-u', '<repo>/experiments/e0_v2.py', '--run-id', 'e0-20261003T104407Z-a8d8b9-000', '--backend', 'xbox', '--xbox-acceptance', '<repo>/docs/evidence/xbox-e0-20261003-098/acceptance.json', '--threads', '2', '--run', '--d', '96', '--layers', '3', '--d-ff', '391', '--fmt', 'ternary', '--mlp', 'gelu', '--scale-policy', 'row16', '--delta', '0.5', '--ctx', '256', '--seed', '0', '--batch', '32', '--lr', '0.003', '--wd', '0.1'])",
   "device": {
     "adapter": "SraKmd_arden",
     "capabilities": {
@@ -65,7 +65,7 @@
       "progress": "unverified"
     },
     "host": {
-      "error": "Traceback (most recent call last):\n  File \"/home/gianluca/Workspace/experiments/floppy_4mb/experiments/e0_v2.py\", line 161, in cmd_run\n    return _execute_run(a, cfg, model, spec, run_id, run_dir, ev_dir)\n  File \"/home/gianluca/Workspace/experiments/floppy_4mb/experiments/e0_v2.py\", line 276, in _execute_run\n    acct = Portal.configured().train(\n        job_root,\n    ...<5 lines>...\n        recover=bool(getattr(a, \"resume\", None)),\n    )\n  File \"/home/gianluca/Workspace/experiments/floppy_4mb/src/floppylm_xbox/portal.py\", line 799, in train\n    raise RuntimeError(\"Xbox job did not complete: \" + report[\"state\"])\nRuntimeError: Xbox job did not complete: interrupted\n",
+      "error": "Traceback (most recent call last):\n  File \"<repo>/experiments/e0_v2.py\", line 161, in cmd_run\n    return _execute_run(a, cfg, model, spec, run_id, run_dir, ev_dir)\n  File \"<repo>/experiments/e0_v2.py\", line 276, in _execute_run\n    acct = Portal.configured().train(\n        job_root,\n    ...<5 lines>...\n        recover=bool(getattr(a, \"resume\", None)),\n    )\n  File \"<repo>/src/floppylm_xbox/portal.py\", line 799, in train\n    raise RuntimeError(\"Xbox job did not complete: \" + report[\"state\"])\nRuntimeError: Xbox job did not complete: interrupted\n",
       "state": "failed",
       "updated": "2026-10-03T11:36:47+00:00"
     },

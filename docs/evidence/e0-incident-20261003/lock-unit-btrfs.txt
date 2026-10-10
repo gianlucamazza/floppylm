@@ -2,7 +2,7 @@ F                                                                        [100%]
 =================================== FAILURES ===================================
 _________________ test_process_identity_and_live_lock_required _________________
 
-tmp_path = PosixPath('/home/gianluca/Workspace/experiments/floppy_4mb/runs/e0-incident-20261003T113647Z/pytest-btrfs/test_process_identity_and_live0')
+tmp_path = PosixPath('<repo>/runs/e0-incident-20261003T113647Z/pytest-btrfs/test_process_identity_and_live0')
 
     def test_process_identity_and_live_lock_required(tmp_path):
         runlog.set_status(tmp_path, "running")

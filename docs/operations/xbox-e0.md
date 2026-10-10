@@ -108,7 +108,7 @@ and docs may change.
 systemd-run --user --unit=floppylm-e0-campaign-<unique> \
   --slice=background.slice --working-directory="$PWD" \
   --property=Restart=no --property=KillMode=mixed --property=TimeoutStopSec=infinity \
-  /bin/bash -c 'exec /home/gianluca/.local/bin/bg .venv/bin/python -u experiments/e0_campaign.py \
+  /bin/bash -c 'exec ~/.local/bin/bg .venv/bin/python -u experiments/e0_campaign.py \
     --out runs/e0-campaign-<unique> \
     --acceptance runs/xbox-acceptance-<date>-ci<run>/acceptance.json \
     --benchmark runs/xbox-benchmark-<date>-ci<run>/summary.json \

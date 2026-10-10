@@ -21,7 +21,7 @@ Owner of languages, toolchain and machine constraints. It does not own the thesi
 
 ## Machines
 
-- **Host**: Lenovo i7-1165G7, 4C/8T, 32 GB, Iris Xe without CUDA. Measured: 92–117 GFLOPS fp32 in
+- **Host**: dev laptop, i7-1165G7, 4C/8T, 32 GB, Iris Xe without CUDA. Measured: 92–117 GFLOPS fp32 in
   bursts, ~23 GB/s, slow bf16 (not native), AVX512-VNNI for int8 ([R6](research/06-hardware-budget.md)).
   It prepares data, runs the Python oracle and evaluation, and drives the Xbox. Long jobs run
   under `systemd-run --user` with linger, through `bg` in `background.slice`, following
