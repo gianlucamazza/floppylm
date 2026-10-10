@@ -58,6 +58,7 @@ Flags and the Xbox procedure: [code map](docs/operations/code-map.md),
 | [docs/STATUS.md](docs/STATUS.md)                                     | Live state                                                 |
 | [docs/vision.md](docs/vision.md)                                     | Mission, success, non-goals                                |
 | [docs/concept.md](docs/concept.md)                                   | Thesis v0.2, principles, F0–F4, v0.1 stress test           |
+| [docs/architecture.md](docs/architecture.md)                             | How the host is divided                                    |
 | [docs/roadmap.md](docs/roadmap.md)                                   | E0–E4 and their gates                                      |
 | [docs/positioning.md](docs/positioning.md)                           | Vs Quant-Noise, Sign Lock-In, QTIP, SeedLM, Parameter Golf |
 | [docs/adr/](docs/adr/README.md)                                      | Accepted decisions                                         |

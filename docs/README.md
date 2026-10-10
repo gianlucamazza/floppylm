@@ -9,10 +9,11 @@ which fact** and where to start.
 
 1. [vision](vision.md): what success means.
 2. [concept](concept.md): the thesis and what kills it (F0–F4).
-3. [positioning](positioning.md): what already exists.
-4. [ADR 0001](adr/0001-floppy-budget.md): what counts toward the floppy.
-5. [roadmap](roadmap.md) and [completion plan](completion-plan.md): what is measured, in which order.
-6. [STATUS](STATUS.md): where things stand today.
+3. [architecture](architecture.md): how the host is divided.
+4. [positioning](positioning.md): what already exists.
+5. [ADR 0001](adr/0001-floppy-budget.md): what counts toward the floppy.
+6. [roadmap](roadmap.md) and [completion plan](completion-plan.md): what is measured, in which order.
+7. [STATUS](STATUS.md): where things stand today.
 
 **Operator** (running E0): [STATUS](STATUS.md) → [Xbox runbook](operations/xbox-e0.md) →
 [code map](operations/code-map.md) → [stack](stack.md).
@@ -29,6 +30,7 @@ Update the owner; every other document links to it instead of copying.
 | Live state: package, campaign, what is running | [STATUS](STATUS.md)                                                                                                                |
 | Mission, success, non-goals                    | [vision](vision.md)                                                                                                                |
 | Thesis, principles P1–P5, F0–F4, v0.1 record   | [concept](concept.md)                                                                                                              |
+| How the host is divided                        | [architecture](architecture.md)                                                                                                    |
 | Prior art comparison                           | [positioning](positioning.md)                                                                                                      |
 | Floppy budget and what counts                  | [ADR 0001](adr/0001-floppy-budget.md)                                                                                              |
 | Adversaries and the paired gate                | [ADR 0002](adr/0002-adversary-dense-frontier.md) (amendment), [ADR 0005](adr/0005-e0v2-protocol.md) §7                             |
