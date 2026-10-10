@@ -74,9 +74,10 @@ Continue in this order:
    stay proposed in [the 1/16 pilot proposal](adr/proposals/e1-1-16-pilot.md)
    and are not accepted. That proposal now copies both stored decisions and
    the selection hash, and its equal-byte rule is the ADR 0020 window. The
-   scientific file is FLP2. `VQF1` stays the functional fixture. The byte
-   order of the book and the header seed is still unchosen, so the proposal
-   cannot be accepted as it stands.
+   scientific file is FLP2. Decision 14 specifies the byte order: one `VQB1`
+   book in the shared section, `core_fmt` `vq` on a vector arm, and the
+   existing per-tensor framing. `VQF1` stays the functional fixture.
+   The proposal stays unaccepted.
 3. The console is free. No Xbox vector executor exists in this repository or in
    the accepted trainer. `src/floppylm/vq.py` remains the CPU fixture oracle from
    [ADR 0013](adr/0013-e1-functional-qualification.md). Qualification has not

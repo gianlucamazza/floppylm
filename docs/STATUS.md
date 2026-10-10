@@ -1,7 +1,7 @@
 # Status
 
 The only page that states live project state. Update it — and nothing else — on every package
-bump or campaign start/stop. Last updated: **2026-10-10**.
+bump or campaign start/stop. Last updated: **2026-10-11**.
 
 ## Where this stands
 
@@ -23,8 +23,7 @@ records ternary minus 2-bit −0.023838 bpb, sample SD 0.013733, frozen gate
 the baseline complete and keeps both stored arms. Roadmap gate 4 is recorded
 in the [review](evidence/e0-review-20261010-94847b/notes.md). The 1/16 pilot
 proposal now copies both stored arms, the selection hash, and the ADR 0020
-window. It stays unaccepted: the FLP2 book byte order and the header seed
-are still unchosen.
+window, and decision 14 specifies the FLP2 byte order. It stays unaccepted.
 [Issue #26](https://github.com/gianlucamazza/floppylm/issues/26) is closed.
 [Issue #25](https://github.com/gianlucamazza/floppylm/issues/25) stays open.
 Campaign
@@ -90,8 +89,8 @@ baseline: [campaign report](evidence/e0-v2/campaigns/e0-20261004T103838Z-c58a86/
 
 E1–E4 stay specified. The gate 4 review of the completed E0 report is recorded.
 They wait for an accepted E1 protocol.
-The 1/16 pilot proposal now names both stored arms, the selection hash, and
-the ADR 0020 window. It is not accepted: the FLP2 book byte order is unchosen
+The 1/16 pilot proposal now names both stored arms, the selection hash, the
+ADR 0020 window, and the FLP2 byte order. It is not accepted
 ([the pilot proposal](adr/proposals/e1-1-16-pilot.md)).
 Host init-pack is on main as [ADR 0019](adr/0019-host-init-pack.md)
 ([PR #22](https://github.com/gianlucamazza/floppylm/pull/22), `328c906`). It applies

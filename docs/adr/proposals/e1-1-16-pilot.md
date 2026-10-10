@@ -4,9 +4,9 @@
 
 Proposed — 2026-10-04. Not an ADR. Does not authorize code, a campaign, a console
 job, or an F1 verdict. The gate 4 review is recorded and does not accept this
-file. Accepting this proposal would create the scientific E1 ADR; this file
-would stay as context. The FLP2 vector byte order is still unchosen, so this
-file cannot be accepted as it stands.
+file. Decision 14 specifies the FLP2 byte order. Acceptance is still a separate
+step. Accepting this proposal would create the scientific E1 ADR; this file
+would stay as context.
 
 ## Context
 
@@ -100,16 +100,34 @@ The scalar recipe stays unnamed.
     rule. An Xbox vector executor may replace the CPU only after it matches the
     CPU oracle on identical inputs and identical artifact bytes. A scalar
     throughput number does not qualify it. No rented GPU.
-14. **Accounting.** The file that parity reads contains the header, the
-    embedding, the indices, the scales, the norms, and the learned book when
-    the arm has one. The seed of a fixed book is inside the header. No side
-    file counts. The scientific file is FLP2
-    ([ADR 0006](../0006-flp2-only.md)). `VQF1` and `VQB1` in
-    `src/floppylm/vq.py` are the functional fixture and are not that file.
-    FLP2's shared section is empty for every scalar codec, and nothing writes
-    a vector book into it. `GPTConfig` has no book-seed field. The byte order
-    that puts the seed in the header and the book in the counted file is not
-    chosen here.
+14. **Accounting and byte order.** The file that parity reads is one FLP2
+    artifact ([ADR 0006](../0006-flp2-only.md)). No side file counts. `VQF1`
+    in `src/floppylm/vq.py` stays the functional fixture and is not this file.
+    The framing is the existing one: `FLP2`, u16 header length, canonical
+    `GPTConfig` JSON, u32 shared length, the shared section, then each tensor
+    in `tensor_shapes()` order.
+
+    A scalar arm keeps `core_fmt` `ternary` or `2bit` and an empty shared
+    section. A vector arm uses the same JSON keys. Its `core_fmt` is `vq`,
+    `emb_fmt` stays `4bit`, and `scale_policy` stays `row8log`. `delta` remains
+    in the header and the vector core does not read it. `GPTConfig` gains no
+    field. The embedding record stays the scalar 4-bit record. Norms stay raw
+    fp16.
+
+    The shared section holds one `VQB1` book, once, not once per matrix:
+    `VQB1`, u8 dimension, u8 bits, u8 generator, u8 learned, u64 little-endian
+    seed, then learned entries. The generator is 1. Dimension is 8 or 16.
+    Bits are `dimension * rate` for rate 0.5 or 0.75. Learned is 0 or 1. A
+    fixed book ends after those 16 header bytes. A learned book appends
+    `2^bits * dimension` little-endian fp16 entries, level-major. The seed
+    is that u64.
+
+    A core vector record is the `row8log` scale bytes of a 2-bit scalar codec,
+    an fp16 base plus one code byte per row, then a u32 byte length, then
+    `rans.encode_best` of the group indices. The index count is
+    `rows * ceil(cols / dimension)`, row-major, after the column axis is
+    padded with zeros to a multiple of `dimension`. The alphabet is `2^bits`.
+    Decode drops the padded columns.
 
 ## Copied from the E0 report
 
@@ -130,7 +148,7 @@ These three blanks were open until the report. They are filled from
 ## Consequences
 
 Accepting it, merging vector training into the model, or starting a pilot
-remains forbidden while the FLP2 book byte order is unchosen. A
+remains forbidden until that acceptance. A
 4096-entry G=16 book cannot be added afterwards as the 1/16 learned arm. The
 six ADR 0013 snapping pairs are not a validation search.
 
@@ -163,3 +181,11 @@ until after acceptance. `VQF1` stays the functional fixture. The scientific
 file stays FLP2, and the order of the book and the header seed is still
 unchosen. This file stays proposed. No code, campaign, or console job is
 authorized.
+
+## Later (2026-10-11, byte order)
+
+Decision 14 now specifies the order. The seed is the u64 in the single
+`VQB1` header inside the FLP2 shared section. `GPTConfig` gains no field.
+A vector arm sets `core_fmt` to `vq`. `VQF1` stays the functional fixture.
+This file stays proposed. Acceptance is still
+[issue #25](https://github.com/gianlucamazza/floppylm/issues/25).

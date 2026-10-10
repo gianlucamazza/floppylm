@@ -96,3 +96,9 @@ equal-byte rule is the ADR 0020 window. `VQF1` remains the functional fixture.
 The scientific file remains FLP2, and the byte order of the book and the
 header seed is still unchosen. The proposal stays unaccepted. No console job
 was started.
+
+## Later (2026-10-11, byte order)
+
+The proposal's decision 14 now specifies that order. One `VQB1` book sits in
+the FLP2 shared section, a vector arm sets `core_fmt` to `vq`, and `GPTConfig`
+gains no field. The proposal stays unaccepted. No console job was started.
