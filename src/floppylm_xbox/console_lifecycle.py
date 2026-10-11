@@ -545,7 +545,11 @@ def is_orphan(result: dict) -> bool:
     if report.get("verdict") == "orphan" or report.get("state_orphan") is True:
         return True
     reason = report.get("reason")
-    if isinstance(reason, str) and reason.startswith("orphan") and reason not in GPU_ADVISORY_REASONS:
+    if (
+        isinstance(reason, str)
+        and reason.startswith("orphan")
+        and reason not in GPU_ADVISORY_REASONS
+    ):
         return True
     return bool(report.get("orphan"))
 
