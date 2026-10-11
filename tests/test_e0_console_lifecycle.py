@@ -14,6 +14,7 @@ import pytest
 from floppylm_xbox import portal
 from floppylm_xbox.console_lifecycle import (
     CONFIG_FILE_ENV,
+    DEFAULT_ON_TOOL_UNREACHABLE,
     DEFAULT_REFUSE_ORPHAN,
     TOOL_ENV,
     TOOL_FLAGS,
@@ -104,7 +105,10 @@ def gpu_advisory(pinned=False, excluded=None):
         "adapters": [[0.0, 0.0, 0.0, 0.0, 0.0, 100.0 if pinned else 0.0, 0.0]],
     }
 
-def idle_report(when, *, orphan=False, job_active=False, after_fail=False, pinned=False):
+def idle_report(
+    when, *, orphan=False, job_active=False, after_fail=False, pinned=False,
+    start_unknown=False,
+):
     leftover = 4000.0 if orphan else None
     stale = orphan or leftover is None
     heartbeat_age = 4000.0 if orphan else None
@@ -118,6 +122,7 @@ def idle_report(when, *, orphan=False, job_active=False, after_fail=False, pinne
         stale = True
         orphan = False
         job_active = False
+        start_unknown = False
     running = job_active
     queued = False
     claimed = job_active
@@ -127,12 +132,26 @@ def idle_report(when, *, orphan=False, job_active=False, after_fail=False, pinne
             ok, reason = False, "job_active"
         elif orphan:
             ok, reason = False, "orphan_stale_idle"
+        elif start_unknown:
+            ok, reason = True, "start_time_unknown"
         else:
             ok, reason = True, "ok"
     elif present:
         ok, reason = False, "process_still_running"
     else:
         ok, reason = True, "ok"
+    if start_unknown:
+        app_age = idle_age = leftover = None
+        orphan_value = None
+    elif orphan:
+        app_age = idle_age = 4000.0
+        orphan_value = True
+    elif present:
+        app_age = idle_age = 12.0
+        orphan_value = False
+    else:
+        app_age = idle_age = leftover
+        orphan_value = orphan
     return {
         "when": when,
         "ok": ok,
@@ -141,13 +160,16 @@ def idle_report(when, *, orphan=False, job_active=False, after_fail=False, pinne
         "job_active": job_active,
         "queued": queued,
         "claimed": claimed,
+        "claimed_live": ["job.claimed"] if claimed else [],
         "running": running,
         "ready": ready,
         "worker_state": "running" if running else "ready",
+        "app_age_seconds": app_age,
+        "idle_age_seconds": idle_age,
         "heartbeat_age_seconds": heartbeat_age,
         "heartbeat_stale": stale,
         "last_job_ended_age_seconds": leftover,
-        "orphan": orphan,
+        "orphan": orphan_value,
         "cpu_idle": present and not job_active,
         "gpu_advisory": gpu_advisory(pinned=pinned or orphan or (when == "before")),
     }
@@ -170,6 +192,7 @@ if command == "idle-gpu":
         job_active=mode == "job-active" and when == "before",
         after_fail=mode == "after-fail" and when == "after",
         pinned=mode == "gpu-idle",
+        start_unknown=mode == "start-time-unknown" and when == "before",
     )
     print(json.dumps(report, sort_keys=True), flush=True)
     raise SystemExit(0 if report["ok"] else 1)
@@ -293,6 +316,7 @@ def test_config_defaults_and_overrides(tmp_path, monkeypatch):
     assert defaults.gpu_engines is None
     assert heartbeat_seconds() == TOOL_HEARTBEAT_INTERVAL_DEFAULT
     assert defaults.refuse_orphan is DEFAULT_REFUSE_ORPHAN
+    assert defaults.on_tool_unreachable == DEFAULT_ON_TOOL_UNREACHABLE
     assert defaults.gpu_engines is None
     assert defaults.gpu_engine_exclude is None
     assert defaults.process_images is None
@@ -433,6 +457,7 @@ def test_lifecycle_environ_maps_xbox_settings_without_argv_secrets(tmp_path, mon
     monkeypatch.setenv("XBOX_PASS", "secret")
     result = heartbeat(tool=tool, package="pkg")
     assert result["ok"]
+    assert "--instance-id" not in result["argv"]
     dumped = json.dumps(result, default=str)
     assert "secret" not in dumped
     assert "--password" not in dumped
@@ -469,6 +494,9 @@ def test_idle_gpu_before_detects_state_orphan(tmp_path, monkeypatch):
     assert report["job_active"] is False
     assert report["heartbeat_stale"] is True
     assert report["last_job_ended_age_seconds"] == 4000.0
+    assert report["app_age_seconds"] == 4000.0
+    assert report["idle_age_seconds"] == 4000.0
+    assert report["claimed_live"] == []
     assert report["gpu_advisory"]["decisive"] is False
 
 
@@ -621,6 +649,8 @@ def test_campaign_refuses_orphan_unless_flag(
         lifecycle_tool=tool,
         allow_orphan_gpu=True,
     )
+    assert allowed.allow_orphan is True
+    assert allowed.allow_orphan_gpu is True
     allowed.run = lambda: allowed.state.update(status="completed")
     allowed.report = lambda: None
     allowed.run_managed()
@@ -645,6 +675,9 @@ def test_unreachable_console_does_not_crash_campaign_record(
     before = campaign.state["console_lifecycle"]["idle_gpu_before"]
     assert not before["reachable"]
     assert campaign.state["console_lifecycle"]["teardown"]["reachable"] is False
+    held = campaign.state["console_lifecycle"]
+    assert held["on_tool_unreachable"] == "continue"
+    assert held["config"]["on_tool_unreachable"] == "continue"
 
 
 @pytest.mark.parametrize("outcome", ["completed", "failed", "cancel"])
@@ -851,7 +884,7 @@ def test_crash_or_invalid_report_is_fail_closed(
         proof,
         speed,
         lifecycle_tool=tool,
-        allow_orphan_gpu=True,
+        allow_orphan=True,
     )
     allowed.run = lambda: allowed.state.update(status="completed")
     allowed.report = lambda: None
@@ -961,6 +994,13 @@ def test_docs_and_example_use_canonical_names():
         "XGPU_HEARTBEAT_INTERVAL_SECONDS",
         "XGPU_GPU_ENGINE_EXCLUDE",
         "XGPU_PORTAL_PASSWORD",
+        "--allow-orphan",
+        "on_tool_unreachable",
+        "XGPU_E0_ON_TOOL_UNREACHABLE",
+        "app_age_seconds",
+        "idle_age_seconds",
+        "claimed_live",
+        "start_time_unknown",
     ):
         assert token in text
     for token in (
@@ -997,3 +1037,164 @@ def test_new_sources_have_no_personal_hosts_or_engine_assumption():
         text = path.read_text()
         for token in forbidden:
             assert token not in text, f"{path} contains {token}"
+
+
+def test_start_time_unknown_is_warning_not_orphan():
+    unknown = {
+        "reachable": True,
+        "ok": True,
+        "report": {
+            "when": "before",
+            "ok": True,
+            "reason": "start_time_unknown",
+            "orphan": None,
+            "process_present": True,
+            "job_active": False,
+            "claimed_live": [],
+            "app_age_seconds": None,
+            "idle_age_seconds": None,
+            "gpu_advisory": {"decisive": False},
+        },
+    }
+    assert is_valid_idle_report(unknown)
+    assert not is_orphan(unknown)
+    assert prepare_verdict(unknown) == "start_time_unknown"
+    orphan_null = {
+        "reachable": True,
+        "ok": True,
+        "report": {
+            "when": "before",
+            "ok": True,
+            "reason": "ok",
+            "orphan": None,
+            "process_present": True,
+            "job_active": False,
+        },
+    }
+    assert not is_orphan(orphan_null)
+    assert prepare_verdict(orphan_null) == "start_time_unknown"
+
+
+def test_start_time_unknown_starts_campaign(
+    tmp_path, monkeypatch, campaign_module
+):
+    tool = write_tool(tmp_path)
+    log = tool_log(tmp_path)
+    monkeypatch.setenv("LIFECYCLE_LOG", str(log))
+    monkeypatch.setenv("LIFECYCLE_MODE", "start-time-unknown")
+    proof, speed = inputs(tmp_path)
+    campaign = campaign_module.Campaign(
+        tmp_path / "campaign", proof, speed, lifecycle_tool=tool
+    )
+    campaign.run = lambda: campaign.state.update(status="completed")
+    campaign.report = lambda: None
+    campaign.run_managed()
+    assert campaign.state["status"] == "completed"
+    before = campaign.state["console_lifecycle"]["idle_gpu_before"]
+    assert before["report"]["reason"] == "start_time_unknown"
+    assert before["report"]["orphan"] is None
+    assert before["report"]["app_age_seconds"] is None
+    assert before["report"]["idle_age_seconds"] is None
+    assert prepare_verdict(before) == "start_time_unknown"
+    assert not is_orphan(before)
+    assert campaign.state["console_lifecycle"]["warning"] == "start_time_unknown"
+    assert campaign.state["console_lifecycle"]["teardown"]["reachable"]
+
+
+def test_on_tool_unreachable_refuse_stops_campaign(
+    tmp_path, monkeypatch, campaign_module
+):
+    proof, speed = inputs(tmp_path)
+    campaign = campaign_module.Campaign(
+        tmp_path / "campaign",
+        proof,
+        speed,
+        lifecycle_tool=tmp_path / "missing-tool.py",
+        on_tool_unreachable="refuse",
+    )
+    campaign.run = Mock(side_effect=AssertionError("must not start"))
+    campaign.report = lambda: None
+    with pytest.raises(RuntimeError, match="unreachable"):
+        campaign.run_managed()
+    campaign.run.assert_not_called()
+    assert campaign.state["status"] == "stopped"
+    held = campaign.state["console_lifecycle"]
+    assert held["on_tool_unreachable"] == "refuse"
+    assert held["config"]["on_tool_unreachable"] == "refuse"
+    assert not held["prepare"]["reachable"]
+    assert "teardown" not in held
+
+
+def test_env_on_tool_unreachable_refuse(tmp_path, monkeypatch, campaign_module):
+    monkeypatch.setenv("XGPU_E0_ON_TOOL_UNREACHABLE", "refuse")
+    proof, speed = inputs(tmp_path)
+    campaign = campaign_module.Campaign(
+        tmp_path / "campaign",
+        proof,
+        speed,
+        lifecycle_tool=tmp_path / "missing-tool.py",
+    )
+    assert campaign.lifecycle.on_tool_unreachable == "refuse"
+    campaign.run = Mock(side_effect=AssertionError("must not start"))
+    campaign.report = lambda: None
+    with pytest.raises(RuntimeError, match="unreachable"):
+        campaign.run_managed()
+    campaign.run.assert_not_called()
+    campaign.lock.close()
+
+
+def test_allow_orphan_constructor_alias(tmp_path, monkeypatch, campaign_module):
+    tool = write_tool(tmp_path)
+    log = tool_log(tmp_path)
+    monkeypatch.setenv("LIFECYCLE_LOG", str(log))
+    monkeypatch.setenv("LIFECYCLE_MODE", "orphan")
+    proof, speed = inputs(tmp_path)
+    campaign = campaign_module.Campaign(
+        tmp_path / "campaign",
+        proof,
+        speed,
+        lifecycle_tool=tool,
+        allow_orphan=True,
+    )
+    assert campaign.allow_orphan is True
+    assert campaign.allow_orphan_gpu is True
+    campaign.run = lambda: campaign.state.update(status="completed")
+    campaign.report = lambda: None
+    campaign.run_managed()
+    assert campaign.state["status"] == "completed"
+    assert campaign.state["console_lifecycle"]["config"]["refuse_orphan"] is False
+
+
+def test_campaign_cli_exposes_renamed_flags():
+    import subprocess
+
+    result = subprocess.run(
+        [sys.executable, str(ROOT / "experiments/e0_campaign.py"), "--help"],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert result.returncode == 0
+    assert "--allow-orphan" in result.stdout
+    assert "--allow-orphan-gpu" in result.stdout
+    assert "deprecated alias of --allow-orphan" in result.stdout
+    assert "--on-tool-unreachable" in result.stdout
+
+
+def test_on_tool_unreachable_config_and_environ(monkeypatch):
+    monkeypatch.delenv("XGPU_E0_ON_TOOL_UNREACHABLE", raising=False)
+    defaults = load_lifecycle_config(settings={})
+    assert defaults.on_tool_unreachable == "continue"
+    assert (
+        lifecycle_environ(settings={}, config=defaults)["XGPU_E0_ON_TOOL_UNREACHABLE"]
+        == "continue"
+    )
+    refused = load_lifecycle_config(
+        settings={}, overrides={"on_tool_unreachable": "refuse"}
+    )
+    assert refused.on_tool_unreachable == "refuse"
+    assert refused.public_dict()["on_tool_unreachable"] == "refuse"
+    invalid = load_lifecycle_config(
+        settings={"XGPU_E0_ON_TOOL_UNREACHABLE": "explode"}
+    )
+    assert invalid.on_tool_unreachable == "continue"

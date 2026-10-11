@@ -32,6 +32,10 @@ HEARTBEAT_ENV = "XGPU_HEARTBEAT_INTERVAL_SECONDS"
 # Runner thread only, when the interval is unset. Matches #46's documented default.
 TOOL_HEARTBEAT_INTERVAL_DEFAULT = 30.0
 DEFAULT_REFUSE_ORPHAN = True
+ON_TOOL_UNREACHABLE_CONTINUE = "continue"
+ON_TOOL_UNREACHABLE_REFUSE = "refuse"
+DEFAULT_ON_TOOL_UNREACHABLE = ON_TOOL_UNREACHABLE_CONTINUE
+UNREACHABLE_POLICIES = (ON_TOOL_UNREACHABLE_CONTINUE, ON_TOOL_UNREACHABLE_REFUSE)
 
 # Canonical env names from xbox-gpu-training docs/e0/lifecycle.md.
 ENV_KEYS = {
@@ -57,6 +61,7 @@ ENV_KEYS = {
     "tls_pin": "XGPU_PORTAL_TLS_PIN",
     "credentials": "XGPU_PORTAL_CREDENTIALS",
     "refuse_orphan": "XGPU_E0_REFUSE_ORPHAN",
+    "on_tool_unreachable": "XGPU_E0_ON_TOOL_UNREACHABLE",
 }
 
 ENV_ALIASES = {
@@ -114,6 +119,7 @@ POLICY_FIELDS = (
     "portal_port",
     "tls_verify",
     "refuse_orphan",
+    "on_tool_unreachable",
 )
 
 
@@ -143,6 +149,7 @@ class LifecycleConfig:
     tls_pin: str | None = None
     credentials: str | None = None
     refuse_orphan: bool = DEFAULT_REFUSE_ORPHAN
+    on_tool_unreachable: str = DEFAULT_ON_TOOL_UNREACHABLE
     password: str | None = None
 
     def public_dict(self) -> dict:
@@ -160,6 +167,13 @@ class LifecycleConfig:
         if self.tool is not None:
             data["tool"] = str(self.tool)
         return data
+
+
+def _as_unreachable_policy(value: Any, default: str = DEFAULT_ON_TOOL_UNREACHABLE) -> str:
+    if value is None or value == "":
+        return default
+    text = str(value).strip().lower()
+    return text if text in UNREACHABLE_POLICIES else default
 
 
 def _as_bool(value: Any, default: bool) -> bool:
@@ -246,7 +260,10 @@ def load_lifecycle_config(
 ) -> LifecycleConfig:
     """Resolve settings. Overrides beat campaign config beat file beat env. Unset stays None."""
     settings = settings if settings is not None else {**read_env_file(env_file()), **os.environ}
-    merged: dict[str, Any] = {"refuse_orphan": DEFAULT_REFUSE_ORPHAN}
+    merged: dict[str, Any] = {
+        "refuse_orphan": DEFAULT_REFUSE_ORPHAN,
+        "on_tool_unreachable": DEFAULT_ON_TOOL_UNREACHABLE,
+    }
     env_layer = {
         field: value
         for field in ENV_KEYS
@@ -294,6 +311,7 @@ def load_lifecycle_config(
         tls_pin=_as_optional(merged.get("tls_pin")),
         credentials=_as_optional(merged.get("credentials")),
         refuse_orphan=_as_bool(merged.get("refuse_orphan"), DEFAULT_REFUSE_ORPHAN),
+        on_tool_unreachable=_as_unreachable_policy(merged.get("on_tool_unreachable")),
         password=_as_optional(password),
     )
 
@@ -350,7 +368,7 @@ def lifecycle_environ(
         env["XGPU_PORTAL_TLS_PIN"] = pin.replace(":", "").lower()
         env["OPENAPPX_DEVICE_PIN"] = env["XGPU_PORTAL_TLS_PIN"]
     for field, env_key in ENV_KEYS.items():
-        if field in ("tool", "refuse_orphan"):
+        if field in ("tool", "refuse_orphan", "on_tool_unreachable"):
             continue
         value = getattr(config, field)
         if value in (None, ""):
@@ -362,6 +380,8 @@ def lifecycle_environ(
         )
     if config.refuse_orphan is not None:
         env["XGPU_E0_REFUSE_ORPHAN"] = "1" if config.refuse_orphan else "0"
+    if config.on_tool_unreachable:
+        env["XGPU_E0_ON_TOOL_UNREACHABLE"] = config.on_tool_unreachable
     return env
 
 
@@ -519,7 +539,10 @@ def is_valid_idle_report(result: dict) -> bool:
 
 
 def is_orphan(result: dict) -> bool:
-    """True only for #46's state-based `orphan` / `orphan_stale_idle`."""
+    """True only for #46's state-based `orphan: true` / `orphan_stale_idle`.
+
+    `orphan: null` with `reason: start_time_unknown` is a warning, not an orphan.
+    """
     report = _report(result)
     if report is None:
         return False
@@ -527,7 +550,7 @@ def is_orphan(result: dict) -> bool:
 
 
 def prepare_verdict(result: dict) -> str:
-    """`unreachable` | `invalid` | `orphan` | `job_active` | `ready`."""
+    """`unreachable` | `invalid` | `orphan` | `job_active` | `start_time_unknown` | `ready`."""
     if not result.get("reachable"):
         return "unreachable"
     if not is_valid_idle_report(result):
@@ -537,6 +560,10 @@ def prepare_verdict(result: dict) -> str:
     report = _report(result) or {}
     if report.get("reason") == "job_active" or report.get("job_active") is True:
         return "job_active"
+    if report.get("reason") == "start_time_unknown" or (
+        "orphan" in report and report.get("orphan") is None
+    ):
+        return "start_time_unknown"
     return "ready"
 
 

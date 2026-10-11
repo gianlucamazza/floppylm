@@ -42,8 +42,8 @@ from floppylm.campaign_protocol import (
 )
 from floppylm.campaign_report import attempt_record, baseline_complete
 from floppylm.model import GPTConfig
-from floppylm_xbox.console_lifecycle import heartbeat as send_host_heartbeat
 from floppylm_xbox.console_lifecycle import (
+    ON_TOOL_UNREACHABLE_REFUSE,
     heartbeat_seconds,
     idle_gpu,
     is_valid_prepare_report,
@@ -53,6 +53,7 @@ from floppylm_xbox.console_lifecycle import (
     resolve_tool,
     stop_console,
 )
+from floppylm_xbox.console_lifecycle import heartbeat as send_host_heartbeat
 
 
 class Campaign:
@@ -66,7 +67,9 @@ class Campaign:
         from_grid_ternary: bool = False,
         from_paired: bool = False,
         lifecycle_tool: Path | None = None,
+        allow_orphan: bool = False,
         allow_orphan_gpu: bool = False,
+        on_tool_unreachable: str | None = None,
         heartbeat_interval_seconds: float | None = None,
         lifecycle_config: Path | None = None,
     ):
@@ -146,8 +149,10 @@ class Campaign:
         overrides = {}
         if lifecycle_tool is not None:
             overrides["tool"] = lifecycle_tool
-        if allow_orphan_gpu:
+        if allow_orphan or allow_orphan_gpu:
             overrides["refuse_orphan"] = False
+        if on_tool_unreachable is not None:
+            overrides["on_tool_unreachable"] = on_tool_unreachable
         if heartbeat_interval_seconds is not None:
             overrides["heartbeat_interval_seconds"] = heartbeat_interval_seconds
         self.lifecycle = load_lifecycle_config(
@@ -158,7 +163,9 @@ class Campaign:
         if not self.lifecycle.package:
             self.lifecycle = replace(self.lifecycle, package=self.state.get("package") or None)
         self.lifecycle_tool = self.lifecycle.tool
-        self.allow_orphan_gpu = not self.lifecycle.refuse_orphan
+        self.allow_orphan = not self.lifecycle.refuse_orphan
+        self.allow_orphan_gpu = self.allow_orphan
+        self.on_tool_unreachable = self.lifecycle.on_tool_unreachable
         self.heartbeat_interval_seconds = heartbeat_seconds(
             self.lifecycle.heartbeat_interval_seconds
         )
@@ -258,19 +265,29 @@ class Campaign:
         refuse = True
         if getattr(self, "lifecycle", None) is not None:
             refuse = self.lifecycle.refuse_orphan
-        elif getattr(self, "allow_orphan_gpu", False):
+        elif getattr(self, "allow_orphan", False) or getattr(self, "allow_orphan_gpu", False):
             refuse = False
+        unreachable_policy = "continue"
+        if getattr(self, "lifecycle", None) is not None:
+            unreachable_policy = self.lifecycle.on_tool_unreachable
+        elif getattr(self, "on_tool_unreachable", None):
+            unreachable_policy = self.on_tool_unreachable
         prepared = prepare(**kwargs)
-        self._store_lifecycle(prepare=prepared)
+        self._store_lifecycle(prepare=prepared, on_tool_unreachable=unreachable_policy)
         if not prepared.get("reachable"):
             print(f"console prepare skipped: {prepared.get('error')}", flush=True)
+            if unreachable_policy == ON_TOOL_UNREACHABLE_REFUSE:
+                raise RuntimeError(
+                    "prepare unreachable; set on_tool_unreachable=continue or "
+                    "XGPU_E0_ON_TOOL_UNREACHABLE=continue to start anyway"
+                )
         elif not is_valid_prepare_report(prepared):
             detail = prepared.get("error") or prepared.get("stderr") or "invalid prepare"
             print(f"console prepare invalid: {detail}", flush=True)
             if refuse:
                 raise RuntimeError(
                     "prepare crashed or returned an invalid report; pass "
-                    "--allow-orphan-gpu or set XGPU_E0_REFUSE_ORPHAN=0 to start anyway"
+                    "--allow-orphan or set XGPU_E0_REFUSE_ORPHAN=0 to start anyway"
                 )
             print("prepare invalid; starting because refuse_orphan is false", flush=True)
         else:
@@ -289,6 +306,13 @@ class Campaign:
                 f"console idle-gpu --when before skipped: {result.get('error')}",
                 flush=True,
             )
+            self._store_lifecycle(on_tool_unreachable=unreachable_policy)
+            if unreachable_policy == ON_TOOL_UNREACHABLE_REFUSE:
+                raise RuntimeError(
+                    "idle-gpu --when before unreachable; set "
+                    "on_tool_unreachable=continue or "
+                    "XGPU_E0_ON_TOOL_UNREACHABLE=continue to start anyway"
+                )
             return
         self.event(
             "console_idle_gpu_before",
@@ -296,12 +320,20 @@ class Campaign:
             reason=reason,
             verdict=verdict,
         )
+        if verdict == "start_time_unknown":
+            print(
+                "console idle-gpu --when before warning: start_time_unknown "
+                "(orphan is null); starting",
+                flush=True,
+            )
+            self._store_lifecycle(warning="start_time_unknown")
+            return
         if verdict in ("invalid", "orphan", "job_active"):
             detail = result.get("error") or result.get("stderr") or reason
             print(f"console idle-gpu --when before {verdict}: {detail}", flush=True)
             if refuse:
                 raise RuntimeError(
-                    f"idle-gpu --when before {verdict}; pass --allow-orphan-gpu or "
+                    f"idle-gpu --when before {verdict}; pass --allow-orphan or "
                     "set XGPU_E0_REFUSE_ORPHAN=0 to start anyway"
                 )
             print(
@@ -872,10 +904,24 @@ def main():
         help="JSON policy file (or $FLOPPYLM_E0_LIFECYCLE_CONFIG)",
     )
     parser.add_argument(
-        "--allow-orphan-gpu",
+        "--allow-orphan",
         action="store_true",
+        dest="allow_orphan",
         help="start even when idle-gpu --when before reports a state-based orphan "
         "or a crashed/invalid report",
+    )
+    parser.add_argument(
+        "--allow-orphan-gpu",
+        action="store_true",
+        dest="allow_orphan_gpu",
+        help="deprecated alias of --allow-orphan",
+    )
+    parser.add_argument(
+        "--on-tool-unreachable",
+        choices=("continue", "refuse"),
+        default=None,
+        help="when the lifecycle tool is unset or unreachable: continue (default) "
+        "or refuse (omit to use $XGPU_E0_ON_TOOL_UNREACHABLE or continue)",
     )
     parser.add_argument(
         "--heartbeat-interval-seconds",
@@ -893,7 +939,9 @@ def main():
         from_grid_ternary=a.from_grid_ternary,
         from_paired=a.from_paired,
         lifecycle_tool=a.lifecycle_tool,
+        allow_orphan=a.allow_orphan or a.allow_orphan_gpu,
         allow_orphan_gpu=a.allow_orphan_gpu,
+        on_tool_unreachable=a.on_tool_unreachable,
         heartbeat_interval_seconds=a.heartbeat_interval_seconds,
         lifecycle_config=a.lifecycle_config,
     )

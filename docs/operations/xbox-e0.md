@@ -111,13 +111,13 @@ runner calls `prepare` (clears leftover `inbox/shutdown`) then
 `idle-gpu --when before` and, by default, refuses to start when that report is
 `orphan_stale_idle` or `job_active`. GPU sits under `gpu_advisory` with
 `decisive: false` and does not refuse. A crashed tool or invalid report
-follows the same fail-closed policy (`--allow-orphan-gpu` or
-`XGPU_E0_REFUSE_ORPHAN=0` overrides). While the campaign runs it refreshes
-`host.heartbeat`. On completion,
+follows the same fail-closed policy (`--allow-orphan` or
+`XGPU_E0_REFUSE_ORPHAN=0` overrides). `reason: start_time_unknown` /
+`orphan: null` is a warning, not a refuse. A missing tool is
+`on_tool_unreachable` (`continue` by default, or `refuse`). While the
+campaign runs it refreshes `host.heartbeat`. On completion,
 failure or cancel — and from the unit `ExecStop` — it runs `teardown` then
 `idle-gpu --when after` and stores the reports in `campaign.json` / `summary.json`.
-A missing tool or unreachable console is logged and does not discard the campaign
-record.
 
 ```bash
 # Set XGPU_E0_CONSOLE_LIFECYCLE and Device Portal keys in xbox.env / e0-lifecycle.env

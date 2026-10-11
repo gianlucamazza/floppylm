@@ -3,7 +3,7 @@
 Owner of the settings the campaign runner and the lifecycle unit pass to
 xbox-gpu-training `scripts/e0_console_lifecycle.py`
 ([PR #46](https://github.com/gianlucamazza/xbox-gpu-training/pull/46), tip
-`9ed67f52df31ecf081010d1c4597ba3f443c0cb1`). The tool's table lives in
+`9be961f83f3cdfee4e79c0b5332f51362a2ddf11`). The tool's table lives in
 `docs/e0/lifecycle.md` on that branch. Procedure stays in the
 [Xbox runbook](xbox-e0.md). Live package and campaign identity stay in
 [STATUS](../STATUS.md).
@@ -17,8 +17,8 @@ Unset values are omitted so the tool's documented defaults apply.
 Highest wins on the FloppyLM side:
 
 1. Campaign / teardown CLI flags (`--lifecycle-tool`, `--lifecycle-config`,
-   `--allow-orphan-gpu`, `--heartbeat-interval-seconds`, `--package`,
-   `--teardown-wait-seconds`)
+   `--allow-orphan`, `--on-tool-unreachable`, `--heartbeat-interval-seconds`,
+   `--package`, `--teardown-wait-seconds`)
 2. `campaign.json` → `console_lifecycle.config` (policy snapshot written at
    campaign start)
 3. JSON file `$FLOPPYLM_E0_LIFECYCLE_CONFIG` or `--lifecycle-config`
@@ -68,7 +68,8 @@ marked.
 | Portal user | `XGPU_PORTAL_USER` or `UWP_DEVICE_USER` | — | — | unset | env only |
 | Portal password | `XGPU_PORTAL_PASSWORD` or `OPENAPPX_DEVICE_PASSWORD` | — | — | unset | env / credentials file only |
 | Credentials file | `XGPU_PORTAL_CREDENTIALS` | `credentials` | `--credentials` | none | `--credentials` |
-| Refuse orphan / invalid prepare (FloppyLM) | `XGPU_E0_REFUSE_ORPHAN` | `refuse_orphan` | `--allow-orphan-gpu` sets false | `true` | not a tool flag; runner policy |
+| Refuse orphan / invalid prepare (FloppyLM) | `XGPU_E0_REFUSE_ORPHAN` | `refuse_orphan` | `--allow-orphan` sets false (`--allow-orphan-gpu` is a deprecated alias) | `true` | not a tool flag; runner policy |
+| Tool unreachable (FloppyLM) | `XGPU_E0_ON_TOOL_UNREACHABLE` | `on_tool_unreachable` | `--on-tool-unreachable continue\|refuse` | `continue` | not a tool flag; runner policy |
 
 Boolean env values: `0`, `false`, `no`, `off` are false; anything else is true.
 
@@ -87,6 +88,7 @@ Do not forward the retired flags `--engine`, `--adapter`, `--image`, `--pid`,
   "process_images": ["xgpue0.exe"],
   "terminate_by": ["package", "pid"],
   "refuse_orphan": true,
+  "on_tool_unreachable": "continue",
   "package": "Publisher.App_1.2.3.4_x64__publisher"
 }
 ```
@@ -118,15 +120,36 @@ The runner reads #46's report as printed. `idle-gpu --when before` fails only
 on `job_active` or `orphan_stale_idle`. GPU sits under `gpu_advisory` with
 `decisive: false` and is never a refuse reason.
 
-| Tool outcome | Default | Override (`--allow-orphan-gpu` / `XGPU_E0_REFUSE_ORPHAN=0`) |
+Besides `when`, `ok`, `reason`, `process_present`, `job_active`, `queued`,
+`claimed`, `running`, `ready`, `worker_state`, `heartbeat_age_seconds`,
+`heartbeat_stale`, `last_job_ended_age_seconds`, `orphan`, `cpu_idle` and
+`gpu_advisory`, the report includes:
+
+| Field | Meaning |
+| --- | --- |
+| `app_age_seconds` | Age of this app instance (process start / `started_at`) |
+| `idle_age_seconds` | Time since the latest of instance start, last in-instance job, in-instance heartbeat |
+| `claimed_live` | Inbox `.claimed` names that still look live; finished historical claims are ignored |
+
+`reason: start_time_unknown` with `orphan: null` means the tool could not
+anchor this instance's start time. That is **ok with a warning, not a
+refusal**: the runner starts and records `warning: start_time_unknown`.
+
+#46 is adding `LocalState/instance.json` (`instance_id`, `started_at`) and
+instance-bound heartbeats. The current tool `heartbeat` subcommand has no
+instance-id flag, so FloppyLM does not invent `--instance-id`.
+
+| Tool outcome | Default | Override |
 | --- | --- | --- |
-| Tool unset or not found (`unreachable`) | log and continue | — |
-| `prepare` crash / missing `cleared` list | refuse | start |
-| Crash, non-JSON, or invalid `idle-gpu` report | refuse | start |
-| `orphan: true` / `reason: orphan_stale_idle` | refuse | start |
-| `reason: job_active` | refuse | start |
+| Tool unset or not found (`unreachable`) | `on_tool_unreachable: continue` (log and start) | `on_tool_unreachable: refuse` / `--on-tool-unreachable refuse` / `XGPU_E0_ON_TOOL_UNREACHABLE=refuse` |
+| `prepare` crash / missing `cleared` list | refuse | `--allow-orphan` / `XGPU_E0_REFUSE_ORPHAN=0` |
+| Crash, non-JSON, or invalid `idle-gpu` report | refuse | `--allow-orphan` / `XGPU_E0_REFUSE_ORPHAN=0` |
+| `orphan: true` / `reason: orphan_stale_idle` | refuse | `--allow-orphan` / `XGPU_E0_REFUSE_ORPHAN=0` |
+| `reason: job_active` | refuse | `--allow-orphan` / `XGPU_E0_REFUSE_ORPHAN=0` |
+| `reason: start_time_unknown` / `orphan: null` | start with warning | — |
 | Idle ready app (`orphan: false`, including `gpu_advisory.engine_pinned`) | start | — |
 
-Orphan means: process present, no job running/queued, heartbeat missing or
-stale, and last job ended past the idle deadline. A freshly launched idle app
-has no last-job age and is reusable.
+Orphan means: process present, no live job (`worker.json` state / `active_job`,
+`.ready` queue; historical `.claimed` ignored), leftover idle past
+`idle_exit_seconds`, and the ready app is not younger than that deadline. A
+freshly launched idle app is reusable.
