@@ -19,6 +19,7 @@ runlog.py        unique ids, exclusive directories, atomic writes, state, manife
 data.py          TinyStoriesV2: exact dedup, hash split, manifest, reproducibility
 bpe.py           train-only byte-exact BPE oracle (E1 functional qualification, ADR 0013)
 vq.py            VQB1 book and vector oracle; learned reseeds continue the PCG32 stream; VQF1 stays a fixture
+e1_plan.py       1/16 host plan: stored scalar arms, four G=8 books, F1. Does not train. Vector width, depth, d_ff, learning rate, and weight decay are not named
 ```
 
 ## Xbox execution — `src/floppylm_xbox/`

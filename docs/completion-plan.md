@@ -102,8 +102,11 @@ Continue in this order:
    FLP2 layout is on main (`b362991`): one `VQB1` book in the shared section.
    The host trainer is `e9e7ef8`
    ([python run 38095852624](https://github.com/gianlucamazza/floppylm/actions/runs/38095852624)).
-   The layer map is [architecture](architecture.md) (`860b92c`).
-   It applies ADR 0023 decisions 7–9 on CPU. Assignment is
+   The layer map is [architecture](architecture.md) (`e4bc41d`).
+   The host plan is `src/floppylm/e1_plan.py`. It materializes the specified
+   scalar arms and the four G=8 books. ADR 0023 does not name the vector
+   width, depth, `d_ff`, learning rate, or weight decay. The trainer applies
+   ADR 0023 decisions 7–9 on CPU. Assignment is
    every 64 steps at probability 0.1. A dead learned entry is reseeded from
    that arm's PCG32 stream and logged. A fixed book logs the dead entry and
    keeps the seed. Resume continues the master weights, indices, scales,
