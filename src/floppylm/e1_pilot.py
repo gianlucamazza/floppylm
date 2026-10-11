@@ -2,8 +2,10 @@
 
 Reads the published ADR 0024 shapes. A functional smoke trains a tiny
 synthetic stand-in and is not a scientific result. The smoke does not freeze
-a selection and does not reserve a final test. The test split stays closed
-until a scientific cell freezes.
+a selection and does not reserve a final test. publish_signal reads eighteen
+closed cells, freezes the eligible validation artifacts, and reserves one
+final test. score_final_test is the only read of the test split, and it runs
+once. The 1/16 signal is not the F1 verdict.
 """
 
 from __future__ import annotations
@@ -11,6 +13,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import statistics
 import subprocess
 from pathlib import Path
 
@@ -23,6 +26,10 @@ from .e1_plan import (
     TARGET_BYTES,
     VECTOR_LR,
     VECTOR_WD,
+    MeanBpb,
+    f1_abl,
+    f1_holds,
+    f1_separation,
     init_pack,
     pilot_tokens,
     published_shapes,
@@ -35,7 +42,7 @@ from .e1_plan import (
 )
 from .model import GPTConfig, TinyGPT
 from .pack import pack_sections, unpack
-from .parity import admissible
+from .parity import admissible, paired_sigma
 from .seed import seed_all
 from .train import TrainSpec, schedule, sliding_bpb, train_wsd
 from .vq import VectorBook
@@ -44,8 +51,9 @@ from .vq import VectorBook
 # at context 256. 20_780_800 / 256 = 81_175, and 81_175 % 25 == 0.
 PILOT_BATCH = 25
 PILOT_CTX = 256
-# Roadmap S7 window used by the E0 campaign. Saturation is recorded, not a gate.
+# Roadmap S7 windows used by the E0 campaign. Saturation is recorded, not a gate.
 EVAL_VAL_BYTES = 1 << 20
+TEST_BYTES = 1 << 21
 SATURATION_ABS = 0.01
 
 
@@ -494,3 +502,408 @@ def _run_locked_cell(index: int, data_dir: Path, run_root: Path, evidence_root: 
     _write_json(evidence / "summary.json", summary)
     (evidence / "notes.md").write_text(_notes(summary))
     return summary
+
+
+def _required_float(value: object, label: str) -> float:
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        raise ValueError(label)
+    return float(value)
+
+
+def _required_number(value: object, label: str) -> int | float:
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        raise ValueError(label)
+    return value
+
+
+def _check_summary(summary: dict, plan: dict) -> None:
+    """A closed cell matches its plan row and did not open the test split."""
+    if summary.get("kind") != "scientific-cell":
+        raise ValueError("the signal reads scientific cells")
+    if summary.get("id") != cell_id(plan):
+        raise ValueError("cell id does not match the plan")
+    if summary.get("arm") != plan["arm"] or summary.get("seed") != plan["seed"]:
+        raise ValueError("cell arm or seed does not match the plan")
+    if summary.get("core") != plan["core"]:
+        raise ValueError("cell core does not match the plan")
+    if summary.get("final_test_opened") is not False or summary.get("test_split_read") is not False:
+        raise ValueError("a cell does not open the final test")
+    if summary.get("console_job") is not False:
+        raise ValueError("a cell is not a console job")
+    tokens = pilot_t()
+    expected = (tokens, 2 * tokens, 4 * tokens)
+    if tuple(summary.get("token_ends") or ()) != expected or summary.get("token_T") != tokens:
+        raise ValueError("cell token ends are not T, 2T and 4T")
+    branches = summary.get("branches")
+    if not isinstance(branches, list) or len(branches) != 3:
+        raise ValueError("a scientific cell closes three cooldowns")
+    for row, seen in zip(branches, expected, strict=True):
+        if row.get("tokens_seen") != seen:
+            raise ValueError("cooldown tokens do not match T, 2T and 4T")
+        digest = row.get("sha256")
+        if not isinstance(digest, str) or len(digest) != 64:
+            raise ValueError("cooldown needs a sha256")
+        try:
+            int(digest, 16)
+        except ValueError as exc:
+            raise ValueError("cooldown needs a sha256") from exc
+        if type(row.get("model_bytes")) is not int:
+            raise ValueError("cooldown needs model_bytes")
+        _required_float(row.get("val_bpb"), "cooldown needs a val_bpb")
+        _required_float(row.get("fill"), "cooldown needs a fill")
+    if summary.get("saturation", {}).get("gate") is not False:
+        raise ValueError("saturation is recorded and is not a gate")
+    ok, _reasons = _eligible(branches)
+    if summary.get("eligible") is not ok:
+        raise ValueError("cell eligibility does not match packed bytes")
+
+
+def _trunk_seconds(summary: dict) -> float:
+    attempts = summary.get("attempts")
+    if not isinstance(attempts, list) or not attempts:
+        raise ValueError("cell costs need the recorded attempts")
+    total = 0.0
+    for attempt in attempts:
+        total += _required_float(attempt.get("trunk_seconds"), "cell costs need trunk_seconds")
+    return total
+
+
+def _cooldown_scores(summary: dict) -> tuple[float, float, float]:
+    scores = tuple(
+        _required_float(row["val_bpb"], "cooldown needs a val_bpb") for row in summary["branches"]
+    )
+    if len(scores) != 3:
+        raise ValueError("a scientific cell closes three cooldowns")
+    return scores[0], scores[1], scores[2]
+
+
+def _minimizers(means: dict[str, MeanBpb], field: str) -> list[str]:
+    best = min(getattr(arm, field) for arm in means.values())
+    return sorted(name for name, arm in means.items() if getattr(arm, field) == best)
+
+
+def _unique_best(names: list[str]) -> str | None:
+    if len(names) == 1:
+        return names[0]
+    return None
+
+
+def signal_from_cells(summaries: list[dict] | tuple[dict, ...]) -> dict:
+    """Validation signal from the eighteen closed cells. Not the F1 verdict.
+
+    Eligible cells are the only ones in the means. Saturation is copied and
+    does not drop a cell. A seed mismatch records a null F1 and does not
+    invent a sample sd. Rank disagreement is recorded and is not a failure.
+    """
+    plans = cell_plan()
+    if len(summaries) != len(plans):
+        raise ValueError("the signal needs the eighteen pilot cells")
+    by_id: dict[str, dict] = {}
+    for summary in summaries:
+        ident = summary.get("id")
+        if not isinstance(ident, str) or ident in by_id:
+            raise ValueError("duplicate pilot cell")
+        by_id[ident] = summary
+    ordered: list[dict] = []
+    for plan in plans:
+        ident = cell_id(plan)
+        summary = by_id.get(ident)
+        if summary is None:
+            raise ValueError("the signal needs the eighteen pilot cells")
+        _check_summary(summary, plan)
+        ordered.append(summary)
+
+    tokens = pilot_t()
+    ends = (tokens, 2 * tokens, 4 * tokens)
+    eligible_rows: list[dict] = []
+    exclusions: list[dict] = []
+    saturation: list[dict] = []
+    costs_cells: list[dict] = []
+    fills: dict[str, float] = {}
+    frozen: list[dict] = []
+    for summary in ordered:
+        branches = summary["branches"]
+        ok, reasons = _eligible(branches)
+        counted = branches[-1]
+        fills[summary["id"]] = _required_float(counted["fill"], "cooldown needs a fill")
+        sat = summary["saturation"]
+        saturation.append(
+            {
+                "id": summary["id"],
+                "abs_delta": _required_float(sat.get("abs_delta"), "saturation needs abs_delta"),
+                "saturated": sat.get("saturated"),
+                "gate": False,
+            }
+        )
+        costs_cells.append(
+            {
+                "id": summary["id"],
+                "trunk_seconds": _trunk_seconds(summary),
+                "flops_per_token": _required_number(
+                    summary.get("flops_per_token"), "cell costs need flops_per_token"
+                ),
+                "stored_params": _required_number(
+                    summary.get("stored_params"), "cell costs need stored_params"
+                ),
+            }
+        )
+        if not ok:
+            exclusions.append(
+                {"id": summary["id"], "reasons": reasons, "s3_error": summary.get("s3_error")}
+            )
+            continue
+        scores = _cooldown_scores(summary)
+        eligible_rows.append(
+            {
+                "id": summary["id"],
+                "arm": summary["arm"],
+                "seed": summary["seed"],
+                "core": summary["core"],
+                "scores": scores,
+            }
+        )
+        frozen.append(
+            {
+                "name": summary["id"],
+                "sha256": counted["sha256"],
+                "model_bytes": counted["model_bytes"],
+                "val_bpb": float(counted["val_bpb"]),
+            }
+        )
+
+    by_arm: dict[str, list[dict]] = {}
+    for row in eligible_rows:
+        by_arm.setdefault(row["arm"], []).append(row)
+    arm_means = {
+        arm: MeanBpb(*(statistics.fmean(row["scores"][i] for row in rows) for i in range(3)))
+        for arm, rows in by_arm.items()
+    }
+    arms = {
+        arm: {
+            "seeds": sorted(row["seed"] for row in by_arm[arm]),
+            "t": mean.t,
+            "t2": mean.t2,
+            "t4": mean.t4,
+            "n": len(by_arm[arm]),
+        }
+        for arm, mean in arm_means.items()
+    }
+    scalar_means = {arm: mean for arm, mean in arm_means.items() if not arm.startswith("vq-")}
+    vector_means = {arm: mean for arm, mean in arm_means.items() if arm.startswith("vq-")}
+    scalar_at_4t = _minimizers(scalar_means, "t4") if scalar_means else []
+    vector_at_4t = _minimizers(vector_means, "t4") if vector_means else []
+    best_scalar = _unique_best(scalar_at_4t)
+    best_vector = _unique_best(vector_at_4t)
+    if arm_means:
+        rank = {
+            "at_T": _minimizers(arm_means, "t"),
+            "at_2T": _minimizers(arm_means, "t2"),
+            "at_4T": _minimizers(arm_means, "t4"),
+        }
+        earlier = set(rank["at_T"]) & set(rank["at_2T"])
+        rank["winner_at_4t_also_minimizes_earlier"] = set(rank["at_4T"]) <= earlier
+    else:
+        rank = {
+            "at_T": [],
+            "at_2T": [],
+            "at_4T": [],
+            "winner_at_4t_also_minimizes_earlier": None,
+        }
+
+    paired = None
+    separation = None
+    f1_at_1_16 = None
+    if best_scalar is not None and best_vector is not None:
+        scalar_map = {row["seed"]: row["scores"][2] for row in by_arm[best_scalar]}
+        vector_map = {row["seed"]: row["scores"][2] for row in by_arm[best_vector]}
+        try:
+            paired_raw = paired_sigma(scalar_map, vector_map)
+        except ValueError:
+            paired_raw = None
+        if paired_raw is not None:
+            paired = {
+                "seeds": paired_raw["seeds"],
+                "mean": paired_raw["mean"],
+                "sd": paired_raw["sd"],
+                "n": paired_raw["n"],
+            }
+            separation = f1_separation(paired["sd"])
+            f1_at_1_16 = f1_holds(arm_means[best_vector], arm_means[best_scalar], paired["sd"])
+
+    ablations = []
+    for rate in (0.5, 0.75):
+        learned = {row["seed"]: row for row in by_arm.get(f"vq-{rate}-learned", ())}
+        fixed = {row["seed"]: row for row in by_arm.get(f"vq-{rate}-fixed", ())}
+        for seed in sorted(set(learned) & set(fixed)):
+            left = learned[seed]["scores"]
+            right = fixed[seed]["scores"]
+            ablations.append(
+                {
+                    "rate": rate,
+                    "seed": seed,
+                    "t": f1_abl(left[0], right[0]),
+                    "t2": f1_abl(left[1], right[1]),
+                    "t4": f1_abl(left[2], right[2]),
+                }
+            )
+
+    parity_sizes = {item["name"]: item["model_bytes"] for item in frozen}
+    if parity_sizes:
+        parity_ok, parity_reasons = admissible(parity_sizes, TARGET_BYTES)
+        if not parity_ok:
+            raise ValueError("eligible cells failed byte parity")
+    else:
+        parity_ok, parity_reasons = False, ["no eligible cell"]
+    return {
+        "kind": "pilot-signal",
+        "scientific_result": False,
+        "f1_verdict": None,
+        "f1_at_1_16": f1_at_1_16,
+        "f1_separation": separation,
+        "final_test_opened": False,
+        "test_split_read": False,
+        "console_job": False,
+        "token_T": tokens,
+        "token_ends": list(ends),
+        "n_cells": len(ordered),
+        "n_eligible": len(eligible_rows),
+        "parity": {"ok": parity_ok, "reasons": parity_reasons},
+        "arms": arms,
+        "best_scalar": best_scalar,
+        "best_vector": best_vector,
+        "scalar_at_4t": scalar_at_4t,
+        "vector_at_4t": vector_at_4t,
+        "rank": rank,
+        "paired": paired,
+        "f1_abl": ablations,
+        "saturation": saturation,
+        "costs": {
+            "trunk_seconds": sum(row["trunk_seconds"] for row in costs_cells),
+            "cells": costs_cells,
+        },
+        "exclusions": exclusions,
+        "fill": fills,
+        "frozen_hashes": frozen,
+    }
+
+
+def _signal_notes(signal: dict) -> str:
+    f1 = signal["f1_at_1_16"]
+    shown = "null" if f1 is None else str(f1).lower()
+    lines = [
+        "# 1/16 pilot signal",
+        "",
+        "Validation signal from the closed CPU cells. This file is not the F1 verdict.",
+        "The verdict needs the same sign at 1/16 and at 1/4.",
+        f"F1 at 1/16 is {shown}.",
+        "Saturation is recorded and is not a gate.",
+        f"Eligible cells: {signal['n_eligible']}. Exclusions: {len(signal['exclusions'])}.",
+    ]
+    if signal["final_test_opened"]:
+        lines.append("A final test is reserved. This file did not read the test split.")
+    else:
+        lines.append("No eligible cell. No freeze and no final test were written.")
+    lines.append("No console job was dispatched.")
+    return "\n".join(lines) + "\n"
+
+
+def publish_signal(evidence_root: Path, dest: Path) -> dict:
+    """Read eighteen cell summaries and write the signal. Does not train.
+
+    Freezes eligible 4T hashes and reserves the final test. Zero eligible
+    cells publish the exclusions and do not freeze or reserve. Does not read
+    the test split.
+    """
+    evidence_root = Path(evidence_root)
+    dest = Path(dest)
+    if (
+        (dest / "summary.json").exists()
+        or (dest / "freeze.json").exists()
+        or (dest / "final-test.reservation.json").exists()
+    ):
+        raise ValueError("the signal record already exists")
+    summaries = []
+    for plan in cell_plan():
+        path = evidence_root / cell_id(plan) / "summary.json"
+        if not path.is_file():
+            raise ValueError("a pilot cell is missing")
+        summaries.append(json.loads(path.read_text()))
+    signal = signal_from_cells(summaries)
+    if signal["frozen_hashes"]:
+        items = tuple({**item, "smoke": False} for item in signal["frozen_hashes"])
+        freeze = freeze_selection(dest, items, purpose="scientific")
+        open_final_test(freeze, dest)
+        signal["final_test_opened"] = True
+        signal["test_split_read"] = False
+        signal["frozen_hashes"] = [
+            {
+                "name": item["name"],
+                "sha256": item["sha256"],
+                "model_bytes": item["model_bytes"],
+                "val_bpb": item["val_bpb"],
+            }
+            for item in freeze["items"]
+        ]
+    _exclusive_json(dest / "summary.json", signal)
+    (dest / "notes.md").write_text(_signal_notes(signal))
+    return signal
+
+
+def score_final_test(data_dir: Path, dest: Path, artifacts: dict[str, bytes]) -> dict:
+    """Score the frozen artifacts once. The test split is read after the checks.
+
+    The reservation and the freeze must already exist. A second call refuses.
+    This does not decide the F1 verdict.
+    """
+    dest = Path(dest)
+    data_dir = Path(data_dir)
+    if not (dest / "final-test.reservation.json").is_file():
+        raise ValueError("the final test scores only after the reservation")
+    freeze_path = dest / "freeze.json"
+    if not freeze_path.is_file():
+        raise ValueError("the final test scores only a frozen selection")
+    out = dest / "final-test.json"
+    if out.exists():
+        raise ValueError("the final test runs once")
+    freeze = json.loads(freeze_path.read_text())
+    if freeze.get("purpose") != "scientific":
+        raise ValueError("the final test scores only a scientific freeze")
+    items = freeze.get("items") or []
+    if not items:
+        raise ValueError("the final test scores a nonempty freeze")
+    checked: list[tuple[dict, bytes]] = []
+    for item in items:
+        blob = artifacts.get(item["name"])
+        if blob is None:
+            raise ValueError("frozen artifact is missing")
+        if hashlib.sha256(blob).hexdigest() != item["sha256"]:
+            raise ValueError("frozen artifact hash mismatch")
+        if len(blob) != item["model_bytes"]:
+            raise ValueError("frozen artifact size mismatch")
+        checked.append((item, blob))
+    test_path = data_dir / "test.bin"
+    if not test_path.is_file():
+        raise ValueError("the final test needs the frozen test split")
+    test = load_split(data_dir, "test")
+    results = []
+    for item, blob in checked:
+        bpb, scored = sliding_bpb(unpack(blob), test, TEST_BYTES)
+        results.append(
+            {
+                "name": item["name"],
+                "sha256": item["sha256"],
+                "model_bytes": item["model_bytes"],
+                "test_bpb": bpb,
+                "test_scored_bytes": scored,
+            }
+        )
+    payload = {
+        "kind": "final-test",
+        "purpose": "scientific",
+        "test_split_read": True,
+        "f1_verdict": None,
+        "console_job": False,
+        "results": results,
+    }
+    _exclusive_json(out, payload)
+    return payload
