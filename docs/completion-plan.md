@@ -104,8 +104,10 @@ Continue in this order:
    ([python run 38095852624](https://github.com/gianlucamazza/floppylm/actions/runs/38095852624)).
    The layer map is [architecture](architecture.md) (`e4bc41d`).
    The host plan is `src/floppylm/e1_plan.py`. It materializes the specified
-   scalar arms and the four G=8 books. ADR 0023 does not name the vector
-   width, depth, `d_ff`, learning rate, or weight decay. The trainer applies
+   scalar arms, the four G=8 books, and the
+   [ADR 0024](adr/0024-e1-vector-shape.md) shape rule. Seed 0 of the fixed
+   rate-0.5 book is closed at `d` 80, 12 layers, `d_ff` 247, 85934 bytes.
+   Three books remain open, so the pilot token count is unnamed. The trainer applies
    ADR 0023 decisions 7–9 on CPU. Assignment is
    every 64 steps at probability 0.1. A dead learned entry is reseeded from
    that arm's PCG32 stream and logged. A fixed book logs the dead entry and

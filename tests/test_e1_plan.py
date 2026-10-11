@@ -11,20 +11,27 @@ from floppylm.e1_plan import (
     SELECTION_SHA256,
     TARGET_BYTES,
     TOKENS_PER_STORED_PARAM,
+    VECTOR_LR,
+    VECTOR_WD,
     BookSpec,
     MeanBpb,
+    SolvedShape,
     book_specs,
+    choose_shape,
     f1_abl,
     f1_holds,
     f1_separation,
+    ff_bounds,
     init_pack,
+    nominal_payload_bytes,
     pilot_tokens,
     scalar_arms,
     vector_books,
+    vector_config,
     vector_recipe,
 )
 from floppylm.model import TinyGPT
-from floppylm.pack import pack
+from floppylm.pack import pack, pack_sections
 from floppylm.parity import admissible
 from floppylm.seed import seed_all
 from floppylm.vq import VectorBook
@@ -42,6 +49,7 @@ def test_plan_constants_copy_the_accepted_protocol():
     assert SELECTION_SHA256 == (
         "de80fff08e750702784e6efbcb583ca86de566965207212c1c6531822a05bbe4"
     )
+    assert (VECTOR_LR, VECTOR_WD) == (0.003, 0.1)
     arms = {arm.name: arm for arm in scalar_arms()}
     ternary, two = arms["ternary"], arms["2bit"]
     assert (ternary.lr, ternary.wd) == (0.01, 0.1)
@@ -121,11 +129,49 @@ def test_g16_needs_an_adr_edit_before_the_first_attempt():
         BookSpec(16, 0.5, False)
 
 
-def test_vector_recipe_and_pilot_tokens_are_not_named():
-    with pytest.raises(ValueError, match="does not name the vector width"):
+def test_shape_rule_orders_candidates_and_matches_nominal_bits():
+    assert ff_bounds(96) == (128, 384)
+    assert ff_bounds(80) == (107, 320)
+    far = SolvedShape(64, 2, 100, 0.5, False, 87000, 10)
+    close_big = SolvedShape(128, 4, 200, 0.5, False, 85940, 500)
+    close_small = SolvedShape(96, 3, 150, 0.5, False, 85940, 400)
+    wider = SolvedShape(112, 2, 150, 0.5, False, 85940, 400)
+    assert choose_shape([far, close_big, close_small, wider]) == close_small
+    assert choose_shape([]) is None
+    spec = book_specs()[0]
+    cfg = vector_config(64, 1, ff_bounds(64)[0])
+    book = VectorBook(spec.dimension, spec.rate, 0, learned=spec.learned)
+    seed_all(0)
+    model = TinyGPT(cfg, book)
+    assert nominal_payload_bytes(64, 1, cfg.d_ff, spec) == model.nominal_bits() / 8
+
+
+def test_seed0_fixed_rate_05_shape_repacks():
+    """Closed book from the 2026-10-11 solver. Does not walk the grid."""
+    spec = book_specs()[0]
+    assert (spec.rate, spec.learned) == (0.5, False)
+    book = VectorBook(spec.dimension, spec.rate, 0, learned=False)
+    cfg = vector_config(80, 12, 247)
+    assert ff_bounds(80)[0] <= cfg.d_ff <= ff_bounds(80)[1]
+    seed_all(0)
+    model = TinyGPT(cfg, book)
+    assert len(pack_sections(model)[0]) == 85934
+    assert model.stored_params() == 1_039_040
+    ok, reasons = admissible({spec.rate: 85934}, TARGET_BYTES)
+    assert ok, reasons
+    for d_ff, nbytes in ((246, 85785), (248, 86031)):
+        seed_all(0)
+        neighbor = TinyGPT(vector_config(80, 12, d_ff), book)
+        packed = len(pack_sections(neighbor)[0])
+        assert packed == nbytes
+        assert abs(packed - TARGET_BYTES) > abs(85934 - TARGET_BYTES)
+
+
+def test_vector_recipe_rejects_a_hand_specified_shape():
+    with pytest.raises(ValueError, match="caller-supplied width"):
         vector_recipe(d=80, n_layers=4, d_ff=320, lr=0.01, wd=0.1)
-    with pytest.raises(ValueError, match="does not name the vector width"):
-        pilot_tokens(scalar_params=374400)
+    with pytest.raises(ValueError, match="four G=8 books"):
+        pilot_tokens((), (1, 1))
     with pytest.raises(ValueError, match="vq core"):
         init_pack(replace(scalar_arms()[0].nominal, core_fmt="vq"), seed=0)
 

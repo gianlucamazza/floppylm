@@ -106,9 +106,10 @@ unaffected.
 The accepted protocol is [ADR 0023](adr/0023-e1-1-16-pilot.md). This section
 does not restate it. The host layout (`b362991`) and the host trainer
 (`e9e7ef8`) are on main. The layer map is [architecture](architecture.md).
-The host plan is `src/floppylm/e1_plan.py`. ADR 0023 does not name the vector
-shape or learning rate. Live state is in [STATUS](STATUS.md). The pilot has
-not started.
+The host plan is `src/floppylm/e1_plan.py`. The shape rule is
+[ADR 0024](adr/0024-e1-vector-shape.md). Seed 0 of the fixed rate-0.5 book is
+closed; three books are open. Live state is in [STATUS](STATUS.md). The pilot
+has not started.
 
 - K=1, no recursion. 3 seeds, vector rate 0.5 and 0.75 bit/weight, tokens ≈ 20 per stored
   parameter of the largest arm, equal for all.

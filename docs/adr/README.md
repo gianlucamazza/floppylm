@@ -48,6 +48,7 @@ It is not a brainstorm, a survey or a TODO.
 | [0021](0021-paired-seed-successor.md) | The next E0 campaign starts at the paired seeds from the stored `766d4b` decisions; cell `031` is not resumed | amended |
 | [0022](0022-paired-campaign-on-109.md) | One new paired campaign may bind package 0.1.0.109; `87686a` and cell `031` stay closed | accepted |
 | [0023](0023-e1-1-16-pilot.md) | E1 1/16 pilot: both stored scalar arms, ADR 0020 window, FLP2 `VQB1` byte order; host implementation on main ([STATUS](../STATUS.md)); pilot not started | accepted |
+| [0024](0024-e1-vector-shape.md) | Vector shape rule for the 1/16 pilot: one seed-0 init pack per G=8 book inside the E0 box; lr 0.003, wd 0.1. Fixed rate 0.5 is closed at d=80, 12 layers, d_ff=247, 85934 bytes. Three books are open. Pilot not started | accepted |
 
 ## Proposals
 

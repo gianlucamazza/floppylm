@@ -1,16 +1,14 @@
-"""Specified 1/16 host plan from ADR 0023.
+"""Specified 1/16 host plan from ADR 0023 and the ADR 0024 shape rule.
 
-Materializes the two stored scalar arms, their ADR 0019 init-pack, and the
-four shared G=8 books. Computes the F1 separation. Does not train, does not
-freeze a selection, and does not open the test split.
-
-ADR 0023 does not name the vector width, depth, d_ff, learning rate, or
-weight decay. T is 20 times the stored-parameter count of the largest arm.
-The vector arms have no shape, so this module does not name a pilot token count.
+Materializes the two stored scalar arms, their ADR 0019 init-pack, the four
+shared G=8 books, and the one seed-0 vector shape per book. Computes the F1
+separation. Does not train, does not freeze a selection, and does not open
+the test split.
 """
 
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass
 
 from .model import GPTConfig, TinyGPT
@@ -24,8 +22,12 @@ SEEDS = (0, 1, 2)
 TARGET_BYTES = 11_000_000 / 16 / 8
 TOKENS_PER_STORED_PARAM = 20
 SELECTION_SHA256 = "de80fff08e750702784e6efbcb583ca86de566965207212c1c6531822a05bbe4"
-_VECTOR_SHAPE = (
-    "ADR 0023 does not name the vector width, depth, d_ff, learning rate, or weight decay"
+# Copied from the stored 2-bit arm. The vector scales are that row8log codec.
+VECTOR_LR = 0.003
+VECTOR_WD = 0.1
+_HAND_SHAPE = (
+    "ADR 0024 names one seed-0 shape per G=8 book by the packed-byte solver; "
+    "a caller-supplied width, depth, d_ff, learning rate, or weight decay is not a shape"
 )
 
 
@@ -152,21 +154,150 @@ def init_pack(
     return repaired, record
 
 
-def vector_recipe(**_ignored: object) -> None:
-    """Refuse a vector width, depth, d_ff, learning rate, or weight decay.
-
-    Copying a scalar shape is not a vector recipe. Searching those fields is
-    not a step this ADR authorizes.
-    """
-    raise ValueError(_VECTOR_SHAPE)
+def ff_bounds(d: int) -> tuple[int, int]:
+    """Integer d_ff inside the E0 SwiGLU interval 2·(2/3)·d … 6·(2/3)·d."""
+    if type(d) is not int or d < 1:
+        raise ValueError("width must be a positive int")
+    return (4 * d + 2) // 3, 4 * d
 
 
-def pilot_tokens(**_ignored: object) -> int:
-    """Refuse a token count computed from the scalar arms alone."""
-    raise ValueError(
-        "ADR 0023 sets T to 20 times the largest arm and does not name the "
-        "vector width, depth, d_ff, learning rate, or weight decay"
+def vector_config(d: int, n_layers: int, d_ff: int) -> GPTConfig:
+    """One vector core in the stored scalar family. The book is not a field."""
+    if d % 16:
+        raise ValueError("ADR 0024 widths are multiples of 16 so n_heads = d/16")
+    return GPTConfig(
+        vocab=256,
+        d=d,
+        n_layers=n_layers,
+        n_heads=d // 16,
+        d_ff=d_ff,
+        mlp="swiglu",
+        core_fmt="vq",
+        emb_fmt="4bit",
+        scale_policy="row8log",
+        delta=0.5,
+        qk_norm=False,
+        ctx=256,
     )
+
+
+def nominal_payload_bytes(d: int, n_layers: int, d_ff: int, spec: BookSpec) -> float:
+    """Model nominal bytes for a vector shape. Not the FLP2 size parity reads."""
+    bits = int(spec.dimension * spec.rate)
+
+    def core(rows: int, cols: int) -> int:
+        groups = math.ceil(cols / spec.dimension)
+        return rows * groups * bits + 16 + 8 * rows
+
+    emb = 256 * d * 4 + 16 + 8 * 256
+    body = n_layers * (core(3 * d, d) + core(d, d) + core(2 * d_ff, d) + core(d, d_ff))
+    norms = (2 * n_layers + 1) * 16 * d
+    return (8 * spec.shared_bytes + emb + body + norms) / 8
+
+
+@dataclass(frozen=True)
+class SolvedShape:
+    """One seed-0 vector arm. ``d_ff`` is the init pack chosen for that book."""
+
+    d: int
+    n_layers: int
+    d_ff: int
+    rate: float
+    learned: bool
+    init_bytes: int
+    stored_params: int
+
+    def rank(self) -> tuple[float, int, int, int, int]:
+        distance = abs(self.init_bytes - TARGET_BYTES)
+        return (distance, self.stored_params, self.d, self.n_layers, self.d_ff)
+
+
+def choose_shape(candidates: list[SolvedShape]) -> SolvedShape | None:
+    """Closest packed file, then fewer stored parameters, then the smaller grid point."""
+    if not candidates:
+        return None
+    return min(candidates, key=lambda shape: shape.rank())
+
+
+def _pack_shape(cfg: GPTConfig, book: VectorBook) -> tuple[int, int]:
+    seed_all(0)
+    model = TinyGPT(cfg, book)
+    return len(pack_sections(model)[0]), model.stored_params()
+
+
+def _best_d_ff(d: int, n_layers: int, spec: BookSpec, book: VectorBook) -> SolvedShape | None:
+    """Seed-0 d_ff in the SwiGLU interval whose pack is closest to the target.
+
+    Pack size increases with d_ff on this init. The two integers around the
+    crossing are the only closest candidates. A local decrease scans the interval.
+    """
+    lo, hi = ff_bounds(d)
+    cache: dict[int, tuple[int, int]] = {}
+
+    def measure(d_ff: int) -> tuple[int, int]:
+        if d_ff not in cache:
+            cache[d_ff] = _pack_shape(vector_config(d, n_layers, d_ff), book)
+        return cache[d_ff]
+
+    lo_bytes = measure(lo)[0]
+    hi_bytes = measure(hi)[0]
+    if hi_bytes < lo_bytes:
+        scan = range(lo, hi + 1)
+    else:
+        left, right = lo, hi
+        while left < right:
+            mid = (left + right) // 2
+            if measure(mid)[0] < TARGET_BYTES:
+                left = mid + 1
+            else:
+                right = mid
+        if left > lo and measure(left)[0] < measure(left - 1)[0]:
+            scan = range(lo, hi + 1)
+        else:
+            scan = range(max(lo, left - 1), min(hi, left + 1) + 1)
+    found: list[SolvedShape] = []
+    for d_ff in scan:
+        nbytes, params = measure(d_ff)
+        if not admissible({spec.rate: nbytes}, TARGET_BYTES)[0]:
+            continue
+        found.append(
+            SolvedShape(d, n_layers, d_ff, spec.rate, spec.learned, nbytes, params)
+        )
+    return choose_shape(found)
+
+
+def solve_vector_shapes() -> tuple[SolvedShape | None, ...]:
+    """One seed-0 shape per G=8 book, or None where the grid has no admissible pack.
+
+    Order is book_specs(): rate 0.5 fixed, 0.5 learned, 0.75 fixed, 0.75 learned.
+    Does not train and does not read a validation loss.
+    """
+    found: list[SolvedShape | None] = []
+    for spec in book_specs():
+        book = VectorBook(spec.dimension, spec.rate, 0, learned=spec.learned)
+        best: SolvedShape | None = None
+        for d in range(64, 257, 16):
+            for n_layers in range(1, 17):
+                shape = _best_d_ff(d, n_layers, spec, book)
+                if shape is not None and (best is None or shape.rank() < best.rank()):
+                    best = shape
+        found.append(best)
+    return tuple(found)
+
+
+def vector_recipe(**_ignored: object) -> None:
+    """Refuse a hand-specified vector width, depth, d_ff, learning rate, or weight decay."""
+    raise ValueError(_HAND_SHAPE)
+
+
+def pilot_tokens(shapes: tuple[SolvedShape, ...], scalar_params: tuple[int, ...]) -> int:
+    """T from the seed-0 submitted shapes. The same count for every seed."""
+    if len(shapes) != 4 or any(shape is None for shape in shapes):
+        raise ValueError("pilot T needs one admissible shape for each of the four G=8 books")
+    if len(scalar_params) != 2 or any(type(n) is not int or n < 1 for n in scalar_params):
+        raise ValueError("pilot T needs the two scalar seed-0 stored-parameter counts")
+    largest = max([*(shape.stored_params for shape in shapes), *scalar_params])
+    return TOKENS_PER_STORED_PARAM * largest
 
 
 def f1_separation(sd: float) -> float:

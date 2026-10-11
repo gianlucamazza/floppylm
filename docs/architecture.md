@@ -102,7 +102,7 @@ image, and FAT12 layout are E3 and E4. They are not in this repository.
 | Training | `src/floppylm/train.py` | WSD trunk and cooldowns. Vector cadence is not a TrainSpec field. Core matrices assign; the embedding does not. |
 | Serialization | `src/floppylm/pack.py`, `rans.py` | FLP2. One VQB1 when `core_fmt` is `vq`. Indices are entropy-coded. FLP1 is rejected. |
 | Qualification canary | `scripts/e1_qualify.py` | ADR 0013. `snap()` rewrites masters. Not the scientific step. |
-| Experiment control | `experiments/`, `parity.py`, `runlog.py`, `e1_plan.py` | E0 campaigns, eligibility, paired differences. `e1_plan.py` materializes the specified scalar arms and the four G=8 books. It does not train. ADR 0023 does not name the vector width, depth, `d_ff`, learning rate, or weight decay. The pilot token count stays unnamed until the largest arm has a shape. |
+| Experiment control | `experiments/`, `parity.py`, `runlog.py`, `e1_plan.py` | E0 campaigns, eligibility, paired differences. `e1_plan.py` materializes the specified scalar arms, the four G=8 books, and the ADR 0024 seed-0 solver. It does not train. Fixed rate 0.5 is closed at `d` 80, 12 layers, `d_ff` 247, 85934 bytes. Three books are open, so the pilot token count stays unnamed. The pilot has not started. |
 | Xbox client | `src/floppylm_xbox/` | Portal and jobs. The core package does not import it. |
 | Native scalar executor | `xbox-gpu-training` | DX12/UWP E0 trainer. It consumes contracts defined here ([ADR 0012](adr/0012-repo-boundaries.md)). |
 | Final image | roadmap E3/E4 | Static C runtime on a FAT12 data floppy. Not written. |

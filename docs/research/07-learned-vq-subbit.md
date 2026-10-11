@@ -266,3 +266,10 @@ started.
 Later note (2026-10-11, architecture): the host division is
 [architecture](../architecture.md). This survey stays background. The pilot
 has not started.
+
+Later note (2026-10-11, F0 check): a bounded search from 2026-09-01 through
+2026-10-11 did not find an LM trained from scratch with a learned codebook
+below 1 bit/weight, a description of at most 1.5 MB, and a seed-codebook
+control at equal bytes. The hits are post-training quantizers of large models.
+F0 stays partial. This survey stays background. The five-arm plan in the
+minimum experiment stays unaccepted. The pilot has not started.
