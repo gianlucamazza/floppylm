@@ -109,7 +109,8 @@ Continue in this order:
    rate-0.5 book is closed at `d` 80, 12 layers, `d_ff` 247, 85934 bytes.
    The learned rate-0.5 book is closed at `d` 256, 1 layer, `d_ff` 801,
    85935 bytes. The fixed rate-0.75 book is closed at `d` 80, 8 layers,
-   `d_ff` 258, 85938 bytes. One book remains open, so the pilot token count is unnamed. The trainer applies
+   `d_ff` 258, 85938 bytes. The learned rate-0.75 book is closed at `d` 160,
+   2 layers, `d_ff` 479, 85939 bytes. T is 20780800. The pilot has not started. The trainer applies
    ADR 0023 decisions 7–9 on CPU. Assignment is
    every 64 steps at probability 0.1. A dead learned entry is reseeded from
    that arm's PCG32 stream and logged. A fixed book logs the dead entry and
@@ -141,7 +142,7 @@ not decided. A smoke, a placeholder, or an open shape closes neither end.
 
 | Id | Task | Depends on | Done when | Yes |
 | --- | --- | --- | --- | --- |
-| A0 | Finish the four seed-0 shapes, or publish the stop | ADR 0024. Three books are closed; the learned rate-0.75 book is open | Every G=8 book has an admissible init pack, or one book has none and the pilot stays stopped. T is named only when four shapes exist | Already given |
+| A0 | Finish the four seed-0 shapes, or publish the stop | ADR 0024. All four seed-0 books are closed. T is 20780800 | Every G=8 book has an admissible init pack, or one book has none and the pilot stays stopped. T is named only when four shapes exist | Already given |
 | A1 | CPU pilot driver | A0 with four shapes | The driver reads the preregistered shapes, seeds 0/1/2, one shared T, cooldowns at T, 2T and 4T, one S3, one freeze, and one `--final-test`. A synthetic smoke passes and is not a result | Separate yes after the shapes are written |
 | A2 | Eighteen runs | A1 | Six recipes times three seeds, one job at a time, on the lab machine. Each closed cell has `notes.md` and `summary.json` | Separate yes after A1 |
 | A3 | Pilot signal | A2, eligible validation repairs only | ±1% parity, rank at T/2T/4T, saturation recorded and not used as a gate, F1, F1-abl, costs, exclusions, fill, frozen hashes, one final test. The signal is not the F1 verdict | Included in the A2 yes |

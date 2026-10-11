@@ -52,8 +52,8 @@ not train. A hand-specified vector width, depth, `d_ff`, learning rate, or
 weight decay is not a shape. G=16 stays out of this rule.
 
 The seed-0 table below records each book as the solver closes it. A closed
-row is locked by re-packing that file. An open row is not a shape, and T stays
-unnamed until every row is closed. The pilot has not started. No console job
+row is locked by re-packing that file. An open row is not a shape. T is
+named only when every row is closed. The pilot has not started. No console job
 is authorized.
 
 ## Measured seed-0 shapes
@@ -66,7 +66,7 @@ The pilot has not started. No console job is authorized.
 | rate 0.5, fixed | closed | 80 | 12 | 247 | 85934 | 1039040 |
 | rate 0.5, learned | closed | 256 | 1 | 801 | 85935 | 942976 |
 | rate 0.75, fixed | closed | 80 | 8 | 258 | 85938 | 720640 |
-| rate 0.75, learned | open |  |  |  |  |  |
+| rate 0.75, learned | closed | 160 | 2 | 479 | 85939 | 706112 |
 
 The fixed rate-0.5 file is 3.5 bytes from 85937.5. Re-packing `d_ff` 246 and
 248 at the same width and depth yields 85785 and 86031 bytes. Both are farther
@@ -74,8 +74,17 @@ from the target. The learned rate-0.5 file is 2.5 bytes from 85937.5.
 Re-packing `d_ff` 800 and 802 at the same width and depth yields 85809 and
 85972 bytes. Both are farther from the target. The fixed rate-0.75 file is
 0.5 bytes from 85937.5. Re-packing `d_ff` 257 and 259 at the same width and
-depth yields 85803 and 86070 bytes. Both are farther from the target. Each
-closed arm copies learning rate 0.003 and weight decay 0.1.
+depth yields 85803 and 86070 bytes. Both are farther from the target. The
+learned rate-0.75 file is 1.5 bytes from 85937.5. Re-packing `d_ff` 478 and
+480 at the same width and depth yields 85901 and 86019 bytes. Both are farther
+from the target. Each closed arm copies learning rate 0.003 and weight decay
+0.1.
+
+T is 20780800 tokens. It is twenty times 1039040, the largest seed-0 stored
+parameter count among these four shapes and the two submitted scalar arms
+(ternary `d_ff` 262 has 374400; submitted 2-bit `d_ff` 205 has 312288). Seeds
+1 and 2 use this same T. The pilot has not started. No console job is
+authorized.
 
 ## Alternatives
 

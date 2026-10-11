@@ -209,6 +209,62 @@ def test_seed0_fixed_rate_075_shape_repacks():
         assert abs(packed - TARGET_BYTES) > abs(85938 - TARGET_BYTES)
 
 
+def test_seed0_learned_rate_075_shape_repacks():
+    """Closed book from the 2026-10-11 solver. Does not walk the grid."""
+    spec = book_specs()[3]
+    assert (spec.rate, spec.learned) == (0.75, True)
+    book = VectorBook(spec.dimension, spec.rate, 0, learned=True)
+    cfg = vector_config(160, 2, 479)
+    assert ff_bounds(160)[0] <= cfg.d_ff <= ff_bounds(160)[1]
+    seed_all(0)
+    model = TinyGPT(cfg, book)
+    assert len(pack_sections(model)[0]) == 85939
+    assert model.stored_params() == 706_112
+    ok, reasons = admissible({spec.rate: 85939}, TARGET_BYTES)
+    assert ok, reasons
+    for d_ff, nbytes in ((478, 85901), (480, 86019)):
+        seed_all(0)
+        neighbor = TinyGPT(vector_config(160, 2, d_ff), book)
+        packed = len(pack_sections(neighbor)[0])
+        assert packed == nbytes
+        assert abs(packed - TARGET_BYTES) > abs(85939 - TARGET_BYTES)
+
+
+def test_pilot_tokens_is_twenty_times_the_largest_seed0_count():
+    """T from the shipped pack of the four closed shapes and the submitted scalar arms."""
+    closed = (
+        (0, 80, 12, 247),
+        (1, 256, 1, 801),
+        (2, 80, 8, 258),
+        (3, 160, 2, 479),
+    )
+    shapes = []
+    for index, d, layers, d_ff in closed:
+        spec = book_specs()[index]
+        book = VectorBook(spec.dimension, spec.rate, 0, learned=spec.learned)
+        seed_all(0)
+        model = TinyGPT(vector_config(d, layers, d_ff), book)
+        shapes.append(
+            SolvedShape(
+                d,
+                layers,
+                d_ff,
+                spec.rate,
+                spec.learned,
+                len(pack_sections(model)[0]),
+                model.stored_params(),
+            )
+        )
+    scalar = []
+    for arm in scalar_arms():
+        cfg, _rec = init_pack(arm.nominal, seed=0)
+        seed_all(0)
+        scalar.append(TinyGPT(cfg).stored_params())
+    largest = max([shape.stored_params for shape in shapes] + scalar)
+    assert pilot_tokens(tuple(shapes), tuple(scalar)) == TOKENS_PER_STORED_PARAM * largest
+    assert pilot_tokens(tuple(shapes), tuple(scalar)) == 20_780_800
+
+
 def test_vector_recipe_rejects_a_hand_specified_shape():
     with pytest.raises(ValueError, match="caller-supplied width"):
         vector_recipe(d=80, n_layers=4, d_ff=320, lr=0.01, wd=0.1)
