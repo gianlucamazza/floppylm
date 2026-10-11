@@ -21,7 +21,10 @@ lab practices in [ADR 0003](adr/0003-lab-practices.md). If F1 fires, E2–E4 are
 | 5   | E1a recursion, E1 at 1/4, E1b trellis/signs                          | Local Xbox/CPU             | Gated by the pilot and accepted protocols |
 | 6   | E2 → E3 → E4                                                         | Local Xbox/CPU             | Gated; local judge and 30 blind human reviews |
 
-Scope and execution order: [completion plan](completion-plan.md). Per-trial duration follows from the measured throughput of the bound package
+Scope and execution order: [completion plan](completion-plan.md). The forward
+task map, and which yes each row needs, is the
+[completion task map](completion-plan.md#completion-task-map-2026-10-11).
+Per-trial duration follows from the measured throughput of the bound package
 ([evidence](evidence/README.md)); it is an estimate, never a duration limit.
 
 ## E0 v2 — Accepted numerical choices

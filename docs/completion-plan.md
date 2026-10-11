@@ -121,3 +121,55 @@ Continue in this order:
 The `c58a86` source freeze was released by that stop. [PR #22](https://github.com/gianlucamazza/floppylm/pull/22)
 merged the host init-pack ([ADR 0019](adr/0019-host-init-pack.md)) for a future campaign.
 It does not apply to the cells already measured. No full-project completion claim is justified yet.
+
+## Completion task map (2026-10-11)
+
+This section owns the forward order. It does not amend
+[ADR 0023](adr/0023-e1-1-16-pilot.md) or
+[ADR 0024](adr/0024-e1-vector-shape.md). Live rows stay in
+[STATUS](STATUS.md). A yes on one row does not authorize the next row.
+The pilot has not started. No console job is authorized.
+
+The approved scope is the E0–E4 ladder, local Xbox/CPU only, with no rented
+GPU. The ladder is not walked by default. The research is complete when F1,
+F2, F3, or F4 fires and the measurement is published; later rows do not start,
+and no alternative scalar-floppy product is opened. The product is complete
+only when F1 and F2 do not fire and E4 closes. E0 is measured. F1 and F2 are
+not decided. A smoke, a placeholder, or an open shape closes neither end.
+
+| Id | Task | Depends on | Done when | Yes |
+| --- | --- | --- | --- | --- |
+| A0 | Finish the four seed-0 shapes, or publish the stop | ADR 0024. One book is closed; three are open | Every G=8 book has an admissible init pack, or one book has none and the pilot stays stopped. T is named only when four shapes exist | Already given |
+| A1 | CPU pilot driver | A0 with four shapes | The driver reads the preregistered shapes, seeds 0/1/2, one shared T, cooldowns at T, 2T and 4T, one S3, one freeze, and one `--final-test`. A synthetic smoke passes and is not a result | Separate yes after the shapes are written |
+| A2 | Eighteen runs | A1 | Six recipes times three seeds, one job at a time, on the lab machine. Each closed cell has `notes.md` and `summary.json` | Separate yes after A1 |
+| A3 | Pilot signal | A2, eligible validation repairs only | ±1% parity, rank at T/2T/4T, saturation recorded and not used as a gate, F1, F1-abl, costs, exclusions, fill, frozen hashes, one final test. The signal is not the F1 verdict | Included in the A2 yes |
+| B0 | 1/4 tokenizer ADR | A favorable A3 signal | Accepted choice of BPE 512 or a relaxed embedding share. The 1/16 pilot is not recomputed | Yes with that ADR |
+| B1 | E1a | B0 | Budget 1/4, the winning arm's core, the same tokens and FLOPs, three seeds: b0, iter-emb, IA³, LoRA r=1, randn J in {1, 8, 64}, and a ceiling of K untied blocks. randn at or below IA³ or LoRA at equal bits kills v0.1. ceiling − b0 below the gate selects b0 | Yes after B0 |
+| B2 | E1 at 1/4 | B1 | The pilot's best two or three arms, with the chosen recursion. The sign is published. A disagreement with 1/16 leaves F1 undecided and stops the ladder | Yes after B1 |
+| B3 | E1b | B2 with the same favorable sign | Its own ADR, then a QTIP-style computed trellis and low-rank signs plus VQ magnitudes | Yes for the ADR, then yes for the runs |
+| C0 | E2 | F1 did not fire at 1/16 and at 1/4 | An ADR for `NLL + λ·bits(description)` and rANS on every arm, with the same λ search budget per arm. The MDL control is recorded and not chased. F2 is decided | Yes for the ADR, then yes for the runs |
+| D0 | E3 | F2 did not fire | Budget 1×, BPE, the whole image counted, a static C runtime. Boot records index decode, peak RSS, median tok/s over five runs, and an expanded-weight hash identical across five boots. F3 fires above 60 s, above 1 GB, or below 5 tok/s | Yes for the ADR, then yes for the measurement |
+| E0d | S10 | Before an E4 claim, not before the pilot | Near-duplicate filtering and an OOD test, beyond the sha1 dedup already done | Yes after D0 does not fire F3 |
+| E1j | Local judge | R5, before E4 | A qualification protocol. Fifty prompts times four samples, with TinyStories-8M in the same session. Generated output does not qualify the judge | Yes for the protocol |
+| E2i | E4 | E1j and E0d | A 1 474 560-byte FAT12 image, mounted and executed, plus 30 blind human ratings. F4 fires when coherence is not non-inferior to TinyStories-8M (margin 0.5) or grammar and coherence are below 6 and 5 | Yes for the image, after the judge |
+| H0 | ADR 0012 pin | Between campaigns, never during a source freeze | xbox-gpu-training tests schema fields added after commit `3e5ab3c`, or a note records that the pin stays | Separate yes. Not a scientific gate |
+
+A1 reads shapes that are already written. Seeds 1 and 2 may move only `d_ff`,
+by the same closest-file rule inside the same interval. That move is the
+[ADR 0019](adr/0019-host-init-pack.md) init pack. It does not change G, rate,
+or book length. The driver is not an Xbox executor and not an Odroid unit.
+
+A2 runs one job at a time. The ADR 0004 estimate of 0.5–1 h is the scalar
+1/16 figure and is not a limit. A3 uses the ADR 0023 F1 rule:
+`max(0.02, 2σ)`, and lower at T and at 2T as well. F1-abl is learned minus
+seed at the same G and rate, book included. The prior is that the seed is at
+least as good. The F1 verdict exists only when the 1/4 sign agrees.
+
+If A0 publishes a stop, A1 through E2i do not start. If A3 fires F1 at 1/16,
+B0 through E2i do not start.
+
+An Xbox vector executor may replace the CPU only after it matches `vq.py` on
+identical inputs and identical artifact bytes. A scalar throughput number does
+not qualify it, and the CPU thesis does not need it. The C runtime, the FAT12
+image, and the tokenizer image wait for their own yes. Surveys 01–06 stay
+closed. The F0 check stays continuous and does not block A0.
