@@ -16,6 +16,7 @@ import signal
 import statistics
 import subprocess
 import sys
+import threading
 from dataclasses import replace
 from pathlib import Path
 
@@ -41,6 +42,14 @@ from floppylm.campaign_protocol import (
 )
 from floppylm.campaign_report import attempt_record, baseline_complete
 from floppylm.model import GPTConfig
+from floppylm_xbox.console_lifecycle import heartbeat as send_host_heartbeat
+from floppylm_xbox.console_lifecycle import (
+    idle_gpu,
+    is_orphan,
+    load_lifecycle_config,
+    resolve_tool,
+    stop_console,
+)
 
 
 class Campaign:
@@ -53,6 +62,10 @@ class Campaign:
         recover: bool = False,
         from_grid_ternary: bool = False,
         from_paired: bool = False,
+        lifecycle_tool: Path | None = None,
+        allow_orphan_gpu: bool = False,
+        host_heartbeat_seconds: float | None = None,
+        lifecycle_config: Path | None = None,
     ):
         if from_grid_ternary and from_paired:
             raise RuntimeError("a campaign has one successor start")
@@ -61,6 +74,11 @@ class Campaign:
         self.child = None
         self.stop_signal = None
         self.launching = self.stopping = False
+        self._lifecycle_lock = threading.Lock()
+        self._heartbeat_stop = None
+        self._heartbeat_thread = None
+        self._heartbeat_ok = self._heartbeat_failed = 0
+        self._console_started = False
         proof, speed = json.loads(acceptance.read_text()), json.loads(benchmark.read_text())
         if not proof["ok"] or any(proof[k] != speed[k] for k in ("package", "commit")):
             raise RuntimeError("benchmark and acceptance must bind the same hardware package")
@@ -122,6 +140,25 @@ class Campaign:
             with self.path.open("x") as file:
                 json.dump(self.state, file, indent=1)
         self.state.update(pid=os.getpid(), process_identity=runlog.process_identity())
+        overrides = {}
+        if lifecycle_tool is not None:
+            overrides["tool"] = lifecycle_tool
+        if allow_orphan_gpu:
+            overrides["refuse_orphan"] = False
+        if host_heartbeat_seconds is not None:
+            overrides["heartbeat_seconds"] = host_heartbeat_seconds
+        self.lifecycle = load_lifecycle_config(
+            campaign_root=root,
+            config_path=lifecycle_config,
+            overrides=overrides or None,
+        )
+        if not self.lifecycle.package:
+            self.lifecycle = replace(self.lifecycle, package=self.state.get("package") or None)
+        self.lifecycle_tool = self.lifecycle.tool
+        self.allow_orphan_gpu = not self.lifecycle.refuse_orphan
+        self.heartbeat_seconds = self.lifecycle.heartbeat_seconds
+        current = self.state.setdefault("console_lifecycle", {})
+        current["config"] = self.lifecycle.public_dict()
         self.save()
 
     def event(self, event, **fields):
@@ -179,6 +216,132 @@ class Campaign:
             self.child = None
             self.stopping = was_stopping
 
+    def _lifecycle_kwargs(self):
+        config = getattr(self, "lifecycle", None)
+        if config is None:
+            return {
+                "tool": getattr(self, "lifecycle_tool", None),
+                "package": (getattr(self, "state", None) or {}).get("package") or "",
+            }
+        return {"config": config}
+
+    def _store_lifecycle(self, **fields):
+        """Persist console_lifecycle on campaign.json and summary.json. Never raises."""
+        try:
+            lock = getattr(self, "_lifecycle_lock", None) or threading.Lock()
+            with lock:
+                current = self.state.setdefault("console_lifecycle", {})
+                current.update(fields)
+                current["updated"] = runlog.now()
+                self.save()
+            summary = self.root / "summary.json"
+            if summary.is_file():
+                data = json.loads(summary.read_text())
+                held = data.get("console_lifecycle")
+                if not isinstance(held, dict):
+                    held = {}
+                held.update(fields)
+                held["updated"] = current["updated"]
+                data["console_lifecycle"] = held
+                runlog.write_json(summary, data)
+        except Exception as exc:
+            print(f"console lifecycle record failed: {exc}", flush=True)
+
+    def prepare_console(self):
+        """Refuse an orphan GPU signature unless --allow-orphan-gpu. Missing tool is logged."""
+        result = idle_gpu("before", **self._lifecycle_kwargs())
+        self._store_lifecycle(idle_gpu_before=result)
+        if not result.get("reachable"):
+            print(f"console idle-gpu --when before skipped: {result.get('error')}", flush=True)
+            return
+        reason = (result.get("report") or {}).get("reason")
+        self.event("console_idle_gpu_before", ok=result.get("ok"), reason=reason)
+        refuse = True
+        if getattr(self, "lifecycle", None) is not None:
+            refuse = self.lifecycle.refuse_orphan
+        elif getattr(self, "allow_orphan_gpu", False):
+            refuse = False
+        if is_orphan(result) and refuse:
+            raise RuntimeError(
+                "orphan GPU signature present; pass --allow-orphan-gpu or set "
+                "XGPU_E0_REFUSE_ORPHAN=0 to start anyway"
+            )
+        if is_orphan(result):
+            print(
+                "orphan GPU signature present; starting because refuse_orphan is false",
+                flush=True,
+            )
+
+    def send_heartbeat(self):
+        result = send_host_heartbeat(**self._lifecycle_kwargs())
+        if result.get("ok"):
+            self._heartbeat_ok = getattr(self, "_heartbeat_ok", 0) + 1
+            return
+        self._heartbeat_failed = getattr(self, "_heartbeat_failed", 0) + 1
+        error = result.get("error") or result.get("stdout") or "heartbeat failed"
+        print(f"console heartbeat failed: {error}", flush=True)
+        try:
+            self.event("console_heartbeat_failed", error=str(error))
+        except Exception:
+            pass
+
+    def start_heartbeats(self):
+        interval = getattr(self, "heartbeat_seconds", None)
+        tool = resolve_tool(getattr(self, "lifecycle_tool", None))
+        if not interval or interval <= 0 or tool is None or not tool.is_file():
+            return
+        self._heartbeat_stop = threading.Event()
+
+        def loop():
+            self.send_heartbeat()
+            while not self._heartbeat_stop.wait(interval):
+                self.send_heartbeat()
+
+        self._heartbeat_thread = threading.Thread(
+            target=loop, name="e0-host-heartbeat", daemon=True
+        )
+        self._heartbeat_thread.start()
+
+    def stop_heartbeats(self):
+        stop = getattr(self, "_heartbeat_stop", None)
+        thread = getattr(self, "_heartbeat_thread", None)
+        if stop is not None:
+            stop.set()
+        if thread is not None:
+            thread.join(timeout=5)
+        self._heartbeat_stop = self._heartbeat_thread = None
+
+    def finish_console(self, reason: str):
+        """teardown, then idle-gpu --when after. Missing tool/console is logged, not raised."""
+        try:
+            self.stop_heartbeats()
+        except Exception as exc:
+            print(f"console heartbeat stop failed: {exc}", flush=True)
+        if not getattr(self, "_console_started", False):
+            return
+        try:
+            result = stop_console(**self._lifecycle_kwargs())
+            self._store_lifecycle(
+                stop_reason=reason,
+                heartbeats={
+                    "ok": getattr(self, "_heartbeat_ok", 0),
+                    "failed": getattr(self, "_heartbeat_failed", 0),
+                },
+                teardown=result["teardown"],
+                idle_gpu_after=result["idle_gpu_after"],
+                ok=result["ok"],
+            )
+            if result["teardown"].get("reachable") or result["idle_gpu_after"].get("reachable"):
+                self.event("console_teardown", reason=reason, ok=result.get("ok"))
+            if not result.get("ok"):
+                print("console teardown incomplete; campaign record kept", flush=True)
+        except Exception as exc:
+            print(f"console teardown failed: {exc}", flush=True)
+            try:
+                self._store_lifecycle(stop_reason=reason, error=repr(exc))
+            except Exception:
+                pass
+
     def run_managed(self):
         previous = {s: signal.signal(s, self.on_signal) for s in (signal.SIGINT, signal.SIGTERM)}
         try:
@@ -188,6 +351,9 @@ class Campaign:
             self.state.pop("error", None)
             self.save()
             self.event("worker_started", process_identity=self.state["process_identity"])
+            self.prepare_console()
+            self._console_started = True
+            self.start_heartbeats()
             self.run()
         except BaseException as error:
             self.stopping = True
@@ -199,6 +365,8 @@ class Campaign:
             self.report()
             raise
         finally:
+            status = (getattr(self, "state", None) or {}).get("status")
+            self.finish_console("completed" if status == "completed" else "stopped")
             for signum, handler in previous.items():
                 signal.signal(signum, handler)
             self.lock.close()
@@ -433,6 +601,7 @@ class Campaign:
             "decisions": self.state["decisions"],
             "comparisons": self.state.get("comparisons", {}),
             "instability": self.state.get("instability"),
+            "console_lifecycle": self.state.get("console_lifecycle"),
         }
         frozen = final = None
         selection = self.state.get("selection")
@@ -653,6 +822,29 @@ def main():
         action="store_true",
         help="open a new campaign at paired seeds from the stored 766d4b decisions",
     )
+    parser.add_argument(
+        "--lifecycle-tool",
+        type=Path,
+        default=None,
+        help="xbox-gpu-training scripts/e0_console_lifecycle.py (or $XGPU_E0_CONSOLE_LIFECYCLE)",
+    )
+    parser.add_argument(
+        "--lifecycle-config",
+        type=Path,
+        default=None,
+        help="JSON policy file (or $FLOPPYLM_E0_LIFECYCLE_CONFIG)",
+    )
+    parser.add_argument(
+        "--allow-orphan-gpu",
+        action="store_true",
+        help="start even when idle-gpu --when before reports an orphan signature",
+    )
+    parser.add_argument(
+        "--host-heartbeat-seconds",
+        type=float,
+        default=None,
+        help="refresh LocalState/host.heartbeat while the campaign runs (default 300)",
+    )
     a = parser.parse_args()
     campaign = Campaign(
         a.out,
@@ -661,6 +853,10 @@ def main():
         recover=a.recover,
         from_grid_ternary=a.from_grid_ternary,
         from_paired=a.from_paired,
+        lifecycle_tool=a.lifecycle_tool,
+        allow_orphan_gpu=a.allow_orphan_gpu,
+        host_heartbeat_seconds=a.host_heartbeat_seconds,
+        lifecycle_config=a.lifecycle_config,
     )
     campaign.run_managed()
     return 0

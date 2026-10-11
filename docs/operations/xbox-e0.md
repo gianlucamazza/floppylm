@@ -104,16 +104,36 @@ stops the campaign. While it runs, keep the
 frozen `src/floppylm/*.py`, `experiments/*.py` and the installed trainer unchanged; scripts, tests
 and docs may change.
 
+Console lifecycle settings (tool path, Device Portal URL, heartbeat interval,
+idle-GPU thresholds, process/package identity, refuse-on-orphan, teardown wait)
+are listed in the [lifecycle config reference](e0-console-lifecycle.md). The
+runner calls `idle-gpu --when before` and, by default, refuses to start when that
+report is an orphan signature (`--allow-orphan-gpu` or `XGPU_E0_REFUSE_ORPHAN=0`
+overrides). While the campaign runs it refreshes `host.heartbeat`. On completion,
+failure or cancel — and from the unit `ExecStop` — it runs `teardown` then
+`idle-gpu --when after` and stores the reports in `campaign.json` / `summary.json`.
+A missing tool or unreachable console is logged and does not discard the campaign
+record.
+
 ```bash
+# Set XGPU_E0_CONSOLE_LIFECYCLE and Device Portal keys in xbox.env / e0-lifecycle.env
 systemd-run --user --unit=floppylm-e0-campaign-<unique> \
   --slice=background.slice --working-directory="$PWD" \
   --property=Restart=no --property=KillMode=mixed --property=TimeoutStopSec=infinity \
+  --property=EnvironmentFile="$XDG_CONFIG_HOME/floppylm/e0-lifecycle.env" \
+  --property=ExecStop="$PWD/.venv/bin/python $PWD/scripts/e0_console_teardown.py --campaign $PWD/runs/e0-campaign-<unique>" \
   /bin/bash -c 'exec ~/.local/bin/bg .venv/bin/python -u experiments/e0_campaign.py \
     --out runs/e0-campaign-<unique> \
     --acceptance runs/xbox-acceptance-<date>-ci<run>/acceptance.json \
     --benchmark runs/xbox-benchmark-<date>-ci<run>/summary.json \
     >> runs/e0-campaign-<unique>.launch.log 2>&1'
 ```
+
+The checked-in template `units/floppylm-e0-campaign@.service` uses the same
+`ExecStop` helper and `EnvironmentFile=` drop-ins. Campaign paths come from
+`FLOPPYLM_ROOT` / `FLOPPYLM_E0_OUT` / `FLOPPYLM_E0_ACCEPTANCE` /
+`FLOPPYLM_E0_BENCHMARK`. Do not bake hostnames, home directories, engine
+indexes or package names into the unit.
 
 Verify linger (`loginctl show-user "$USER" -p Linger`). The current owner instruction
 requires `bg` for CPU-heavy jobs; the supervised service also sets `background.slice`

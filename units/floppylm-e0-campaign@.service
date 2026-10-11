@@ -1,0 +1,24 @@
+# FloppyLM E0 campaign unit. Instance is a unique suffix, not a hostname.
+# Every setting comes from EnvironmentFile drop-ins or the process environment.
+# Required campaign paths: FLOPPYLM_ROOT, FLOPPYLM_E0_OUT, FLOPPYLM_E0_ACCEPTANCE,
+# FLOPPYLM_E0_BENCHMARK. Optional: FLOPPYLM_PYTHON, FLOPPYLM_E0_CAMPAIGN_ARGS.
+# Console lifecycle keys are listed in docs/operations/e0-console-lifecycle.md
+# and docs/operations/e0-lifecycle.env.example.
+#
+# ExecStop runs teardown then idle-gpu --when after via scripts/e0_console_teardown.py
+# (xbox-gpu-training#46). The helper reads the same environment; it does not
+# bake a console, engine, package, path, or timeout into this unit.
+
+[Unit]
+Description=FloppyLM E0 campaign %i
+Documentation=https://github.com/gianlucamazza/floppylm/blob/main/docs/operations/e0-console-lifecycle.md
+
+[Service]
+Type=simple
+Restart=no
+KillMode=mixed
+TimeoutStopSec=infinity
+EnvironmentFile=-%E/floppylm/xbox.env
+EnvironmentFile=-%E/floppylm/e0-lifecycle.env
+ExecStart=/bin/sh -c 'cd "${FLOPPYLM_ROOT:?}" && exec "${FLOPPYLM_PYTHON:-python}" -u experiments/e0_campaign.py --out "${FLOPPYLM_E0_OUT:?}" --acceptance "${FLOPPYLM_E0_ACCEPTANCE:?}" --benchmark "${FLOPPYLM_E0_BENCHMARK:?}" $FLOPPYLM_E0_CAMPAIGN_ARGS'
+ExecStop=/bin/sh -c 'cd "${FLOPPYLM_ROOT:?}" && exec "${FLOPPYLM_PYTHON:-python}" scripts/e0_console_teardown.py --campaign "${FLOPPYLM_E0_OUT:?}"'
