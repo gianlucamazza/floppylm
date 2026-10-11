@@ -23,8 +23,10 @@ from floppylm_xbox.console_lifecycle import (
     idle_gpu,
     is_orphan,
     is_valid_idle_report,
+    is_valid_prepare_report,
     lifecycle_environ,
     load_lifecycle_config,
+    prepare,
     prepare_verdict,
     record_console_lifecycle,
     resolve_tool,
@@ -48,10 +50,19 @@ RETIRED_FLAGS = (
 )
 GLOBAL_FLAGS = set(TOOL_FLAGS.values())
 
+GPU_ADVISORY_NOTE = (
+    "GPU utilisation is advisory and not decisive. On Xbox the foreground "
+    "engine often reads ~100% for any idle foreground app."
+)
+
 MOCK_TOOL = r"""
 import json, os, sys
 from pathlib import Path
 
+NOTE = (
+    "GPU utilisation is advisory and not decisive. On Xbox the foreground "
+    "engine often reads ~100% for any idle foreground app."
+)
 log = Path(os.environ["LIFECYCLE_LOG"])
 mode = os.environ.get("LIFECYCLE_MODE", "ok")
 entry = {
@@ -68,10 +79,10 @@ flags = {
     "--heartbeat-stale-seconds", "--poll-interval-seconds",
     "--gpu-threshold-percent", "--gpu-sample-count",
     "--gpu-sample-interval-seconds", "--gpu-engine",
-    "--idle-cpu-percent", "--teardown-wait-seconds",
-    "--process-image", "--package", "--package-family",
-    "--terminate-by", "--portal-url", "--portal-port",
-    "--tls-verify", "--tls-pin", "--credentials",
+    "--gpu-engine-exclude", "--idle-cpu-percent",
+    "--teardown-wait-seconds", "--process-image", "--package",
+    "--package-family", "--terminate-by", "--portal-url",
+    "--portal-port", "--tls-verify", "--tls-pin", "--credentials",
 }
 i = 0
 while i < len(args) and args[i] in flags:
@@ -82,6 +93,68 @@ if mode == "crash":
 if mode == "unreachable":
     sys.stderr.write("connection refused\n")
     raise SystemExit(2)
+
+def gpu_advisory(pinned=False, excluded=None):
+    return {
+        "decisive": False,
+        "note": NOTE,
+        "engine_pinned": pinned,
+        "pinned": [{"adapter": 0, "engine": 5, "percent": 100.0}] if pinned else [],
+        "excluded": list(excluded or []),
+        "adapters": [[0.0, 0.0, 0.0, 0.0, 0.0, 100.0 if pinned else 0.0, 0.0]],
+    }
+
+def idle_report(when, *, orphan=False, job_active=False, after_fail=False, pinned=False):
+    leftover = 4000.0 if orphan else None
+    stale = orphan or leftover is None
+    heartbeat_age = 4000.0 if orphan else None
+    present = orphan or job_active or after_fail or pinned or when == "before"
+    if after_fail:
+        present = True
+    if when == "after" and not after_fail:
+        present = False
+        leftover = None
+        heartbeat_age = None
+        stale = True
+        orphan = False
+        job_active = False
+    running = job_active
+    queued = False
+    claimed = job_active
+    ready = (not job_active) and (not running)
+    if when == "before":
+        if job_active:
+            ok, reason = False, "job_active"
+        elif orphan:
+            ok, reason = False, "orphan_stale_idle"
+        else:
+            ok, reason = True, "ok"
+    elif present:
+        ok, reason = False, "process_still_running"
+    else:
+        ok, reason = True, "ok"
+    return {
+        "when": when,
+        "ok": ok,
+        "reason": reason,
+        "process_present": present,
+        "job_active": job_active,
+        "queued": queued,
+        "claimed": claimed,
+        "running": running,
+        "ready": ready,
+        "worker_state": "running" if running else "ready",
+        "heartbeat_age_seconds": heartbeat_age,
+        "heartbeat_stale": stale,
+        "last_job_ended_age_seconds": leftover,
+        "orphan": orphan,
+        "cpu_idle": present and not job_active,
+        "gpu_advisory": gpu_advisory(pinned=pinned or orphan or (when == "before")),
+    }
+
+if command == "prepare":
+    print(json.dumps({"cleared": ["inbox/shutdown"] if mode == "prepare-cleared" else []}, sort_keys=True), flush=True)
+    raise SystemExit(0)
 if command == "heartbeat":
     print("heartbeat: ok", flush=True)
     raise SystemExit(0)
@@ -90,55 +163,18 @@ if command == "idle-gpu":
     if mode == "invalid":
         print("not-a-report", flush=True)
         raise SystemExit(1)
-    after_fail = mode == "after-fail" and when == "after"
-    state_orphan = mode == "orphan" and when == "before"
-    gpu_idle = mode == "gpu-idle"
-    legacy_gpu = mode == "legacy-gpu"
-    report = {
-        "when": when,
-        "ok": not (state_orphan or after_fail or legacy_gpu),
-        "reason": (
-            "orphan_stale_heartbeat"
-            if state_orphan
-            else "orphan_gpu_signature"
-            if legacy_gpu
-            else "ok"
-        ),
-        "verdict": "orphan" if state_orphan else "ready",
-        "orphan": state_orphan or legacy_gpu,
-        "job_status": "running" if state_orphan else "ready",
-        "heartbeat_age_seconds": 4000 if state_orphan else 5,
-        "heartbeat_stale": state_orphan,
-        "app_state": "orphan" if state_orphan else "ready",
-        "process_present": state_orphan or after_fail or gpu_idle or legacy_gpu,
-        "cpu_idle": state_orphan or gpu_idle or legacy_gpu,
-        "engine_pinned": state_orphan or gpu_idle or legacy_gpu,
-        "engines": [0, 0, 0, 0, 0, 100.0 if (state_orphan or gpu_idle or legacy_gpu) else 0.0, 0],
-    }
-    if gpu_idle:
-        report["orphan"] = False
-        report["ok"] = True
-        report["reason"] = "ok"
-        report["verdict"] = "ready"
-        report["gpu"] = {"advisory": True, "engine_pinned": True}
-    if legacy_gpu:
-        report.pop("verdict")
-        report.pop("job_status")
-        report.pop("heartbeat_age_seconds")
-        report.pop("heartbeat_stale")
-        report.pop("app_state")
+    report = idle_report(
+        when,
+        orphan=mode == "orphan" and when == "before",
+        job_active=mode == "job-active" and when == "before",
+        after_fail=mode == "after-fail" and when == "after",
+        pinned=mode == "gpu-idle",
+    )
     print(json.dumps(report, sort_keys=True), flush=True)
     raise SystemExit(0 if report["ok"] else 1)
 if command == "teardown":
-    report = {
-        "when": "after",
-        "ok": mode != "teardown-fail",
-        "reason": "ok" if mode != "teardown-fail" else "process_still_running",
-        "orphan": False,
-        "process_present": mode == "teardown-fail",
-        "terminated": True,
-        "engines": [0, 0, 0, 0, 0, 0.0, 0],
-    }
+    report = idle_report("after", after_fail=mode == "teardown-fail")
+    report["terminated"] = mode == "teardown-fail"
     print(json.dumps(report, sort_keys=True), flush=True)
     raise SystemExit(0 if report["ok"] else 1)
 raise SystemExit(2)
@@ -229,6 +265,7 @@ def test_cli_stays_thin_and_omits_unset_detection_flags(tmp_path):
         "before",
     ]
     assert_no_retired_flags(before)
+    assert tool_command(tool, "prepare")[-1] == "prepare"
     assert tool_command(tool, "teardown")[-1] == "teardown"
     assert tool_command(tool, "idle-gpu", "--when", "after")[-2:] == ["--when", "after"]
 
@@ -237,6 +274,7 @@ def test_config_defaults_and_overrides(tmp_path, monkeypatch):
     for key in (
         "XGPU_HEARTBEAT_INTERVAL_SECONDS",
         "XGPU_GPU_ENGINES",
+        "XGPU_GPU_ENGINE_EXCLUDE",
         "XGPU_PROCESS_IMAGES",
         "XGPU_TEARDOWN_WAIT_SECONDS",
         "XGPU_IDLE_CPU_PERCENT",
@@ -255,6 +293,7 @@ def test_config_defaults_and_overrides(tmp_path, monkeypatch):
     assert heartbeat_seconds() == TOOL_HEARTBEAT_INTERVAL_DEFAULT
     assert defaults.refuse_orphan is DEFAULT_REFUSE_ORPHAN
     assert defaults.gpu_engines is None
+    assert defaults.gpu_engine_exclude is None
     assert defaults.process_images is None
     assert defaults.idle_cpu_percent is None
     assert defaults.teardown_wait_seconds is None
@@ -264,6 +303,7 @@ def test_config_defaults_and_overrides(tmp_path, monkeypatch):
     monkeypatch.setenv("XGPU_HEARTBEAT_INTERVAL_SECONDS", "12")
     monkeypatch.setenv("XGPU_E0_REFUSE_ORPHAN", "0")
     monkeypatch.setenv("XGPU_GPU_ENGINES", "3,5")
+    monkeypatch.setenv("XGPU_GPU_ENGINE_EXCLUDE", "5")
     monkeypatch.setenv("XGPU_PROCESS_IMAGES", "Trainer.exe")
     monkeypatch.setenv("XGPU_TEARDOWN_WAIT_SECONDS", "9")
     monkeypatch.setenv("XGPU_GPU_THRESHOLD_PERCENT", "80")
@@ -276,6 +316,7 @@ def test_config_defaults_and_overrides(tmp_path, monkeypatch):
     assert env_cfg.heartbeat_interval_seconds == 12
     assert env_cfg.refuse_orphan is False
     assert env_cfg.gpu_engines == ("3", "5")
+    assert env_cfg.gpu_engine_exclude == ("5",)
     assert env_cfg.process_images == ("Trainer.exe",)
     assert env_cfg.teardown_wait_seconds == 9
     assert env_cfg.idle_cpu_percent == 2
@@ -328,14 +369,17 @@ def test_config_defaults_and_overrides(tmp_path, monkeypatch):
         overrides={
             "heartbeat_interval_seconds": 3,
             "gpu_engines": ("9",),
+            "gpu_engine_exclude": ("5",),
             "tool": tool,
         },
     )
     assert cli.heartbeat_interval_seconds == 3
     assert cli.gpu_engines == ("9",)
+    assert cli.gpu_engine_exclude == ("5",)
 
     forwarded = tool_command(cli, "idle-gpu", "--when", "before")
     assert forwarded[forwarded.index("--gpu-engine") + 1] == "9"
+    assert forwarded[forwarded.index("--gpu-engine-exclude") + 1] == "5"
     assert forwarded[forwarded.index("--process-image") + 1] == "Host.exe"
     assert forwarded[forwarded.index("--heartbeat-interval-seconds") + 1] == "3"
     assert_no_retired_flags(forwarded)
@@ -417,29 +461,17 @@ def test_idle_gpu_before_detects_state_orphan(tmp_path, monkeypatch):
     assert not result["ok"]
     assert is_orphan(result)
     assert prepare_verdict(result) == "orphan"
-    assert result["report"]["reason"] == "orphan_stale_heartbeat"
-    assert result["report"]["job_status"] == "running"
-    assert result["report"]["heartbeat_stale"] is True
+    report = result["report"]
+    assert report["reason"] == "orphan_stale_idle"
+    assert report["orphan"] is True
+    assert report["process_present"] is True
+    assert report["job_active"] is False
+    assert report["heartbeat_stale"] is True
+    assert report["last_job_ended_age_seconds"] == 4000.0
+    assert report["gpu_advisory"]["decisive"] is False
 
 
-def test_gpu_pin_on_idle_ready_app_is_advisory():
-    legacy = {
-        "reachable": True,
-        "ok": False,
-        "report": {
-            "when": "before",
-            "ok": False,
-            "reason": "orphan_gpu_signature",
-            "orphan": True,
-            "process_present": True,
-            "cpu_idle": True,
-            "engine_pinned": True,
-            "engines": [0, 0, 0, 0, 0, 100.0, 0],
-        },
-    }
-    assert is_valid_idle_report(legacy)
-    assert not is_orphan(legacy)
-    assert prepare_verdict(legacy) == "ready"
+def test_gpu_advisory_is_not_an_orphan_verdict():
     ready = {
         "reachable": True,
         "ok": True,
@@ -447,35 +479,83 @@ def test_gpu_pin_on_idle_ready_app_is_advisory():
             "when": "before",
             "ok": True,
             "reason": "ok",
-            "verdict": "ready",
             "orphan": False,
-            "job_status": "ready",
-            "heartbeat_age_seconds": 4,
-            "heartbeat_stale": False,
-            "app_state": "ready",
             "process_present": True,
-            "engine_pinned": True,
+            "job_active": False,
+            "queued": False,
+            "claimed": False,
+            "running": False,
+            "ready": True,
+            "worker_state": "ready",
+            "heartbeat_age_seconds": None,
+            "heartbeat_stale": True,
+            "last_job_ended_age_seconds": None,
+            "cpu_idle": True,
+            "gpu_advisory": {
+                "decisive": False,
+                "note": GPU_ADVISORY_NOTE,
+                "engine_pinned": True,
+                "pinned": [{"adapter": 0, "engine": 5, "percent": 100.0}],
+                "excluded": [5],
+                "adapters": [[0.0, 0.0, 0.0, 0.0, 0.0, 100.0, 0.0]],
+            },
         },
     }
+    assert is_valid_idle_report(ready)
     assert not is_orphan(ready)
     assert prepare_verdict(ready) == "ready"
-    state = {
+    orphan = {
         "reachable": True,
         "ok": False,
         "report": {
             "when": "before",
             "ok": False,
-            "reason": "orphan_stale_heartbeat",
-            "verdict": "orphan",
+            "reason": "orphan_stale_idle",
             "orphan": True,
-            "job_status": "running",
-            "heartbeat_age_seconds": 4000,
+            "process_present": True,
+            "job_active": False,
+            "queued": False,
+            "claimed": False,
+            "running": False,
+            "ready": True,
+            "worker_state": "ready",
+            "heartbeat_age_seconds": 4000.0,
             "heartbeat_stale": True,
-            "engine_pinned": True,
+            "last_job_ended_age_seconds": 4000.0,
+            "gpu_advisory": {"decisive": False, "engine_pinned": True, "pinned": []},
         },
     }
-    assert is_orphan(state)
-    assert prepare_verdict(state) == "orphan"
+    assert is_orphan(orphan)
+    assert prepare_verdict(orphan) == "orphan"
+    busy = {
+        "reachable": True,
+        "ok": False,
+        "report": {
+            "when": "before",
+            "ok": False,
+            "reason": "job_active",
+            "orphan": False,
+            "process_present": True,
+            "job_active": True,
+            "running": True,
+            "ready": False,
+            "gpu_advisory": {"decisive": False, "engine_pinned": False},
+        },
+    }
+    assert not is_orphan(busy)
+    assert prepare_verdict(busy) == "job_active"
+
+
+def test_prepare_reports_cleared_markers(tmp_path, monkeypatch):
+    tool = write_tool(tmp_path)
+    log = tool_log(tmp_path)
+    monkeypatch.setenv("LIFECYCLE_LOG", str(log))
+    monkeypatch.setenv("LIFECYCLE_MODE", "prepare-cleared")
+    result = prepare(tool=tool, package="pkg")
+    assert result["ok"]
+    assert is_valid_prepare_report(result)
+    assert result["report"]["cleared"] == ["inbox/shutdown"]
+    assert result["argv"][-1] == "prepare"
 
 
 def test_unreachable_tool_is_logged_not_raised(tmp_path):
@@ -602,7 +682,8 @@ def test_teardown_on_terminal_paths(tmp_path, monkeypatch, campaign_module, outc
     assert state["console_lifecycle"]["teardown"]["ok"]
     assert state["console_lifecycle"]["idle_gpu_after"]["report"]["when"] == "after"
     commands = [argv_command(row) for row in logged_commands(log)]
-    assert commands[0] == "idle-gpu"
+    assert commands[0] == "prepare"
+    assert commands[1] == "idle-gpu"
     assert "teardown" in commands
     assert commands[-1] == "idle-gpu"
     for argv in logged_commands(log):
@@ -701,28 +782,34 @@ def test_idle_ready_gpu_busy_app_is_reusable(tmp_path, monkeypatch, campaign_mod
     campaign.run_managed()
     assert campaign.state["status"] == "completed"
     before = campaign.state["console_lifecycle"]["idle_gpu_before"]
-    assert before["report"]["engine_pinned"] is True
-    assert before["report"]["job_status"] == "ready"
+    assert campaign.state["console_lifecycle"]["prepare"]["ok"]
+    assert before["report"]["gpu_advisory"]["decisive"] is False
+    assert before["report"]["gpu_advisory"]["engine_pinned"] is True
+    assert before["report"]["ready"] is True
     assert not is_orphan(before)
+    commands = [argv_command(row) for row in logged_commands(log)]
+    assert commands[0] == "prepare"
+    assert commands[1] == "idle-gpu"
 
 
-def test_legacy_gpu_signature_does_not_refuse(tmp_path, monkeypatch, campaign_module):
+def test_job_active_before_is_refused(tmp_path, monkeypatch, campaign_module):
     tool = write_tool(tmp_path)
     log = tool_log(tmp_path)
     monkeypatch.setenv("LIFECYCLE_LOG", str(log))
-    monkeypatch.setenv("LIFECYCLE_MODE", "legacy-gpu")
+    monkeypatch.setenv("LIFECYCLE_MODE", "job-active")
     proof, speed = inputs(tmp_path)
     campaign = campaign_module.Campaign(
         tmp_path / "campaign", proof, speed, lifecycle_tool=tool
     )
-    campaign.run = lambda: campaign.state.update(status="completed")
+    campaign.run = Mock(side_effect=AssertionError("must not start"))
     campaign.report = lambda: None
-    campaign.run_managed()
-    assert campaign.state["status"] == "completed"
+    with pytest.raises(RuntimeError, match="idle-gpu --when before job_active"):
+        campaign.run_managed()
+    campaign.run.assert_not_called()
     before = campaign.state["console_lifecycle"]["idle_gpu_before"]
-    assert before["report"]["reason"] == "orphan_gpu_signature"
+    assert before["report"]["reason"] == "job_active"
     assert not is_orphan(before)
-    assert prepare_verdict(before) == "ready"
+    assert prepare_verdict(before) == "job_active"
 
 
 @pytest.mark.parametrize("mode", ["crash", "invalid"])
@@ -739,14 +826,24 @@ def test_crash_or_invalid_report_is_fail_closed(
     )
     campaign.run = Mock(side_effect=AssertionError("must not start"))
     campaign.report = lambda: None
-    with pytest.raises(RuntimeError, match="idle-gpu --when before invalid"):
+    expected = (
+        "prepare crashed or returned an invalid report"
+        if mode == "crash"
+        else "idle-gpu --when before invalid"
+    )
+    with pytest.raises(RuntimeError, match=expected):
         campaign.run_managed()
     campaign.run.assert_not_called()
     assert campaign.state["status"] == "stopped"
-    before = campaign.state["console_lifecycle"]["idle_gpu_before"]
-    assert before["reachable"] is True
-    assert prepare_verdict(before) == "invalid"
-    assert "teardown" not in campaign.state["console_lifecycle"]
+    held = campaign.state["console_lifecycle"]
+    assert held["prepare"]["reachable"] is True
+    if mode == "crash":
+        assert not is_valid_prepare_report(held["prepare"])
+        assert "idle_gpu_before" not in held
+    else:
+        assert held["idle_gpu_before"]["reachable"] is True
+        assert prepare_verdict(held["idle_gpu_before"]) == "invalid"
+    assert "teardown" not in held
 
     allowed = campaign_module.Campaign(
         tmp_path / f"allowed-{mode}",
@@ -780,6 +877,10 @@ def test_integer_settings_are_formatted_as_integers():
     assert env["XGPU_GPU_SAMPLE_COUNT"] == "3"
     assert env["XGPU_PORTAL_PORT"] == "11443"
     assert env["XGPU_POLL_INTERVAL_SECONDS"] == "1"
+    exclude = load_lifecycle_config(
+        settings={}, overrides={"gpu_engine_exclude": ("5", "1")}
+    )
+    assert lifecycle_environ(settings={}, config=exclude)["XGPU_GPU_ENGINE_EXCLUDE"] == "5,1"
     for key in (
         "XGPU_IDLE_EXIT_SECONDS",
         "XGPU_HEARTBEAT_INTERVAL_SECONDS",
@@ -844,6 +945,7 @@ def test_docs_and_example_use_canonical_names():
         "--gpu-sample-count",
         "--gpu-sample-interval-seconds",
         "--gpu-engine",
+        "--gpu-engine-exclude",
         "--idle-cpu-percent",
         "--teardown-wait-seconds",
         "--process-image",
@@ -856,6 +958,7 @@ def test_docs_and_example_use_canonical_names():
         "--credentials",
         "XGPU_IDLE_EXIT_SECONDS",
         "XGPU_HEARTBEAT_INTERVAL_SECONDS",
+        "XGPU_GPU_ENGINE_EXCLUDE",
         "XGPU_PORTAL_PASSWORD",
     ):
         assert token in text

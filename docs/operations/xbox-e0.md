@@ -107,9 +107,10 @@ and docs may change.
 Console lifecycle settings (tool path, Device Portal URL, heartbeat interval,
 idle-GPU thresholds, process/package identity, refuse-on-orphan, teardown wait)
 are listed in the [lifecycle config reference](e0-console-lifecycle.md). The
-runner calls `idle-gpu --when before` and, by default, refuses to start when that
-report is a state-based orphan (job status / heartbeat age). GPU pin on an idle
-ready app is advisory and does not refuse. A crashed tool or invalid report
+runner calls `prepare` (clears leftover `inbox/shutdown`) then
+`idle-gpu --when before` and, by default, refuses to start when that report is
+`orphan_stale_idle` or `job_active`. GPU sits under `gpu_advisory` with
+`decisive: false` and does not refuse. A crashed tool or invalid report
 follows the same fail-closed policy (`--allow-orphan-gpu` or
 `XGPU_E0_REFUSE_ORPHAN=0` overrides). While the campaign runs it refreshes
 `host.heartbeat`. On completion,

@@ -44,6 +44,7 @@ ENV_KEYS = {
     "gpu_sample_count": "XGPU_GPU_SAMPLE_COUNT",
     "gpu_sample_interval_seconds": "XGPU_GPU_SAMPLE_INTERVAL_SECONDS",
     "gpu_engines": "XGPU_GPU_ENGINES",
+    "gpu_engine_exclude": "XGPU_GPU_ENGINE_EXCLUDE",
     "idle_cpu_percent": "XGPU_IDLE_CPU_PERCENT",
     "teardown_wait_seconds": "XGPU_TEARDOWN_WAIT_SECONDS",
     "process_images": "XGPU_PROCESS_IMAGES",
@@ -85,6 +86,7 @@ SCALAR_FLAGS = {
 
 REPEAT_FLAGS = {
     "gpu_engines": "--gpu-engine",
+    "gpu_engine_exclude": "--gpu-engine-exclude",
     "process_images": "--process-image",
     "terminate_by": "--terminate-by",
 }
@@ -102,6 +104,7 @@ POLICY_FIELDS = (
     "gpu_sample_count",
     "gpu_sample_interval_seconds",
     "gpu_engines",
+    "gpu_engine_exclude",
     "idle_cpu_percent",
     "teardown_wait_seconds",
     "process_images",
@@ -127,6 +130,7 @@ class LifecycleConfig:
     gpu_sample_count: float | None = None
     gpu_sample_interval_seconds: float | None = None
     gpu_engines: tuple[str, ...] | None = None
+    gpu_engine_exclude: tuple[str, ...] | None = None
     idle_cpu_percent: float | None = None
     teardown_wait_seconds: float | None = None
     process_images: tuple[str, ...] | None = None
@@ -277,6 +281,7 @@ def load_lifecycle_config(
         gpu_sample_count=_as_float(merged.get("gpu_sample_count")),
         gpu_sample_interval_seconds=_as_float(merged.get("gpu_sample_interval_seconds")),
         gpu_engines=_as_list(merged.get("gpu_engines")),
+        gpu_engine_exclude=_as_list(merged.get("gpu_engine_exclude")),
         idle_cpu_percent=_as_float(merged.get("idle_cpu_percent")),
         teardown_wait_seconds=_as_float(merged.get("teardown_wait_seconds")),
         process_images=_as_list(merged.get("process_images")),
@@ -452,6 +457,15 @@ def run_tool(
         result["stderr"] = stderr
     if command == "heartbeat":
         result["ok"] = proc.returncode == 0 and stdout == "heartbeat: ok"
+    elif command == "prepare":
+        report = result.get("report")
+        result["ok"] = (
+            proc.returncode == 0
+            and isinstance(report, dict)
+            and isinstance(report.get("cleared"), list)
+        )
+        if not result["ok"] and "error" not in result:
+            result["error"] = stderr or stdout or f"exit {proc.returncode}"
     elif "report" in result:
         result["ok"] = bool(result["report"].get("ok"))
     else:
@@ -459,6 +473,11 @@ def run_tool(
         if not result["ok"]:
             result["error"] = stderr or stdout or f"exit {proc.returncode}"
     return result
+
+
+def prepare(**kwargs) -> dict:
+    """Clear leftover inbox/shutdown before launch (`prepare` in #46)."""
+    return run_tool("prepare", **kwargs)
 
 
 def idle_gpu(when: str, **kwargs) -> dict:
@@ -480,88 +499,44 @@ def teardown(*, wait_seconds: float | None = None, **kwargs) -> dict:
     return run_tool("teardown", config=config, **kwargs)
 
 
-# GPU pin on a healthy idle app is advisory. Refuse only a state-based verdict
-# (job status / heartbeat age) from xbox-gpu-training#46.
-GPU_ADVISORY_REASONS = frozenset({"orphan_gpu_signature", "engine_still_pinned"})
-STATE_ORPHAN_MARKERS = (
-    "verdict",
-    "state_orphan",
-    "job_status",
-    "job",
-    "app_state",
-    "heartbeat_age_seconds",
-    "heartbeat_stale",
-)
-
-
 def _report(result: dict) -> dict | None:
     report = result.get("report")
     return report if isinstance(report, dict) else None
 
 
+def is_valid_prepare_report(result: dict) -> bool:
+    """#46 `prepare` prints `{"cleared": [...]}`."""
+    report = _report(result)
+    return report is not None and isinstance(report.get("cleared"), list)
+
+
 def is_valid_idle_report(result: dict) -> bool:
-    """A parsed idle-gpu object with `when` and a verdict field."""
+    """#46 `idle-gpu` / `teardown` object with `when` and a state verdict."""
     report = _report(result)
     if report is None or report.get("when") not in ("before", "after"):
         return False
-    return any(key in report for key in ("ok", "reason", "verdict", "orphan"))
-
-
-def _job_status(report: dict) -> str | None:
-    job = report.get("job_status", report.get("job"))
-    if isinstance(job, dict):
-        job = job.get("status") or job.get("state")
-    return str(job) if job not in (None, "") else None
-
-
-def _gpu_advisory_only(report: dict) -> bool:
-    """Old compositor/GPU pin without a state-based orphan verdict."""
-    if report.get("verdict") == "orphan" or report.get("state_orphan") is True:
-        return False
-    if report.get("heartbeat_stale") is True:
-        return False
-    if report.get("app_state") == "orphan" or _job_status(report) == "orphan":
-        return False
-    reason = report.get("reason")
-    if (
-        isinstance(reason, str)
-        and reason.startswith("orphan")
-        and reason not in GPU_ADVISORY_REASONS
-    ):
-        return False
-    has_state = any(report.get(key) not in (None, "", {}) for key in STATE_ORPHAN_MARKERS)
-    if has_state and report.get("orphan") is True and reason not in GPU_ADVISORY_REASONS:
-        return False
-    if reason in GPU_ADVISORY_REASONS:
-        return True
-    return bool(report.get("orphan") and report.get("engine_pinned") and not has_state)
+    return any(key in report for key in ("ok", "reason", "orphan"))
 
 
 def is_orphan(result: dict) -> bool:
-    """True only for #46's state-based orphan verdict. GPU pin is advisory."""
+    """True only for #46's state-based `orphan` / `orphan_stale_idle`."""
     report = _report(result)
-    if report is None or _gpu_advisory_only(report):
+    if report is None:
         return False
-    if report.get("verdict") == "orphan" or report.get("state_orphan") is True:
-        return True
-    reason = report.get("reason")
-    if (
-        isinstance(reason, str)
-        and reason.startswith("orphan")
-        and reason not in GPU_ADVISORY_REASONS
-    ):
-        return True
-    return bool(report.get("orphan"))
+    return report.get("orphan") is True or report.get("reason") == "orphan_stale_idle"
 
 
 def prepare_verdict(result: dict) -> str:
-    """`unreachable` | `invalid` | `orphan` | `ready` for idle-gpu --when before."""
+    """`unreachable` | `invalid` | `orphan` | `job_active` | `ready`."""
     if not result.get("reachable"):
         return "unreachable"
     if not is_valid_idle_report(result):
         return "invalid"
     if is_orphan(result):
         return "orphan"
+    report = _report(result) or {}
+    if report.get("reason") == "job_active" or report.get("job_active") is True:
+        return "job_active"
     return "ready"
 
 

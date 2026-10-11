@@ -3,7 +3,7 @@
 Owner of the settings the campaign runner and the lifecycle unit pass to
 xbox-gpu-training `scripts/e0_console_lifecycle.py`
 ([PR #46](https://github.com/gianlucamazza/xbox-gpu-training/pull/46), tip
-`94769836a5af8ceaa226ea2c24aef39cef696c1f`). The tool's table lives in
+`9ed67f52df31ecf081010d1c4597ba3f443c0cb1`). The tool's table lives in
 `docs/e0/lifecycle.md` on that branch. Procedure stays in the
 [Xbox runbook](xbox-e0.md). Live package and campaign identity stay in
 [STATUS](../STATUS.md).
@@ -54,6 +54,7 @@ marked.
 | GPU sample count | `XGPU_GPU_SAMPLE_COUNT` | `gpu_sample_count` | `--gpu-sample-count` | tool `3` | `--gpu-sample-count` |
 | GPU sample interval | `XGPU_GPU_SAMPLE_INTERVAL_SECONDS` | `gpu_sample_interval_seconds` | `--gpu-sample-interval-seconds` | tool `1` | `--gpu-sample-interval-seconds` |
 | GPU engine filter | `XGPU_GPU_ENGINES` (comma indices) | `gpu_engines` | `--gpu-engine` (repeat) | tool: all engines | `--gpu-engine` (repeat) |
+| GPU engine exclude | `XGPU_GPU_ENGINE_EXCLUDE` (comma indices) | `gpu_engine_exclude` | `--gpu-engine-exclude` (repeat) | tool: none | `--gpu-engine-exclude` (repeat) |
 | Idle CPU threshold | `XGPU_IDLE_CPU_PERCENT` | `idle_cpu_percent` | `--idle-cpu-percent` | tool `1` | `--idle-cpu-percent` |
 | Teardown wait | `XGPU_TEARDOWN_WAIT_SECONDS` | `teardown_wait_seconds` | `--teardown-wait-seconds` | tool `60` | `--teardown-wait-seconds` |
 | Process image names | `XGPU_PROCESS_IMAGES` (comma) | `process_images` | `--process-image` (repeat) | tool `xgpue0.exe` | `--process-image` (repeat) |
@@ -82,6 +83,7 @@ Do not forward the retired flags `--engine`, `--adapter`, `--image`, `--pid`,
   "idle_exit_seconds": 1800,
   "teardown_wait_seconds": 90,
   "gpu_engines": ["3"],
+  "gpu_engine_exclude": ["5"],
   "process_images": ["xgpue0.exe"],
   "terminate_by": ["package", "pid"],
   "refuse_orphan": true,
@@ -96,29 +98,35 @@ Env key names are also accepted. Do not put passwords in this file.
 The call sites stay thin. Global flags come before the subcommand:
 
 ```text
+python e0_console_lifecycle.py [global flags] prepare
 python e0_console_lifecycle.py [global flags] idle-gpu --when before
 python e0_console_lifecycle.py [global flags] heartbeat
 python e0_console_lifecycle.py [global flags] teardown
 python e0_console_lifecycle.py [global flags] idle-gpu --when after
 ```
 
+`prepare` deletes leftover `inbox/shutdown` so the next launch does not exit.
 Identity and threshold flags are appended only when configured. Integer settings
-are forwarded as integers (`20`, not `20.0`) so the tool's `int()` env parse
-succeeds. `ExecStop` is
+are forwarded as integers (`20`, not `20.0`); #46 also accepts float-looking
+values. `ExecStop` is
 `scripts/e0_console_teardown.py --campaign "$FLOPPYLM_E0_OUT"`; it rereads the
 same environment and the campaign snapshot.
 
 ## Prepare verdict
 
-`idle-gpu --when before` is fail-closed except when the tool is missing:
+The runner reads #46's report as printed. `idle-gpu --when before` fails only
+on `job_active` or `orphan_stale_idle`. GPU sits under `gpu_advisory` with
+`decisive: false` and is never a refuse reason.
 
 | Tool outcome | Default | Override (`--allow-orphan-gpu` / `XGPU_E0_REFUSE_ORPHAN=0`) |
 | --- | --- | --- |
 | Tool unset or not found (`unreachable`) | log and continue | — |
-| Crash, non-JSON, or invalid report | refuse | start |
-| State-based orphan (`verdict=orphan`, `orphan` with job/heartbeat state, `reason` other than GPU pin) | refuse | start |
-| Idle ready app, including compositor GPU ~100% (`orphan_gpu_signature` / `engine_pinned` only) | start (GPU advisory) | — |
+| `prepare` crash / missing `cleared` list | refuse | start |
+| Crash, non-JSON, or invalid `idle-gpu` report | refuse | start |
+| `orphan: true` / `reason: orphan_stale_idle` | refuse | start |
+| `reason: job_active` | refuse | start |
+| Idle ready app (`orphan: false`, including `gpu_advisory.engine_pinned`) | start | — |
 
-The runner reads #46 report fields (`verdict`, `orphan`, `reason`, `job_status`,
-`job`, `app_state`, `heartbeat_age_seconds`, `heartbeat_stale`) and does not
-invent a GPU-pin predicate.
+Orphan means: process present, no job running/queued, heartbeat missing or
+stale, and last job ended past the idle deadline. A freshly launched idle app
+has no last-job age and is reusable.

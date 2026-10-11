@@ -46,7 +46,9 @@ from floppylm_xbox.console_lifecycle import heartbeat as send_host_heartbeat
 from floppylm_xbox.console_lifecycle import (
     heartbeat_seconds,
     idle_gpu,
+    is_valid_prepare_report,
     load_lifecycle_config,
+    prepare,
     prepare_verdict,
     resolve_tool,
     stop_console,
@@ -251,17 +253,37 @@ class Campaign:
             print(f"console lifecycle record failed: {exc}", flush=True)
 
     def prepare_console(self):
-        """Refuse a state-based orphan or invalid/crash report. Missing tool is logged."""
-        result = idle_gpu("before", **self._lifecycle_kwargs())
-        self._store_lifecycle(idle_gpu_before=result)
-        verdict = prepare_verdict(result)
+        """`prepare` then `idle-gpu --when before`. Refuse #46 orphan / invalid."""
+        kwargs = self._lifecycle_kwargs()
         refuse = True
         if getattr(self, "lifecycle", None) is not None:
             refuse = self.lifecycle.refuse_orphan
         elif getattr(self, "allow_orphan_gpu", False):
             refuse = False
+        prepared = prepare(**kwargs)
+        self._store_lifecycle(prepare=prepared)
+        if not prepared.get("reachable"):
+            print(f"console prepare skipped: {prepared.get('error')}", flush=True)
+        elif not is_valid_prepare_report(prepared):
+            detail = prepared.get("error") or prepared.get("stderr") or "invalid prepare"
+            print(f"console prepare invalid: {detail}", flush=True)
+            if refuse:
+                raise RuntimeError(
+                    "prepare crashed or returned an invalid report; pass "
+                    "--allow-orphan-gpu or set XGPU_E0_REFUSE_ORPHAN=0 to start anyway"
+                )
+            print("prepare invalid; starting because refuse_orphan is false", flush=True)
+        else:
+            self.event(
+                "console_prepare",
+                ok=prepared.get("ok"),
+                cleared=(prepared.get("report") or {}).get("cleared"),
+            )
+        result = idle_gpu("before", **kwargs)
+        self._store_lifecycle(idle_gpu_before=result)
+        verdict = prepare_verdict(result)
         report = result.get("report") if isinstance(result.get("report"), dict) else {}
-        reason = report.get("reason") or report.get("verdict") or verdict
+        reason = report.get("reason") or verdict
         if verdict == "unreachable":
             print(
                 f"console idle-gpu --when before skipped: {result.get('error')}",
@@ -274,7 +296,7 @@ class Campaign:
             reason=reason,
             verdict=verdict,
         )
-        if verdict in ("invalid", "orphan"):
+        if verdict in ("invalid", "orphan", "job_active"):
             detail = result.get("error") or result.get("stderr") or reason
             print(f"console idle-gpu --when before {verdict}: {detail}", flush=True)
             if refuse:
@@ -284,12 +306,6 @@ class Campaign:
                 )
             print(
                 f"{verdict} present; starting because refuse_orphan is false",
-                flush=True,
-            )
-            return
-        if report.get("engine_pinned") or report.get("reason") == "orphan_gpu_signature":
-            print(
-                "console idle-gpu GPU is advisory; idle ready app is reusable",
                 flush=True,
             )
 
