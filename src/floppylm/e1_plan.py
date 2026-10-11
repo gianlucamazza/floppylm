@@ -154,6 +154,44 @@ def init_pack(
     return repaired, record
 
 
+def _s3_guard(measured_bytes: int, *, smoke: bool, retry_count: int) -> None:
+    if type(measured_bytes) is not int or measured_bytes < 1:
+        raise ValueError("S3 measured bytes must be a positive int")
+    if type(smoke) is not bool or type(retry_count) is not int:
+        raise ValueError("S3 smoke must be a bool and retry_count must be an int")
+    if smoke or retry_count:
+        raise ValueError("S3 requires an original non-smoke run and at most one retry")
+
+
+def scalar_s3(
+    cfg: GPTConfig, measured_bytes: int, *, smoke: bool, retry_count: int
+) -> GPTConfig | None:
+    """One post-training d_ff repair for a scalar arm, under the 94847b rule.
+
+    Returns None when the measured file is already inside ±1%. A smoke, a
+    second retry, a vq core, or a repair that keeps the same d_ff is refused.
+    Width and depth stay put.
+    """
+    _s3_guard(measured_bytes, smoke=smoke, retry_count=retry_count)
+    if cfg.core_fmt == "vq":
+        raise ValueError("scalar S3 does not resize a vq core")
+    if admissible({"4T": measured_bytes}, TARGET_BYTES)[0]:
+        return None
+    ratio = measured_bytes * 8 / cfg.nominal_bits()
+    repaired = fill_d_ff(cfg, TARGET_BYTES * 8, ratio=ratio)
+    k = 2 / 3 if cfg.mlp == "swiglu" else 1
+    if (
+        repaired is None
+        or repaired.d != cfg.d
+        or repaired.n_layers != cfg.n_layers
+        or not 2 * k * cfg.d <= repaired.d_ff <= 6 * k * cfg.d
+    ):
+        raise ValueError("S3 adjustment excluded: no valid d_ff in the declared shape range")
+    if repaired.d_ff == cfg.d_ff:
+        raise ValueError("S3 adjustment excluded: solver returned the same shape")
+    return repaired
+
+
 def ff_bounds(d: int) -> tuple[int, int]:
     """Integer d_ff inside the E0 SwiGLU interval 2·(2/3)·d … 6·(2/3)·d."""
     if type(d) is not int or d < 1:
@@ -219,13 +257,15 @@ def choose_shape(candidates: list[SolvedShape]) -> SolvedShape | None:
     return min(candidates, key=lambda shape: shape.rank())
 
 
-def _pack_shape(cfg: GPTConfig, book: VectorBook) -> tuple[int, int]:
-    seed_all(0)
+def _pack_shape(cfg: GPTConfig, book: VectorBook, seed: int = 0) -> tuple[int, int]:
+    seed_all(seed)
     model = TinyGPT(cfg, book)
     return len(pack_sections(model)[0]), model.stored_params()
 
 
-def _best_d_ff(d: int, n_layers: int, spec: BookSpec, book: VectorBook) -> SolvedShape | None:
+def _best_d_ff(
+    d: int, n_layers: int, spec: BookSpec, book: VectorBook, seed: int = 0
+) -> SolvedShape | None:
     """Seed-0 d_ff in the SwiGLU interval whose pack is closest to the target.
 
     Pack size increases with d_ff on this init. The two integers around the
@@ -236,7 +276,7 @@ def _best_d_ff(d: int, n_layers: int, spec: BookSpec, book: VectorBook) -> Solve
 
     def measure(d_ff: int) -> tuple[int, int]:
         if d_ff not in cache:
-            cache[d_ff] = _pack_shape(vector_config(d, n_layers, d_ff), book)
+            cache[d_ff] = _pack_shape(vector_config(d, n_layers, d_ff), book, seed)
         return cache[d_ff]
 
     lo_bytes = measure(lo)[0]
@@ -283,6 +323,66 @@ def solve_vector_shapes() -> tuple[SolvedShape | None, ...]:
                     best = shape
         found.append(best)
     return tuple(found)
+
+
+def published_shapes() -> tuple[SolvedShape, ...]:
+    """The four seed-0 shapes measured on 2026-10-11. Does not walk the grid."""
+    return (
+        SolvedShape(80, 12, 247, 0.5, False, 85934, 1_039_040),
+        SolvedShape(256, 1, 801, 0.5, True, 85935, 942_976),
+        SolvedShape(80, 8, 258, 0.75, False, 85938, 720_640),
+        SolvedShape(160, 2, 479, 0.75, True, 85939, 706_112),
+    )
+
+
+def scalar_seed0_params() -> tuple[int, int]:
+    """Stored-parameter counts of the two submitted scalar arms at seed 0."""
+    counts: list[int] = []
+    for arm in scalar_arms():
+        cfg, _record = init_pack(arm.nominal, seed=0)
+        seed_all(0)
+        counts.append(TinyGPT(cfg).stored_params())
+    return counts[0], counts[1]
+
+
+def shape_for_seed(shape: SolvedShape, seed: int) -> SolvedShape:
+    """Seed 0 is the published shape. Seeds 1 and 2 may change only d_ff."""
+    if type(seed) is not int or seed not in SEEDS:
+        raise ValueError("ADR 0023 arm seeds are 0, 1 and 2")
+    if seed == 0:
+        return shape
+    spec = BookSpec(8, shape.rate, shape.learned)
+    book = VectorBook(spec.dimension, spec.rate, seed, learned=spec.learned)
+    found = _best_d_ff(shape.d, shape.n_layers, spec, book, seed)
+    if found is None:
+        raise ValueError("no admissible d_ff for this seed inside the SwiGLU interval")
+    if found.d != shape.d or found.n_layers != shape.n_layers:
+        raise ValueError("a seed repair changed width or depth")
+    return found
+
+
+def vector_s3(
+    shape: SolvedShape, seed: int, measured_bytes: int, *, smoke: bool, retry_count: int
+) -> SolvedShape | None:
+    """One post-training d_ff repair for a vector arm.
+
+    The search packs the file. It does not call ``fill_d_ff``. Width, depth,
+    rate, and the book stay put. Returns None when the measured file is already
+    inside ±1%.
+    """
+    _s3_guard(measured_bytes, smoke=smoke, retry_count=retry_count)
+    if type(seed) is not int or seed not in SEEDS:
+        raise ValueError("ADR 0023 arm seeds are 0, 1 and 2")
+    if admissible({"4T": measured_bytes}, TARGET_BYTES)[0]:
+        return None
+    spec = BookSpec(8, shape.rate, shape.learned)
+    book = VectorBook(spec.dimension, spec.rate, seed, learned=spec.learned)
+    found = _best_d_ff(shape.d, shape.n_layers, spec, book, seed)
+    if found is None or found.d != shape.d or found.n_layers != shape.n_layers:
+        raise ValueError("S3 adjustment excluded: no valid d_ff in the declared shape range")
+    if found.d_ff == shape.d_ff or found.rate != shape.rate or found.learned != shape.learned:
+        raise ValueError("S3 adjustment excluded: solver returned the same shape")
+    return found
 
 
 def vector_recipe(**_ignored: object) -> None:

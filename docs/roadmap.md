@@ -109,9 +109,11 @@ unaffected.
 The accepted protocol is [ADR 0023](adr/0023-e1-1-16-pilot.md). This section
 does not restate it. The host layout (`b362991`) and the host trainer
 (`e9e7ef8`) are on main. The layer map is [architecture](architecture.md).
-The host plan is `src/floppylm/e1_plan.py`. The shape rule is
+The host plan is `src/floppylm/e1_plan.py`. The CPU campaign path is
+`src/floppylm/e1_pilot.py`. Its synthetic smoke is functional and is not a
+result. The shape rule is
 [ADR 0024](adr/0024-e1-vector-shape.md). All four seed-0 G=8 books are closed. T is 20780800. Live state is in
-[STATUS](STATUS.md). The pilot has not started.
+[STATUS](STATUS.md). The pilot cells have not started.
 
 - K=1, no recursion. 3 seeds, vector rate 0.5 and 0.75 bit/weight, tokens ≈ 20 per stored
   parameter of the largest arm, equal for all.

@@ -25,10 +25,13 @@ from floppylm.e1_plan import (
     init_pack,
     nominal_payload_bytes,
     pilot_tokens,
+    published_shapes,
     scalar_arms,
+    scalar_s3,
     vector_books,
     vector_config,
     vector_recipe,
+    vector_s3,
 )
 from floppylm.model import TinyGPT
 from floppylm.pack import pack, pack_sections
@@ -263,6 +266,64 @@ def test_pilot_tokens_is_twenty_times_the_largest_seed0_count():
     largest = max([shape.stored_params for shape in shapes] + scalar)
     assert pilot_tokens(tuple(shapes), tuple(scalar)) == TOKENS_PER_STORED_PARAM * largest
     assert pilot_tokens(tuple(shapes), tuple(scalar)) == 20_780_800
+    packed = tuple((s.d, s.n_layers, s.d_ff, s.init_bytes, s.stored_params) for s in shapes)
+    recorded = tuple(
+        (s.d, s.n_layers, s.d_ff, s.init_bytes, s.stored_params) for s in published_shapes()
+    )
+    assert packed == recorded
+
+
+def test_scalar_s3_changes_only_d_ff_on_an_inadmissible_pack():
+    cfg = scalar_arms()[1].nominal
+    seed_all(0)
+    measured = len(pack(TinyGPT(cfg)))
+    ok, _reasons = admissible({cfg.core_fmt: measured}, TARGET_BYTES)
+    assert not ok
+    repaired = scalar_s3(cfg, measured, smoke=False, retry_count=0)
+    assert repaired is not None
+    assert (repaired.d, repaired.n_layers, repaired.core_fmt) == (cfg.d, cfg.n_layers, cfg.core_fmt)
+    assert repaired.d_ff != cfg.d_ff
+    seed_all(0)
+    packed = len(pack(TinyGPT(repaired)))
+    ok, reasons = admissible({cfg.core_fmt: packed}, TARGET_BYTES)
+    assert ok, reasons
+    assert scalar_s3(repaired, packed, smoke=False, retry_count=0) is None
+    with pytest.raises(ValueError, match="at most one retry"):
+        scalar_s3(cfg, measured, smoke=False, retry_count=1)
+    with pytest.raises(ValueError, match="non-smoke"):
+        scalar_s3(cfg, measured, smoke=True, retry_count=0)
+    with pytest.raises(ValueError, match="vq core"):
+        scalar_s3(replace(cfg, core_fmt="vq"), measured, smoke=False, retry_count=0)
+
+
+def test_vector_s3_repacks_a_different_d_ff_and_refuses_a_second_retry():
+    base = published_shapes()[2]
+    lo, hi = ff_bounds(base.d)
+    assert lo <= base.d_ff <= hi
+    assert lo != base.d_ff
+    off = SolvedShape(base.d, base.n_layers, lo, base.rate, base.learned, 1, 1)
+    repaired = vector_s3(off, 0, 1, smoke=False, retry_count=0)
+    assert repaired is not None
+    assert (repaired.d, repaired.n_layers, repaired.rate, repaired.learned) == (
+        base.d,
+        base.n_layers,
+        base.rate,
+        base.learned,
+    )
+    assert repaired.d_ff != lo
+    spec = book_specs()[2]
+    book = VectorBook(spec.dimension, spec.rate, 0, learned=spec.learned)
+    seed_all(0)
+    model = TinyGPT(vector_config(repaired.d, repaired.n_layers, repaired.d_ff), book)
+    assert len(pack_sections(model)[0]) == repaired.init_bytes
+    assert model.stored_params() == repaired.stored_params
+    ok, reasons = admissible({spec.rate: repaired.init_bytes}, TARGET_BYTES)
+    assert ok, reasons
+    assert vector_s3(repaired, 0, repaired.init_bytes, smoke=False, retry_count=0) is None
+    with pytest.raises(ValueError, match="at most one retry"):
+        vector_s3(off, 0, 1, smoke=False, retry_count=1)
+    with pytest.raises(ValueError, match="non-smoke"):
+        vector_s3(off, 0, 1, smoke=True, retry_count=0)
 
 
 def test_vector_recipe_rejects_a_hand_specified_shape():

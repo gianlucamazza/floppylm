@@ -131,7 +131,9 @@ This section owns the forward order. It does not amend
 [ADR 0023](adr/0023-e1-1-16-pilot.md) or
 [ADR 0024](adr/0024-e1-vector-shape.md). Live rows stay in
 [STATUS](STATUS.md). A yes on one row does not authorize the next row.
-The pilot has not started. No console job is authorized.
+The CPU campaign path is `src/floppylm/e1_pilot.py`. Its synthetic smoke is
+functional and is not a result. The pilot cells have not started. No console
+job is authorized.
 
 The approved scope is the E0–E4 ladder, local Xbox/CPU only, with no rented
 GPU. The ladder is not walked by default. The research is complete when F1,

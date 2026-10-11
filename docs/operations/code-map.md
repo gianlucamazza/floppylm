@@ -19,7 +19,8 @@ runlog.py        unique ids, exclusive directories, atomic writes, state, manife
 data.py          TinyStoriesV2: exact dedup, hash split, manifest, reproducibility
 bpe.py           train-only byte-exact BPE oracle (E1 functional qualification, ADR 0013)
 vq.py            VQB1 book and vector oracle; learned reseeds continue the PCG32 stream; VQF1 stays a fixture
-e1_plan.py       1/16 host plan: stored scalar arms, four G=8 books, ADR 0024 seed-0 solver, F1. Does not train. All four G=8 seed-0 books are closed. T is 20780800. The pilot has not started
+e1_plan.py       1/16 host plan: stored scalar arms, four G=8 books, ADR 0024 seed-0 solver, F1. Does not train. All four G=8 seed-0 books are closed. T is 20780800. The pilot cells have not started
+e1_pilot.py      1/16 CPU campaign path: shared T, seeds 0/1/2, cooldowns at T/2T/4T, one S3, one freeze, one final test. The synthetic smoke is not a result. The pilot cells have not started
 ```
 
 ## Xbox execution — `src/floppylm_xbox/`
