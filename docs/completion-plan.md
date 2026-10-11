@@ -110,13 +110,13 @@ Continue in this order:
    The learned rate-0.5 book is closed at `d` 256, 1 layer, `d_ff` 801,
    85935 bytes. The fixed rate-0.75 book is closed at `d` 80, 8 layers,
    `d_ff` 258, 85938 bytes. The learned rate-0.75 book is closed at `d` 160,
-   2 layers, `d_ff` 479, 85939 bytes. T is 20780800. The pilot has not started. The trainer applies
+   2 layers, `d_ff` 479, 85939 bytes. T is 20780800. Cell `ternary-s0` is running on the lab CPU and is not a result. The trainer applies
    ADR 0023 decisions 7–9 on CPU. Assignment is
    every 64 steps at probability 0.1. A dead learned entry is reseeded from
    that arm's PCG32 stream and logged. A fixed book logs the dead entry and
    keeps the seed. Resume continues the master weights, indices, scales,
    book, and optimizer moments. The cooldown artifact is that quantized
-   container. The paired 1/16 pilot has not started. No console job is
+   container. The other seventeen cells have not started. No console job is
    authorized. Proceed through E1a/E1/E1b and E2–E4 only on passing gates.
    Keep local-judge qualification and actual 30 blind human ratings explicit
    at E4.
@@ -132,7 +132,8 @@ This section owns the forward order. It does not amend
 [ADR 0024](adr/0024-e1-vector-shape.md). Live rows stay in
 [STATUS](STATUS.md). A yes on one row does not authorize the next row.
 The CPU campaign path is `src/floppylm/e1_pilot.py`. Its synthetic smoke is
-functional and is not a result. The pilot cells have not started. No console
+functional and is not a result. Cell `ternary-s0` is running on the lab CPU.
+It is not a result. The other seventeen cells have not started. No console
 job is authorized.
 
 The approved scope is the E0–E4 ladder, local Xbox/CPU only, with no rented
