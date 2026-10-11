@@ -108,9 +108,21 @@ def inputs(tmp_path, preflight):
     return tmp_path, proof, speed, manifest
 
 
+def _snapshot(root):
+    """File bytes, ignoring git's transient maintenance lock."""
+    out = {}
+    for path in root.rglob("*"):
+        if not path.is_file():
+            continue
+        if path.relative_to(root).as_posix() == ".git/objects/maintenance.lock":
+            continue
+        out[path] = path.read_bytes()
+    return out
+
+
 def test_read_only_ready_and_local_is_not_console_ready(inputs, preflight, monkeypatch):
     root, *args = inputs
-    before = {p: p.read_bytes() for p in root.rglob("*") if p.is_file()}
+    before = _snapshot(root)
     original_open, path_open = builtins.open, Path.open
 
     def guard(path, mode):
@@ -132,7 +144,7 @@ def test_read_only_ready_and_local_is_not_console_ready(inputs, preflight, monke
         assert report["ready"], report
         local = preflight.report(root, *args)
         assert local["local_ok"] and not local["ready"] and not local["xbox_checked"]
-    assert before == {p: p.read_bytes() for p in root.rglob("*") if p.is_file()}
+    assert before == _snapshot(root)
     assert not (root / "runs").exists()
 
 
