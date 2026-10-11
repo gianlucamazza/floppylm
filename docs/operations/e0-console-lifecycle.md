@@ -67,7 +67,7 @@ marked.
 | Portal user | `XGPU_PORTAL_USER` or `UWP_DEVICE_USER` | — | — | unset | env only |
 | Portal password | `XGPU_PORTAL_PASSWORD` or `OPENAPPX_DEVICE_PASSWORD` | — | — | unset | env / credentials file only |
 | Credentials file | `XGPU_PORTAL_CREDENTIALS` | `credentials` | `--credentials` | none | `--credentials` |
-| Refuse orphan before start (FloppyLM) | `XGPU_E0_REFUSE_ORPHAN` | `refuse_orphan` | `--allow-orphan-gpu` sets false | `true` | not a tool flag; runner policy |
+| Refuse orphan / invalid prepare (FloppyLM) | `XGPU_E0_REFUSE_ORPHAN` | `refuse_orphan` | `--allow-orphan-gpu` sets false | `true` | not a tool flag; runner policy |
 
 Boolean env values: `0`, `false`, `no`, `off` are false; anything else is true.
 
@@ -102,6 +102,23 @@ python e0_console_lifecycle.py [global flags] teardown
 python e0_console_lifecycle.py [global flags] idle-gpu --when after
 ```
 
-Identity and threshold flags are appended only when configured. `ExecStop` is
+Identity and threshold flags are appended only when configured. Integer settings
+are forwarded as integers (`20`, not `20.0`) so the tool's `int()` env parse
+succeeds. `ExecStop` is
 `scripts/e0_console_teardown.py --campaign "$FLOPPYLM_E0_OUT"`; it rereads the
 same environment and the campaign snapshot.
+
+## Prepare verdict
+
+`idle-gpu --when before` is fail-closed except when the tool is missing:
+
+| Tool outcome | Default | Override (`--allow-orphan-gpu` / `XGPU_E0_REFUSE_ORPHAN=0`) |
+| --- | --- | --- |
+| Tool unset or not found (`unreachable`) | log and continue | — |
+| Crash, non-JSON, or invalid report | refuse | start |
+| State-based orphan (`verdict=orphan`, `orphan` with job/heartbeat state, `reason` other than GPU pin) | refuse | start |
+| Idle ready app, including compositor GPU ~100% (`orphan_gpu_signature` / `engine_pinned` only) | start (GPU advisory) | — |
+
+The runner reads #46 report fields (`verdict`, `orphan`, `reason`, `job_status`,
+`job`, `app_state`, `heartbeat_age_seconds`, `heartbeat_stale`) and does not
+invent a GPU-pin predicate.

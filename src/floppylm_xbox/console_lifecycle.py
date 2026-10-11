@@ -147,7 +147,12 @@ class LifecycleConfig:
         for name in POLICY_FIELDS:
             value = getattr(self, name)
             if value is not None:
-                data[name] = list(value) if isinstance(value, tuple) else value
+                if isinstance(value, tuple):
+                    data[name] = list(value)
+                elif isinstance(value, float) and value.is_integer():
+                    data[name] = int(value)
+                else:
+                    data[name] = value
         if self.tool is not None:
             data["tool"] = str(self.tool)
         return data
@@ -345,7 +350,11 @@ def lifecycle_environ(
         value = getattr(config, field)
         if value in (None, ""):
             continue
-        env[env_key] = ",".join(value) if isinstance(value, tuple) else str(value)
+        env[env_key] = (
+            ",".join(_flag_value(item) for item in value)
+            if isinstance(value, tuple)
+            else _flag_value(value)
+        )
     if config.refuse_orphan is not None:
         env["XGPU_E0_REFUSE_ORPHAN"] = "1" if config.refuse_orphan else "0"
     return env
@@ -471,9 +480,85 @@ def teardown(*, wait_seconds: float | None = None, **kwargs) -> dict:
     return run_tool("teardown", config=config, **kwargs)
 
 
+# GPU pin on a healthy idle app is advisory. Refuse only a state-based verdict
+# (job status / heartbeat age) from xbox-gpu-training#46.
+GPU_ADVISORY_REASONS = frozenset({"orphan_gpu_signature", "engine_still_pinned"})
+STATE_ORPHAN_MARKERS = (
+    "verdict",
+    "state_orphan",
+    "job_status",
+    "job",
+    "app_state",
+    "heartbeat_age_seconds",
+    "heartbeat_stale",
+)
+
+
+def _report(result: dict) -> dict | None:
+    report = result.get("report")
+    return report if isinstance(report, dict) else None
+
+
+def is_valid_idle_report(result: dict) -> bool:
+    """A parsed idle-gpu object with `when` and a verdict field."""
+    report = _report(result)
+    if report is None or report.get("when") not in ("before", "after"):
+        return False
+    return any(key in report for key in ("ok", "reason", "verdict", "orphan"))
+
+
+def _job_status(report: dict) -> str | None:
+    job = report.get("job_status", report.get("job"))
+    if isinstance(job, dict):
+        job = job.get("status") or job.get("state")
+    return str(job) if job not in (None, "") else None
+
+
+def _gpu_advisory_only(report: dict) -> bool:
+    """Old compositor/GPU pin without a state-based orphan verdict."""
+    if report.get("verdict") == "orphan" or report.get("state_orphan") is True:
+        return False
+    if report.get("heartbeat_stale") is True:
+        return False
+    if report.get("app_state") == "orphan" or _job_status(report) == "orphan":
+        return False
+    reason = report.get("reason")
+    if (
+        isinstance(reason, str)
+        and reason.startswith("orphan")
+        and reason not in GPU_ADVISORY_REASONS
+    ):
+        return False
+    has_state = any(report.get(key) not in (None, "", {}) for key in STATE_ORPHAN_MARKERS)
+    if has_state and report.get("orphan") is True and reason not in GPU_ADVISORY_REASONS:
+        return False
+    if reason in GPU_ADVISORY_REASONS:
+        return True
+    return bool(report.get("orphan") and report.get("engine_pinned") and not has_state)
+
+
 def is_orphan(result: dict) -> bool:
-    report = result.get("report") or {}
-    return bool(report.get("orphan") or report.get("reason") == "orphan_gpu_signature")
+    """True only for #46's state-based orphan verdict. GPU pin is advisory."""
+    report = _report(result)
+    if report is None or _gpu_advisory_only(report):
+        return False
+    if report.get("verdict") == "orphan" or report.get("state_orphan") is True:
+        return True
+    reason = report.get("reason")
+    if isinstance(reason, str) and reason.startswith("orphan") and reason not in GPU_ADVISORY_REASONS:
+        return True
+    return bool(report.get("orphan"))
+
+
+def prepare_verdict(result: dict) -> str:
+    """`unreachable` | `invalid` | `orphan` | `ready` for idle-gpu --when before."""
+    if not result.get("reachable"):
+        return "unreachable"
+    if not is_valid_idle_report(result):
+        return "invalid"
+    if is_orphan(result):
+        return "orphan"
+    return "ready"
 
 
 def stop_console(

@@ -46,8 +46,8 @@ from floppylm_xbox.console_lifecycle import heartbeat as send_host_heartbeat
 from floppylm_xbox.console_lifecycle import (
     heartbeat_seconds,
     idle_gpu,
-    is_orphan,
     load_lifecycle_config,
+    prepare_verdict,
     resolve_tool,
     stop_console,
 )
@@ -251,27 +251,45 @@ class Campaign:
             print(f"console lifecycle record failed: {exc}", flush=True)
 
     def prepare_console(self):
-        """Refuse an orphan GPU signature unless --allow-orphan-gpu. Missing tool is logged."""
+        """Refuse a state-based orphan or invalid/crash report. Missing tool is logged."""
         result = idle_gpu("before", **self._lifecycle_kwargs())
         self._store_lifecycle(idle_gpu_before=result)
-        if not result.get("reachable"):
-            print(f"console idle-gpu --when before skipped: {result.get('error')}", flush=True)
-            return
-        reason = (result.get("report") or {}).get("reason")
-        self.event("console_idle_gpu_before", ok=result.get("ok"), reason=reason)
+        verdict = prepare_verdict(result)
         refuse = True
         if getattr(self, "lifecycle", None) is not None:
             refuse = self.lifecycle.refuse_orphan
         elif getattr(self, "allow_orphan_gpu", False):
             refuse = False
-        if is_orphan(result) and refuse:
-            raise RuntimeError(
-                "orphan GPU signature present; pass --allow-orphan-gpu or set "
-                "XGPU_E0_REFUSE_ORPHAN=0 to start anyway"
-            )
-        if is_orphan(result):
+        report = result.get("report") if isinstance(result.get("report"), dict) else {}
+        reason = report.get("reason") or report.get("verdict") or verdict
+        if verdict == "unreachable":
             print(
-                "orphan GPU signature present; starting because refuse_orphan is false",
+                f"console idle-gpu --when before skipped: {result.get('error')}",
+                flush=True,
+            )
+            return
+        self.event(
+            "console_idle_gpu_before",
+            ok=result.get("ok"),
+            reason=reason,
+            verdict=verdict,
+        )
+        if verdict in ("invalid", "orphan"):
+            detail = result.get("error") or result.get("stderr") or reason
+            print(f"console idle-gpu --when before {verdict}: {detail}", flush=True)
+            if refuse:
+                raise RuntimeError(
+                    f"idle-gpu --when before {verdict}; pass --allow-orphan-gpu or "
+                    "set XGPU_E0_REFUSE_ORPHAN=0 to start anyway"
+                )
+            print(
+                f"{verdict} present; starting because refuse_orphan is false",
+                flush=True,
+            )
+            return
+        if report.get("engine_pinned") or report.get("reason") == "orphan_gpu_signature":
+            print(
+                "console idle-gpu GPU is advisory; idle ready app is reusable",
                 flush=True,
             )
 
@@ -840,7 +858,8 @@ def main():
     parser.add_argument(
         "--allow-orphan-gpu",
         action="store_true",
-        help="start even when idle-gpu --when before reports an orphan signature",
+        help="start even when idle-gpu --when before reports a state-based orphan "
+        "or a crashed/invalid report",
     )
     parser.add_argument(
         "--heartbeat-interval-seconds",
