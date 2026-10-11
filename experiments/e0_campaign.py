@@ -44,6 +44,7 @@ from floppylm.campaign_report import attempt_record, baseline_complete
 from floppylm.model import GPTConfig
 from floppylm_xbox.console_lifecycle import heartbeat as send_host_heartbeat
 from floppylm_xbox.console_lifecycle import (
+    heartbeat_seconds,
     idle_gpu,
     is_orphan,
     load_lifecycle_config,
@@ -64,7 +65,7 @@ class Campaign:
         from_paired: bool = False,
         lifecycle_tool: Path | None = None,
         allow_orphan_gpu: bool = False,
-        host_heartbeat_seconds: float | None = None,
+        heartbeat_interval_seconds: float | None = None,
         lifecycle_config: Path | None = None,
     ):
         if from_grid_ternary and from_paired:
@@ -145,8 +146,8 @@ class Campaign:
             overrides["tool"] = lifecycle_tool
         if allow_orphan_gpu:
             overrides["refuse_orphan"] = False
-        if host_heartbeat_seconds is not None:
-            overrides["heartbeat_seconds"] = host_heartbeat_seconds
+        if heartbeat_interval_seconds is not None:
+            overrides["heartbeat_interval_seconds"] = heartbeat_interval_seconds
         self.lifecycle = load_lifecycle_config(
             campaign_root=root,
             config_path=lifecycle_config,
@@ -156,7 +157,9 @@ class Campaign:
             self.lifecycle = replace(self.lifecycle, package=self.state.get("package") or None)
         self.lifecycle_tool = self.lifecycle.tool
         self.allow_orphan_gpu = not self.lifecycle.refuse_orphan
-        self.heartbeat_seconds = self.lifecycle.heartbeat_seconds
+        self.heartbeat_interval_seconds = heartbeat_seconds(
+            self.lifecycle.heartbeat_interval_seconds
+        )
         current = self.state.setdefault("console_lifecycle", {})
         current["config"] = self.lifecycle.public_dict()
         self.save()
@@ -286,7 +289,7 @@ class Campaign:
             pass
 
     def start_heartbeats(self):
-        interval = getattr(self, "heartbeat_seconds", None)
+        interval = getattr(self, "heartbeat_interval_seconds", None)
         tool = resolve_tool(getattr(self, "lifecycle_tool", None))
         if not interval or interval <= 0 or tool is None or not tool.is_file():
             return
@@ -840,10 +843,11 @@ def main():
         help="start even when idle-gpu --when before reports an orphan signature",
     )
     parser.add_argument(
-        "--host-heartbeat-seconds",
+        "--heartbeat-interval-seconds",
         type=float,
         default=None,
-        help="refresh LocalState/host.heartbeat while the campaign runs (default 300)",
+        help="refresh LocalState/host.heartbeat while the campaign runs "
+        "(omit to use $XGPU_HEARTBEAT_INTERVAL_SECONDS or the tool default 30)",
     )
     a = parser.parse_args()
     campaign = Campaign(
@@ -855,7 +859,7 @@ def main():
         from_paired=a.from_paired,
         lifecycle_tool=a.lifecycle_tool,
         allow_orphan_gpu=a.allow_orphan_gpu,
-        host_heartbeat_seconds=a.host_heartbeat_seconds,
+        heartbeat_interval_seconds=a.heartbeat_interval_seconds,
         lifecycle_config=a.lifecycle_config,
     )
     campaign.run_managed()

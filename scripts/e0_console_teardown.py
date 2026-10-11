@@ -33,7 +33,7 @@ def teardown_campaign(
     *,
     tool: Path | None = None,
     package: str = "",
-    wait_seconds: float | None = None,
+    teardown_wait_seconds: float | None = None,
     config_path: Path | None = None,
     source: str = "execstop",
     run=None,
@@ -43,8 +43,8 @@ def teardown_campaign(
         overrides["tool"] = tool
     if package:
         overrides["package"] = package
-    if wait_seconds is not None:
-        overrides["teardown_wait_seconds"] = wait_seconds
+    if teardown_wait_seconds is not None:
+        overrides["teardown_wait_seconds"] = teardown_wait_seconds
     config = load_lifecycle_config(
         campaign_root=root, config_path=config_path, overrides=overrides or None
     )
@@ -77,13 +77,13 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--lifecycle-tool", type=Path, default=None)
     parser.add_argument("--lifecycle-config", type=Path, default=None)
     parser.add_argument("--package", default="")
-    parser.add_argument("--wait-seconds", type=float, default=None)
+    parser.add_argument("--teardown-wait-seconds", type=float, default=None)
     args = parser.parse_args(argv)
     result = teardown_campaign(
         args.campaign,
         tool=args.lifecycle_tool,
         package=args.package,
-        wait_seconds=args.wait_seconds,
+        teardown_wait_seconds=args.teardown_wait_seconds,
         config_path=args.lifecycle_config,
     )
     print(json.dumps(result, sort_keys=True, default=str), flush=True)

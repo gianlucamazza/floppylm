@@ -14,11 +14,12 @@ import pytest
 from floppylm_xbox import portal
 from floppylm_xbox.console_lifecycle import (
     CONFIG_FILE_ENV,
-    DEFAULT_HEARTBEAT_SECONDS,
     DEFAULT_REFUSE_ORPHAN,
     TOOL_ENV,
     TOOL_FLAGS,
+    TOOL_HEARTBEAT_INTERVAL_DEFAULT,
     heartbeat,
+    heartbeat_seconds,
     idle_gpu,
     is_orphan,
     lifecycle_environ,
@@ -31,6 +32,19 @@ from floppylm_xbox.console_lifecycle import (
 )
 
 ROOT = Path(__file__).resolve().parents[1]
+RETIRED_FLAGS = (
+    "--engine",
+    "--adapter",
+    "--image",
+    "--pid",
+    "--engine-percent",
+    "--cpu-idle-percent",
+    "--wait-seconds",
+    "--password",
+    "--pass",
+    "-p",
+)
+GLOBAL_FLAGS = set(TOOL_FLAGS.values())
 
 MOCK_TOOL = r"""
 import json, os, sys
@@ -40,16 +54,22 @@ log = Path(os.environ["LIFECYCLE_LOG"])
 mode = os.environ.get("LIFECYCLE_MODE", "ok")
 entry = {
     "argv": sys.argv[1:],
-    "UWP_DEVICE_URL": os.environ.get("UWP_DEVICE_URL"),
-    "UWP_DEVICE_USER": os.environ.get("UWP_DEVICE_USER"),
-    "has_password": bool(os.environ.get("OPENAPPX_DEVICE_PASSWORD")),
-    "has_pin": bool(os.environ.get("OPENAPPX_DEVICE_PIN")),
+    "XGPU_PORTAL_URL": os.environ.get("XGPU_PORTAL_URL"),
+    "XGPU_PORTAL_USER": os.environ.get("XGPU_PORTAL_USER"),
+    "has_password": bool(os.environ.get("XGPU_PORTAL_PASSWORD")),
+    "has_pin": bool(os.environ.get("XGPU_PORTAL_TLS_PIN")),
 }
 log.write_text(log.read_text() + json.dumps(entry) + "\n")
 args = sys.argv[1:]
 flags = {
-    "--package", "--image", "--pid", "--adapter", "--engine",
-    "--engine-percent", "--cpu-idle-percent", "--wait-seconds",
+    "--idle-exit-seconds", "--heartbeat-interval-seconds",
+    "--heartbeat-stale-seconds", "--poll-interval-seconds",
+    "--gpu-threshold-percent", "--gpu-sample-count",
+    "--gpu-sample-interval-seconds", "--gpu-engine",
+    "--idle-cpu-percent", "--teardown-wait-seconds",
+    "--process-image", "--package", "--package-family",
+    "--terminate-by", "--portal-url", "--portal-port",
+    "--tls-verify", "--tls-pin", "--credentials",
 }
 i = 0
 while i < len(args) and args[i] in flags:
@@ -154,20 +174,15 @@ def logged_commands(log: Path) -> list[list[str]]:
 
 
 def argv_command(argv: list[str]) -> str:
-    flags = {"--" + name.replace("_", "-") for name in TOOL_FLAGS} | {
-        "--package",
-        "--image",
-        "--pid",
-        "--adapter",
-        "--engine",
-        "--engine-percent",
-        "--cpu-idle-percent",
-        "--wait-seconds",
-    }
     i = 0
-    while i < len(argv) and argv[i] in flags:
+    while i < len(argv) and argv[i] in GLOBAL_FLAGS:
         i += 2
     return argv[i]
+
+
+def assert_no_retired_flags(argv: list[str]) -> None:
+    for flag in RETIRED_FLAGS:
+        assert flag not in argv
 
 
 def test_cli_stays_thin_and_omits_unset_detection_flags(tmp_path):
@@ -183,46 +198,68 @@ def test_cli_stays_thin_and_omits_unset_detection_flags(tmp_path):
         "--when",
         "before",
     ]
-    assert "--engine" not in before
+    assert_no_retired_flags(before)
     assert tool_command(tool, "teardown")[-1] == "teardown"
     assert tool_command(tool, "idle-gpu", "--when", "after")[-2:] == ["--when", "after"]
 
 
 def test_config_defaults_and_overrides(tmp_path, monkeypatch):
-    monkeypatch.delenv("XGPU_E0_GPU_ENGINE", raising=False)
-    defaults = load_lifecycle_config(settings={})
-    assert defaults.heartbeat_seconds == DEFAULT_HEARTBEAT_SECONDS
+    for key in (
+        "XGPU_HEARTBEAT_INTERVAL_SECONDS",
+        "XGPU_GPU_ENGINES",
+        "XGPU_PROCESS_IMAGES",
+        "XGPU_TEARDOWN_WAIT_SECONDS",
+        "XGPU_IDLE_CPU_PERCENT",
+        "XGPU_E0_HOST_HEARTBEAT_SECONDS",
+        "XGPU_E0_GPU_ENGINE",
+        "XGPU_E0_APP_IMAGE",
+    ):
+        monkeypatch.delenv(key, raising=False)
+    monkeypatch.setenv("XGPU_E0_HOST_HEARTBEAT_SECONDS", "99")
+    monkeypatch.setenv("XGPU_E0_APP_IMAGE", "Old.exe")
+    monkeypatch.setenv("XGPU_E0_GPU_ENGINE", "5")
+    defaults = load_lifecycle_config()
+    assert defaults.heartbeat_interval_seconds is None
+    assert defaults.process_images is None
+    assert defaults.gpu_engines is None
+    assert heartbeat_seconds() == TOOL_HEARTBEAT_INTERVAL_DEFAULT
     assert defaults.refuse_orphan is DEFAULT_REFUSE_ORPHAN
-    assert defaults.engine is None
-    assert defaults.adapter is None
-    assert defaults.image is None
-    assert defaults.pid is None
+    assert defaults.gpu_engines is None
+    assert defaults.process_images is None
+    assert defaults.idle_cpu_percent is None
     assert defaults.teardown_wait_seconds is None
+    assert defaults.idle_exit_seconds is None
+    assert defaults.terminate_by is None
 
-    monkeypatch.setenv("XGPU_E0_HOST_HEARTBEAT_SECONDS", "12")
+    monkeypatch.setenv("XGPU_HEARTBEAT_INTERVAL_SECONDS", "12")
     monkeypatch.setenv("XGPU_E0_REFUSE_ORPHAN", "0")
-    monkeypatch.setenv("XGPU_E0_GPU_ENGINE", "3")
-    monkeypatch.setenv("XGPU_E0_GPU_ADAPTER", "1")
-    monkeypatch.setenv("XGPU_E0_APP_IMAGE", "Trainer.exe")
-    monkeypatch.setenv("XGPU_E0_PID", "4242")
-    monkeypatch.setenv("XGPU_E0_TEARDOWN_WAIT_SECONDS", "9")
-    monkeypatch.setenv("XGPU_E0_GPU_ENGINE_PERCENT", "80")
-    monkeypatch.setenv("XGPU_E0_IDLE_CPU_PERCENT", "2")
+    monkeypatch.setenv("XGPU_GPU_ENGINES", "3,5")
+    monkeypatch.setenv("XGPU_PROCESS_IMAGES", "Trainer.exe")
+    monkeypatch.setenv("XGPU_TEARDOWN_WAIT_SECONDS", "9")
+    monkeypatch.setenv("XGPU_GPU_THRESHOLD_PERCENT", "80")
+    monkeypatch.setenv("XGPU_IDLE_CPU_PERCENT", "2")
+    monkeypatch.setenv("XGPU_IDLE_EXIT_SECONDS", "600")
+    monkeypatch.setenv("XGPU_PACKAGE_FAMILY", "Fam")
+    monkeypatch.setenv("XGPU_TERMINATE_BY", "package,pid")
+    monkeypatch.setenv("XGPU_PORTAL_TLS_VERIFY", "pin")
     env_cfg = load_lifecycle_config()
-    assert env_cfg.heartbeat_seconds == 12
+    assert env_cfg.heartbeat_interval_seconds == 12
     assert env_cfg.refuse_orphan is False
-    assert env_cfg.engine == "3"
-    assert env_cfg.adapter == "1"
-    assert env_cfg.image == "Trainer.exe"
-    assert env_cfg.pid == "4242"
+    assert env_cfg.gpu_engines == ("3", "5")
+    assert env_cfg.process_images == ("Trainer.exe",)
     assert env_cfg.teardown_wait_seconds == 9
+    assert env_cfg.idle_cpu_percent == 2
+    assert env_cfg.idle_exit_seconds == 600
+    assert env_cfg.package_family == "Fam"
+    assert env_cfg.terminate_by == ("package", "pid")
+    assert env_cfg.tls_verify == "pin"
 
     file_cfg = tmp_path / "lifecycle.json"
     file_cfg.write_text(
         json.dumps(
             {
-                "heartbeat_seconds": 40,
-                "engine": "7",
+                "heartbeat_interval_seconds": 40,
+                "gpu_engines": ["7"],
                 "refuse_orphan": True,
                 "package": "from-file",
             }
@@ -230,8 +267,8 @@ def test_config_defaults_and_overrides(tmp_path, monkeypatch):
     )
     monkeypatch.setenv(CONFIG_FILE_ENV, str(file_cfg))
     from_file = load_lifecycle_config()
-    assert from_file.heartbeat_seconds == 40
-    assert from_file.engine == "7"
+    assert from_file.heartbeat_interval_seconds == 40
+    assert from_file.gpu_engines == ("7",)
     assert from_file.refuse_orphan is True
     assert from_file.package == "from-file"
 
@@ -242,31 +279,47 @@ def test_config_defaults_and_overrides(tmp_path, monkeypatch):
             {
                 "schema": "floppylm.e0.campaign.v1",
                 "console_lifecycle": {
-                    "config": {"heartbeat_seconds": 88, "engine": "2", "image": "Host.exe"}
+                    "config": {
+                        "heartbeat_interval_seconds": 88,
+                        "gpu_engines": ["2"],
+                        "process_images": ["Host.exe"],
+                    }
                 },
             }
         )
     )
     from_campaign = load_lifecycle_config(campaign_root=root)
-    assert from_campaign.heartbeat_seconds == 88
-    assert from_campaign.engine == "2"
-    assert from_campaign.image == "Host.exe"
+    assert from_campaign.heartbeat_interval_seconds == 88
+    assert from_campaign.gpu_engines == ("2",)
+    assert from_campaign.process_images == ("Host.exe",)
     tool = write_tool(tmp_path)
     cli = load_lifecycle_config(
         campaign_root=root,
-        overrides={"heartbeat_seconds": 3, "engine": "9", "tool": tool},
+        overrides={
+            "heartbeat_interval_seconds": 3,
+            "gpu_engines": ("9",),
+            "tool": tool,
+        },
     )
-    assert cli.heartbeat_seconds == 3
-    assert cli.engine == "9"
+    assert cli.heartbeat_interval_seconds == 3
+    assert cli.gpu_engines == ("9",)
 
     forwarded = tool_command(cli, "idle-gpu", "--when", "before")
-    assert forwarded[forwarded.index("--engine") + 1] == "9"
-    assert forwarded[forwarded.index("--image") + 1] == "Host.exe"
+    assert forwarded[forwarded.index("--gpu-engine") + 1] == "9"
+    assert forwarded[forwarded.index("--process-image") + 1] == "Host.exe"
+    assert forwarded[forwarded.index("--heartbeat-interval-seconds") + 1] == "3"
+    assert_no_retired_flags(forwarded)
+    command_at = forwarded.index("idle-gpu")
+    assert forwarded[command_at - 2] != "idle-gpu"
+    assert "idle-gpu" in forwarded[command_at:]
     torn = tool_command(
         load_lifecycle_config(overrides={"tool": tool, "teardown_wait_seconds": 15}),
         "teardown",
     )
-    assert torn[-2:] == ["--wait-seconds", "15"]
+    assert "--teardown-wait-seconds" in torn
+    assert torn[torn.index("--teardown-wait-seconds") + 1] == "15"
+    assert torn[-1] == "teardown"
+    assert_no_retired_flags(torn)
 
 
 def test_tool_path_comes_from_env_or_flag(tmp_path, monkeypatch):
@@ -282,6 +335,7 @@ def test_tool_path_comes_from_env_or_flag(tmp_path, monkeypatch):
 
 def test_lifecycle_environ_maps_xbox_settings_without_argv_secrets(tmp_path, monkeypatch):
     monkeypatch.delenv("UWP_DEVICE_URL", raising=False)
+    monkeypatch.delenv("XGPU_PORTAL_URL", raising=False)
     env = lifecycle_environ(
         {
             "XBOX_IP": "192.0.2.10",
@@ -292,10 +346,11 @@ def test_lifecycle_environ_maps_xbox_settings_without_argv_secrets(tmp_path, mon
             "XGPU_E0_PACKAGE": "pkg",
         }
     )
+    assert env["XGPU_PORTAL_URL"] == "https://192.0.2.10:11443"
+    assert env["XGPU_PORTAL_USER"] == "portal-user"
+    assert env["XGPU_PORTAL_PASSWORD"] == "secret"
+    assert env["XGPU_PORTAL_TLS_PIN"] == "ab" * 32
     assert env["UWP_DEVICE_URL"] == "https://192.0.2.10:11443"
-    assert env["UWP_DEVICE_USER"] == "portal-user"
-    assert env["OPENAPPX_DEVICE_PASSWORD"] == "secret"
-    assert env["OPENAPPX_DEVICE_PIN"] == "ab" * 32
     tool = write_tool(tmp_path)
     log = tool_log(tmp_path)
     monkeypatch.setenv("LIFECYCLE_LOG", str(log))
@@ -303,9 +358,23 @@ def test_lifecycle_environ_maps_xbox_settings_without_argv_secrets(tmp_path, mon
     monkeypatch.setenv("XBOX_PASS", "secret")
     result = heartbeat(tool=tool, package="pkg")
     assert result["ok"]
-    joined = " ".join(result["argv"])
-    assert "secret" not in joined
-    assert "--password" not in joined
+    dumped = json.dumps(result, default=str)
+    assert "secret" not in dumped
+    assert "--password" not in dumped
+    assert_no_retired_flags(result["argv"])
+    recorded = json.loads(log.read_text().splitlines()[0])
+    assert recorded["has_password"] is True
+    assert "secret" not in log.read_text()
+
+
+def test_run_tool_rejects_password_cli_flags(tmp_path, monkeypatch):
+    tool = write_tool(tmp_path)
+    monkeypatch.setattr(
+        "floppylm_xbox.console_lifecycle.tool_command",
+        lambda *_a, **_k: [sys.executable, str(tool), "--password", "secret", "heartbeat"],
+    )
+    with pytest.raises(RuntimeError, match="password must not be a CLI flag"):
+        run_tool("heartbeat", tool=tool)
 
 
 def test_idle_gpu_before_detects_orphan_signature(tmp_path, monkeypatch):
@@ -371,6 +440,9 @@ def test_campaign_refuses_orphan_unless_flag(
     assert campaign.state["status"] == "stopped"
     assert is_orphan(campaign.state["console_lifecycle"]["idle_gpu_before"])
     assert "teardown" not in campaign.state["console_lifecycle"]
+    stored = campaign.state["console_lifecycle"]["config"]
+    assert "password" not in stored
+    assert "secret" not in json.dumps(stored)
 
     allowed = campaign_module.Campaign(
         tmp_path / "allowed",
@@ -417,7 +489,7 @@ def test_teardown_on_terminal_paths(tmp_path, monkeypatch, campaign_module, outc
         proof,
         speed,
         lifecycle_tool=tool,
-        host_heartbeat_seconds=60,
+        heartbeat_interval_seconds=60,
     )
     if outcome == "completed":
         campaign.run = lambda: campaign.state.update(status="completed")
@@ -444,6 +516,8 @@ def test_teardown_on_terminal_paths(tmp_path, monkeypatch, campaign_module, outc
     assert commands[0] == "idle-gpu"
     assert "teardown" in commands
     assert commands[-1] == "idle-gpu"
+    for argv in logged_commands(log):
+        assert_no_retired_flags(argv)
 
 
 def test_heartbeat_while_campaign_runs(tmp_path, monkeypatch, campaign_module):
@@ -457,7 +531,7 @@ def test_heartbeat_while_campaign_runs(tmp_path, monkeypatch, campaign_module):
         proof,
         speed,
         lifecycle_tool=tool,
-        host_heartbeat_seconds=0.05,
+        heartbeat_interval_seconds=0.05,
     )
     campaign.run = lambda: time.sleep(0.16)
     campaign.report = lambda: None
@@ -504,6 +578,26 @@ def test_execstop_helper_records_failed_tool(tmp_path, monkeypatch, teardown_mod
     assert summary["status"] == "completed"
 
 
+def test_execstop_cli_uses_teardown_wait_seconds(tmp_path, teardown_module):
+    captured = {}
+
+    def fake(root, **kwargs):
+        captured.update(kwargs)
+        captured["root"] = root
+        return {"ok": True}
+
+    teardown_module.teardown_campaign = fake
+    assert (
+        teardown_module.main(
+            ["--campaign", str(tmp_path), "--teardown-wait-seconds", "15"]
+        )
+        == 0
+    )
+    assert captured["teardown_wait_seconds"] == 15
+    with pytest.raises(SystemExit):
+        teardown_module.main(["--campaign", str(tmp_path), "--wait-seconds", "15"])
+
+
 def test_env_refuse_orphan_override_allows_start(tmp_path, monkeypatch, campaign_module):
     tool = write_tool(tmp_path)
     log = tool_log(tmp_path)
@@ -536,6 +630,55 @@ def test_unit_template_uses_environment_files():
     assert "gianlucamazza.it" not in lowered
     assert "engine 5" not in lowered
     assert "--engine" not in text
+
+
+def test_docs_and_example_use_canonical_names():
+    docs = (ROOT / "docs/operations/e0-console-lifecycle.md").read_text()
+    example = (ROOT / "docs/operations/e0-lifecycle.env.example").read_text()
+    text = docs + "\n" + example
+    for token in (
+        "--idle-exit-seconds",
+        "--heartbeat-interval-seconds",
+        "--heartbeat-stale-seconds",
+        "--poll-interval-seconds",
+        "--gpu-threshold-percent",
+        "--gpu-sample-count",
+        "--gpu-sample-interval-seconds",
+        "--gpu-engine",
+        "--idle-cpu-percent",
+        "--teardown-wait-seconds",
+        "--process-image",
+        "--package-family",
+        "--terminate-by",
+        "--portal-url",
+        "--portal-port",
+        "--tls-verify",
+        "--tls-pin",
+        "--credentials",
+        "XGPU_IDLE_EXIT_SECONDS",
+        "XGPU_HEARTBEAT_INTERVAL_SECONDS",
+        "XGPU_PORTAL_PASSWORD",
+    ):
+        assert token in text
+    for token in (
+        "--host-heartbeat-seconds",
+        "XGPU_E0_HOST_HEARTBEAT_SECONDS",
+        "XGPU_E0_APP_IMAGE",
+        "XGPU_E0_PID",
+        "XGPU_E0_GPU_ADAPTER",
+        "XGPU_E0_GPU_ENGINE",
+    ):
+        assert token not in text
+    for token in (
+        "XGPU_E0_HOST_HEARTBEAT_SECONDS",
+        "XGPU_E0_APP_IMAGE",
+        "XGPU_E0_PID",
+        "XGPU_E0_GPU_ADAPTER",
+        "--wait-seconds",
+        "--engine-percent",
+        "--cpu-idle-percent",
+    ):
+        assert token not in example
 
 
 def test_new_sources_have_no_personal_hosts_or_engine_assumption():
