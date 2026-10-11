@@ -153,7 +153,8 @@ def idle_report(when, *, orphan=False, job_active=False, after_fail=False, pinne
     }
 
 if command == "prepare":
-    print(json.dumps({"cleared": ["inbox/shutdown"] if mode == "prepare-cleared" else []}, sort_keys=True), flush=True)
+    cleared = ["inbox/shutdown"] if mode == "prepare-cleared" else []
+    print(json.dumps({"cleared": cleared}, sort_keys=True), flush=True)
     raise SystemExit(0)
 if command == "heartbeat":
     print("heartbeat: ok", flush=True)
