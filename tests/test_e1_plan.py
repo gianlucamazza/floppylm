@@ -167,6 +167,27 @@ def test_seed0_fixed_rate_05_shape_repacks():
         assert abs(packed - TARGET_BYTES) > abs(85934 - TARGET_BYTES)
 
 
+def test_seed0_learned_rate_05_shape_repacks():
+    """Closed book from the 2026-10-11 solver. Does not walk the grid."""
+    spec = book_specs()[1]
+    assert (spec.rate, spec.learned) == (0.5, True)
+    book = VectorBook(spec.dimension, spec.rate, 0, learned=True)
+    cfg = vector_config(256, 1, 801)
+    assert ff_bounds(256)[0] <= cfg.d_ff <= ff_bounds(256)[1]
+    seed_all(0)
+    model = TinyGPT(cfg, book)
+    assert len(pack_sections(model)[0]) == 85935
+    assert model.stored_params() == 942_976
+    ok, reasons = admissible({spec.rate: 85935}, TARGET_BYTES)
+    assert ok, reasons
+    for d_ff, nbytes in ((800, 85809), (802, 85972)):
+        seed_all(0)
+        neighbor = TinyGPT(vector_config(256, 1, d_ff), book)
+        packed = len(pack_sections(neighbor)[0])
+        assert packed == nbytes
+        assert abs(packed - TARGET_BYTES) > abs(85935 - TARGET_BYTES)
+
+
 def test_vector_recipe_rejects_a_hand_specified_shape():
     with pytest.raises(ValueError, match="caller-supplied width"):
         vector_recipe(d=80, n_layers=4, d_ff=320, lr=0.01, wd=0.1)
