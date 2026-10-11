@@ -7,12 +7,20 @@ from pathlib import Path
 import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
-NATIVE_BINARY = Path(
-    os.environ.get(
-        "XGPU_E0_BINARY",
-        ROOT.parents[1] / "tooling/xbox-gpu-training/build/xgpu_e0_train",
-    )
-)
+
+
+def _default_native_binary() -> Path:
+    """Optional host-layout default. Unset XGPU_E0_BINARY on a shallow checkout."""
+    try:
+        return ROOT.parents[1] / "tooling/xbox-gpu-training/build/xgpu_e0_train"
+    except IndexError:
+        return ROOT / "xbox-gpu-training/build/xgpu_e0_train"
+
+
+if os.environ.get("XGPU_E0_BINARY"):
+    NATIVE_BINARY = Path(os.environ["XGPU_E0_BINARY"])
+else:
+    NATIVE_BINARY = _default_native_binary()
 
 
 @pytest.fixture(scope="session")

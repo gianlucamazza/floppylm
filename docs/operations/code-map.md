@@ -38,7 +38,7 @@ portal.py        Device Portal: settings, pinned TLS, verified assets, submissio
 | Script                         | Purpose                                                | Main flags                                                                                                                                                                                                       |
 | ------------------------------ | ------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `e0_v2.py`                     | E0 v2 harness: plan, train, grid, parity, freeze, test | modes `--plan` `--run` `--resume` `--retry` `--grid` `--parity` `--freeze` `--final-test` `--verify-data`; `--smoke`, `--functional`, `--name` (required by `--freeze`), `--backend cpu\|xbox`, `--xbox-acceptance`, `--run-id`, `--threads`, `--jobs`, `--val-bytes`, `--budget-frac`, `--tokens`, `--branches`, shape/recipe flags |
-| `e0_campaign.py`               | Sequential frozen Xbox E0 campaign                     | `--out` `--acceptance` `--benchmark` `--recover`                                                                                                                                                                 |
+| `e0_campaign.py`               | Sequential frozen Xbox E0 campaign                     | `--out` `--acceptance` `--benchmark` `--recover` `--lifecycle-tool` `--lifecycle-config` `--allow-orphan` `--on-tool-unreachable` `--heartbeat-interval-seconds`                                                                     |
 | `xbox_acceptance.py`           | Operation cases, model fixtures, optimizer, resume     | `--out`                                                                                                                                                                                                          |
 | `xbox_benchmark.py`            | Representative synthetic throughput                    | `--out` `--acceptance` `--steps` `--summarize`                                                                                                                                                                                 |
 | `xbox_worker_acceptance.py`    | Identity/oversized rejection and worker reuse          | `--out` `--expect-broken`                                                                                                                                                                                        |
@@ -60,6 +60,13 @@ JSON Schemas of every file exchanged with the native backend; see [schemas/READM
 - `scripts/e0_recover.py --out DIR --acceptance FILE --benchmark FILE`: explicit operator
   recover. Starts the bound package with `openappx deploy --start` only when the
   process is missing, waits for a live worker, then execs `e0_campaign.py --recover`.
+- `scripts/e0_console_teardown.py --campaign DIR`: unit `ExecStop` helper. Invokes
+  xbox-gpu-training `e0_console_lifecycle.py` `teardown` then `idle-gpu --when after`
+  ([PR #46](https://github.com/gianlucamazza/xbox-gpu-training/pull/46)). Settings:
+  [lifecycle config](e0-console-lifecycle.md). Records into `campaign.json` /
+  `summary.json`; an unreachable tool or console is logged and does not raise.
+- `units/floppylm-e0-campaign@.service`: user-unit template; `EnvironmentFile=` for
+  xbox.env and e0-lifecycle.env; `ExecStop` teardown.
 - `scripts/e1_qualify.py`, `scripts/e1_cpu_profile.py`: ADR 0013 functional qualification and the
   scalar CPU profile ([evidence](../evidence/e1-qualification-20261001/notes.md)).
 - `scripts/contract_fixtures.py`: regenerate the golden contract instances in

@@ -38,6 +38,7 @@ Update the owner; every other document links to it instead of copying.
 | Approved completion scope and execution order  | [completion plan](completion-plan.md) |
 | E0–E4 definitions and completion gates         | [roadmap](roadmap.md)                                                                                                              |
 | Xbox procedure                                 | [runbook](operations/xbox-e0.md)                                                                                                   |
+| E0 console lifecycle settings                  | [lifecycle config](operations/e0-console-lifecycle.md)                                                                             |
 | Native backend contracts (`floppylm.*.v1`) and the inbox protocol | [schemas](../schemas/README.md), [inbox protocol](contracts/inbox-protocol.md) |
 | Modules and CLI flags                          | [code map](operations/code-map.md)                                                                                                 |
 | Toolchain and machines                         | [stack](stack.md)                                                                                                                  |
