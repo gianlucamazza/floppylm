@@ -119,6 +119,21 @@ campaign runs it refreshes `host.heartbeat`. On completion,
 failure or cancel — and from the unit `ExecStop` — it runs `teardown` then
 `idle-gpu --when after` and stores the reports in `campaign.json` / `summary.json`.
 
+**Minimum versions before any real E0 campaign.** The host must run
+`scripts/e0_console_lifecycle.py` from xbox-gpu-training at or after `516c8b3c`
+(PR #46) together with this repository at or after `ba411fa7` (PR #31), and the
+console must run XgpuE0 `0.1.0.122` or later. The app ignores a `host.heartbeat`
+whose `instance_id` does not match its `instance.json`, so an older host tool
+(heartbeats without `instance_id`) would let the app idle-exit mid-campaign.
+That mismatch path is covered by unit tests only, not by a console run. The
+`start_time_unknown` / `orphan: null` path is likewise unit-tested only. Point
+`XGPU_E0_CONSOLE_LIFECYCLE` at
+`<xbox-gpu-training checkout>/scripts/e0_console_lifecycle.py` on a checkout
+that contains `516c8b3c` and confirm `device.json` reports the expected package
+before launch. For a real campaign, set
+`XGPU_E0_ON_TOOL_UNREACHABLE=refuse` in `e0-lifecycle.env` so a missing tool
+blocks the start instead of being skipped silently.
+
 ```bash
 # Set XGPU_E0_CONSOLE_LIFECYCLE and Device Portal keys in xbox.env / e0-lifecycle.env
 systemd-run --user --unit=floppylm-e0-campaign-<unique> \
