@@ -6,6 +6,7 @@ import numpy as np
 import pytest
 
 from floppylm.e1_pilot import (
+    _write_json,
     cell_id,
     cell_plan,
     freeze_selection,
@@ -271,6 +272,7 @@ def test_signal_uses_eligible_cells_and_does_not_decide_the_verdict(tmp_path):
     assert excluded == {f"vq-0.75-learned-s{seed}" for seed in (0, 1, 2)}
     assert {item["s3_error"] for item in signal["exclusions"]} == {"solver returned the same shape"}
     assert signal["costs"]["trunk_seconds"] == 19.5
+    assert signal["costs"]["account_complete"] is True
     assert {item["stored_params"] for item in signal["costs"]["cells"]} == {10}
     assert "total_flops" not in signal["costs"]
     assert all(item["gate"] is False for item in signal["saturation"])
@@ -405,6 +407,31 @@ def test_score_final_test_reads_the_split_once_after_the_reservation(tmp_path):
     assert isinstance(scored["results"][0]["test_bpb"], float)
     with pytest.raises(ValueError, match="once"):
         score_final_test(data, dest, {"ternary-s0": blob})
+
+
+def test_summary_json_writes_a_numpy_bool(tmp_path):
+    path = tmp_path / "summary.json"
+    _write_json(
+        path,
+        {"saturated": np.bool_(False), "abs_delta": np.float64(0.05), "gate": False},
+    )
+    loaded = json.loads(path.read_text())
+    assert loaded["saturated"] is False
+    assert loaded["abs_delta"] == 0.05
+    assert type(loaded["saturated"]) is bool
+    assert type(loaded["abs_delta"]) is float
+
+
+def test_missing_trunk_seconds_stay_null():
+    rows = _campaign()
+    rows[0]["attempts"][0]["trunk_seconds"] = None
+    rows[0]["account_recorded"] = False
+    signal = signal_from_cells(rows)
+    assert signal["costs"]["account_complete"] is False
+    assert signal["costs"]["trunk_seconds"] is None
+    saved = next(row for row in signal["costs"]["cells"] if row["id"] == "ternary-s0")
+    assert saved["trunk_seconds"] is None
+    assert saved["account_complete"] is False
 
 
 def test_score_final_test_refuses_before_the_reservation(tmp_path):

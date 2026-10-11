@@ -16,6 +16,7 @@ evidence/e0-v2/selections/<name>.test.json   # final test, once per selection
 evidence/xbox-e0-YYYYMMDD[-tag]/             # hand-written package acceptance: notes.md + JSON proofs
 evidence/e0-lite/pre-v2/                     # stopped pre-v2 grid, diagnostic only
 evidence/e1-qualification-YYYYMMDD/          # E1 functional qualification (ADR 0013), not scientific E1
+evidence/e1-1-16/<cell-id>/                  # 1/16 scientific CPU cell: summary.json and notes.md
 ```
 
 The full manifest, state and artifacts of each run live in `runs/<run_id>/` (outside Git; only
@@ -204,6 +205,14 @@ Same campaign, eligible MLP repairs only. The green mean is the two gelu seeds, 
 round trips, vector storage/reconstruction probes and deterministic partial-quantization canaries
 under [ADR 0013](../adr/0013-e1-functional-qualification.md). It is neither scientific E1 nor Xbox
 vector acceptance; the producing code is `scripts/e1_qualify.py` on `main`.
+
+### E1 1/16 pilot
+
+[e1-1-16/ternary-s0](e1-1-16/ternary-s0/notes.md): scientific CPU cell, not a console job.
+The first attempt at `d_ff` 262 packed outside ±1%. S3 repaired it to `d_ff` 266.
+Repair bytes are 85849 / 85906 / 85761 and validation bpb is 1.2997 / 1.2379 / 1.1863.
+The repair is eligible. Saturation is recorded and is not a gate. Trunk seconds were
+not saved. This cell is not the signal and not the F1 verdict. The test split was not opened.
 
 A dated narrative of these packages is in the [archive](../archive/xbox-e0-history.md).
 `ca781f` is the first row16 pair with both seeds eligible under ADR 0015. The rest of the E0

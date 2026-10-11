@@ -324,9 +324,26 @@ def _eligible(branches: list[dict]) -> tuple[bool, list[str]]:
     return admissible(sizes, TARGET_BYTES)
 
 
+def _json_ready(value: object) -> object:
+    """Turn numpy scalars into JSON values. A numpy bool is not a Python bool."""
+    if isinstance(value, dict):
+        return {str(key): _json_ready(item) for key, item in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [_json_ready(item) for item in value]
+    if isinstance(value, np.bool_):
+        return bool(value)
+    if isinstance(value, np.floating):
+        return float(value)
+    if isinstance(value, np.integer):
+        return int(value)
+    if value is None or isinstance(value, (str, bool, int, float)):
+        return value
+    return value
+
+
 def _write_json(path: Path, payload: dict) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(payload, indent=2) + "\n")
+    path.write_text(json.dumps(_json_ready(payload), indent=2) + "\n")
 
 
 def _notes(summary: dict) -> str:
@@ -345,6 +362,12 @@ def _notes(summary: dict) -> str:
         f"Saturation |4T − 2T| is {summary['saturation']['abs_delta']}. "
         "It is recorded and is not a gate.\n"
         f"Eligible for the signal: {summary['eligible']}.\n"
+        + (
+            "Trunk seconds were not saved. The training finished and the summary "
+            "writer failed before the account was written.\n"
+            if summary.get("account_recorded") is False
+            else ""
+        )
     )
 
 
@@ -451,6 +474,7 @@ def _run_locked_cell(index: int, data_dir: Path, run_root: Path, evidence_root: 
                 "trunk_seconds": account["trunk_seconds"],
             }
         )
+        _write_json(run_dir / "attempts.json", {"attempts": attempts, "s3_error": s3_error})
         if ok or retry_count == 1:
             break
         try:
@@ -460,7 +484,7 @@ def _run_locked_cell(index: int, data_dir: Path, run_root: Path, evidence_root: 
             break
     counted = attempts[-1]
     branches = counted["branches"]
-    delta = abs(branches[2]["val_bpb"] - branches[1]["val_bpb"])
+    delta = float(abs(branches[2]["val_bpb"] - branches[1]["val_bpb"]))
     summary = {
         "kind": "scientific-cell",
         "id": built["id"],
@@ -493,7 +517,7 @@ def _run_locked_cell(index: int, data_dir: Path, run_root: Path, evidence_root: 
         "saturation": {
             "abs_delta": delta,
             "criterion": f"|bpb(4T) - bpb(2T)| < {SATURATION_ABS}",
-            "saturated": delta < SATURATION_ABS,
+            "saturated": bool(delta < SATURATION_ABS),
             "gate": False,
         },
         "flops_per_token": built["model"].flops_per_token(),
@@ -558,13 +582,17 @@ def _check_summary(summary: dict, plan: dict) -> None:
         raise ValueError("cell eligibility does not match packed bytes")
 
 
-def _trunk_seconds(summary: dict) -> float:
+def _trunk_seconds(summary: dict) -> float | None:
+    """Sum recorded trunk seconds. A missing account stays null and is not invented."""
     attempts = summary.get("attempts")
     if not isinstance(attempts, list) or not attempts:
         raise ValueError("cell costs need the recorded attempts")
     total = 0.0
     for attempt in attempts:
-        total += _required_float(attempt.get("trunk_seconds"), "cell costs need trunk_seconds")
+        seconds = attempt.get("trunk_seconds")
+        if seconds is None:
+            return None
+        total += _required_float(seconds, "cell costs need trunk_seconds")
     return total
 
 
@@ -635,10 +663,12 @@ def signal_from_cells(summaries: list[dict] | tuple[dict, ...]) -> dict:
                 "gate": False,
             }
         )
+        trunk_seconds = _trunk_seconds(summary)
         costs_cells.append(
             {
                 "id": summary["id"],
-                "trunk_seconds": _trunk_seconds(summary),
+                "trunk_seconds": trunk_seconds,
+                "account_complete": trunk_seconds is not None,
                 "flops_per_token": _required_number(
                     summary.get("flops_per_token"), "cell costs need flops_per_token"
                 ),
@@ -778,7 +808,12 @@ def signal_from_cells(summaries: list[dict] | tuple[dict, ...]) -> dict:
         "f1_abl": ablations,
         "saturation": saturation,
         "costs": {
-            "trunk_seconds": sum(row["trunk_seconds"] for row in costs_cells),
+            "trunk_seconds": (
+                sum(row["trunk_seconds"] for row in costs_cells)
+                if all(row["account_complete"] for row in costs_cells)
+                else None
+            ),
+            "account_complete": all(row["account_complete"] for row in costs_cells),
             "cells": costs_cells,
         },
         "exclusions": exclusions,
