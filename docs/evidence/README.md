@@ -214,6 +214,12 @@ Repair bytes are 85849 / 85906 / 85761 and validation bpb is 1.2997 / 1.2379 / 1
 The repair is eligible. Saturation is recorded and is not a gate. Trunk seconds were
 not saved. This cell is not the signal and not the F1 verdict. The test split was not opened.
 
+[e1-1-16/ternary-s1](e1-1-16/ternary-s1/notes.md): scientific CPU cell, not a console job.
+`d_ff` stayed 262. Bytes are 85169 / 85003 / 85142 and validation bpb is
+1.2946 / 1.2275 / 1.1811. The 2T file is outside ±1%, so the cell is ineligible.
+S3 did not run because the 4T file is inside the window. Trunk seconds are 8876.
+This cell is not the signal and not the F1 verdict. The test split was not opened.
+
 A dated narrative of these packages is in the [archive](../archive/xbox-e0-history.md).
 `ca781f` is the first row16 pair with both seeds eligible under ADR 0015. The rest of the E0
 grid, paired σ and the held-out test remain open; the [roadmap](../roadmap.md) defines those gates.
