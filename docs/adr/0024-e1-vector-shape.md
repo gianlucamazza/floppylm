@@ -65,15 +65,17 @@ The pilot has not started. No console job is authorized.
 | --- | --- | --- | --- | --- | --- | --- |
 | rate 0.5, fixed | closed | 80 | 12 | 247 | 85934 | 1039040 |
 | rate 0.5, learned | closed | 256 | 1 | 801 | 85935 | 942976 |
-| rate 0.75, fixed | open |  |  |  |  |  |
+| rate 0.75, fixed | closed | 80 | 8 | 258 | 85938 | 720640 |
 | rate 0.75, learned | open |  |  |  |  |  |
 
 The fixed rate-0.5 file is 3.5 bytes from 85937.5. Re-packing `d_ff` 246 and
 248 at the same width and depth yields 85785 and 86031 bytes. Both are farther
 from the target. The learned rate-0.5 file is 2.5 bytes from 85937.5.
 Re-packing `d_ff` 800 and 802 at the same width and depth yields 85809 and
-85972 bytes. Both are farther from the target. Both arms copy learning rate
-0.003 and weight decay 0.1.
+85972 bytes. Both are farther from the target. The fixed rate-0.75 file is
+0.5 bytes from 85937.5. Re-packing `d_ff` 257 and 259 at the same width and
+depth yields 85803 and 86070 bytes. Both are farther from the target. Each
+closed arm copies learning rate 0.003 and weight decay 0.1.
 
 ## Alternatives
 

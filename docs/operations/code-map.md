@@ -19,7 +19,7 @@ runlog.py        unique ids, exclusive directories, atomic writes, state, manife
 data.py          TinyStoriesV2: exact dedup, hash split, manifest, reproducibility
 bpe.py           train-only byte-exact BPE oracle (E1 functional qualification, ADR 0013)
 vq.py            VQB1 book and vector oracle; learned reseeds continue the PCG32 stream; VQF1 stays a fixture
-e1_plan.py       1/16 host plan: stored scalar arms, four G=8 books, ADR 0024 seed-0 solver, F1. Does not train. Fixed and learned rate 0.5 are closed; two books are open. The pilot has not started
+e1_plan.py       1/16 host plan: stored scalar arms, four G=8 books, ADR 0024 seed-0 solver, F1. Does not train. Three G=8 books are closed; the learned rate-0.75 book is open. The pilot has not started
 ```
 
 ## Xbox execution — `src/floppylm_xbox/`
