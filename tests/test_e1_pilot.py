@@ -1,16 +1,21 @@
 import json
 
+import numpy as np
 import pytest
 
 from floppylm.e1_pilot import (
     cell_plan,
     freeze_selection,
+    materialize_cell,
     open_final_test,
     pilot_schedule,
     pilot_t,
     run_functional_smoke,
+    run_scientific_cell,
+    score_cooldown,
 )
-from floppylm.e1_plan import ff_bounds, published_shapes, shape_for_seed
+from floppylm.e1_plan import ff_bounds, init_pack, published_shapes, scalar_arms, shape_for_seed
+from floppylm.model import GPTConfig, TinyGPT
 
 
 def test_schedule_lands_on_t_2t_4t():
@@ -91,3 +96,49 @@ def test_freeze_and_final_test_stay_closed_for_a_functional_record(tmp_path):
     assert reservation["test_split_read"] is False
     with pytest.raises(ValueError, match="once"):
         open_final_test(kept, tmp_path / "sci")
+
+
+def test_materialize_cell_keeps_the_published_seed0_shape_and_shared_t():
+    ternary = materialize_cell(0)
+    assert ternary["spec"].tokens == 20_780_800
+    assert ternary["spec"].batch == 25
+    assert ternary["token_ends"] == (20_780_800, 41_561_600, 83_123_200)
+    assert (ternary["cfg"].d, ternary["cfg"].n_layers, ternary["cfg"].d_ff) == (80, 4, 262)
+    two = materialize_cell(3)
+    cfg, record = init_pack(scalar_arms()[1].nominal, seed=0)
+    assert two["cfg"].d_ff == cfg.d_ff == record["submitted_d_ff"]
+    assert (two["cfg"].d, two["cfg"].n_layers) == (96, 3)
+    vector = materialize_cell(6)
+    shape = published_shapes()[0]
+    assert (vector["cfg"].d, vector["cfg"].n_layers, vector["cfg"].d_ff) == (
+        shape.d,
+        shape.n_layers,
+        shape.d_ff,
+    )
+    assert vector["spec"].tokens == ternary["spec"].tokens
+    assert vector["model"].cfg.core_fmt == "vq"
+    repaired = materialize_cell(7)
+    assert (repaired["cfg"].d, repaired["cfg"].n_layers) == (shape.d, shape.n_layers)
+    lo, hi = ff_bounds(shape.d)
+    assert lo <= repaired["cfg"].d_ff <= hi
+
+
+def test_score_cooldown_packs_the_model_and_scores_the_given_bytes():
+    cfg = GPTConfig(vocab=256, d=32, n_layers=1, n_heads=2, d_ff=48, ctx=32)
+    row = score_cooldown(
+        TinyGPT(cfg),
+        np.arange(400, dtype=np.uint8),
+        {"end_step": 4, "tokens_seen": 256, "cooldown_steps": 1},
+    )
+    assert row["model_bytes"] == len(row["blob"])
+    assert len(row["sha256"]) == 64
+    assert row["val_scored_bytes"] > 0
+    assert isinstance(row["val_bpb"], float)
+
+
+def test_scientific_cell_does_not_start_without_the_val_split(tmp_path):
+    (tmp_path / "train.bin").write_bytes(b"abc")
+    with pytest.raises(ValueError, match="frozen train and val"):
+        run_scientific_cell(0, tmp_path, tmp_path / "runs", tmp_path / "evidence")
+    assert not (tmp_path / "runs" / "job.lock").exists()
+    assert not (tmp_path / "evidence").exists()
