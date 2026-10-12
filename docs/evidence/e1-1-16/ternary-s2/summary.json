@@ -1,0 +1,226 @@
+{
+  "kind": "scientific-cell",
+  "id": "ternary-s2",
+  "index": 2,
+  "arm": "ternary",
+  "seed": 2,
+  "core": "ternary",
+  "d": 80,
+  "n_layers": 4,
+  "nominal_d_ff": 262,
+  "submitted_d_ff": 267,
+  "rate": null,
+  "learned": null,
+  "token_T": 20780800,
+  "token_ends": [
+    20780800,
+    41561600,
+    83123200
+  ],
+  "batch": 25,
+  "lr": 0.01,
+  "wd": 0.1,
+  "threads": 8,
+  "source": "63cbe83745cff2982c3e860caa17912eb043523c",
+  "console_job": false,
+  "final_test_opened": false,
+  "test_split_read": false,
+  "signal_published": false,
+  "s3_applied": true,
+  "s3_error": null,
+  "eligible": true,
+  "attempts": [
+    {
+      "retry_count": 0,
+      "submitted_d_ff": 262,
+      "eligible": false,
+      "reasons": [
+        "83123200: 84867 B is -1.25% from target"
+      ],
+      "branches": [
+        {
+          "end_step": 3247,
+          "tokens_seen": 20780800,
+          "cooldown_steps": 324,
+          "model_bytes": 85223,
+          "fill": 0.9916858181818182,
+          "sha256": "1360f21d68e55a086567ea05ec6e2a78322d5840ab95bf13d665b5280d74e94d",
+          "val_bpb": 1.3024939841918108,
+          "val_scored_bytes": 1048575,
+          "sections": {
+            "header": 182,
+            "shared": 0,
+            "emb": 9198,
+            "core": 70417,
+            "scales": 3986,
+            "norms": 1440
+          }
+        },
+        {
+          "end_step": 6494,
+          "tokens_seen": 41561600,
+          "cooldown_steps": 649,
+          "model_bytes": 85089,
+          "fill": 0.9901265454545455,
+          "sha256": "ef9494a6167ddba3011f47b61f3263e31e174eddd46ba5e29212da62e2605a52",
+          "val_bpb": 1.2402495021284363,
+          "val_scored_bytes": 1048575,
+          "sections": {
+            "header": 182,
+            "shared": 0,
+            "emb": 9074,
+            "core": 70407,
+            "scales": 3986,
+            "norms": 1440
+          }
+        },
+        {
+          "end_step": 12988,
+          "tokens_seen": 83123200,
+          "cooldown_steps": 1298,
+          "model_bytes": 84867,
+          "fill": 0.9875432727272727,
+          "sha256": "efba6620690223d085006c075648a80f62c9de61c995ddb5988ad041592bdb85",
+          "val_bpb": 1.1920891336834845,
+          "val_scored_bytes": 1048575,
+          "sections": {
+            "header": 182,
+            "shared": 0,
+            "emb": 8855,
+            "core": 70404,
+            "scales": 3986,
+            "norms": 1440
+          }
+        }
+      ],
+      "trunk_seconds": 11335.719149827957
+    },
+    {
+      "retry_count": 1,
+      "submitted_d_ff": 267,
+      "eligible": true,
+      "reasons": [],
+      "branches": [
+        {
+          "end_step": 3247,
+          "tokens_seen": 20780800,
+          "cooldown_steps": 324,
+          "model_bytes": 85880,
+          "fill": 0.999330909090909,
+          "sha256": "8c9c562041c07529f05d69881a3aca3a5c5cb0acf3bc8e9eeffba2f9def9dd7f",
+          "val_bpb": 1.2900702577128722,
+          "val_scored_bytes": 1048575,
+          "sections": {
+            "header": 182,
+            "shared": 0,
+            "emb": 8877,
+            "core": 71355,
+            "scales": 4026,
+            "norms": 1440
+          }
+        },
+        {
+          "end_step": 6494,
+          "tokens_seen": 41561600,
+          "cooldown_steps": 649,
+          "model_bytes": 85759,
+          "fill": 0.9979229090909091,
+          "sha256": "4eab1eaf919d0f69356051c2b9b4983aeb4507ad0f31d96a4d2105c6a761d19d",
+          "val_bpb": 1.2307460419488006,
+          "val_scored_bytes": 1048575,
+          "sections": {
+            "header": 182,
+            "shared": 0,
+            "emb": 8760,
+            "core": 71351,
+            "scales": 4026,
+            "norms": 1440
+          }
+        },
+        {
+          "end_step": 12988,
+          "tokens_seen": 83123200,
+          "cooldown_steps": 1298,
+          "model_bytes": 85853,
+          "fill": 0.9990167272727273,
+          "sha256": "b48e23bc2b56ca1caca6280ea90583db18cd3878e276b5ba9c541853eae28b50",
+          "val_bpb": 1.1790152830220146,
+          "val_scored_bytes": 1048575,
+          "sections": {
+            "header": 182,
+            "shared": 0,
+            "emb": 8869,
+            "core": 71336,
+            "scales": 4026,
+            "norms": 1440
+          }
+        }
+      ],
+      "trunk_seconds": 7171.705880880356
+    }
+  ],
+  "branches": [
+    {
+      "end_step": 3247,
+      "tokens_seen": 20780800,
+      "cooldown_steps": 324,
+      "model_bytes": 85880,
+      "fill": 0.999330909090909,
+      "sha256": "8c9c562041c07529f05d69881a3aca3a5c5cb0acf3bc8e9eeffba2f9def9dd7f",
+      "val_bpb": 1.2900702577128722,
+      "val_scored_bytes": 1048575,
+      "sections": {
+        "header": 182,
+        "shared": 0,
+        "emb": 8877,
+        "core": 71355,
+        "scales": 4026,
+        "norms": 1440
+      }
+    },
+    {
+      "end_step": 6494,
+      "tokens_seen": 41561600,
+      "cooldown_steps": 649,
+      "model_bytes": 85759,
+      "fill": 0.9979229090909091,
+      "sha256": "4eab1eaf919d0f69356051c2b9b4983aeb4507ad0f31d96a4d2105c6a761d19d",
+      "val_bpb": 1.2307460419488006,
+      "val_scored_bytes": 1048575,
+      "sections": {
+        "header": 182,
+        "shared": 0,
+        "emb": 8760,
+        "core": 71351,
+        "scales": 4026,
+        "norms": 1440
+      }
+    },
+    {
+      "end_step": 12988,
+      "tokens_seen": 83123200,
+      "cooldown_steps": 1298,
+      "model_bytes": 85853,
+      "fill": 0.9990167272727273,
+      "sha256": "b48e23bc2b56ca1caca6280ea90583db18cd3878e276b5ba9c541853eae28b50",
+      "val_bpb": 1.1790152830220146,
+      "val_scored_bytes": 1048575,
+      "sections": {
+        "header": 182,
+        "shared": 0,
+        "emb": 8869,
+        "core": 71336,
+        "scales": 4026,
+        "norms": 1440
+      }
+    }
+  ],
+  "saturation": {
+    "abs_delta": 0.051730758926785914,
+    "criterion": "|bpb(4T) - bpb(2T)| < 0.01",
+    "saturated": false,
+    "gate": false
+  },
+  "flops_per_token": 922240.0,
+  "stored_params": 379200
+}

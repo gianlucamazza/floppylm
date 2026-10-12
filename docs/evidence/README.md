@@ -220,6 +220,12 @@ not saved. This cell is not the signal and not the F1 verdict. The test split wa
 S3 did not run because the 4T file is inside the window. Trunk seconds are 8876.
 This cell is not the signal and not the F1 verdict. The test split was not opened.
 
+[e1-1-16/ternary-s2](e1-1-16/ternary-s2/notes.md): scientific CPU cell, not a console job.
+The first 4T file was 84867 bytes, outside ±1%. S3 repaired `d_ff` 262 to 267.
+Repair bytes are 85880 / 85759 / 85853 and validation bpb is 1.2901 / 1.2307 / 1.1790.
+The repair is eligible. Saturation is recorded and is not a gate. Trunk seconds
+are recorded. This cell is not the signal and not the F1 verdict. The test split was not opened.
+
 A dated narrative of these packages is in the [archive](../archive/xbox-e0-history.md).
 `ca781f` is the first row16 pair with both seeds eligible under ADR 0015. The rest of the E0
 grid, paired σ and the held-out test remain open; the [roadmap](../roadmap.md) defines those gates.
