@@ -116,7 +116,7 @@ Continue in this order:
    that arm's PCG32 stream and logged. A fixed book logs the dead entry and
    keeps the seed. Resume continues the master weights, indices, scales,
    book, and optimizer moments. The cooldown artifact is that quantized
-   container. Cell `ternary-s1` is closed and ineligible (85169 / 85003 / 85142 bytes). It is not the signal. Cell `ternary-s2` is closed and eligible. S3 repaired `d_ff` 262 to 267. It is not the signal. Cell `2bit-s0` is closed and eligible. `d_ff` stayed 205. It is not the signal. Cell `2bit-s1` is closed and eligible. `d_ff` stayed 205. It is not the signal. The other thirteen cells have not started. No console job is
+   container. Cell `ternary-s1` is closed and ineligible (85169 / 85003 / 85142 bytes). It is not the signal. Cell `ternary-s2` is closed and eligible. S3 repaired `d_ff` 262 to 267. It is not the signal. Cell `2bit-s0` is closed and eligible. `d_ff` stayed 205. It is not the signal. Cell `2bit-s1` is closed and eligible. `d_ff` stayed 205. It is not the signal. Cell `2bit-s2` is closed and eligible. `d_ff` stayed 205. It is not the signal. The other twelve cells have not started. No console job is
    authorized. Proceed through E1a/E1/E1b and E2–E4 only on passing gates.
    Keep local-judge qualification and actual 30 blind human ratings explicit
    at E4.
@@ -134,7 +134,7 @@ This section owns the forward order. It does not amend
 The CPU campaign path is `src/floppylm/e1_pilot.py`. Its synthetic smoke is
 functional and is not a result. Cell `ternary-s0` is closed. S3 repaired `d_ff` 262 to 266. The repair is
 eligible and is not the signal. Trunk seconds were not saved. Cell `ternary-s1` is closed and ineligible.
-Cell `ternary-s2` is closed and eligible. S3 repaired `d_ff` 262 to 267. It is not the signal. Cell `2bit-s0` is closed and eligible. `d_ff` stayed 205. It is not the signal. Cell `2bit-s1` is closed and eligible. `d_ff` stayed 205. It is not the signal. The other thirteen cells have not started. No console job is authorized.
+Cell `ternary-s2` is closed and eligible. S3 repaired `d_ff` 262 to 267. It is not the signal. Cell `2bit-s0` is closed and eligible. `d_ff` stayed 205. It is not the signal. Cell `2bit-s1` is closed and eligible. `d_ff` stayed 205. It is not the signal. Cell `2bit-s2` is closed and eligible. `d_ff` stayed 205. It is not the signal. The other twelve cells have not started. No console job is authorized.
 
 The approved scope is the E0–E4 ladder, local Xbox/CPU only, with no rented
 GPU. The ladder is not walked by default. The research is complete when F1,
