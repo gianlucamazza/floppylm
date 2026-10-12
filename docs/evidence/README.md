@@ -232,6 +232,12 @@ are recorded. This cell is not the signal and not the F1 verdict. The test split
 recorded and is not a gate. This cell is not the signal and not the F1 verdict.
 The test split was not opened.
 
+[e1-1-16/2bit-s1](e1-1-16/2bit-s1/notes.md): scientific CPU cell, not a console job.
+`d_ff` stayed 205. Bytes are 85443 / 85523 / 85498 and validation bpb is
+1.2926 / 1.2274 / 1.1799. The cell is eligible. S3 did not run. Saturation is
+recorded and is not a gate. This cell is not the signal and not the F1 verdict.
+The test split was not opened.
+
 A dated narrative of these packages is in the [archive](../archive/xbox-e0-history.md).
 `ca781f` is the first row16 pair with both seeds eligible under ADR 0015. The rest of the E0
 grid, paired σ and the held-out test remain open; the [roadmap](../roadmap.md) defines those gates.

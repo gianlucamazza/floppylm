@@ -113,7 +113,7 @@ The host plan is `src/floppylm/e1_plan.py`. The CPU campaign path is
 `src/floppylm/e1_pilot.py`. Its synthetic smoke is functional and is not a
 result. The shape rule is
 [ADR 0024](adr/0024-e1-vector-shape.md). All four seed-0 G=8 books are closed. T is 20780800. Live state is in
-[STATUS](STATUS.md). Cell `ternary-s0` is closed. S3 repaired `d_ff` 262 to 266. The repair is eligible and is not the signal. Trunk seconds were not saved. Cell `ternary-s1` is closed and ineligible. Cell `ternary-s2` is closed and eligible. S3 repaired `d_ff` 262 to 267. It is not the signal. Cell `2bit-s0` is closed and eligible. `d_ff` stayed 205. It is not the signal. The other cells have not started.
+[STATUS](STATUS.md). Cell `ternary-s0` is closed. S3 repaired `d_ff` 262 to 266. The repair is eligible and is not the signal. Trunk seconds were not saved. Cell `ternary-s1` is closed and ineligible. Cell `ternary-s2` is closed and eligible. S3 repaired `d_ff` 262 to 267. It is not the signal. Cell `2bit-s0` is closed and eligible. `d_ff` stayed 205. Cell `2bit-s1` is closed and eligible. `d_ff` stayed 205. It is not the signal. The other cells have not started.
 
 - K=1, no recursion. 3 seeds, vector rate 0.5 and 0.75 bit/weight, tokens ≈ 20 per stored
   parameter of the largest arm, equal for all.

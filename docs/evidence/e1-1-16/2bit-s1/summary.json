@@ -1,0 +1,161 @@
+{
+  "kind": "scientific-cell",
+  "id": "2bit-s1",
+  "index": 4,
+  "arm": "2bit",
+  "seed": 1,
+  "core": "2bit",
+  "d": 96,
+  "n_layers": 3,
+  "nominal_d_ff": 193,
+  "submitted_d_ff": 205,
+  "rate": null,
+  "learned": null,
+  "token_T": 20780800,
+  "token_ends": [
+    20780800,
+    41561600,
+    83123200
+  ],
+  "batch": 25,
+  "lr": 0.003,
+  "wd": 0.1,
+  "threads": 8,
+  "source": "426dbb5f50b55cadd4e4fea54de7f2890c1dfa51",
+  "console_job": false,
+  "final_test_opened": false,
+  "test_split_read": false,
+  "signal_published": false,
+  "s3_applied": false,
+  "s3_error": null,
+  "eligible": true,
+  "attempts": [
+    {
+      "retry_count": 0,
+      "submitted_d_ff": 205,
+      "eligible": true,
+      "reasons": [],
+      "branches": [
+        {
+          "end_step": 3247,
+          "tokens_seen": 20780800,
+          "cooldown_steps": 324,
+          "model_bytes": 85443,
+          "fill": 0.9942458181818182,
+          "sha256": "41b23824b6c7ad9b0c0f36e2ca7891ba979fb1aa9efc30bd7e6674dc936e4553",
+          "val_bpb": 1.2926229064730945,
+          "val_scored_bytes": 1048575,
+          "sections": {
+            "header": 179,
+            "shared": 0,
+            "emb": 10836,
+            "core": 70132,
+            "scales": 2952,
+            "norms": 1344
+          }
+        },
+        {
+          "end_step": 6494,
+          "tokens_seen": 41561600,
+          "cooldown_steps": 649,
+          "model_bytes": 85523,
+          "fill": 0.9951767272727273,
+          "sha256": "9166228ca45eb49602d3821e320e1480fac731de4702d5c338a5d23b7930d90a",
+          "val_bpb": 1.2273726486280276,
+          "val_scored_bytes": 1048575,
+          "sections": {
+            "header": 179,
+            "shared": 0,
+            "emb": 10929,
+            "core": 70119,
+            "scales": 2952,
+            "norms": 1344
+          }
+        },
+        {
+          "end_step": 12988,
+          "tokens_seen": 83123200,
+          "cooldown_steps": 1298,
+          "model_bytes": 85498,
+          "fill": 0.9948858181818182,
+          "sha256": "dbf439d36fccb83b8c9bb2503e16e3f1ebc38235609346bf6fbfbe2ad8aade35",
+          "val_bpb": 1.179936681448709,
+          "val_scored_bytes": 1048575,
+          "sections": {
+            "header": 179,
+            "shared": 0,
+            "emb": 10877,
+            "core": 70146,
+            "scales": 2952,
+            "norms": 1344
+          }
+        }
+      ],
+      "trunk_seconds": 6384.001858472824
+    }
+  ],
+  "branches": [
+    {
+      "end_step": 3247,
+      "tokens_seen": 20780800,
+      "cooldown_steps": 324,
+      "model_bytes": 85443,
+      "fill": 0.9942458181818182,
+      "sha256": "41b23824b6c7ad9b0c0f36e2ca7891ba979fb1aa9efc30bd7e6674dc936e4553",
+      "val_bpb": 1.2926229064730945,
+      "val_scored_bytes": 1048575,
+      "sections": {
+        "header": 179,
+        "shared": 0,
+        "emb": 10836,
+        "core": 70132,
+        "scales": 2952,
+        "norms": 1344
+      }
+    },
+    {
+      "end_step": 6494,
+      "tokens_seen": 41561600,
+      "cooldown_steps": 649,
+      "model_bytes": 85523,
+      "fill": 0.9951767272727273,
+      "sha256": "9166228ca45eb49602d3821e320e1480fac731de4702d5c338a5d23b7930d90a",
+      "val_bpb": 1.2273726486280276,
+      "val_scored_bytes": 1048575,
+      "sections": {
+        "header": 179,
+        "shared": 0,
+        "emb": 10929,
+        "core": 70119,
+        "scales": 2952,
+        "norms": 1344
+      }
+    },
+    {
+      "end_step": 12988,
+      "tokens_seen": 83123200,
+      "cooldown_steps": 1298,
+      "model_bytes": 85498,
+      "fill": 0.9948858181818182,
+      "sha256": "dbf439d36fccb83b8c9bb2503e16e3f1ebc38235609346bf6fbfbe2ad8aade35",
+      "val_bpb": 1.179936681448709,
+      "val_scored_bytes": 1048575,
+      "sections": {
+        "header": 179,
+        "shared": 0,
+        "emb": 10877,
+        "core": 70146,
+        "scales": 2952,
+        "norms": 1344
+      }
+    }
+  ],
+  "saturation": {
+    "abs_delta": 0.04743596717931875,
+    "criterion": "|bpb(4T) - bpb(2T)| < 0.01",
+    "saturated": false,
+    "gate": false
+  },
+  "flops_per_token": 772032.0,
+  "stored_params": 312288
+}
