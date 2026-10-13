@@ -6,6 +6,10 @@ a selection and does not reserve a final test. publish_signal reads eighteen
 closed cells, freezes the eligible validation artifacts, and reserves one
 final test. score_final_test is the only read of the test split, and it runs
 once. The 1/16 signal is not the F1 verdict.
+
+A dead job lock does not block the cell. If summary.json is absent and
+trunk.pt matches the model, training resumes from that checkpoint. A cooldown
+whose branch file is already present at that boundary is not run again.
 """
 
 from __future__ import annotations
@@ -15,6 +19,7 @@ import json
 import os
 import statistics
 import subprocess
+from dataclasses import asdict
 from pathlib import Path
 
 import numpy as np
@@ -371,10 +376,152 @@ def _notes(summary: dict) -> str:
     )
 
 
+def _pid_alive(pid: object) -> bool:
+    if type(pid) is not int or pid <= 0:
+        return False
+    try:
+        os.kill(pid, 0)
+    except OSError:
+        return False
+    return True
+
+
+def _claim_job(lock: Path, index: int) -> None:
+    """One live job. A lock whose pid is dead does not block a resume."""
+    if lock.exists():
+        try:
+            owner = json.loads(lock.read_text())
+        except json.JSONDecodeError as exc:
+            raise ValueError("job lock is not readable") from exc
+        if not isinstance(owner, dict):
+            raise ValueError("job lock is not readable")
+        if _pid_alive(owner.get("pid")):
+            raise ValueError("one scientific job at a time")
+        lock.unlink()
+    try:
+        _exclusive_json(lock, {"index": index, "pid": os.getpid()})
+    except ValueError as exc:
+        raise ValueError("one scientific job at a time") from exc
+
+
+def _load_trunk(path: Path) -> dict | None:
+    if not path.is_file():
+        return None
+    ckpt = torch.load(path, map_location="cpu", weights_only=False)
+    if not isinstance(ckpt, dict) or "step" not in ckpt or "model" not in ckpt:
+        raise ValueError("trunk checkpoint is not a training checkpoint")
+    if "spec" not in ckpt:
+        raise ValueError("trunk checkpoint is not a training checkpoint")
+    return ckpt
+
+
+def _trunk_matches(model: TinyGPT, spec: TrainSpec, ckpt: dict) -> bool:
+    if ckpt["spec"] != asdict(spec):
+        return False
+    current = model.state_dict()
+    saved = ckpt["model"]
+    if set(saved) != set(current):
+        return False
+    return all(tuple(saved[key].shape) == tuple(current[key].shape) for key in current)
+
+
+def _resume_checkpoint(
+    model: TinyGPT, spec: TrainSpec, path: Path, *, required: bool
+) -> dict | None:
+    """Return a trunk that belongs to this model. A foreign trunk is not resumed."""
+    ckpt = _load_trunk(path)
+    if ckpt is None:
+        return None
+    if _trunk_matches(model, spec, ckpt):
+        return ckpt
+    if required:
+        raise ValueError("trunk checkpoint does not match this cell")
+    return None
+
+
+def _read_branch_records(run_dir: Path) -> dict[int, dict]:
+    path = run_dir / "branches.json"
+    if not path.is_file():
+        return {}
+    payload = json.loads(path.read_text())
+    rows = payload.get("branches") if isinstance(payload, dict) else None
+    if not isinstance(rows, list):
+        raise ValueError("branches.json has no branch list")
+    found: dict[int, dict] = {}
+    for row in rows:
+        if not isinstance(row, dict) or type(row.get("end_step")) is not int:
+            raise ValueError("branch record needs an end_step")
+        found[row["end_step"]] = row
+    return found
+
+
+def _read_attempts(run_dir: Path) -> dict:
+    path = run_dir / "attempts.json"
+    if not path.is_file():
+        return {"attempts": [], "s3_error": None}
+    payload = json.loads(path.read_text())
+    if not isinstance(payload, dict) or not isinstance(payload.get("attempts"), list):
+        raise ValueError("attempts.json has no attempt list")
+    return {"attempts": payload["attempts"], "s3_error": payload.get("s3_error")}
+
+
+def _finished_branch(
+    run_dir: Path, end: int, recorded: dict[int, dict], val: np.ndarray, sch: dict
+) -> dict:
+    """Use the cooldown file already on disk. Do not train it again."""
+    artifact = run_dir / f"branch-{end}.flp"
+    if not artifact.is_file():
+        raise ValueError("resumed trunk passed a cooldown whose branch file is missing")
+    blob = artifact.read_bytes()
+    digest = hashlib.sha256(blob).hexdigest()
+    expected_tokens = end * sch["per_step"]
+    cd_len = dict(zip(sch["ends"], sch["cooldowns"], strict=True))[end]
+    row = recorded.get(end)
+    if row is not None:
+        if row.get("sha256") != digest or row.get("model_bytes") != len(blob):
+            raise ValueError("branch file does not match the recorded cooldown")
+        if row.get("end_step") != end or row.get("tokens_seen") != expected_tokens:
+            raise ValueError("branch record does not match the cooldown")
+        return {**row, "blob": blob}
+    info = {"end_step": end, "tokens_seen": expected_tokens, "cooldown_steps": cd_len}
+    scored = score_cooldown(unpack(blob), val, info)
+    if scored["blob"] != blob:
+        raise ValueError("saved cooldown does not round-trip")
+    return scored
+
+
+def _cell_finished(attempts: list[dict], s3_error: str | None) -> bool:
+    if s3_error is not None:
+        return True
+    if not attempts:
+        return False
+    if attempts[-1].get("eligible") is True:
+        return True
+    return len(attempts) >= 2
+
+
 def _train_attempt(
-    model: TinyGPT, train: np.ndarray, val: np.ndarray, spec: TrainSpec, run_dir: Path
+    model: TinyGPT,
+    train: np.ndarray,
+    val: np.ndarray,
+    spec: TrainSpec,
+    run_dir: Path,
+    resume: dict | None = None,
 ) -> tuple[list[dict], dict]:
+    run_dir.mkdir(parents=True, exist_ok=True)
     branches: list[dict] = []
+    recorded = _read_branch_records(run_dir)
+    sch = schedule(spec, model.cfg.ctx)
+    resumed_step = None if resume is None else resume["step"]
+    cd_start_of = {
+        end: end - cd_len for end, cd_len in zip(sch["ends"], sch["cooldowns"], strict=True)
+    }
+    if resume is not None:
+        for end in sch["ends"]:
+            if resumed_step > cd_start_of[end]:
+                branches.append(_finished_branch(run_dir, end, recorded, val, sch))
+            else:
+                break
 
     def on_branch(end: int, branch: TinyGPT, info: dict) -> None:
         row = score_cooldown(branch, val, info)
@@ -396,7 +543,25 @@ def _train_attempt(
         torch.save(ckpt, temporary)
         temporary.replace(target)
 
-    account = train_wsd(model, train, spec, on_branch, on_checkpoint, log=print)
+    def skip_cooldown(end: int) -> bool:
+        # Only a resume that is already sitting on this boundary can keep the file.
+        if resumed_step != cd_start_of[end]:
+            return False
+        if not (run_dir / f"branch-{end}.flp").is_file():
+            return False
+        branches.append(_finished_branch(run_dir, end, recorded, val, sch))
+        return True
+
+    account = train_wsd(
+        model,
+        train,
+        spec,
+        on_branch,
+        on_checkpoint,
+        resume=resume,
+        log=print,
+        skip_cooldown=skip_cooldown,
+    )
     if len(branches) != 3 or branches[-1]["tokens_seen"] != 4 * spec.tokens:
         raise ValueError("the scientific cell did not close T, 2T and 4T")
     return branches, account
@@ -439,9 +604,7 @@ def run_scientific_cell(index: int, data_dir: Path, run_root: Path, evidence_roo
     evidence_root = Path(evidence_root)
     run_root.mkdir(parents=True, exist_ok=True)
     lock = run_root / "job.lock"
-    if lock.exists():
-        raise ValueError("one scientific job at a time")
-    _exclusive_json(lock, {"index": index, "pid": os.getpid()})
+    _claim_job(lock, index)
     try:
         return _run_locked_cell(index, data_dir, run_root, evidence_root)
     finally:
@@ -459,29 +622,48 @@ def _run_locked_cell(index: int, data_dir: Path, run_root: Path, evidence_root: 
     torch.set_num_threads(threads)
     train = load_split(data_dir, "train")
     val = load_split(data_dir, "val")
-    attempts: list[dict] = []
-    s3_error = None
-    for retry_count in (0, 1):
-        branches, account = _train_attempt(built["model"], train, val, built["spec"], run_dir)
-        ok, reasons = _eligible(branches)
-        attempts.append(
-            {
-                "retry_count": retry_count,
-                "submitted_d_ff": built["submitted_d_ff"],
-                "eligible": ok,
-                "reasons": reasons,
-                "branches": [_public_branch(row) for row in branches],
-                "trunk_seconds": account["trunk_seconds"],
-            }
-        )
-        _write_json(run_dir / "attempts.json", {"attempts": attempts, "s3_error": s3_error})
-        if ok or retry_count == 1:
-            break
+    prior = _read_attempts(run_dir)
+    attempts: list[dict] = list(prior["attempts"])
+    s3_error = prior["s3_error"]
+    if attempts and attempts[0].get("eligible") is False and s3_error is None:
         try:
-            built = _apply_s3(built, branches[-1]["model_bytes"], retry_count)
+            built = _apply_s3(built, attempts[0]["branches"][-1]["model_bytes"], 0)
         except ValueError as exc:
             s3_error = str(exc)
-            break
+    if not _cell_finished(attempts, s3_error):
+        pending = 1 if attempts else 0
+        while True:
+            resume = _resume_checkpoint(
+                built["model"],
+                built["spec"],
+                run_dir / "trunk.pt",
+                required=pending == 0,
+            )
+            branches, account = _train_attempt(
+                built["model"], train, val, built["spec"], run_dir, resume=resume
+            )
+            ok, reasons = _eligible(branches)
+            attempts.append(
+                {
+                    "retry_count": pending,
+                    "submitted_d_ff": built["submitted_d_ff"],
+                    "eligible": ok,
+                    "reasons": reasons,
+                    "branches": [_public_branch(row) for row in branches],
+                    "trunk_seconds": account["trunk_seconds"],
+                }
+            )
+            _write_json(run_dir / "attempts.json", {"attempts": attempts, "s3_error": s3_error})
+            if ok or pending == 1:
+                break
+            try:
+                built = _apply_s3(built, branches[-1]["model_bytes"], 0)
+            except ValueError as exc:
+                s3_error = str(exc)
+                break
+            pending = 1
+    if not attempts:
+        raise ValueError("a scientific cell closed without an attempt")
     counted = attempts[-1]
     branches = counted["branches"]
     delta = float(abs(branches[2]["val_bpb"] - branches[1]["val_bpb"]))

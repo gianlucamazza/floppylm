@@ -9,6 +9,7 @@ from floppylm.model import GPTConfig, QLinear, TinyGPT
 from floppylm.pack import pack, pack_sections, unpack
 from floppylm.train import (
     ASSIGN_EVERY,
+    CHECKPOINT_EVERY,
     PARTIAL_PROB,
     DataStream,
     TrainSpec,
@@ -140,6 +141,49 @@ def test_resume_from_trunk_checkpoint_is_deterministic() -> None:
     assert [e for e, _ in resumed] == [e for e, _ in full[1:]]
     for (_, a), (_, b) in zip(resumed, full[1:], strict=True):
         assert _state_equal(a, b)
+
+
+def test_periodic_checkpoint_resumes_the_same_trunk_and_keeps_the_account() -> None:
+    torch.manual_seed(0)
+    torch.set_num_threads(1)
+    spec = TrainSpec(tokens=80 * 4 * CFG.ctx, branches=1, batch=4, lr=3e-3, seed=1)
+
+    def run(resume=None):
+        torch.manual_seed(0)
+        model = TinyGPT(CFG)
+        out, ckpts = [], []
+        acct = train_wsd(
+            model,
+            DATA,
+            spec,
+            lambda e, b, _i: out.append((e, b.state_dict())),
+            on_checkpoint=ckpts.append,
+            resume=resume,
+            log=lambda _s: None,
+        )
+        return out, ckpts, acct
+
+    full, ckpts, full_acct = run()
+    sch = schedule(spec, CFG.ctx)
+    cd_start = sch["ends"][0] - sch["cooldowns"][0]
+    assert [ckpt["step"] for ckpt in ckpts] == [CHECKPOINT_EVERY, cd_start]
+    mid = ckpts[0]
+    assert mid["step"] == CHECKPOINT_EVERY
+    assert mid["trunk_steps"] == CHECKPOINT_EVERY
+    assert isinstance(mid["trunk_seconds"], float) and mid["trunk_seconds"] >= 0
+    resumed, _, resumed_acct = run(resume=mid)
+    assert _state_equal(resumed[0][1], full[0][1])
+    assert resumed_acct["trunk_steps"] == full_acct["trunk_steps"] == cd_start
+    carried = copy.deepcopy(mid)
+    carried["trunk_seconds"] = 1000.0
+    _, _, carried_acct = run(resume=carried)
+    assert 1000.0 <= carried_acct["trunk_seconds"] < 1500.0
+    bare = copy.deepcopy(mid)
+    del bare["trunk_steps"]
+    del bare["trunk_seconds"]
+    _, _, bare_acct = run(resume=bare)
+    assert bare_acct["trunk_seconds"] is None
+    assert bare_acct["trunk_steps"] == cd_start
 
 
 def test_train_wsd_branches_improve() -> None:
@@ -388,7 +432,13 @@ def test_cooldown_artifact_is_the_held_quantized_container() -> None:
         saved["log"] = list(branch.reseed_log)
 
     train_wsd(model, DATA, spec, on_branch, on_checkpoint=ckpts.append, log=lambda _s: None)
-    assert saved["end"] == 80 and len(ckpts) == 1 and "vq" in ckpts[0]
+    sch = schedule(spec, VQ_CFG.ctx)
+    cd_start = sch["ends"][0] - sch["cooldowns"][0]
+    expected = list(range(CHECKPOINT_EVERY, cd_start, CHECKPOINT_EVERY))
+    expected.append(cd_start)
+    assert saved["end"] == sch["ends"][0]
+    assert [ckpt["step"] for ckpt in ckpts] == expected and "vq" in ckpts[-1]
+    assert ckpts[-1]["trunk_steps"] == cd_start
 
     resumed: dict = {}
 
@@ -402,7 +452,7 @@ def test_cooldown_artifact_is_the_held_quantized_container() -> None:
         DATA,
         spec,
         on_resume,
-        resume=ckpts[0],
+        resume=ckpts[-1],
         log=lambda _s: None,
     )
     assert _state_equal(resumed["state"], saved["state"])

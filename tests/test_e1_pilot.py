@@ -1,11 +1,16 @@
 import hashlib
 import json
+import os
 import statistics
+import subprocess
 
 import numpy as np
 import pytest
+import torch
 
 from floppylm.e1_pilot import (
+    _resume_checkpoint,
+    _train_attempt,
     _write_json,
     cell_id,
     cell_plan,
@@ -32,6 +37,7 @@ from floppylm.e1_plan import (
 from floppylm.model import GPTConfig, TinyGPT
 from floppylm.pack import pack_sections
 from floppylm.parity import admissible
+from floppylm.train import DataStream, TrainSpec, Trunk, _optimizer
 
 
 def test_schedule_lands_on_t_2t_4t():
@@ -438,3 +444,91 @@ def test_score_final_test_refuses_before_the_reservation(tmp_path):
     with pytest.raises(ValueError, match="reservation"):
         score_final_test(tmp_path, tmp_path / "missing", {})
     assert not (tmp_path / "test.bin").exists()
+
+
+def _tiny_cell():
+    cfg = GPTConfig(vocab=256, d=32, n_layers=1, n_heads=2, d_ff=48, ctx=16)
+    spec = TrainSpec(tokens=16 * 4 * cfg.ctx, branches=3, batch=4, lr=3e-3, seed=0)
+    data = np.frombuffer(b"the cat sat on the mat. " * 400, dtype=np.uint8)
+    return cfg, spec, data
+
+
+def test_pilot_resume_keeps_a_scored_cooldown(tmp_path):
+    torch.manual_seed(0)
+    torch.set_num_threads(1)
+    cfg, spec, data = _tiny_cell()
+    run = tmp_path / "cell"
+    first, _account = _train_attempt(TinyGPT(cfg), data, data, spec, run)
+    files = {path.name: path.read_bytes() for path in run.glob("branch-*.flp")}
+    assert len(files) == 3
+    ckpt = torch.load(run / "trunk.pt", map_location="cpu", weights_only=False)
+    assert ckpt["trunk_steps"] == ckpt["step"]
+    ckpt["trunk_seconds"] = 1000.0
+    torch.manual_seed(1)
+    again, resumed = _train_attempt(TinyGPT(cfg), data, data, spec, run, resume=ckpt)
+    assert {path.name: path.read_bytes() for path in run.glob("branch-*.flp")} == files
+    assert [row["sha256"] for row in again] == [row["sha256"] for row in first]
+    assert resumed["trunk_seconds"] == 1000.0
+    assert resumed["trunk_steps"] == ckpt["step"]
+    bare = dict(ckpt)
+    del bare["trunk_steps"]
+    del bare["trunk_seconds"]
+    _held, incomplete = _train_attempt(TinyGPT(cfg), data, data, spec, run, resume=bare)
+    assert incomplete["trunk_seconds"] is None
+    assert {path.name: path.read_bytes() for path in run.glob("branch-*.flp")} == files
+    last = sorted(files)[-1]
+    (run / last).unlink()
+    _train_attempt(TinyGPT(cfg), data, data, spec, run, resume=ckpt)
+    assert (run / last).is_file()
+    for name, blob in files.items():
+        if name != last:
+            assert (run / name).read_bytes() == blob
+    artifact = run / last
+    raw = bytearray(artifact.read_bytes())
+    raw[0] ^= 0xFF
+    artifact.write_bytes(bytes(raw))
+    with pytest.raises(ValueError, match="does not match the recorded cooldown"):
+        _train_attempt(TinyGPT(cfg), data, data, spec, run, resume=ckpt)
+
+
+def test_trunk_from_another_shape_is_not_this_cell(tmp_path):
+    cfg, spec, data = _tiny_cell()
+    model = TinyGPT(cfg)
+    ckpt = Trunk(
+        model, _optimizer(model, spec), DataStream(data, spec.batch, cfg.ctx, spec.seed), 0
+    ).checkpoint(spec)
+    path = tmp_path / "trunk.pt"
+    torch.save(ckpt, path)
+    wider = GPTConfig(vocab=256, d=32, n_layers=1, n_heads=2, d_ff=64, ctx=16)
+    with pytest.raises(ValueError, match="does not match this cell"):
+        _resume_checkpoint(TinyGPT(wider), spec, path, required=True)
+    assert _resume_checkpoint(TinyGPT(wider), spec, path, required=False) is None
+    assert _resume_checkpoint(TinyGPT(cfg), spec, path, required=True)["step"] == 0
+
+
+def test_a_live_lock_refuses_and_a_dead_lock_does_not(tmp_path, monkeypatch):
+    data = tmp_path / "data"
+    data.mkdir()
+    (data / "train.bin").write_bytes(b"abc")
+    (data / "val.bin").write_bytes(b"abc")
+    seen = {}
+
+    def fake(index, _data_dir, _run_root, _evidence_root):
+        seen["index"] = index
+        return {"id": "not-trained"}
+
+    monkeypatch.setattr("floppylm.e1_pilot._run_locked_cell", fake)
+    run = tmp_path / "runs"
+    run.mkdir()
+    lock = run / "job.lock"
+    proc = subprocess.Popen(["sleep", "0"])
+    proc.wait()
+    lock.write_text(json.dumps({"index": 6, "pid": proc.pid}) + "\n")
+    out = run_scientific_cell(4, data, run, tmp_path / "evidence")
+    assert out == {"id": "not-trained"}
+    assert seen["index"] == 4
+    assert not lock.exists()
+    lock.write_text(json.dumps({"index": 6, "pid": os.getpid()}) + "\n")
+    with pytest.raises(ValueError, match="one scientific job at a time"):
+        run_scientific_cell(4, data, run, tmp_path / "evidence")
+    assert json.loads(lock.read_text())["pid"] == os.getpid()

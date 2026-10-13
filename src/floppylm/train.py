@@ -8,6 +8,11 @@ their own copy of the data-stream RNG, so the trunk continues exactly as if they
 A vq core (ADR 0023) assigns group indices every 64 steps and keeps those indices and
 scales. Training forwards use partial-quantization probability 0.1. The cooldown artifact
 is the quantized container of that held assignment. Scalar trunks do not take this path.
+
+The trunk writes a checkpoint every 64 optimizer steps and again at each cooldown
+boundary, before the fork. The checkpoint carries the trunk step count and the trunk
+seconds counted so far. A resumed file that has no trunk seconds continues the weights
+and leaves that account incomplete.
 """
 
 from __future__ import annotations
@@ -32,6 +37,8 @@ GRAD_CLIP = 1.0
 # ADR 0023 decision 7. Not TrainSpec fields: a scalar checkpoint's spec must stay exact.
 ASSIGN_EVERY = 64
 PARTIAL_PROB = 0.1
+# Trunk snapshot interval. Not a TrainSpec field. The cooldown boundary is an extra snapshot.
+CHECKPOINT_EVERY = 64
 
 
 @dataclass(frozen=True)
@@ -169,7 +176,7 @@ class Trunk:
     stream: DataStream
     step: int = 0
 
-    def checkpoint(self, spec: TrainSpec) -> dict:
+    def checkpoint(self, spec: TrainSpec, account: dict | None = None) -> dict:
         ckpt = {
             "model": copy.deepcopy(self.model.state_dict()),
             "opt": copy.deepcopy(self.opt.state_dict()),
@@ -180,6 +187,19 @@ class Trunk:
         }
         if self.model.cfg.core_fmt == "vq":
             ckpt["vq"] = vector_state(self.model)
+        if account is not None:
+            steps = account["trunk_steps"]
+            seconds = account["trunk_seconds"]
+            if type(steps) is not int or steps != self.step:
+                raise ValueError("checkpoint trunk_steps do not match the step")
+            if seconds is not None and (
+                isinstance(seconds, bool)
+                or not isinstance(seconds, (int, float))
+                or seconds < 0
+            ):
+                raise ValueError("checkpoint trunk_seconds is not a duration")
+            ckpt["trunk_steps"] = steps
+            ckpt["trunk_seconds"] = None if seconds is None else float(seconds)
         return ckpt
 
     @classmethod
@@ -366,6 +386,29 @@ def schedule(spec: TrainSpec, ctx: int) -> dict:
     }
 
 
+def _opened_account(resume: dict | None) -> tuple[dict, bool]:
+    """Trunk account carried by a checkpoint. Missing seconds are not invented."""
+    acct: dict = {"trunk_steps": 0, "cooldowns": [], "trunk_seconds": 0.0}
+    if resume is None:
+        return acct, True
+    step = resume["step"]
+    if type(step) is not int or step < 0:
+        raise ValueError("checkpoint step is not a trunk step")
+    stored = resume.get("trunk_steps")
+    if stored is not None and stored != step:
+        raise ValueError("checkpoint trunk_steps do not match the step")
+    seconds = resume.get("trunk_seconds")
+    if "trunk_seconds" not in resume or seconds is None:
+        acct["trunk_steps"] = step
+        acct["trunk_seconds"] = None
+        return acct, False
+    if isinstance(seconds, bool) or not isinstance(seconds, (int, float)) or seconds < 0:
+        raise ValueError("checkpoint trunk_seconds is not a duration")
+    acct["trunk_steps"] = step
+    acct["trunk_seconds"] = float(seconds)
+    return acct, True
+
+
 def train_wsd(
     model: TinyGPT,
     data: np.ndarray,
@@ -374,8 +417,13 @@ def train_wsd(
     on_checkpoint: Callable[[dict], None] | None = None,
     resume: dict | None = None,
     log: Callable[[str], None] = print,
+    skip_cooldown: Callable[[int], bool] | None = None,
 ) -> dict:
     """Run the trunk; at each branch point fork, cool down, report, discard the fork.
+
+    Writes a trunk checkpoint every CHECKPOINT_EVERY steps and at each cooldown
+    boundary. skip_cooldown, when true, does not run that cooldown. A resumed
+    checkpoint with no trunk seconds returns trunk_seconds as None.
 
     Returns compute accounting: trunk and per-cooldown steps/tokens and wall seconds.
     """
@@ -386,7 +434,7 @@ def train_wsd(
         )
     else:
         trunk = Trunk.restore(model, data, spec, resume)
-    acct = {"trunk_steps": 0, "cooldowns": [], "trunk_seconds": 0.0}
+    acct, complete = _opened_account(resume)
 
     def take(target: TinyGPT, opt: torch.optim.Optimizer, stream: DataStream, lr: float, step: int):
         before = len(getattr(target, "reseed_log", ()))
@@ -395,10 +443,19 @@ def train_wsd(
         if fresh:
             log(f"dead code step={step} entries={fresh}")
 
+    def emit(t0: float) -> float:
+        now = time.time()
+        if complete:
+            acct["trunk_seconds"] += now - t0
+        if on_checkpoint is not None:
+            on_checkpoint(trunk.checkpoint(spec, acct))
+        return now
+
     for end, cd_len in zip(sch["ends"], sch["cooldowns"], strict=True):
         cd_start = end - cd_len
         if trunk.step > cd_start:
             continue  # resumed past this branch point
+        already = trunk.step == cd_start
         t0 = time.time()
         while trunk.step < cd_start:
             take(
@@ -410,10 +467,12 @@ def train_wsd(
             )
             trunk.step += 1
             acct["trunk_steps"] += 1
-        acct["trunk_seconds"] += time.time() - t0
-        ckpt = trunk.checkpoint(spec)
-        if on_checkpoint is not None:
-            on_checkpoint(ckpt)
+            if trunk.step < cd_start and trunk.step % CHECKPOINT_EVERY == 0:
+                t0 = emit(t0)
+        if not already:
+            emit(t0)
+        if skip_cooldown is not None and skip_cooldown(end):
+            continue
         branch = copy.deepcopy(trunk.model)
         _tie_book(branch)
         bopt = _optimizer(branch, spec)

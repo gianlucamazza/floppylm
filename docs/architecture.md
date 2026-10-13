@@ -64,6 +64,13 @@ Evaluation and the cooldown file use the held assignment for every group. That
 file is the quantized FLP2 container. Master weights and optimizer moments are
 training state. A checkpoint of the masters is not the scored result.
 
+The same checkpoint is written every 64 trunk steps and again before each
+cooldown. It carries the trunk step count and the trunk seconds counted so far.
+A checkpoint saved before those fields still restores, and its trunk seconds
+stay null. The CPU pilot treats a dead job lock as free. When `summary.json`
+is absent and `trunk.pt` matches the cell, training continues from it. A
+cooldown that already has its branch file at that boundary is not run again.
+
 A learned book reseeds an unused entry from the same PCG32 stream. A fixed book
 logs the dead entry and keeps the seed, because the file stores the seed and a
 rewritten entry would not round-trip.
@@ -102,7 +109,7 @@ image, and FAT12 layout are E3 and E4. They are not in this repository.
 | Training | `src/floppylm/train.py` | WSD trunk and cooldowns. Vector cadence is not a TrainSpec field. Core matrices assign; the embedding does not. |
 | Serialization | `src/floppylm/pack.py`, `rans.py` | FLP2. One VQB1 when `core_fmt` is `vq`. Indices are entropy-coded. FLP1 is rejected. |
 | Qualification canary | `scripts/e1_qualify.py` | ADR 0013. `snap()` rewrites masters. Not the scientific step. |
-| Experiment control | `experiments/`, `parity.py`, `runlog.py`, `e1_plan.py`, `e1_pilot.py` | E0 campaigns, eligibility, paired differences. `e1_plan.py` materializes the specified scalar arms, the four G=8 books, and the ADR 0024 seed-0 solver. It does not train. `e1_pilot.py` is the CPU campaign path. Its synthetic smoke is functional and is not a result. Cell `ternary-s0` is closed. S3 repaired `d_ff` 262 to 266. The repair is eligible and is not the signal. Trunk seconds were not saved. Cell `ternary-s1` is closed and ineligible. Cell `ternary-s2` is closed and eligible. S3 repaired `d_ff` 262 to 267. It is not the signal. Cell `2bit-s0` is closed and eligible. `d_ff` stayed 205. Cell `2bit-s1` is closed and eligible. `d_ff` stayed 205. Cell `2bit-s2` is closed and eligible. `d_ff` stayed 205. It is not the signal. The other cells have not started. Fixed rate 0.5 is closed at `d` 80, 12 layers, `d_ff` 247, 85934 bytes. Learned rate 0.5 is closed at `d` 256, 1 layer, `d_ff` 801, 85935 bytes. Fixed rate 0.75 is closed at `d` 80, 8 layers, `d_ff` 258, 85938 bytes. Learned rate 0.75 is closed at `d` 160, 2 layers, `d_ff` 479, 85939 bytes. T is 20780800. |
+| Experiment control | `experiments/`, `parity.py`, `runlog.py`, `e1_plan.py`, `e1_pilot.py` | E0 campaigns, eligibility, paired differences. `e1_plan.py` materializes the specified scalar arms, the four G=8 books, and the ADR 0024 seed-0 solver. It does not train. `e1_pilot.py` is the CPU campaign path. Its synthetic smoke is functional and is not a result. Cell `ternary-s0` is closed. S3 repaired `d_ff` 262 to 266. The repair is eligible and is not the signal. Trunk seconds were not saved. Cell `ternary-s1` is closed and ineligible. Cell `ternary-s2` is closed and eligible. S3 repaired `d_ff` 262 to 267. It is not the signal. Cell `2bit-s0` is closed and eligible. `d_ff` stayed 205. Cell `2bit-s1` is closed and eligible. `d_ff` stayed 205. Cell `2bit-s2` is closed and eligible. `d_ff` stayed 205. It is not the signal. Cell `vq-0.5-fixed-s0` is training and is not closed. It is not the signal. The other eleven cells have not started. Fixed rate 0.5 is closed at `d` 80, 12 layers, `d_ff` 247, 85934 bytes. Learned rate 0.5 is closed at `d` 256, 1 layer, `d_ff` 801, 85935 bytes. Fixed rate 0.75 is closed at `d` 80, 8 layers, `d_ff` 258, 85938 bytes. Learned rate 0.75 is closed at `d` 160, 2 layers, `d_ff` 479, 85939 bytes. T is 20780800. |
 | Xbox client | `src/floppylm_xbox/` | Portal and jobs. The core package does not import it. |
 | Native scalar executor | `xbox-gpu-training` | DX12/UWP E0 trainer. It consumes contracts defined here ([ADR 0012](adr/0012-repo-boundaries.md)). |
 | Final image | roadmap E3/E4 | Static C runtime on a FAT12 data floppy. Not written. |

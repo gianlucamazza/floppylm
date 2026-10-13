@@ -11,7 +11,7 @@ rans.py          15-bit rANS and bitpack, shortest per tensor, explicit errors
 model.py         validated GPTConfig, TinyGPT; a vq core takes a VectorBook, not a config field
 pack.py          FLP2 ↔ model; one VQB1 when core_fmt is vq; held assignment packed as-is; FLP1 rejected
 shapes.py        shape solver: d, n_layers, free d_ff at 99.5–100% of the budget
-train.py         WSD trunk and cooldowns; a vq core assigns every 64 steps at probability 0.1
+train.py         WSD trunk and cooldowns; trunk checkpoint every 64 steps and before each cooldown, storing trunk steps and seconds; a vq core assigns every 64 steps at probability 0.1
 parity.py        eligibility on serialized bytes, paired σ
 metrics.py       bits per byte (byte tokenizer: one token is one byte)
 seed.py          single RNG entry point (ADR 0003 §3)
@@ -20,7 +20,7 @@ data.py          TinyStoriesV2: exact dedup, hash split, manifest, reproducibili
 bpe.py           train-only byte-exact BPE oracle (E1 functional qualification, ADR 0013)
 vq.py            VQB1 book and vector oracle; learned reseeds continue the PCG32 stream; VQF1 stays a fixture
 e1_plan.py       1/16 host plan: stored scalar arms, four G=8 books, ADR 0024 seed-0 solver, F1. Does not train. All four G=8 seed-0 books are closed. T is 20780800. Live cell state is in STATUS.md
-e1_pilot.py      1/16 CPU campaign path: shared T, seeds 0/1/2, cooldowns at T/2T/4T, one S3, one freeze, one final test. The synthetic smoke is not a result. The signal publisher reads eighteen closed cells and does not publish until they exist. The reserved final test is the one test-split read. Cell ternary-s0 is closed. S3 repaired d_ff 262 to 266. The repair is eligible and is not the signal. Trunk seconds were not saved. Cell ternary-s1 is closed and ineligible. Cell ternary-s2 is closed and eligible. S3 repaired d_ff 262 to 267. It is not the signal. Cell 2bit-s0 is closed and eligible. d_ff stayed 205. Cell 2bit-s1 is closed and eligible. d_ff stayed 205. Cell 2bit-s2 is closed and eligible. d_ff stayed 205. It is not the signal. The other cells have not started. No signal is published
+e1_pilot.py      1/16 CPU campaign path: shared T, seeds 0/1/2, cooldowns at T/2T/4T, one S3, one freeze, one final test. The synthetic smoke is not a result. The signal publisher reads eighteen closed cells and does not publish until they exist. The reserved final test is the one test-split read. Cell ternary-s0 is closed. S3 repaired d_ff 262 to 266. The repair is eligible and is not the signal. Trunk seconds were not saved. Cell ternary-s1 is closed and ineligible. Cell ternary-s2 is closed and eligible. S3 repaired d_ff 262 to 267. It is not the signal. Cell 2bit-s0 is closed and eligible. d_ff stayed 205. Cell 2bit-s1 is closed and eligible. d_ff stayed 205. Cell 2bit-s2 is closed and eligible. d_ff stayed 205. It is not the signal. A dead lock resumes trunk.pt and does not redo a cooldown whose branch file is already at that boundary. Cell vq-0.5-fixed-s0 is training and is not closed. It is not the signal. The other eleven cells have not started. No signal is published
 ```
 
 ## Xbox execution — `src/floppylm_xbox/`
