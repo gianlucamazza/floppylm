@@ -5,12 +5,12 @@ bump or campaign start/stop. Last updated: **2026-11-01**.
 
 ## Where this stands
 
-The E1 1/16 pilot is held. Paused cell `vq-0.5-fixed-s0` records validation bpb 7.05 at 2T, and its
-master weights do not survive full quantization. The
-[canaries](evidence/e1-vq-canary-20261101/notes.md) reach 2.526 bpb at T at best, against 1.295 for
-the best scalar mean. [ADR 0025](adr/0025-e1-vq-recipe-stop.md) stops the vector cells and allows two
-more preregistered recipes, each needing at most 1.40 bpb at T. F1 is not decided. Do not resume the
-paused cell or start another vector cell. The history below stands.
+The E1 1/16 vector line is closed as not reached with these recipes, under
+[ADR 0025](adr/0025-e1-vq-recipe-stop.md). The
+[two last canaries](evidence/e1-vq-last-canaries-20261101/notes.md) record 2.416 bpb at T for G=16 and
+1.665 for assignment every 8 steps, against the 1.40 threshold and 1.295 for the best scalar mean.
+The second file is also outside the ±1% window. F1 is not decided. B0 through E2i do not start. Do
+not resume the paused cell or start another vector cell without a new ADR. The history below stands.
 
 E0 campaign `e0-20261009T174028Z-94847b` completed at 2026-10-10T10:02:53Z on
 the accepted Xbox package 0.1.0.109. Host freeze `96a3054`, unit

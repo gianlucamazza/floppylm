@@ -18,6 +18,7 @@ evidence/e0-lite/pre-v2/                     # stopped pre-v2 grid, diagnostic o
 evidence/e1-qualification-YYYYMMDD/          # E1 functional qualification (ADR 0013), not scientific E1
 evidence/e1-1-16/<cell-id>/                  # 1/16 scientific CPU cell: summary.json and notes.md
 evidence/e1-vq-canary-YYYYMMDD/              # VQ recipe diagnostics, not pilot cells
+evidence/e1-vq-last-canaries-YYYYMMDD/       # ADR 0025 recipes, not pilot cells
 ```
 
 The full manifest, state and artifacts of each run live in `runs/<run_id>/` (outside Git; only
@@ -256,3 +257,6 @@ a jump-host SSH tunnel observation, corpus/protocol binding and cost envelope; n
 
 [e1-vq-canary-20261101](e1-vq-canary-20261101/notes.md): VQ recipe diagnostics, not pilot cells.
 The best learned book reaches 2.526 bpb at T against 1.295. It is not the signal and not the F1 verdict.
+
+[e1-vq-last-canaries-20261101](e1-vq-last-canaries-20261101/notes.md): the two ADR 0025 recipes, not pilot cells.
+Neither reaches 1.40 bpb at T, so the 1/16 vector line closes. It is not the signal and not the F1 verdict.
