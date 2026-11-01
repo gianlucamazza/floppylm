@@ -31,8 +31,9 @@ the machine with other work, so their seconds are not a cost measurement.
 ## Results
 
 Holdout bpb of the fully quantized model. These runs use a 64 KiB holdout and no cooldown.
+The ramp-end rows are at share 0.9985 or more, not exactly 1.
 
-| Arm | Share | lr | Steps | Best before share 1 | First at share 1 | Last |
+| Arm | Share | lr | Steps | Best before the ramp end | At the ramp end | Last |
 | --- | --- | ---: | ---: | ---: | ---: | ---: |
 | vq-0.5-fixed | constant 0.1 | 0.003 | 800 | 5.03 | never | 6.75 |
 | vq-0.5-fixed | ramp to 600 | 0.003 | 800 | 3.47 | 3.71 | 4.11 |
