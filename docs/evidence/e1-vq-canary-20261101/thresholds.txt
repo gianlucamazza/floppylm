@@ -1,0 +1,3 @@
+Fixed before the decisive run (2026-11-01). Best of the two learned books at T, against 1.295 bpb:
+<= 1.40 write the ADR proposal; 1.40-1.60 extend to 2T; >= 1.60 discuss closing the pilot.
+Recipe: ramp to p=1 by step 2400, lr 0.001, 3247 steps, cooldown 324, 256 KiB train holdout, seed 0.

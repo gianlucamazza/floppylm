@@ -67,6 +67,7 @@ JSON Schemas of every file exchanged with the native backend; see [schemas/READM
   `summary.json`; an unreachable tool or console is logged and does not raise.
 - `units/floppylm-e0-campaign@.service`: user-unit template; `EnvironmentFile=` for
   xbox.env and e0-lifecycle.env; `ExecStop` teardown.
+- `scripts/e1_vq_canary.py`: VQ recipe diagnostic on a train holdout. Reads no validation or test.
 - `scripts/e1_qualify.py`, `scripts/e1_cpu_profile.py`: ADR 0013 functional qualification and the
   scalar CPU profile ([evidence](../evidence/e1-qualification-20261001/notes.md)).
 - `scripts/contract_fixtures.py`: regenerate the golden contract instances in
