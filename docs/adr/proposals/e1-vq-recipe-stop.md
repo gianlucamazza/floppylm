@@ -2,8 +2,8 @@
 
 ## Status
 
-`proposed` — 2026-11-01. Not accepted. It does not amend
-[ADR 0023](../0023-e1-1-16-pilot.md) until the owner accepts it.
+`accepted` — 2026-11-01; recorded in [ADR 0025](../0025-e1-vq-recipe-stop.md), which adds a limit
+of two more recipes.
 
 ## Context
 

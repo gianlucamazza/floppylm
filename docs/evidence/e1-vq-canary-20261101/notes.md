@@ -43,7 +43,7 @@ Holdout bpb of the fully quantized model. These runs use a 64 KiB holdout and no
 
 ## Decisive run
 
-Thresholds were written before the run, against the best scalar eligible mean of 1.295 at T: at most
+[Thresholds](thresholds.txt) were written before the run, against the best scalar eligible mean of 1.295 at T: at most
 1.40 writes a recipe ADR; 1.40 to 1.60 extends to 2T; at least 1.60 raises closing the pilot.
 Recipe: ramp to 2400, lr 0.001, 3247 steps, cooldown 324, 256 KiB holdout.
 
@@ -61,5 +61,7 @@ The best arm is 2.526, above 1.60 and 1.23 bpb from the best scalar. The rule ra
 - Holdout is train bytes and scalar figures are validation bytes, so the gap is indicative. Its size
   is much larger than that difference.
 - Fixed and learned arms differ in depth, so their difference is not attributed to the book alone.
-- Loss was still falling at T on both learned arms. No extrapolation to 2T or 4T is claimed.
+- From step 2800 to T both learned arms improve as the learning rate decays to zero. The last
+  stretch differs: from step 3200 to T, `vq-0.5-learned` moves from 2.501 to 2.526 and
+  `vq-0.75-learned` from 3.073 to 3.048. No extrapolation to 2T or 4T is claimed.
 - Other recipes were not tried: a shorter assignment cadence, other optimizers, G=16.
