@@ -1,0 +1,173 @@
+{
+ "kind": "vq-canary-set",
+ "not_a_result": true,
+ "final_test_opened": false,
+ "seed": 0,
+ "threshold_bpb_at_T": 1.4,
+ "runs": {
+  "recipe-a": {
+   "kind": "vq-canary",
+   "arm": "vq-0.5-learned",
+   "seed": 0,
+   "ramp_end": 2400,
+   "lr": 0.001,
+   "cooldown": 324,
+   "group": 16,
+   "assign_every": 64,
+   "d_ff": 585,
+   "not_a_result": true,
+   "rows": [
+    {
+     "step": 400,
+     "partial_prob": 0.249625,
+     "train_loss_bits": 2.390292273884203,
+     "holdout_quantized_bpb": 4.192718234932452,
+     "seconds": 348.25827949802624
+    },
+    {
+     "step": 800,
+     "partial_prob": 0.399625,
+     "train_loss_bits": 1.9326708614746915,
+     "holdout_quantized_bpb": 3.0617518365573217,
+     "seconds": 717.3501849030145
+    },
+    {
+     "step": 1200,
+     "partial_prob": 0.549625,
+     "train_loss_bits": 1.9476140900428591,
+     "holdout_quantized_bpb": 2.609314431568629,
+     "seconds": 1253.440371350036
+    },
+    {
+     "step": 1600,
+     "partial_prob": 0.699625,
+     "train_loss_bits": 2.0186625308713975,
+     "holdout_quantized_bpb": 2.518859558605884,
+     "seconds": 1748.7365088170045
+    },
+    {
+     "step": 2000,
+     "partial_prob": 0.849625,
+     "train_loss_bits": 2.537807468956712,
+     "holdout_quantized_bpb": 2.8482558836623637,
+     "seconds": 2379.2165917690145
+    },
+    {
+     "step": 2400,
+     "partial_prob": 0.999625,
+     "train_loss_bits": 3.058726236103026,
+     "holdout_quantized_bpb": 2.9710111212921757,
+     "seconds": 3127.2242964580073
+    },
+    {
+     "step": 2800,
+     "partial_prob": 1.0,
+     "train_loss_bits": 2.8865210396900007,
+     "holdout_quantized_bpb": 2.8550410602854295,
+     "seconds": 3584.63598707004
+    },
+    {
+     "step": 3200,
+     "partial_prob": 1.0,
+     "train_loss_bits": 2.4450273003651493,
+     "holdout_quantized_bpb": 2.4572389217518835,
+     "seconds": 4048.925713150995
+    },
+    {
+     "step": 3247,
+     "partial_prob": 1.0,
+     "train_loss_bits": 2.487530576751431,
+     "holdout_quantized_bpb": 2.415669790856378,
+     "seconds": 4122.76205742202
+    }
+   ],
+   "final": {
+    "packed_bytes": 86089,
+    "within_window": true,
+    "artifact_holdout_bpb": 2.415669790856378
+   }
+  },
+  "recipe-b": {
+   "kind": "vq-canary",
+   "arm": "vq-0.5-learned",
+   "seed": 0,
+   "ramp_end": 2400,
+   "lr": 0.001,
+   "cooldown": 324,
+   "group": 8,
+   "assign_every": 8,
+   "d_ff": 801,
+   "not_a_result": true,
+   "rows": [
+    {
+     "step": 400,
+     "partial_prob": 0.249625,
+     "train_loss_bits": 2.386152823460586,
+     "holdout_quantized_bpb": 4.422616691044155,
+     "seconds": 413.19432178203715
+    },
+    {
+     "step": 800,
+     "partial_prob": 0.399625,
+     "train_loss_bits": 1.9162272562603966,
+     "holdout_quantized_bpb": 3.2285903701792726,
+     "seconds": 883.278074064001
+    },
+    {
+     "step": 1200,
+     "partial_prob": 0.549625,
+     "train_loss_bits": 1.9576437742758765,
+     "holdout_quantized_bpb": 2.5290119828751028,
+     "seconds": 1551.1717587860185
+    },
+    {
+     "step": 1600,
+     "partial_prob": 0.699625,
+     "train_loss_bits": 2.0234840644883363,
+     "holdout_quantized_bpb": 2.1818852048539608,
+     "seconds": 2147.418340980017
+    },
+    {
+     "step": 2000,
+     "partial_prob": 0.849625,
+     "train_loss_bits": 1.9250164296327403,
+     "holdout_quantized_bpb": 2.006354116094804,
+     "seconds": 3086.5762293450534
+    },
+    {
+     "step": 2400,
+     "partial_prob": 0.999625,
+     "train_loss_bits": 2.0087912426598247,
+     "holdout_quantized_bpb": 1.96154064666629,
+     "seconds": 3633.7897427290445
+    },
+    {
+     "step": 2800,
+     "partial_prob": 1.0,
+     "train_loss_bits": 1.888947368180538,
+     "holdout_quantized_bpb": 1.8816864772489132,
+     "seconds": 4132.604934360017
+    },
+    {
+     "step": 3200,
+     "partial_prob": 1.0,
+     "train_loss_bits": 1.6967999234867157,
+     "holdout_quantized_bpb": 1.702438287664394,
+     "seconds": 4350.2171763080405
+    },
+    {
+     "step": 3247,
+     "partial_prob": 1.0,
+     "train_loss_bits": 1.7193021335256058,
+     "holdout_quantized_bpb": 1.6646277573425632,
+     "seconds": 4385.497657350032
+    }
+   ],
+   "final": {
+    "packed_bytes": 87514,
+    "within_window": false,
+    "artifact_holdout_bpb": 1.6646277573425632
+   }
+  }
+ }
+}

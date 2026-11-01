@@ -127,6 +127,11 @@ result. The shape rule is
 - The pilot is not a final verdict ([ADR 0004](adr/0004-miniature-budgets.md)); it gates further
   local Xbox/CPU work. No rented GPU or paid API is authorized.
 
+**Outcome, 2026-11-01.** The vector line at 1/16 closes as not reached with these recipes, under
+[ADR 0025](adr/0025-e1-vq-recipe-stop.md). Neither of the
+[two last recipes](evidence/e1-vq-last-canaries-20261101/notes.md) reached 1.40 bpb at T. F1 and
+F1-abl stay undecided. A new ADR can reopen the line.
+
 ## E1a — Diversity across iterations (closes v0.1, picks the recursion)
 
 Budget 1/4, core of the pilot's winning arm, same tokens and FLOPs, 3 seeds:

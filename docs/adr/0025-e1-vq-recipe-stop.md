@@ -54,3 +54,8 @@ Resuming as specified was rejected: days of CPU for a result already explained b
 Adopting the ramp and running the pilot was rejected: its best arm misses the threshold. Publishing
 F1 now was rejected: the protocol needs closed cells at 1/16 and the same sign at 1/4. An open recipe
 search was rejected because each attempt is a further look at the same question.
+
+## Later (2026-11-01, outcome)
+
+[Neither recipe passed](../evidence/e1-vq-last-canaries-20261101/notes.md), so decision 8 closes the
+vector line at 1/16. This note does not change the decision. No console job is authorized.

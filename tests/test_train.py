@@ -485,3 +485,18 @@ def test_quant_ramp_is_opt_in_and_reaches_full_quantization():
     for start, end in ((5, 5), (-1, 3)):
         with pytest.raises(ValueError):
             QuantRamp(start, end)
+
+
+def test_assignment_cadence_is_opt_in() -> None:
+    model = _vq(True)
+    assert model.assign_every is None
+    prepare_vector_step(model, 0, 5)
+    prepare_vector_step(model, 8, 5)
+    assert model.assigned_at == 0  # default cadence is 64
+    prepare_vector_step(model, 64, 5)
+    assert model.assigned_at == 64
+    model.assign_every = 8
+    prepare_vector_step(model, 72, 5)
+    assert model.assigned_at == 72
+    prepare_vector_step(model, 73, 5)
+    assert model.assigned_at == 72
