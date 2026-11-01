@@ -33,8 +33,7 @@ closes the vector line at 1/16 as not reached with these recipes. F1 and F1-abl 
 This section is an observation, and it decides nothing.
 
 - Cadence is the largest effect measured so far. Changing only the assignment interval from 64 to 8
-  moves the score from 2.526 to 1.665. Recipe B also holds training and holdout close together at
-  full quantization: 1.719 and 1.665 at T.
+  moves the score from 2.526 to 1.665.
 - G=16 moves it by 0.11 on the same cadence, with a different `d_ff`.
 - Recipe B's file grew past the window as training ran. Its `d_ff` would need repair, and a smaller
   `d_ff` could cost some of the gain.
