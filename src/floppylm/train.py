@@ -53,6 +53,28 @@ class TrainSpec:
     seed: int = 0
 
 
+@dataclass(frozen=True)
+class QuantRamp:
+    """Partial-quantization probability, linear from PARTIAL_PROB to 1 over [start, end).
+
+    A diagnostic recipe, not ADR 0023 decision 7. The pilot driver does not set it, and it
+    is not in a checkpoint, so a resume must set the same ramp again.
+    """
+
+    start: int
+    end: int
+
+    def __post_init__(self) -> None:
+        if type(self.start) is not int or type(self.end) is not int:
+            raise ValueError("quant ramp bounds must be ints")
+        if not 0 <= self.start < self.end:
+            raise ValueError("quant ramp needs 0 <= start < end")
+
+    def at(self, step: int) -> float:
+        done = min(max(step - self.start, 0) / (self.end - self.start), 1.0)
+        return PARTIAL_PROB + (1.0 - PARTIAL_PROB) * done
+
+
 def lr_at(step: int, warmup: int, peak: float, cd_start: int | None, cd_len: int) -> float:
     """Warmup-stable-decay: linear warmup, flat, linear to 0 over the cooldown."""
     if step < warmup:
@@ -273,7 +295,9 @@ def prepare_vector_step(model: TinyGPT, step: int, arm_seed: int) -> None:
     for name, module in cores:
         if module.assignment is None:
             raise ValueError(f"vq core {name} has no assignment")
-        module._partial_prob = PARTIAL_PROB
+        module._partial_prob = (
+            PARTIAL_PROB if model.quant_ramp is None else model.quant_ramp.at(step)
+        )
         module._mask_seed = mask_seed(arm_seed, step, name)
 
 

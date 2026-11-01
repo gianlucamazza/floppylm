@@ -473,3 +473,15 @@ def test_pack_uses_the_held_symbols() -> None:
     expect = qkv.codec.decode(forced, scales, tuple(qkv.weight.shape))
     assert torch.equal(back.blocks[0].qkv.weight, expect)
     assert pack(back) == blob
+
+
+def test_quant_ramp_is_opt_in_and_reaches_full_quantization():
+    from floppylm.train import QuantRamp
+
+    assert QuantRamp(0, 100).at(0) == PARTIAL_PROB
+    assert QuantRamp(0, 100).at(100) == 1.0
+    assert QuantRamp(0, 100).at(10_000) == 1.0
+    assert QuantRamp(10, 20).at(5) == PARTIAL_PROB
+    for start, end in ((5, 5), (-1, 3)):
+        with pytest.raises(ValueError):
+            QuantRamp(start, end)
