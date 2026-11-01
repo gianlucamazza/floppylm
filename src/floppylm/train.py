@@ -274,7 +274,7 @@ def prepare_vector_step(model: TinyGPT, step: int, arm_seed: int) -> None:
         raise ValueError("vq step and arm seed must be non-negative ints")
     _tie_book(model)
     cores = _core_linears(model)
-    if step % ASSIGN_EVERY == 0:
+    if step % (ASSIGN_EVERY if model.assign_every is None else model.assign_every) == 0:
         used: set[int] = set()
         for _, module in cores:
             symbols, scale_bytes = module.codec.encode(module.weight.detach())

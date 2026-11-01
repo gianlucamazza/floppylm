@@ -190,6 +190,7 @@ class TinyGPT(nn.Module):
         assert cfg.d % cfg.n_heads == 0
         self.cfg = cfg
         self.quant_ramp = None  # train.QuantRamp on a diagnostic run; None is ADR 0023 decision 7
+        self.assign_every = None  # a diagnostic cadence (ADR 0025); None is ASSIGN_EVERY
         # The book is not a GPTConfig field. ADR 0023 puts one VQB1 in the FLP2
         # shared section; delta stays in the header and the vector core ignores it.
         if cfg.core_fmt == "vq":
