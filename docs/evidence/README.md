@@ -17,6 +17,7 @@ evidence/xbox-e0-YYYYMMDD[-tag]/             # hand-written package acceptance: 
 evidence/e0-lite/pre-v2/                     # stopped pre-v2 grid, diagnostic only
 evidence/e1-qualification-YYYYMMDD/          # E1 functional qualification (ADR 0013), not scientific E1
 evidence/e1-1-16/<cell-id>/                  # 1/16 scientific CPU cell: summary.json and notes.md
+evidence/e1-vq-canary-YYYYMMDD/              # VQ recipe diagnostics, not pilot cells
 ```
 
 The full manifest, state and artifacts of each run live in `runs/<run_id>/` (outside Git; only
@@ -252,3 +253,6 @@ Real-deadline watchdog: [xbox-e0-20261003-098](xbox-e0-20261003-098/notes.md), c
 
 [E0 readiness, 2026-10-03](e0-readiness-20261003/notes.md): integrated fixes, read-only
 a jump-host SSH tunnel observation, corpus/protocol binding and cost envelope; no campaign launched.
+
+[e1-vq-canary-20261101](e1-vq-canary-20261101/notes.md): VQ recipe diagnostics, not pilot cells.
+The best learned book reaches 2.526 bpb at T against 1.295. It is not the signal and not the F1 verdict.

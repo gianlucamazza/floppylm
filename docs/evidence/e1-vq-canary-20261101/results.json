@@ -1,0 +1,424 @@
+{
+ "kind": "vq-canary-set",
+ "not_a_result": true,
+ "seed": 0,
+ "final_test_opened": false,
+ "runs": {
+  "c-fixed-const": {
+   "kind": "vq-canary",
+   "arm": "vq-0.5-fixed",
+   "seed": 0,
+   "ramp_end": null,
+   "not_a_result": true,
+   "rows": [
+    {
+     "step": 200,
+     "partial_prob": 0.1,
+     "train_loss_bits": 2.3647420153240715,
+     "holdout_quantized_bpb": 5.279944053246091,
+     "seconds": 594.4675832869834
+    },
+    {
+     "step": 400,
+     "partial_prob": 0.1,
+     "train_loss_bits": 1.8320773490717803,
+     "holdout_quantized_bpb": 5.034828012296183,
+     "seconds": 1400.6431431859965
+    },
+    {
+     "step": 600,
+     "partial_prob": 0.1,
+     "train_loss_bits": 1.708880672813923,
+     "holdout_quantized_bpb": 5.267094970188802,
+     "seconds": 2363.599666780967
+    },
+    {
+     "step": 800,
+     "partial_prob": 0.1,
+     "train_loss_bits": 1.6636899955252586,
+     "holdout_quantized_bpb": 6.745039200744339,
+     "seconds": 2993.398307081021
+    }
+   ]
+  },
+  "c-fixed-ramp": {
+   "kind": "vq-canary",
+   "arm": "vq-0.5-fixed",
+   "seed": 0,
+   "ramp_end": 600,
+   "not_a_result": true,
+   "rows": [
+    {
+     "step": 200,
+     "partial_prob": 0.39849999999999997,
+     "train_loss_bits": 2.758153361068651,
+     "holdout_quantized_bpb": 4.321836671218206,
+     "seconds": 596.9171769549721
+    },
+    {
+     "step": 400,
+     "partial_prob": 0.6985,
+     "train_loss_bits": 2.3837013827551874,
+     "holdout_quantized_bpb": 3.4676357450704796,
+     "seconds": 1434.9506511839572
+    },
+    {
+     "step": 600,
+     "partial_prob": 0.9984999999999999,
+     "train_loss_bits": 3.753698841176489,
+     "holdout_quantized_bpb": 3.7062369535659254,
+     "seconds": 2362.989457293006
+    },
+    {
+     "step": 800,
+     "partial_prob": 1.0,
+     "train_loss_bits": 4.173982820083684,
+     "holdout_quantized_bpb": 4.111849075522635,
+     "seconds": 2995.0212633689516
+    }
+   ]
+  },
+  "decisive-learned05": {
+   "kind": "vq-canary",
+   "arm": "vq-0.5-learned",
+   "seed": 0,
+   "ramp_end": 2400,
+   "lr": 0.001,
+   "cooldown": 324,
+   "not_a_result": true,
+   "rows": [
+    {
+     "step": 400,
+     "partial_prob": 0.249625,
+     "train_loss_bits": 2.4002975365807977,
+     "holdout_quantized_bpb": 4.677246687971343,
+     "seconds": 372.42846000299323
+    },
+    {
+     "step": 800,
+     "partial_prob": 0.399625,
+     "train_loss_bits": 1.9391759332609264,
+     "holdout_quantized_bpb": 3.3667524680029914,
+     "seconds": 824.8558473439771
+    },
+    {
+     "step": 1200,
+     "partial_prob": 0.549625,
+     "train_loss_bits": 1.902891033581891,
+     "holdout_quantized_bpb": 2.7814352753433296,
+     "seconds": 1224.0316411799868
+    },
+    {
+     "step": 1600,
+     "partial_prob": 0.699625,
+     "train_loss_bits": 1.9992381223523485,
+     "holdout_quantized_bpb": 2.692523703822679,
+     "seconds": 1753.7857186489855
+    },
+    {
+     "step": 2000,
+     "partial_prob": 0.849625,
+     "train_loss_bits": 2.5573180407838434,
+     "holdout_quantized_bpb": 2.877723488523478,
+     "seconds": 2600.449681372964
+    },
+    {
+     "step": 2400,
+     "partial_prob": 0.999625,
+     "train_loss_bits": 3.0296398422585042,
+     "holdout_quantized_bpb": 2.9804302934726676,
+     "seconds": 4637.154770436988
+    },
+    {
+     "step": 2800,
+     "partial_prob": 1.0,
+     "train_loss_bits": 2.9168460525860365,
+     "holdout_quantized_bpb": 2.877359178669339,
+     "seconds": 5594.479356649972
+    },
+    {
+     "step": 3200,
+     "partial_prob": 1.0,
+     "train_loss_bits": 2.494285195364068,
+     "holdout_quantized_bpb": 2.501087820032282,
+     "seconds": 6351.236318424984
+    },
+    {
+     "step": 3247,
+     "partial_prob": 1.0,
+     "train_loss_bits": 2.578998517716911,
+     "holdout_quantized_bpb": 2.5260598887398897,
+     "seconds": 6488.40643574798
+    }
+   ]
+  },
+  "decisive-learned075": {
+   "kind": "vq-canary",
+   "arm": "vq-0.75-learned",
+   "seed": 0,
+   "ramp_end": 2400,
+   "lr": 0.001,
+   "cooldown": 324,
+   "not_a_result": true,
+   "rows": [
+    {
+     "step": 400,
+     "partial_prob": 0.249625,
+     "train_loss_bits": 2.3510699105284307,
+     "holdout_quantized_bpb": 3.7742342296324107,
+     "seconds": 344.0736997249769
+    },
+    {
+     "step": 800,
+     "partial_prob": 0.399625,
+     "train_loss_bits": 1.8660843385401378,
+     "holdout_quantized_bpb": 3.081226410656654,
+     "seconds": 781.6728413499659
+    },
+    {
+     "step": 1200,
+     "partial_prob": 0.549625,
+     "train_loss_bits": 1.8848663918582143,
+     "holdout_quantized_bpb": 2.774968734242027,
+     "seconds": 1155.7651599620003
+    },
+    {
+     "step": 1600,
+     "partial_prob": 0.699625,
+     "train_loss_bits": 1.9755855203618373,
+     "holdout_quantized_bpb": 2.8768772431501715,
+     "seconds": 1673.4548603849835
+    },
+    {
+     "step": 2000,
+     "partial_prob": 0.849625,
+     "train_loss_bits": 2.7760125554821977,
+     "holdout_quantized_bpb": 3.5265787626972864,
+     "seconds": 2488.063403051987
+    },
+    {
+     "step": 2400,
+     "partial_prob": 0.999625,
+     "train_loss_bits": 3.6356348151509814,
+     "holdout_quantized_bpb": 3.56822384001033,
+     "seconds": 4791.392360774975
+    },
+    {
+     "step": 2800,
+     "partial_prob": 1.0,
+     "train_loss_bits": 3.4200593778086747,
+     "holdout_quantized_bpb": 3.356056799356782,
+     "seconds": 5872.371319810976
+    },
+    {
+     "step": 3200,
+     "partial_prob": 1.0,
+     "train_loss_bits": 3.0361700235117652,
+     "holdout_quantized_bpb": 3.073070236519644,
+     "seconds": 6600.57988725201
+    },
+    {
+     "step": 3247,
+     "partial_prob": 1.0,
+     "train_loss_bits": 3.077365371838235,
+     "holdout_quantized_bpb": 3.048254154823942,
+     "seconds": 6652.647097409004
+    }
+   ]
+  },
+  "fixed05-slow": {
+   "kind": "vq-canary",
+   "arm": "vq-0.5-fixed",
+   "seed": 0,
+   "ramp_end": 2400,
+   "lr": 0.001,
+   "not_a_result": true,
+   "rows": [
+    {
+     "step": 400,
+     "partial_prob": 0.249625,
+     "train_loss_bits": 2.3567613323934333,
+     "holdout_quantized_bpb": 5.823939125842793,
+     "seconds": 862.7732632409898
+    },
+    {
+     "step": 800,
+     "partial_prob": 0.399625,
+     "train_loss_bits": 2.119890831238643,
+     "holdout_quantized_bpb": 4.589100449197006,
+     "seconds": 1706.6397365029552
+    },
+    {
+     "step": 1200,
+     "partial_prob": 0.549625,
+     "train_loss_bits": 2.013922001083015,
+     "holdout_quantized_bpb": 3.6108928900844455,
+     "seconds": 2938.091827447992
+    },
+    {
+     "step": 1600,
+     "partial_prob": 0.699625,
+     "train_loss_bits": 2.101876680456669,
+     "holdout_quantized_bpb": 3.524538444533284,
+     "seconds": 3846.055921886
+    },
+    {
+     "step": 2000,
+     "partial_prob": 0.849625,
+     "train_loss_bits": 2.613278787617489,
+     "holdout_quantized_bpb": 3.386037582535374,
+     "seconds": 4609.384404965967
+    },
+    {
+     "step": 2400,
+     "partial_prob": 0.999625,
+     "train_loss_bits": 3.6367083308576666,
+     "holdout_quantized_bpb": 3.6598662803209367,
+     "seconds": 5161.6300600609975
+    },
+    {
+     "step": 2800,
+     "partial_prob": 1.0,
+     "train_loss_bits": 3.9862052825656353,
+     "holdout_quantized_bpb": 3.9309163873602664,
+     "seconds": 5547.341305153968
+    }
+   ]
+  },
+  "fixed075-ramp600": {
+   "kind": "vq-canary",
+   "arm": "vq-0.75-fixed",
+   "seed": 0,
+   "ramp_end": 600,
+   "lr": 0.003,
+   "not_a_result": true,
+   "rows": [
+    {
+     "step": 200,
+     "partial_prob": 0.39849999999999997,
+     "train_loss_bits": 2.665749662499827,
+     "holdout_quantized_bpb": 3.299969487764615,
+     "seconds": 211.04720607300987
+    },
+    {
+     "step": 400,
+     "partial_prob": 0.6985,
+     "train_loss_bits": 2.368248569592513,
+     "holdout_quantized_bpb": 2.9131434853668936,
+     "seconds": 472.0459313119645
+    },
+    {
+     "step": 600,
+     "partial_prob": 0.9984999999999999,
+     "train_loss_bits": 4.301409237656862,
+     "holdout_quantized_bpb": 4.214736650323758,
+     "seconds": 734.9121981179924
+    },
+    {
+     "step": 800,
+     "partial_prob": 1.0,
+     "train_loss_bits": 4.477348177420119,
+     "holdout_quantized_bpb": 4.4473178306886165,
+     "seconds": 904.3207199409953
+    }
+   ]
+  },
+  "learned05-ramp600": {
+   "kind": "vq-canary",
+   "arm": "vq-0.5-learned",
+   "seed": 0,
+   "ramp_end": 600,
+   "lr": 0.003,
+   "not_a_result": true,
+   "rows": [
+    {
+     "step": 200,
+     "partial_prob": 0.39849999999999997,
+     "train_loss_bits": 2.636648478147331,
+     "holdout_quantized_bpb": 3.3913522510176213,
+     "seconds": 154.54125425999518
+    },
+    {
+     "step": 400,
+     "partial_prob": 0.6985,
+     "train_loss_bits": 2.2304061947524807,
+     "holdout_quantized_bpb": 2.684824322827742,
+     "seconds": 343.08120038802736
+    },
+    {
+     "step": 600,
+     "partial_prob": 0.9984999999999999,
+     "train_loss_bits": 3.4308478494972987,
+     "holdout_quantized_bpb": 3.3862790737112047,
+     "seconds": 554.8912886930048
+    },
+    {
+     "step": 800,
+     "partial_prob": 1.0,
+     "train_loss_bits": 3.617540520453705,
+     "holdout_quantized_bpb": 3.523518704871507,
+     "seconds": 782.6535225220141
+    }
+   ]
+  },
+  "learned05-slow": {
+   "kind": "vq-canary",
+   "arm": "vq-0.5-learned",
+   "seed": 0,
+   "ramp_end": 2400,
+   "lr": 0.001,
+   "not_a_result": true,
+   "rows": [
+    {
+     "step": 400,
+     "partial_prob": 0.249625,
+     "train_loss_bits": 2.206147181935027,
+     "holdout_quantized_bpb": 4.603075003894874,
+     "seconds": 411.65964792796876
+    },
+    {
+     "step": 800,
+     "partial_prob": 0.399625,
+     "train_loss_bits": 2.0462925756284127,
+     "holdout_quantized_bpb": 3.446277348234146,
+     "seconds": 827.9493738319725
+    },
+    {
+     "step": 1200,
+     "partial_prob": 0.549625,
+     "train_loss_bits": 1.890956641490568,
+     "holdout_quantized_bpb": 2.8072519751050455,
+     "seconds": 1255.8553882279666
+    },
+    {
+     "step": 1600,
+     "partial_prob": 0.699625,
+     "train_loss_bits": 1.9984342754422157,
+     "holdout_quantized_bpb": 2.7960699755515717,
+     "seconds": 1655.8445942369872
+    },
+    {
+     "step": 2000,
+     "partial_prob": 0.849625,
+     "train_loss_bits": 2.4637691097429237,
+     "holdout_quantized_bpb": 2.8933712623678605,
+     "seconds": 2128.8364391009673
+    },
+    {
+     "step": 2400,
+     "partial_prob": 0.999625,
+     "train_loss_bits": 3.018664941376345,
+     "holdout_quantized_bpb": 2.9561491011005656,
+     "seconds": 2820.528755294974
+    },
+    {
+     "step": 2800,
+     "partial_prob": 1.0,
+     "train_loss_bits": 2.686858985049379,
+     "holdout_quantized_bpb": 2.73174260726607,
+     "seconds": 3364.261554889963
+    }
+   ]
+  }
+ }
+}
