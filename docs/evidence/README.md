@@ -20,6 +20,7 @@ evidence/e1-1-16/<cell-id>/                  # 1/16 scientific CPU cell: summary
 evidence/e1-vq-canary-YYYYMMDD/              # VQ recipe diagnostics, not pilot cells
 evidence/e1-vq-last-canaries-YYYYMMDD/       # ADR 0025 recipes, not pilot cells
 evidence/e1-vq-depth-diagnostic-YYYYMMDD/    # ADR 0026 depth canary, not a pilot cell
+evidence/e1-stop-YYYYMMDD/                   # frontier at the research stop, no new runs
 ```
 
 The full manifest, state and artifacts of each run live in `runs/<run_id>/` (outside Git; only
@@ -264,3 +265,5 @@ Neither reaches 1.40 bpb at T, so the 1/16 vector line closes. It is not the sig
 
 [e1-vq-depth-diagnostic-20261102](e1-vq-depth-diagnostic-20261102/notes.md): the ADR 0026 canary, not a pilot cell.
 It reaches 1.741 bpb at T, so the closure is final. It is not the signal and not the F1 verdict.
+
+[e1-stop-20261102](e1-stop-20261102/notes.md): the measured frontier at the stop. It runs nothing new.

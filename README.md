@@ -5,7 +5,9 @@ A lab whose goal is the best language model that fits **entirely** on a real 3.5
 1 474 560 bytes is empty FAT12 geometry (2880×512), not a packed image of weights, tokenizer,
 and runtime — there is no `.img` yet ([what counts](docs/adr/0001-floppy-budget.md)).
 
-**Status:** the E0 scalar baseline is complete. How the host is divided is in
+**Status:** the E0 scalar baseline is complete. The research then
+[stopped without a verdict](docs/evidence/e1-stop-20261102/notes.md) at the 1/16 vector pilot: no
+falsifier fired, and no floppy image exists. How the host is divided is in
 [docs/architecture.md](docs/architecture.md). Live state is in
 [docs/STATUS.md](docs/STATUS.md).
 
