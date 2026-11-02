@@ -36,19 +36,22 @@ from floppylm.train import (  # noqa: E402
 from floppylm.vq import VectorBook  # noqa: E402
 
 
-def custom_model(group: int, d: int, n_layers: int, seed: int) -> TinyGPT | None:
+def custom_model(
+    group: int, d: int, n_layers: int, seed: int, d_ff: int | None = None
+) -> TinyGPT | None:
     """Learned rate-0.5 book at a named shape, or None without an admissible d_ff.
 
-    ADR 0024 decision 3 at this width and depth. Reads no split and trains nothing.
+    ADR 0024 decision 3 at this width and depth, unless d_ff names the ADR 0026 repair value.
+    Reads no split and trains nothing.
     """
-    book_spec = SimpleNamespace(rate=0.5, learned=True)
-    shape = _best_d_ff(d, n_layers, book_spec, VectorBook(group, 0.5, 0, learned=True))
-    if shape is None:
-        return None
+    if d_ff is None:
+        book_spec = SimpleNamespace(rate=0.5, learned=True)
+        shape = _best_d_ff(d, n_layers, book_spec, VectorBook(group, 0.5, 0, learned=True))
+        if shape is None:
+            return None
+        d_ff = shape.d_ff
     seed_all(seed)
-    return TinyGPT(
-        vector_config(d, n_layers, shape.d_ff), VectorBook(group, 0.5, seed, learned=True)
-    )
+    return TinyGPT(vector_config(d, n_layers, d_ff), VectorBook(group, 0.5, seed, learned=True))
 
 
 def main() -> None:
@@ -63,6 +66,7 @@ def main() -> None:
     ap.add_argument("--group", type=int, choices=(8, 16), help="learned rate-0.5 book; default 8")
     ap.add_argument("--shape-d", type=int, help="custom width for a learned book; default 256")
     ap.add_argument("--shape-layers", type=int, help="custom depth for a learned book; default 1")
+    ap.add_argument("--shape-d-ff", type=int, help="ADR 0026 repair value; default closest file")
     ap.add_argument("--every", type=int, default=200)
     ap.add_argument("--warmup", type=int, default=64)
     ap.add_argument("--holdout", type=int, default=64 * 1024)
@@ -72,6 +76,10 @@ def main() -> None:
     args = ap.parse_args()
     if (ROOT / "runs" / "e1-1-16").resolve() in args.out.resolve().parents:
         raise SystemExit("--out must stay outside runs/e1-1-16")
+    for name in ("shape_d", "shape_layers", "shape_d_ff"):
+        value = getattr(args, name)
+        if value is not None and value <= 0:
+            raise SystemExit(f"--{name.replace('_', '-')} must be positive")
     torch.set_num_threads(args.threads)
 
     index = next(
@@ -81,11 +89,16 @@ def main() -> None:
     )
     built = materialize_cell(index)
     model, spec = built["model"], built["spec"]
-    if args.group is not None or args.shape_d is not None or args.shape_layers is not None:
+    custom = (args.group, args.shape_d, args.shape_layers, args.shape_d_ff)
+    if any(value is not None for value in custom):
         if args.arm != "vq-0.5-learned":
             raise SystemExit("a custom shape needs arm vq-0.5-learned (ADR 0025, ADR 0026)")
         model = custom_model(
-            args.group or 8, args.shape_d or 256, args.shape_layers or 1, args.seed
+            args.group or 8,
+            args.shape_d or 256,
+            args.shape_layers or 1,
+            args.seed,
+            args.shape_d_ff,
         )
         if model is None:
             raise SystemExit("no admissible d_ff: this recipe does not run (ADR 0025, ADR 0026)")

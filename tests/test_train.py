@@ -517,3 +517,4 @@ def test_canary_custom_shape_packs_inside_the_window() -> None:
     assert (model.cfg.d, model.cfg.n_layers, model.cfg.d_ff) == (80, 12, 245)
     assert model.book.learned
     assert abs(len(pack_sections(model)[0]) - TARGET_BYTES) <= 0.01 * TARGET_BYTES
+    assert canary.custom_model(8, 80, 12, 0, d_ff=240).cfg.d_ff == 240

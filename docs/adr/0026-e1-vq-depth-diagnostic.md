@@ -28,8 +28,9 @@ behind it, while closed cells would give F1 a result even if the vector arms los
    steps, cooldown 324, 256 KiB train holdout, `train.bin` only. `d_ff` 245 is the ADR 0024 decision 3
    value at this width and depth, with an init pack of 85909 bytes.
 2. **Bar.** The run passes at no more than 1.40 bpb at T on the holdout, with its file within ±1% of
-   85937.5 bytes. This is a filter for spending days of CPU. It is not the winning bar: F1 needs about
-   1.275 at T, plus `2σ` and the same order at 2T.
+   85937.5 bytes. This is a filter for spending days of CPU. It is not the winning bar: ADR 0023 needs the
+   best vector mean below the best scalar mean by `max(0.02, 2σ)`, at T and at 2T, so at best about
+   1.275 at T.
 3. **Repair.** If the score passes and the file does not, one repeat runs at
    `d_ff = 245 + round((85937.5 - bytes) / 180)`, 180 bytes being the nominal cost of one `d_ff` unit at
    this shape. It must pass both parts of the bar.
