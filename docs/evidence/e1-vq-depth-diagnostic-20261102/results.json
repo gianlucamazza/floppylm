@@ -1,0 +1,105 @@
+{
+  "kind": "e1-vq-depth-diagnostic",
+  "not_a_result": true,
+  "final_test_opened": false,
+  "seed": 0,
+  "threshold_bpb_at_T": 1.4,
+  "code_commit": "8fc9713",
+  "merged_as": "1d5ca35",
+  "passes": false,
+  "repeat_run": false,
+  "runs": {
+    "C": {
+      "kind": "vq-canary",
+      "arm": "vq-0.5-learned",
+      "seed": 0,
+      "ramp_end": 2400,
+      "lr": 0.001,
+      "cooldown": 324,
+      "group": 8,
+      "assign_every": 8,
+      "d": 80,
+      "n_layers": 12,
+      "d_ff": 245,
+      "not_a_result": true,
+      "rows": [
+        {
+          "step": 400,
+          "partial_prob": 0.249625,
+          "train_loss_bits": 2.4924093805911074,
+          "holdout_quantized_bpb": 4.695134744112331,
+          "seconds": 1375.3490951730055
+        },
+        {
+          "step": 800,
+          "partial_prob": 0.399625,
+          "train_loss_bits": 2.029397515955603,
+          "holdout_quantized_bpb": 4.37081193727518,
+          "seconds": 2112.8091079610167
+        },
+        {
+          "step": 1200,
+          "partial_prob": 0.549625,
+          "train_loss_bits": 2.06061976234119,
+          "holdout_quantized_bpb": 3.027316964058498,
+          "seconds": 2716.209705127985
+        },
+        {
+          "step": 1600,
+          "partial_prob": 0.699625,
+          "train_loss_bits": 2.141067227022032,
+          "holdout_quantized_bpb": 2.536607513853182,
+          "seconds": 3733.9792065239744
+        },
+        {
+          "step": 2000,
+          "partial_prob": 0.849625,
+          "train_loss_bits": 2.0487667180437255,
+          "holdout_quantized_bpb": 2.2195033920432756,
+          "seconds": 4429.433896509989
+        },
+        {
+          "step": 2400,
+          "partial_prob": 0.999625,
+          "train_loss_bits": 2.276506488281558,
+          "holdout_quantized_bpb": 2.2315637075014827,
+          "seconds": 5804.167842303985
+        },
+        {
+          "step": 2800,
+          "partial_prob": 1.0,
+          "train_loss_bits": 2.065122784088731,
+          "holdout_quantized_bpb": 2.0483598119610926,
+          "seconds": 6442.684297956992
+        },
+        {
+          "step": 3200,
+          "partial_prob": 1.0,
+          "train_loss_bits": 1.79927372221151,
+          "holdout_quantized_bpb": 1.7885407874553643,
+          "seconds": 7145.623037730984
+        },
+        {
+          "step": 3247,
+          "partial_prob": 1.0,
+          "train_loss_bits": 1.8163359490209583,
+          "holdout_quantized_bpb": 1.741138324509143,
+          "seconds": 7288.292690216971
+        }
+      ],
+      "final": {
+        "packed_bytes": 88312,
+        "sections": {
+          "header": 178,
+          "shared": 272,
+          "emb": 8966,
+          "core": 63862,
+          "scales": 11034,
+          "norms": 4000
+        },
+        "within_window": false,
+        "artifact_holdout_bpb": 1.741138324509143
+      }
+    }
+  }
+}
