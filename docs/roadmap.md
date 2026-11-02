@@ -134,7 +134,9 @@ F1-abl stay undecided. A new ADR can reopen the line.
 
 **Outcome, 2026-11-02.** The [depth canary](evidence/e1-vq-depth-diagnostic-20261102/notes.md) allowed
 by [ADR 0026](adr/0026-e1-vq-depth-diagnostic.md) reached 1.741 bpb at T, above 1.40, so that closure
-is final. No further 1/16 recipe is proposed under this line. F1 and F1-abl stay undecided.
+is final. No further 1/16 recipe is proposed under this line. F1 and F1-abl stay undecided. The
+research [stops without a verdict](completion-plan.md#stop-without-a-verdict-2026-11-02), and the rows
+after this section do not start.
 
 ## E1a — Diversity across iterations (closes v0.1, picks the recursion)
 
