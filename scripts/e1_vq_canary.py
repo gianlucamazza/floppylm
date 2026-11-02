@@ -21,7 +21,7 @@ import torch  # noqa: E402
 
 from floppylm.data import load  # noqa: E402
 from floppylm.e1_pilot import PILOT_BATCH, cell_plan, materialize_cell  # noqa: E402
-from floppylm.e1_plan import TARGET_BYTES, _best_d_ff, vector_config  # noqa: E402
+from floppylm.e1_plan import TARGET_BYTES, _best_d_ff, ff_bounds, vector_config  # noqa: E402
 from floppylm.model import TinyGPT  # noqa: E402
 from floppylm.pack import pack_sections, unpack  # noqa: E402
 from floppylm.seed import seed_all  # noqa: E402
@@ -36,6 +36,26 @@ from floppylm.train import (  # noqa: E402
 from floppylm.vq import VectorBook  # noqa: E402
 
 
+def custom_model(
+    group: int, d: int, n_layers: int, seed: int, d_ff: int | None = None
+) -> TinyGPT | None:
+    """Learned rate-0.5 book at a named shape, or None without an admissible d_ff.
+
+    ADR 0024 decision 3 at this width and depth, unless d_ff names the ADR 0026 repair value.
+    Reads no split and trains nothing.
+    """
+    if d_ff is None:
+        book_spec = SimpleNamespace(rate=0.5, learned=True)
+        shape = _best_d_ff(d, n_layers, book_spec, VectorBook(group, 0.5, 0, learned=True))
+        if shape is None:
+            return None
+        d_ff = shape.d_ff
+    elif not ff_bounds(d)[0] <= d_ff <= ff_bounds(d)[1]:
+        return None
+    seed_all(seed)
+    return TinyGPT(vector_config(d, n_layers, d_ff), VectorBook(group, 0.5, seed, learned=True))
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--arm", required=True, help="pilot vq arm, e.g. vq-0.5-fixed")
@@ -45,7 +65,10 @@ def main() -> None:
     ap.add_argument("--lr", type=float, help="override the recipe learning rate")
     ap.add_argument("--cooldown", type=int, default=0, help="linear lr decay over the last steps")
     ap.add_argument("--assign-every", type=int, help="assignment cadence; omit for 64")
-    ap.add_argument("--group", type=int, choices=(16,), help="learned rate-0.5 G=16 at d256, L1")
+    ap.add_argument("--group", type=int, choices=(8, 16), help="learned rate-0.5 book; default 8")
+    ap.add_argument("--shape-d", type=int, help="custom width for a learned book; default 256")
+    ap.add_argument("--shape-layers", type=int, help="custom depth for a learned book; default 1")
+    ap.add_argument("--shape-d-ff", type=int, help="ADR 0026 repair value; default closest file")
     ap.add_argument("--every", type=int, default=200)
     ap.add_argument("--warmup", type=int, default=64)
     ap.add_argument("--holdout", type=int, default=64 * 1024)
@@ -55,6 +78,10 @@ def main() -> None:
     args = ap.parse_args()
     if (ROOT / "runs" / "e1-1-16").resolve() in args.out.resolve().parents:
         raise SystemExit("--out must stay outside runs/e1-1-16")
+    for name in ("shape_d", "shape_layers", "shape_d_ff"):
+        value = getattr(args, name)
+        if value is not None and value <= 0:
+            raise SystemExit(f"--{name.replace('_', '-')} must be positive")
     torch.set_num_threads(args.threads)
 
     index = next(
@@ -64,17 +91,19 @@ def main() -> None:
     )
     built = materialize_cell(index)
     model, spec = built["model"], built["spec"]
-    if args.group is not None:
+    custom = (args.group, args.shape_d, args.shape_layers, args.shape_d_ff)
+    if any(value is not None for value in custom):
         if args.arm != "vq-0.5-learned":
-            raise SystemExit("--group 16 needs arm vq-0.5-learned (ADR 0025 recipe A)")
-        book_spec = SimpleNamespace(rate=0.5, learned=True)
-        # ADR 0024 decision 3 at the published width and depth. No training or split is read.
-        shape = _best_d_ff(256, 1, book_spec, VectorBook(args.group, 0.5, 0, learned=True))
-        if shape is None:
-            raise SystemExit("no admissible d_ff: recipe A does not run (ADR 0025)")
-        seed_all(args.seed)
-        book = VectorBook(args.group, 0.5, args.seed, learned=True)
-        model = TinyGPT(vector_config(256, 1, shape.d_ff), book)
+            raise SystemExit("a custom shape needs arm vq-0.5-learned (ADR 0025, ADR 0026)")
+        model = custom_model(
+            args.group or 8,
+            args.shape_d or 256,
+            args.shape_layers or 1,
+            args.seed,
+            args.shape_d_ff,
+        )
+        if model is None:
+            raise SystemExit("no admissible d_ff: this recipe does not run (ADR 0025, ADR 0026)")
     model.assign_every = args.assign_every
     if args.ramp_end is not None:
         model.quant_ramp = QuantRamp(0, args.ramp_end)
@@ -126,6 +155,8 @@ def main() -> None:
                         "cooldown": args.cooldown,
                         "group": args.group or 8,
                         "assign_every": args.assign_every or 64,
+                        "d": model.cfg.d,
+                        "n_layers": model.cfg.n_layers,
                         "d_ff": model.cfg.d_ff,
                         "not_a_result": True,
                         "rows": rows,
@@ -135,10 +166,11 @@ def main() -> None:
             )
 
     # ADR 0025 decision 6: the file at T decides validity and scores as the artifact.
-    blob, _ = pack_sections(model)
+    blob, sections = pack_sections(model)
     artifact_bpb, _ = sliding_bpb(unpack(blob), holdout, args.holdout)
     final = {
         "packed_bytes": len(blob),
+        "sections": sections,
         "within_window": abs(len(blob) - TARGET_BYTES) <= 0.01 * TARGET_BYTES,
         "artifact_holdout_bpb": artifact_bpb,
     }

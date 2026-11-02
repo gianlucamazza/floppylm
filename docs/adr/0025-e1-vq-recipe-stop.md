@@ -2,7 +2,8 @@
 
 ## Status
 
-`accepted` — 2026-11-01. Amends [ADR 0023](0023-e1-1-16-pilot.md): decisions 3 and 7 for canaries
+`amended` — accepted 2026-11-01, amended 2026-11-02 by [ADR 0026](0026-e1-vq-depth-diagnostic.md).
+Amends [ADR 0023](0023-e1-1-16-pilot.md): decisions 3 and 7 for canaries
 only, and the plan to run the twelve vector cells. Records
 [the stop proposal](proposals/e1-vq-recipe-stop.md). Does not amend
 [ADR 0024](0024-e1-vector-shape.md). Does not open a campaign or dispatch a console job.
@@ -59,3 +60,8 @@ search was rejected because each attempt is a further look at the same question.
 
 [Neither recipe passed](../evidence/e1-vq-last-canaries-20261101/notes.md), so decision 8 closes the
 vector line at 1/16. This note does not change the decision. No console job is authorized.
+
+## Amendment — 2026-11-02
+
+[ADR 0026](0026-e1-vq-depth-diagnostic.md) allows one more canary, despite decision 5. The closure
+stands unless that canary passes.

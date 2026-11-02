@@ -49,7 +49,8 @@ It is not a brainstorm, a survey or a TODO.
 | [0022](0022-paired-campaign-on-109.md) | One new paired campaign may bind package 0.1.0.109; `87686a` and cell `031` stay closed | accepted |
 | [0023](0023-e1-1-16-pilot.md) | E1 1/16 pilot: both stored scalar arms, ADR 0020 window, FLP2 `VQB1` byte order; host implementation on main ([STATUS](../STATUS.md)); pilot not started | amended |
 | [0024](0024-e1-vector-shape.md) | Vector shape rule for the 1/16 pilot: one seed-0 init pack per G=8 book inside the E0 box; lr 0.003, wd 0.1. Fixed rate 0.5 is closed at d=80, 12 layers, d_ff=247, 85934 bytes. Learned rate 0.5 is closed at d=256, 1 layer, d_ff=801, 85935 bytes. Fixed rate 0.75 is closed at d=80, 8 layers, d_ff=258, 85938 bytes. Learned rate 0.75 is closed at d=160, 2 layers, d_ff=479, 85939 bytes. T is 20780800. Pilot not started | accepted |
-| [0025](0025-e1-vq-recipe-stop.md) | E1 1/16 vector cells stopped; two more preregistered recipes at most, threshold 1.40 bpb at T | accepted |
+| [0025](0025-e1-vq-recipe-stop.md) | E1 1/16 vector cells stopped; two more preregistered recipes at most, threshold 1.40 bpb at T | amended |
+| [0026](0026-e1-vq-depth-diagnostic.md) | One post hoc depth canary for the closed E1 1/16 vector line, d80 L12 at cadence 8 | accepted |
 
 ## Proposals
 
