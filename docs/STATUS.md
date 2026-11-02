@@ -1,7 +1,7 @@
 # Status
 
 The only page that states live project state. Update it — and nothing else — on every package
-bump or campaign start/stop. Last updated: **2026-11-01**.
+bump or campaign start/stop. Last updated: **2026-11-02**.
 
 ## Where this stands
 
@@ -10,7 +10,9 @@ The E1 1/16 vector line is closed as not reached with these recipes, under
 [two last canaries](evidence/e1-vq-last-canaries-20261101/notes.md) record 2.416 bpb at T for G=16 and
 1.665 for assignment every 8 steps, against the 1.40 threshold and 1.295 for the best scalar mean.
 The second file is also outside the ±1% window. F1 is not decided. B0 through E2i do not start. Do
-not resume the paused cell or start another vector cell without a new ADR. The history below stands.
+not resume the paused cell or start another vector cell without a new ADR.
+[ADR 0026](adr/0026-e1-vq-depth-diagnostic.md) allows one post hoc depth canary, and the closure
+stands unless it passes. The history below stands.
 
 E0 campaign `e0-20261009T174028Z-94847b` completed at 2026-10-10T10:02:53Z on
 the accepted Xbox package 0.1.0.109. Host freeze `96a3054`, unit

@@ -500,3 +500,20 @@ def test_assignment_cadence_is_opt_in() -> None:
     assert model.assigned_at == 72
     prepare_vector_step(model, 73, 5)
     assert model.assigned_at == 72
+
+
+def test_canary_custom_shape_packs_inside_the_window() -> None:
+    import importlib.util
+    from pathlib import Path
+
+    from floppylm.e1_plan import TARGET_BYTES
+    from floppylm.pack import pack_sections
+
+    path = Path(__file__).resolve().parents[1] / "scripts/e1_vq_canary.py"
+    spec = importlib.util.spec_from_file_location("e1_vq_canary_test", path)
+    canary = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(canary)
+    model = canary.custom_model(8, 80, 12, 0)
+    assert (model.cfg.d, model.cfg.n_layers, model.cfg.d_ff) == (80, 12, 245)
+    assert model.book.learned
+    assert abs(len(pack_sections(model)[0]) - TARGET_BYTES) <= 0.01 * TARGET_BYTES
