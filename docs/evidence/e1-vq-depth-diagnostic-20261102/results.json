@@ -101,5 +101,8 @@
         "artifact_holdout_bpb": 1.741138324509143
       }
     }
-  }
+  },
+  "command": "python scripts/e1_vq_canary.py --arm vq-0.5-learned --seed 0 --shape-d 80 --shape-layers 12 --assign-every 8 --ramp-end 2400 --lr 0.001 --steps 3247 --cooldown 324 --every 400 --holdout 262144 --threads 4 --data <data> --out runs/vq-depth/recipe-c.json",
+  "holdout_bytes": 262144,
+  "train_bin_sha256": "8745f0d0f0c2ede79305e35393f90b35ff15c91fa1d85abed2acafdf4046e092"
 }

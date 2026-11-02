@@ -11,7 +11,16 @@ content difference from that merge. It ran to the end on seed 0, as a `systemd-r
 with 4 threads, in 7288 seconds, while an unrelated `llama-server` was using the same machine. The
 JSON confirms the preregistered recipe: `vq-0.5-learned`, G=8, `d` 80, 12 layers, `d_ff` 245,
 assignment every 8 steps, ramp to step 2400, lr 0.001, 3247 steps, cooldown 324, 256 KiB train
-holdout.
+holdout. The script JSON does not record the holdout size, so it comes from the launch command:
+
+```text
+python scripts/e1_vq_canary.py --arm vq-0.5-learned\
+  --seed 0 --shape-d 80 --shape-layers 12 --assign-every 8\
+  --ramp-end 2400 --lr 0.001 --steps 3247 --cooldown 324 --every 400\
+  --holdout 262144 --threads 4 --data <data> --out runs/vq-depth/recipe-c.json
+```
+
+`train.bin` sha256, hashed after the run: `8745f0d0f0c2ede79305e35393f90b35ff15c91fa1d85abed2acafdf4046e092`.
 
 ## Results
 
