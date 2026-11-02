@@ -189,10 +189,10 @@ The owner delegated this decision on 2026-11-02. The research stops at the E1 1/
 the two in the task map. No F\* fired, so the research is not complete by falsification, and the
 product is not complete. No claim either way is made about the thesis. The product is not built.
 
-- A2 and A3 do not finish. The twelve vector cells do not start and `vq-0.5-fixed-s0` is not resumed.
+- A2 and A3 do not finish. The other eleven vector cells do not start and `vq-0.5-fixed-s0` is not resumed.
   The six closed scalar cells stay valid. The 1/16 test split stays unopened.
 - B0 through E2i and H0 do not start. No console job is authorized.
-- Cost is not the reason for the stop. The twelve vector cells, one job at a time, would take about three to four days
+- Cost is not the reason for the stop. All twelve vector cells, one job at a time, would take about three to four days
   of CPU, estimated from 1.3–2.2 s/step on the canaries and the 4T token count.
 - The reason is the outcome already fixed in [ADR 0026](adr/0026-e1-vq-depth-diagnostic.md). The ADR 0023
   recipe is known to measure its own defect at about 7 bpb, as [ADR 0025](adr/0025-e1-vq-recipe-stop.md)

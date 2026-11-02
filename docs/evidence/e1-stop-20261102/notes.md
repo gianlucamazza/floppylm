@@ -29,8 +29,8 @@ the scalar arms. All eleven canaries stayed above the 1.40 filter.
 
 ## Not measured
 
-- A closed vector cell, a 1/16 signal, F1, or F1-abl. No vector run reached 2T or 4T with a working
-  recipe.
+- A closed vector cell, a 1/16 signal, F1, or F1-abl. No vector run reached 4T. Only the paused
+  `vq-0.5-fixed-s0` reached 2T, on the ADR 0023 recipe.
 - The 1/4 and 1× budgets, recursion, coding (E2), the runtime (E3), and the image and human reviews
   (E4). No floppy image exists.
 - Assignment every step, a term that pulls master weights toward their codes, and code usage.
