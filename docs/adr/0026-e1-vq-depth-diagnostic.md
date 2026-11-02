@@ -33,7 +33,9 @@ behind it, while closed cells would give F1 a result even if the vector arms los
    1.275 at T.
 3. **Repair.** If the score passes and the file does not, one repeat runs at
    `d_ff = 245 + round((85937.5 - bytes) / 180)`, 180 bytes being the nominal cost of one `d_ff` unit at
-   this shape. It must pass both parts of the bar.
+   this shape. It must pass both parts of the bar. A score above 1.40 gets no repeat, because the closure
+   then stands at any file size. This canary does not use the pilot S3 rule: at seed 0, `vector_s3`
+   solves the init pack again and refuses the same `d_ff`, so it cannot offset growth during training.
 4. **Outcome.** If it passes, a new proposal names the recipe and shape, and no vector cell starts until
    it is accepted. If it does not, the ADR 0025 closure is final, and no further 1/16 recipe is
    proposed under this line. F1 stays undecided until eighteen cells close.

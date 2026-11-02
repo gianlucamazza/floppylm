@@ -21,7 +21,7 @@ import torch  # noqa: E402
 
 from floppylm.data import load  # noqa: E402
 from floppylm.e1_pilot import PILOT_BATCH, cell_plan, materialize_cell  # noqa: E402
-from floppylm.e1_plan import TARGET_BYTES, _best_d_ff, vector_config  # noqa: E402
+from floppylm.e1_plan import ff_bounds, TARGET_BYTES, _best_d_ff, vector_config  # noqa: E402
 from floppylm.model import TinyGPT  # noqa: E402
 from floppylm.pack import pack_sections, unpack  # noqa: E402
 from floppylm.seed import seed_all  # noqa: E402
@@ -50,6 +50,8 @@ def custom_model(
         if shape is None:
             return None
         d_ff = shape.d_ff
+    elif not ff_bounds(d)[0] <= d_ff <= ff_bounds(d)[1]:
+        return None
     seed_all(seed)
     return TinyGPT(vector_config(d, n_layers, d_ff), VectorBook(group, 0.5, seed, learned=True))
 
