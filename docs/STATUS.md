@@ -11,8 +11,10 @@ The E1 1/16 vector line is closed as not reached with these recipes, under
 1.665 for assignment every 8 steps, against the 1.40 threshold and 1.295 for the best scalar mean.
 The second file is also outside the ±1% window. F1 is not decided. B0 through E2i do not start. Do
 not resume the paused cell or start another vector cell without a new ADR.
-[ADR 0026](adr/0026-e1-vq-depth-diagnostic.md) allows one post hoc depth canary, and the closure
-stands unless it passes. The history below stands.
+The one post hoc depth canary allowed by [ADR 0026](adr/0026-e1-vq-depth-diagnostic.md) did
+[not pass](evidence/e1-vq-depth-diagnostic-20261102/notes.md): 1.741 bpb at T, 88312 bytes, outside
+the window. The closure is final, and no further 1/16 recipe is proposed under this line. The history
+below stands.
 
 E0 campaign `e0-20261009T174028Z-94847b` completed at 2026-10-10T10:02:53Z on
 the accepted Xbox package 0.1.0.109. Host freeze `96a3054`, unit

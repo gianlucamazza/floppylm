@@ -132,6 +132,10 @@ result. The shape rule is
 [two last recipes](evidence/e1-vq-last-canaries-20261101/notes.md) reached 1.40 bpb at T. F1 and
 F1-abl stay undecided. A new ADR can reopen the line.
 
+**Outcome, 2026-11-02.** The [depth canary](evidence/e1-vq-depth-diagnostic-20261102/notes.md) allowed
+by [ADR 0026](adr/0026-e1-vq-depth-diagnostic.md) reached 1.741 bpb at T, above 1.40, so that closure
+is final. No further 1/16 recipe is proposed under this line. F1 and F1-abl stay undecided.
+
 ## E1a — Diversity across iterations (closes v0.1, picks the recursion)
 
 Budget 1/4, core of the pilot's winning arm, same tokens and FLOPs, 3 seeds:
