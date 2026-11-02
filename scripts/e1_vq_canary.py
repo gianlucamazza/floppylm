@@ -21,7 +21,7 @@ import torch  # noqa: E402
 
 from floppylm.data import load  # noqa: E402
 from floppylm.e1_pilot import PILOT_BATCH, cell_plan, materialize_cell  # noqa: E402
-from floppylm.e1_plan import ff_bounds, TARGET_BYTES, _best_d_ff, vector_config  # noqa: E402
+from floppylm.e1_plan import TARGET_BYTES, _best_d_ff, ff_bounds, vector_config  # noqa: E402
 from floppylm.model import TinyGPT  # noqa: E402
 from floppylm.pack import pack_sections, unpack  # noqa: E402
 from floppylm.seed import seed_all  # noqa: E402
